@@ -1,0 +1,14 @@
+export 'start.dart';
+export 'verificationscreen.dart';
+export 'onboardingscreen.dart';
+export 'phone.dart';
+export 'AfterRegistration/addphotos.dart';
+export 'AfterRegistration/birthday.dart';
+export 'AfterRegistration/enablelocation.dart';
+export 'AfterRegistration/genderscreen.dart';
+export 'AfterRegistration/interests.dart';
+export 'AfterRegistration/lookingfor.dart';
+export 'AfterRegistration/namescreen.dart';
+export 'AfterRegistration/showme.dart';
+export 'AfterRegistration/schoolname.dart';
+export 'AfterRegistration/welcome.dart';

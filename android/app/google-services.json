@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "34443348178",
+    "project_id": "lomi-601e5",
+    "storage_bucket": "lomi-601e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34443348178:android:fb43fd2b411727062a850b",
+        "android_client_info": {
+          "package_name": "com.example.lomi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "34443348178-ufkb0k31qeo3dupndp8btke3ee3ogfj8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDHQcE5IDbiWf5pVqF8cHvjDAB4nqReNso"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "34443348178-ufkb0k31qeo3dupndp8btke3ee3ogfj8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

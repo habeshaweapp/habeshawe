@@ -13,6 +13,8 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String msg= '';
+    final msgController = TextEditingController();
+    final scrollController = ScrollController();
     return BlocBuilder<ChatBloc, ChatState>(
       builder: (context, state) {
         if(state is ChatLoading){
@@ -22,6 +24,7 @@ class Body extends StatelessWidget {
         }
         
         if(state is ChatLoaded){
+          //scrollController.jumpTo(scrollController.position.maxScrollExtent);
         return  Column(
         children: [
           Expanded(
@@ -29,10 +32,13 @@ class Body extends StatelessWidget {
               child: state.messages != null ? 
                       Container(
                         child: ListView.builder(
+                          
+                          //controller: scrollController,
                           physics: const NeverScrollableScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: state.messages!.length,
                           reverse: true,
+                          
                           //userMatch.chat![0].messages.length,
                           itemBuilder: ((context, index) {
                             return ListTile(
@@ -42,6 +48,7 @@ class Body extends StatelessWidget {
                               Align(
                                 alignment: Alignment.topRight,
                                 child: Container(
+                                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.83),
                                   padding: EdgeInsets.all(10),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.only(
@@ -70,6 +77,7 @@ class Body extends StatelessWidget {
                                     Align(
                                     alignment: Alignment.topLeft,
                                     child: Container(
+                                      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.83),
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.only(
@@ -142,7 +150,7 @@ class Body extends StatelessWidget {
           //   )
 
           Container(
-      height: 60,
+      //height: 60,
       width: double.infinity,
       child: Padding(
         padding: const EdgeInsets.only(left: 20, right: 20),
@@ -150,7 +158,7 @@ class Body extends StatelessWidget {
           children: [
             Container(
               padding: EdgeInsets.symmetric(horizontal: 10),
-              height: 40,
+              //height: 40,
               width: MediaQuery.of(context).size.width/1.3,
               decoration: BoxDecoration(
                 color: Colors.grey.shade200,
@@ -159,19 +167,28 @@ class Body extends StatelessWidget {
                 ),
               ),
               child:  TextField(
+                //keyboardType: TextInputType.,
+                controller: msgController,
+                maxLines: 6,
+                minLines: 1,
                 onChanged: (value){
                   msg = value;
                 },
                 cursorColor: Colors.black,
                 decoration: InputDecoration(
                   border: InputBorder.none,
+                  //contentPadding: EdgeInsets.zero,
                   hintText: 'Type Here!',
+                  
                   //hintStyle: Theme.of(context).textTheme.bodySmall,
-                  icon: Icon(
-                    FontAwesomeIcons.faceSmile, 
-                    color: Colors.grey,
-                    size: 20,
-                    ),
+                  icon: Padding(
+                    padding: const EdgeInsets.all(0),
+                    child: Icon(
+                      FontAwesomeIcons.faceSmile, 
+                      color: Colors.grey,
+                      size: 20,
+                      ),
+                  ),
                     suffix: Icon(
                       FontAwesomeIcons.paperclip,
                       color: Colors.grey,
@@ -197,8 +214,10 @@ class Body extends StatelessWidget {
                 size: 20,
                 ),
                 onPressed: ()async{
-                  msg='';
-                  context.read<ChatBloc>().add(SendMessage(message: Message(id: 'id', senderId: context.read<AuthBloc>().state.user!.uid, receiverId: context.read<AuthBloc>().state.user!.uid == state.messages![0].senderId ? state.messages![0].receiverId : state.messages![0].senderId, message: msg, timestamp: DateTime.now())));
+                  //msg='';
+                  
+                  context.read<ChatBloc>().add(SendMessage(message: Message(id: 'id', senderId: context.read<AuthBloc>().state.user!.uid, receiverId: context.read<AuthBloc>().state.user!.uid == state.messages![0].senderId ? state.messages![0].receiverId : state.messages![0].senderId, message: msgController.text, timestamp: DateTime.now())));
+                  msgController.clear();
                 },
               ),
             )
@@ -206,7 +225,8 @@ class Body extends StatelessWidget {
       
         ),
       ),
-    )
+    ),
+    SizedBox(height: 5,),
 
             
         ],

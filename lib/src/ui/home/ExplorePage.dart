@@ -8,6 +8,8 @@ import 'package:lomi/src/dataApi/explore_json.dart';
 import 'package:lomi/src/dataApi/icons.dart';
 import 'package:lomi/src/ui/home/components/usercard.dart';
 
+import 'components/swipecard.dart';
+
 class ExplorePage extends StatefulWidget {
   const ExplorePage({Key? key}) : super(key: key);
 
@@ -19,7 +21,7 @@ class _ExplorePageState extends State<ExplorePage> {
    var tempUsers = explore_json;
   @override
   Widget build(BuildContext context) {
-    return UserCard();
+    return SwipeCard();
     
     // Column(
     //   children: [

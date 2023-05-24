@@ -5,6 +5,7 @@ import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/ui/home/home.dart';
 import 'package:lomi/src/ui/itsAmatch/itsAmatch.dart';
 import 'package:lomi/src/ui/onboarding/onboardAllScreens.dart';
+import 'package:lomi/src/wrapper.dart';
 
 import 'ui/splash/splashscreen.dart';
 
@@ -14,8 +15,15 @@ class LomiAppRouter{
    static final GoRouter router = GoRouter(
       routes: [
         GoRoute(
-          name: MyAppRouteConstants.splashRouteName,
+          name: MyAppRouteConstants.wrapperRouteName,
           path: '/',
+          pageBuilder: (context, state) {
+            return const MaterialPage(child: Wrapper());
+          },
+          ),
+          GoRoute(
+          name: MyAppRouteConstants.splashRouteName,
+          path: '/splash',
           pageBuilder: (context, state) {
             return const MaterialPage(child: SplashScreen());
           },
@@ -159,6 +167,7 @@ class LomiAppRouter{
 
 class MyAppRouteConstants {
   static const String splashRouteName = 'splash';
+  static const String wrapperRouteName = 'wrapper';
   static const String homeRouteName = 'home';
   static const String startRouteName = 'start';
   static const String phoneRouteName = 'phone';

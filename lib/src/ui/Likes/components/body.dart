@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 
 import '../../../Blocs/MatchBloc/match_bloc.dart';
+import '../../Profile/profile.dart';
 import '../../chat/chatscreen.dart';
 import 'likes_image.dart';
 
@@ -60,7 +61,12 @@ class Body extends StatelessWidget {
                   
                   itemCount: state.likedMeUsers.length,
                   itemBuilder: (context, index){
-                    return LikesImage(url: state.likedMeUsers[index].imageUrls[0], height: 20,);
+                    return InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: state.likedMeUsers[index])));
+                      },
+                      
+                      child: LikesImage(url: state.likedMeUsers[index].imageUrls[0], height: 20,));
                   } ),
               ),
               

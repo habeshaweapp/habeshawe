@@ -19,6 +19,7 @@ class User extends Equatable {
   final String? aboutMe;
   final String? education;
   final String? livingIn;
+  final String? geohash;
 
   const User({
     required this.id,
@@ -36,6 +37,7 @@ class User extends Equatable {
      this.company,
      this.education,
      this.livingIn,
+     this.geohash
   });
 
   @override
@@ -54,7 +56,8 @@ class User extends Equatable {
         aboutMe,
         company,
         education,
-        livingIn,      
+        livingIn, 
+        geohash     
       
       ];
 
@@ -75,6 +78,7 @@ class User extends Equatable {
       livingIn: snap['livingIn'] ,
       jobTitle: snap['jobTitle'] ,
       lookingFor: snap['lookingFor'],
+      geohash: snap['geohash'],
     );
 
   }
@@ -87,15 +91,15 @@ class User extends Equatable {
       imageUrls: snap['imageUrls'],
       gender: snap['gender'],    
       interests: snap['interests'],
-      location: GeoPoint(9.324, 3.73),
+      location: snap['location'],
       school: snap['school'],
       birthday: snap['birthday'],
-      aboutMe: 'Hi i am new to lomi add me subscribe we will talk',
-      company: 'No company',
-      education: 'you think you funny ha',
-      livingIn: 'Eth',
-      jobTitle: 'No job',
-      lookingFor: 'Long-term closed to short',
+      aboutMe: snap['aboutMe'] ,
+      company: snap['company'] ,
+      education: snap['education'],
+      livingIn: snap['livingIn'] ,
+      jobTitle: snap['jobTitle'] ,
+      lookingFor: snap['lookingFor'],
     );
 
   }
@@ -117,6 +121,7 @@ class User extends Equatable {
       'education' : education,
       'livingIn' : livingIn,
       'jobTitle': jobTitle,
+      'geohash': geohash,
     };
   }
 
@@ -136,6 +141,7 @@ class User extends Equatable {
     String? education,
     String? livingIn,
     String? jobTitle,
+    String? geohash,
 
   }){
     return User(
@@ -154,6 +160,7 @@ class User extends Equatable {
       education: education ?? this.education,
       livingIn: livingIn ?? this.livingIn,
       jobTitle: jobTitle ?? this.jobTitle,
+      geohash: geohash ?? this.geohash,
     );
   }
 

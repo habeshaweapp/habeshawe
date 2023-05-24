@@ -21,51 +21,13 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return 
-    WillPopScope(
-      onWillPop: () async => false,
-      child: BlocConsumer<AuthBloc, AuthState>(
-        builder: (context, state) {
-          if(state.status == AuthStatus.unauthenticated){
-
-            Timer(Duration(seconds: 3),() => null); 
-            return  StartScreen();
-          }
-          if(state.status == AuthStatus.authenticated){
-            
-            Timer(Duration(seconds: 3), () => null);
-            return  Home();
-          }else{
-            return Text('something went wrong');
-          }
-        },
-        listener: (context, state) {
-          // if(state.status == AuthStatus.unauthenticated){
-          //   Timer(Duration(seconds: 1), () => 
-    
-          //   GoRouter.of(context).pushReplacementNamed(MyAppRouteConstants.startRouteName)
-    
-          // ); 
-    
-          // }else if(state.status == AuthStatus.authenticated){
-          //   Timer(Duration(seconds: 1), () => 
-    
-          //   GoRouter.of(context).pushReplacementNamed(MyAppRouteConstants.homeRouteName)
-            
-          // );
-          // }
-
-          
-
-        
-        child: Scaffold(
+       Scaffold(
           body: Container(
             child: Center(
               child: Icon(LineIcons.lemonAlt, size: 63, color: Color.fromARGB(255, 8, 141, 13),),
             ),
           ),
         );
-        },
-      ),
-    );
+       
   }
 }

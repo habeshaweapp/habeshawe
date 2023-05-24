@@ -49,6 +49,10 @@ dependencies:
   cloud_firestore: ^4.5.0
   go_router: ^6.5.5
   geolocator: ^9.0.2
+  cached_network_image: ^3.2.3
+  #geoflutterfire: 
+  flutter_geo_hash: ^0.0.4
+  swipe_cards: ^2.0.0+1
   
 
 

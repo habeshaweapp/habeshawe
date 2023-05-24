@@ -39,13 +39,24 @@ class Body extends StatelessWidget {
       
               SizedBox(
                 height: 150,
-                child: ListView.builder(
+                child: inactiveMatches.length !=0 ? ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
                   itemCount: inactiveMatches.length,
                   itemBuilder: (context, index){
-                    return MatchesImage(url: inactiveMatches[index].matchedUser.imageUrls[0], height: 120, width: 100,);
+                    return InkWell(
+                      onTap: (){Navigator.push(context,MaterialPageRoute(builder: (context) => ChatScreen(inactiveMatches[index])));},
+                      child: MatchesImage(url: inactiveMatches[index].matchedUser.imageUrls[0], height: 120, width: 100,));
                   }
+                  ):
+                  Container(
+                height: 150,
+                width: 120,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.green),
+                  borderRadius: BorderRadius.circular(20)
+                ),
+                child: Center(child: Text('New matches\nwill appear\n here',textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10,fontWeight: FontWeight.w300),)),
                   ),
               ),
               Padding(
@@ -72,31 +83,44 @@ class Body extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           MatchesImage(url: activeMatches[index].matchedUser.imageUrls[0],
-                           height: 80,width: 80,shape: BoxShape.circle,),
-                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                             children: [
-                              SizedBox(height: 5,),
-                               Text(activeMatches[index].matchedUser.name,
-                                    style: Theme.of(context).textTheme.bodyLarge,
-                               
-                               ),
-                              const SizedBox(height: 5,),
-                    
-                                Text(
-                                  activeMatches[index].chat,
-                                  //activeMatches[index].chat![0].messages[0].message,
-                                    style: Theme.of(context).textTheme.bodyMedium,
-                               
-                               ),
-                               const SizedBox(height: 5,),
-                               Text(
-                                activeMatches[index].chat,
-                                //activeMatches[index].chat![0].messages[0].timeString,
-                                    style: Theme.of(context).textTheme.bodySmall,
-                               
-                               ),
-                             ],
+                           height: 60,width: 60,shape: BoxShape.circle,),
+                           Padding(
+                             padding: const EdgeInsets.all(8.0),
+                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                               children: [
+                                SizedBox(height: 5,),
+                                 Text(activeMatches[index].matchedUser.name,
+                                      style: Theme.of(context).textTheme.bodyLarge,
+                                 
+                                 ),
+                                const SizedBox(height: 5,),
+                                               
+                                  Text(
+                                    'Hello from the other side',
+
+                                   // activeMatches[index].chat,
+                                    //activeMatches[index].chat![0].messages[0].message,
+                                      style: Theme.of(context).textTheme.bodySmall,
+                                 
+                                 ),
+                                //  const SizedBox(height: 5,),
+                                //  Text(
+                                //   activeMatches[index].chat,
+                                //   //activeMatches[index].chat![0].messages[0].timeString,
+                                //       style: Theme.of(context).textTheme.bodySmall,
+                                 
+                                //  ),
+                               ],
+                             ),
+                           ),
+                           Spacer(),
+
+                           Padding(
+                             padding: const EdgeInsets.only(top: 15.0),
+                             child: Text('7:03 PM',
+                             style: Theme.of(context).textTheme.bodySmall,
+                             ),
                            )
                         ],
                       ),

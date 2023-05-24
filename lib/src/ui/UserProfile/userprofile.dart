@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Data/Models/model.dart';
+import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/ui/editProfile/editProfile.dart';
 import 'package:lomi/src/ui/settings/settings.dart';
 
@@ -62,7 +63,7 @@ class UserProfile extends StatelessWidget {
                         alignment: Alignment.bottomCenter,
                         child: ElevatedButton(
                             onPressed: () {
-                              context.read<AuthRepository>().signOut();
+                              context.read<DatabaseRepository>().getUsersBasedonPreference(state.user.id);
                             },
                             style: ElevatedButton.styleFrom(
                                 // backgroundColor: Colors.green,

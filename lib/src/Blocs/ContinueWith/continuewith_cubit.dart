@@ -22,7 +22,7 @@ class ContinuewithCubit extends Cubit<ContinuewithState> {
         ));
         
       } catch (e) {
-        
+        print(e.toString());
         
       }
 

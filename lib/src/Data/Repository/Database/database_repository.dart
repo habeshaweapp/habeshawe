@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_geo_hash/geohash.dart' as geohash;
+import 'package:geolocator/geolocator.dart';
 import 'package:lomi/src/Data/Models/chat_model.dart';
 import 'package:lomi/src/Data/Models/message_model.dart';
 import 'package:lomi/src/Data/Models/user.dart';
@@ -48,12 +50,18 @@ class DatabaseRepository extends BaseDatabaseRepository{
   
   @override
   Stream<List<User>> getUsers(String userId, String gender) {
+    //  Position myLocation = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    // geohash.MyGeoHash myGeoHash = geohash.MyGeoHash();
+    // String hash = myGeoHash.geoHashForLocation(geohash.GeoPoint(myLocation.latitude, myLocation.longitude));
     // _firebaseFirestore.collection('users').snapshots()
     // .forEach((element) {
     //   element.docs.forEach((doc) {
-    //     updateUser(User.fromSnapshootOld(doc));
+    //    // updateUser(User.fromSnapshootOld(doc));
+    //    _firebaseFirestore.collection('users').doc(doc.id)
+    //    .update({'geohash': hash });
     //   });
     // });
+   // _firebaseFirestore.collection('users').where('location[0]', whereIn: [99,21] ).where('location[1]', whereIn: [20,12]);
     return _firebaseFirestore.collection('users').where('gender', isNotEqualTo: gender).snapshots()
     .map((snap) => snap.docs
     .map((doc) => User.fromSnapshoot(doc)).toList() );
@@ -164,7 +172,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
     .snapshots()
     .map((snap) => 
      snap.docs
-     .map((user) => User.fromSnapshoot(user)).toList()
+     .map((user) => User.fromSnapshootOld(user)).toList()
     );
   }
   
@@ -207,11 +215,30 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .doc(message.senderId)
       .collection('matches')
       .doc(message.receiverId)
+      .update(
+        {'chat': 'Opened'}
+        ).then((value) {
+         print('here');
+        }
+         )
+      
+      ;
+
+      await _firebaseFirestore.collection('users')
+      .doc(message.senderId)
+      .collection('matches')
+      .doc(message.receiverId)
       .collection('chats')
       .doc('chat')
       .set({'timestamp': DateTime.now()});
       
       //for the other user
+      await _firebaseFirestore.collection('users')
+      .doc(message.receiverId)
+      .collection('matches')
+      .doc(message.senderId)
+      .update({'chat': 'Opened'});
+
       await _firebaseFirestore.collection('users')
       .doc(message.receiverId)
       .collection('matches')
@@ -337,6 +364,71 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .collection('userpreference')
       .doc('preference')
       .set(userPreference.toMap());
+  }
+  
+  @override
+  Future<User> getUsersBasedonPreference(String userId)async {
+    // final permission = await Geolocator.requestPermission();
+    // Position myLocation = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    // geohash.MyGeoHash myGeoHash = geohash.MyGeoHash();
+    // String hash = myGeoHash.geoHashForLocation(geohash.GeoPoint(myLocation.latitude, myLocation.longitude));
+    // _firebaseFirestore.collection('users').snapshots()
+    // .forEach((element) {
+    //   element.docs.forEach((doc) {
+    //    // updateUser(User.fromSnapshootOld(doc));
+    //    _firebaseFirestore.collection('users').doc(doc.id)
+    //    .update({'geohash': hash });
+    //   });
+    // });
+
+    final preference = await _firebaseFirestore.collection('users')
+    .doc(userId).collection('userpreference').doc('preference')
+    .get().then((snap) => UserPreference.fromSnapshoot(snap));
+    //.snapshots().map((snap) => UserPreference.fromSnapshoot(snap));
+    //Position myLocation = await Geolocator.getCurrentPosition();
+    final myLocation = await _firebaseFirestore.collection('users').doc(userId).get().then((value) => value.data()!['location']);
+    geohash.MyGeoHash myGeoHash = geohash.MyGeoHash();
+    String hash = myGeoHash.geoHashForLocation(geohash.GeoPoint(myLocation.latitude, myLocation.longitude));
+
+    // _firebaseFirestore.collection('users').get().then(
+    //   (value) => value.docs.(doc) => doc)
+
+
+    geohash.GeoPoint center = geohash.GeoPoint(myLocation.latitude, myLocation.longitude);
+    double radiusInM = preference.maximumDistance! * 1000;
+    List<List<String>> bounds = myGeoHash.geohashQueryBounds(center, radiusInM);
+    List<Future> futures = [];
+
+    for(List<String> b in bounds){
+      var q = _firebaseFirestore.collection('users')
+                
+                .where('age', isGreaterThan: 12)
+                
+                .orderBy('age')
+  
+                .orderBy('geohash')
+                .startAt([b[0]])
+                .endAt([b[1]])
+                ;
+
+      futures.add(q.get());
+    }
+
+    await Future.wait(futures).then((snapshots){
+      var matchingUsers = [];
+      
+      
+      for(var snap in snapshots){
+        for(var  doc in snap.docs){
+          matchingUsers.add(User.fromSnapshoot(doc));
+        }
+      }
+      
+      return matchingUsers;
+    });
+
+     throw Exception('error occured');
+    
   }
   
 }

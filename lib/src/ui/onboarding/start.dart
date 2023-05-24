@@ -169,7 +169,7 @@ class StartScreen extends StatelessWidget {
                       //await context.read<AuthBloc>().add(LogInWithGoogle());
 
                       await context.read<ContinuewithCubit>().continueWithGoogle();
-                      if(!await context.read<DatabaseRepository>().isUserAlreadyRegistered(context.read<ContinuewithCubit>().state.user!.uid)){
+                      if(!await context.read<DatabaseRepository>().isUserAlreadyRegistered(context.read<AuthBloc>().state.user!.uid)){
 
                       
                       User user = User(
@@ -206,7 +206,9 @@ class StartScreen extends StatelessWidget {
                   text: "LOG IN WITH PHONE NUMBER", 
                   icon: FontAwesomeIcons.phone, 
                   color: Colors.grey,
-                  onPressed: (){}
+                  onPressed: (){
+                    //context.read<DatabaseRepository>().getUsersBasedonPreference('userId');
+                  }
                   ),
                   SizedBox(height: 25,),
                   Center(child: Text('Trouble logging in?', style: TextStyle(color: Colors.white),),)

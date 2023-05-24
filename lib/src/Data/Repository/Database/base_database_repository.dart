@@ -30,4 +30,7 @@ abstract class BaseDatabaseRepository{
   //**************** UserPreference Repository ****************** */
   Stream<UserPreference> getUserPreference(String userId);
   Future<void> updateUserPreference(UserPreference userPreference);
+
+  //***************888 main logic getting ussers based on preference ***********8*8***8*//
+  Future<User> getUsersBasedonPreference(String userId);
 }

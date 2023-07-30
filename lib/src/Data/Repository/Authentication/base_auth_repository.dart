@@ -6,4 +6,6 @@ abstract class BaseAuthRepository{
   Future<auth.User?> logInWithGoogle();
  // Future<auth.User?> registerWithPhone(String mobile);
   Future<void> signOut();
+
+  Future<auth.User?> logInWithTwitter();
 }

@@ -9,8 +9,10 @@ import 'package:lomi/src/Blocs/OnboardingBloc/onboarding_bloc.dart';
 import 'package:lomi/src/Blocs/ProfileBloc/profile_bloc.dart';
 import 'package:lomi/src/Blocs/SwipeBloc/swipebloc_bloc.dart';
 import 'package:lomi/src/Blocs/ContinueWith/continuewith_cubit.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Blocs/UserPreference/userpreference_bloc.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
+
 import 'package:lomi/src/Data/Models/user_model.dart';
 import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
@@ -22,7 +24,9 @@ import 'package:lomi/src/ui/home/home.dart';
 import 'package:lomi/src/ui/onboarding/phone.dart';
 import 'package:lomi/src/ui/onboarding/start.dart';
 import 'package:lomi/src/ui/onboarding/verificationscreen.dart';
+import 'package:lomi/theme/theme_constants.dart';
 
+import 'Blocs/PhoneAuthBloc/phone_auth_bloc.dart';
 import 'ui/UserProfile/userprofile.dart';
 import 'ui/onboarding/AfterRegistration/addphotos.dart';
 import 'ui/onboarding/AfterRegistration/birthday.dart';
@@ -69,19 +73,23 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => MatchBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..add(LoadMatchs(userId: context.read<AuthBloc>().state.user!.uid)) ),
             BlocProvider(create: ((context) => ChatBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc:  context.read<AuthBloc>()))),
             BlocProvider(create: (context) => UserpreferenceBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..add(LoadUserPreference(userId: context.read<AuthBloc>().state.user!.uid))),
+            BlocProvider(create: ((context) => PhoneAuthBloc(authRepository: context.read<AuthRepository>()))),
+
+            BlocProvider(create: (context) => ThemeCubit()),
           ],
-          child: MaterialApp.router(
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              primaryColor: Colors.green,
-              // focusColor: Colors.green,
-              // hintColor: Colors.green,
-              primarySwatch: Colors.green,
-            ),
-            routeInformationParser: LomiAppRouter.router .routeInformationParser,
-            routerDelegate: LomiAppRouter.router.routerDelegate,
-            //home: AddPhotos(),
-            //routerConfig: LomiAppRouter.returnRouter(),
+          child: BlocBuilder<ThemeCubit, ThemeState>(
+            builder: (context, state) {
+              return MaterialApp.router(
+                      debugShowCheckedModeBanner: false,
+                      theme: lightTheme,
+                      darkTheme: darkTheme,
+                      themeMode: state.themeMode,
+                      routeInformationParser: LomiAppRouter.router .routeInformationParser,
+                      routerDelegate: LomiAppRouter.router.routerDelegate,
+                      //home: AddPhotos(),
+                      //routerConfig: LomiAppRouter.returnRouter(),
+                    );
+            },
           )),
     );
   }

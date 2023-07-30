@@ -36,9 +36,14 @@ class UserpreferenceBloc extends Bloc<UserpreferenceEvent, UserpreferenceState> 
   }
 
   void _onLoadUserPreference(LoadUserPreference event, Emitter<UserpreferenceState> emit) {
-     _databaseRepository.getUserPreference(event.userId).listen((userPreference) {
-          add(UpdateUserPreference(preference: userPreference));
-      });
+     try {
+  _databaseRepository.getUserPreference(event.userId).listen((userPreference) {
+       add(UpdateUserPreference(preference: userPreference));
+   });
+} on Exception catch (e) {
+  // TODO
+  print(e.toString());
+}
   }
 
   void _onUpdateUserPreference(UpdateUserPreference event, Emitter<UserpreferenceState> emit){
@@ -46,7 +51,12 @@ class UserpreferenceBloc extends Bloc<UserpreferenceEvent, UserpreferenceState> 
   }
 
   void _onEditUserPreference(EditUserPreference event, Emitter<UserpreferenceState> emit) async{
-      await _databaseRepository.updateUserPreference(event.preference);
+      try {
+  await _databaseRepository.updateUserPreference(event.preference);
+} on Exception catch (e) {
+  // TODO
+  print(e.toString());
+}
     
   }
 

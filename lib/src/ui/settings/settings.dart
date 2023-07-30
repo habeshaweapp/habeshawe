@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/ui/settings/components/body.dart';
 
 class Settings extends StatelessWidget {
@@ -8,11 +10,18 @@ class Settings extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400, fontSize: 17),),
-        backgroundColor: Colors.white,
+        title: Text('Settings', style: TextStyle( fontWeight: FontWeight.w400, fontSize: 17),),
+        //backgroundColor: Colors.transparent,
         leading: BackButton(
           color: Colors.green,
         ),
+        actions: [
+          Switch(
+            value: context.read<ThemeCubit>().state.themeMode == ThemeMode.dark , 
+          onChanged: (value){
+            context.read<ThemeCubit>().changeTheme(value);
+          })
+        ],
       ),
 
       body: Body(),

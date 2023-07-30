@@ -35,9 +35,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void _onLoadChats(LoadChats event, Emitter<ChatState> emit) {
     
-    _databaseRepository.getChats(event.userId, event.matchedUserId).listen((messages) {
-      add(UpdateChats(messages: messages));
-     });
+    try {
+  _databaseRepository.getChats(event.userId, event.matchedUserId).listen((messages) {
+    add(UpdateChats(messages: messages));
+   });
+} on Exception catch (e) {
+  // TODO
+  print(e);
+}
 
   }
 
@@ -50,7 +55,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
 
 void _onSendMessage(SendMessage event, Emitter<ChatState> emit) async{
-    await _databaseRepository.sendMessage(event.message);
+    try {
+  await _databaseRepository.sendMessage(event.message);
+} on Exception catch (e) {
+  // TODO
+  print(e);
+}
 }
 
 }

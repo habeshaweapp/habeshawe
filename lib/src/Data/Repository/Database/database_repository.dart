@@ -12,6 +12,7 @@ import 'package:lomi/src/Data/Models/user.dart';
 import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import 'package:lomi/src/Data/Repository/Storage/storage_repository.dart';
 
+import '../../Models/likes_model.dart';
 import '../../Models/model.dart';
 import 'base_database_repository.dart';
 
@@ -144,33 +145,49 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Future<bool> userLike(String userId, User likedUser) async {
+  Future<bool> userLike(User user, User matchUser) async {
     try {
 
     var result = await _firebaseFirestore.collection('users')
-    .doc(userId)
+    .doc(user.id)
     .collection('likes')
-    .doc(likedUser.id).get();
+    .doc(matchUser.id).get();
 
     if(!result.exists){
 
     
    await _firebaseFirestore
     .collection('users')
-    .doc(likedUser.id)
+    .doc(matchUser.id)
     .collection('likes')
-    .doc(userId)
+    .doc(user.id)
     //.add(likedUser.toMap()..addAll({'userId' : likedUser.id}));
     .set(
-      (await getUserbyId(userId)).toMap()
+      {
+        'userId': user.id,
+        'name': user.name,
+        'age': user.age,
+        'imageUrls': user.imageUrls,
+        'verified': user.verified,
+        'timestamp': FieldValue.serverTimestamp(),
+      }
+      //user.toMap()
+
+
+      // Like(userId: user.id, name: user.name, age: user.age, imageUrls: user.imageUrls, timestamp: FieldValue.serverTimestamp()).toMap()
+      // {
+      //   'likedby' : _firebaseFirestore.collection('users').doc(userId),
+      //   'timestamp' : FieldValue.serverTimestamp(),   
+      // }
+     // (await getUserbyId(userId)).toMap()
     );
 
     //var res = result;
     await _firebaseFirestore
         .collection('users')
-        .doc(userId)
+        .doc(user.id)
         .collection('viewedProfiles')
-        .doc(likedUser.id)
+        .doc(matchUser.id)
         .set({'liked' : true});
 
 
@@ -180,26 +197,44 @@ class DatabaseRepository extends BaseDatabaseRepository{
     if(result.exists){
       await _firebaseFirestore
       .collection('users')
-      .doc(userId)
+      .doc(user.id)
       .collection('matches')
-      .doc(likedUser.id)
-      .set(UserMatch(userId: userId, matchedUser: likedUser, chat:'notOpened').toMap());
+      .doc(matchUser.id)
+      .set(
+        {
+      'timestamp' : FieldValue.serverTimestamp(),
+      'matchedUserId': matchUser.id,
+      'name': matchUser.name,
+      'imageUrls': matchUser.imageUrls,
+      'verified': matchUser.verified,
+      'chatOpened': false,
+    }
+    );
+       // UserMatch(userId: userId, matchedUser: likedUser, chat:'notOpened').toMap());
 
       await _firebaseFirestore
       .collection('users')
-      .doc(likedUser.id)
+      .doc(matchUser.id)
       .collection('matches')
-      .doc(userId)
+      .doc(user.id)
       .set(
-        UserMatch(userId: userId, matchedUser: await getUserbyId(userId), chat: 'notOpened').toMap() );
+        {
+          'timestamp' : FieldValue.serverTimestamp(),
+          'matchedUserId': matchUser.id,
+          'name': matchUser.name,
+          'imageUrls': matchUser.imageUrls,
+          'verified': matchUser.verified,
+          'chatOpened': false,
+        }
+        );
         
       
 
       await _firebaseFirestore
         .collection('users')
-        .doc(userId)
+        .doc(user.id)
         .collection('likes')
-        .doc(likedUser.id)
+        .doc(matchUser.id)
         .delete();
 
       return true;
@@ -221,7 +256,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   Future<void> userPassed(String userId, User passedUser) async {
     try {
     
-    await _firebaseFirestore.collection('users').doc(userId).collection('passed').doc(passedUser.id).set(passedUser.toMap());
+   // await _firebaseFirestore.collection('users').doc(userId).collection('passed').doc(passedUser.id).set(passedUser.toMap());
 
     await _firebaseFirestore
         .collection('users')
@@ -229,6 +264,20 @@ class DatabaseRepository extends BaseDatabaseRepository{
         .collection('viewedProfiles')
         .doc(passedUser.id)
         .set({'liked' : false});
+    final result = await _firebaseFirestore.collection('users')
+        .doc(userId)
+        .collection('likes')
+        .doc(passedUser.id)
+        .get();
+
+    if(result.exists){
+      await _firebaseFirestore.collection('users')
+            .doc(userId)
+            .collection('likes')
+            .doc(passedUser.id)
+            .delete();
+
+    }
 
     }on FirebaseException catch(e){
       print(e.message);
@@ -270,7 +319,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
    .snapshots()
    .map((snap) => 
     snap.docs
-    .map((user) => User.fromSnapshootOld(user)).toList()
+    .map((user) => User.fromSnapshootOld(user['likedby'])).toList()
    );
 }on FirebaseException catch (e){
   throw Exception(e.message);
@@ -680,45 +729,46 @@ Stream<List<User>> getNearByUsers(String userId, LocationData locationData)  {
     .doc(user.id).collection('viewedProfiles')
     .get().then((snap) => snap.docs.map((e) => e.id,).toList() );
 
-    List<String> queens = await _firebaseFirestore
-        .collection('queens')
+    List<User> queens = await _firebaseFirestore
+        .collection(user.gender == 'female'? 'queens' : 'kings')
         .orderBy('number')
         .startAfter(['values'])
         .limit(5)
         .get()
-        .then((value) => value.docs.map((e) => e.id).toList());
+        .then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
     
-    List<String> queensNotViewed = queens.toSet().difference(viewedProfiles.toSet()).toList();
-    queens.removeWhere((element) => viewedProfiles.contains(element));
+    //List<String> queensNotViewed = queens.toSet().difference(viewedProfiles.toSet()).toList();
+    queens.removeWhere((user) => viewedProfiles.contains(user.id));
     if(queens.length < 5){
       while(queens.length < 5){
         
       }
     }
-    if(user.gender == 'women'){
-    List<User> princess = await _firebaseFirestore.collection('users')
-      .where('gender', isEqualTo: 'male')
-      .where('verified', isEqualTo: 'princess')
+  //  if(user.gender == 'women'){
+    List<User> princessOrgents = await _firebaseFirestore.collection('users')
+      .where('gender', isEqualTo: user.gender )
+      .where('verified', isEqualTo: user.gender == 'female'? 'princess' : 'gentlemens')
       .orderBy('createdAt')
       .limit(4)
       .get()
       .then(
         (querySnap) => querySnap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
-    }
+   // }
 
-    if(user.gender == 'man'){
-    List<User> princess = await _firebaseFirestore.collection('users')
-      .where('gender', isEqualTo: 'women')
-      .where('verified', isEqualTo: 'gentlemen')
-      .orderBy('createdAt')
-      .limit(4)
-      .get()
-      .then(
-        (querySnap) => querySnap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
-    princess.remov
+   // if(user.gender == 'man'){
+    // List<User> princess = await _firebaseFirestore.collection('users')
+    //   .where('gender', isEqualTo: 'women')
+    //   .where('verified', isEqualTo: 'gentlemen')
+    //   .orderBy('createdAt')
+    //   .limit(4)
+    //   .get()
+    //   .then(
+    //     (querySnap) => querySnap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
+    // princess.remov
+    //}
     List<User> filler = await _firebaseFirestore
       .collection('users')
-      .where('gender', isEqualTo: 'women')
+      .where('gender', isEqualTo: user.gender)
       .where('score', isGreaterThanOrEqualTo: 1)
       .limit(5)
       .get()
@@ -728,9 +778,8 @@ Stream<List<User>> getNearByUsers(String userId, LocationData locationData)  {
         User.fromSnapshoot(doc)).toList()
         );
 
-    }
 
-    
+     return filler;
   }
   
 

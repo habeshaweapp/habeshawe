@@ -21,6 +21,7 @@ class LookingFor extends StatelessWidget {
       'Stil figuring it\n out',
     ];
     //int selectedIndex = 0;
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
         child: BlocBuilder<OnboardingBloc, OnboardingState>(
@@ -76,8 +77,8 @@ class LookingFor extends StatelessWidget {
                              // selectedIndex = index;
                             },
                             child: Container(
-                                              width: 130,
-                                              height: 150,
+                                              width: size.width*0.32,
+                                              height: size.height*0.18,
                                              // margin: EdgeInsets.all(10),
                                               child: Card(
                                                 
@@ -117,8 +118,8 @@ class LookingFor extends StatelessWidget {
         
                             },
                             child: Container(
-                                              width: 130,
-                                              height: 150,
+                                              width: size.width*0.32,
+                                              height: size.height*0.18,
                                               decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.all(Radius.circular(10))
                                               ),
@@ -133,7 +134,7 @@ class LookingFor extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(LineIcons.capsules, color: Colors.purple,),
-                              SizedBox(height: 10,),
+                             //s SizedBox(height: 10,),
                               Text(
                                 lookignForOpt[3+index],
                               textAlign: TextAlign.center,

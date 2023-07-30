@@ -37,6 +37,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   }
 
   void _onLoadMatchs(LoadMatchs event, Emitter<MatchState> emit) {
+    try{
 
     _databaseRepository.getMatches(event.userId).listen((matches) {
 
@@ -46,6 +47,10 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
         
       });
     });
+
+    }on Exception catch(e){
+      print(e);
+    }
     // final likes = _databaseRepository.getLikedMeUsers(event.userId);
 
     // add(UpdateMatches(matchedUsers: matches., likedMeUsers: likes))
@@ -64,7 +69,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     try {
       emit(MatchLoaded(matchedUsers: event.matchedUsers!, likedMeUsers: event.likedMeUsers!));
       
-    } catch (e) {
+    }on Exception catch (e) {
       print(e.toString());
     }
   }
@@ -79,7 +84,12 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   // }
 
   void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<MatchState> emit) async{
-   await  _databaseRepository.likeLikedMeUser(event.userId, event.likedMeUser);
+   try {
+  await  _databaseRepository.likeLikedMeUser(event.userId, event.likedMeUser);
+} on Exception catch (e) {
+  // TODO
+  print(e.toString());
+}
 
   }
 
@@ -87,7 +97,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     try {
       _databaseRepository.openChat(event.message);
       
-    } catch (e) {
+    }on Exception catch (e) {
       print(e.toString());
       
     }
@@ -96,7 +106,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   void _onDeleteLikedMeUser(DeleteLikedMeUser event, Emitter<MatchState> emit) async{
     try {
       _databaseRepository.deleteLikedMeUser(event.userId, event.likedMeUserId);
-    } catch (e) {
+    }on Exception catch (e) {
       print(e.toString());
     }
   }

@@ -20,6 +20,7 @@ class User extends Equatable {
   final String? education;
   final String? livingIn;
   final String? geohash;
+  final String? verified;
 
   const User({
     required this.id,
@@ -37,7 +38,8 @@ class User extends Equatable {
      this.company,
      this.education,
      this.livingIn,
-     this.geohash
+     this.geohash,
+     this.verified,
   });
 
   @override
@@ -57,29 +59,37 @@ class User extends Equatable {
         company,
         education,
         livingIn, 
-        geohash     
+        geohash,
+        verified,     
       
       ];
 
   factory User.fromSnapshoot(DocumentSnapshot snap){
-    return User(
-      id: snap.id,  
-      name: snap['name'],
-      age: snap['age'],
-      imageUrls: snap['imageUrls'],
-      gender: snap['gender'],    
-      interests: snap['interests'],
-      location: snap['location'],
-      school: snap['school'],
-      birthday: snap['birthday'],
-      aboutMe: snap['aboutMe'] ,
-      company: snap['company'] ,
-      education: snap['education'],
-      livingIn: snap['livingIn'] ,
-      jobTitle: snap['jobTitle'] ,
-      lookingFor: snap['lookingFor'],
-      geohash: snap['geohash'],
-    );
+    try {
+  return User(
+    id: snap.id,  
+    name: snap['name'],
+    age: snap['age'],
+    imageUrls: snap['imageUrls'],
+    gender: snap['gender'],    
+    interests: snap['interests'],
+    location: snap['location'],
+    school: snap['school'],
+    birthday: snap['birthday'],
+    aboutMe: snap['aboutMe'] ,
+    company: snap['company'] ,
+    education: snap['education'],
+    livingIn: snap['livingIn'] ,
+    jobTitle: snap['jobTitle'] ,
+    lookingFor: snap['lookingFor'],
+    geohash: snap['geohash'],
+    verified: (snap.data() as Map<String, dynamic>).containsKey('verified') ? snap['verified'] : null,
+  );
+} on Exception catch (e) {
+  // TODO
+  print(e);
+  throw Exception(e);
+}
 
   }
 
@@ -122,6 +132,7 @@ class User extends Equatable {
       'livingIn' : livingIn,
       'jobTitle': jobTitle,
       'geohash': geohash,
+      'verified': verified,
     };
   }
 
@@ -142,6 +153,7 @@ class User extends Equatable {
     String? livingIn,
     String? jobTitle,
     String? geohash,
+    String? verified,
 
   }){
     return User(
@@ -161,6 +173,7 @@ class User extends Equatable {
       livingIn: livingIn ?? this.livingIn,
       jobTitle: jobTitle ?? this.jobTitle,
       geohash: geohash ?? this.geohash,
+      verified: verified ?? this.verified,
     );
   }
 

@@ -32,9 +32,15 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
 
    // User user = User(id: '', name: '', age: 0, gender: 'gender', imageUrls: [], interests: [], school: '', birthday: '');
 
-    await _databaseRepository.createUser(event.user);
-
-    emit(OnboardingLoaded(user: event.user));
+    try {
+  await _databaseRepository.createUser(event.user);
+  
+  emit(OnboardingLoaded(user: event.user));
+} on Exception catch (e) {
+  // TODO
+  //emit(Onboardinger)
+  print(e.toString());
+}
 
   }
 
@@ -57,7 +63,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
         add(UpdateUser(user: user));
        });
        
-     } catch (e) {
+     }on Exception catch (e) {
       print(e.toString());
        
      }

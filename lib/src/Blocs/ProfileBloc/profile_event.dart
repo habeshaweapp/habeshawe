@@ -44,3 +44,14 @@ class EditUserProfile extends ProfileEvent{
   // TODO: implement props
   List<Object?> get props => [user];
 }
+
+class VerifyMe extends ProfileEvent{
+  final User user;
+  final XFile image;
+  final String? type;
+  const VerifyMe({required this.user, required this.image,this.type});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [user, image, type];
+}

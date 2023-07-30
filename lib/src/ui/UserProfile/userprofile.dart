@@ -2,20 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
+import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/editProfile/editProfile.dart';
 import 'package:lomi/src/ui/settings/settings.dart';
 
 import '../../Blocs/ProfileBloc/profile_bloc.dart';
+import '../../Blocs/UserPreference/userpreference_bloc.dart';
+import '../../Data/Models/enums.dart';
+import '../../Data/Models/userpreference_model.dart';
 import '../../Data/Repository/Authentication/auth_repository.dart';
+import '../verifyProfile/verifyprofile.dart';
 
 class UserProfile extends StatelessWidget {
   const UserProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
+    showVerifyDialog(User user){
+    return showDialog(
+      context: context, 
+      builder: (context) => AlertDialog(
+        //title: Text('Who are you'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30))
+        ),
+        content: VerifyProfile(user:user),
+        
+      )
+    );
+  }
     return Scaffold(
       body: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
@@ -40,7 +59,8 @@ class UserProfile extends StatelessWidget {
                       Center(
                         child: Container(
                           decoration: BoxDecoration(
-                            border: Border.all(width: 4, color: Colors.green),
+                            border: Border.all(width: 4, color: Colors.teal
+                            ),
                             shape: BoxShape.circle,
                           ),
                           child: Padding(
@@ -76,6 +96,7 @@ class UserProfile extends StatelessWidget {
                         child: FloatingActionButton(
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfile()));
+                            
                           },
                           backgroundColor: Colors.white,
                           child: Icon(
@@ -101,10 +122,24 @@ class UserProfile extends StatelessWidget {
                         .bodyLarge!
                         .copyWith(fontSize: 18),
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Icon(Icons.verified_outlined)
+                  // SizedBox(
+                  //   width: 1,
+                  // ),
+                  IconButton(
+                    
+                    icon: state.user.verified == VerifiedStatus.queen.name ?
+                      Icon(LineIcons.crown, color: Colors.amber, )
+                    : Icon(state.user.verified == VerifiedStatus.verified.name ? Icons.verified_outlined : Icons.verified),
+                    onPressed: (){
+                     //context.read<UserpreferenceBloc>().add(EditUserPreference(preference: UserPreference(userId: state.user.id).copyWith(showMe: state.user.gender == 'Man' ? 'Women' : 'Man' )));
+
+                      //Navigator.push(context, MaterialPageRoute(builder: (context) => VerifyProfile()));
+                      state.user.verified == VerifiedStatus.notVerified.name ?
+                      showVerifyDialog(state.user)
+                      :null;
+
+                    },
+                    )
                 ],
               ),
               SizedBox(
@@ -241,6 +276,7 @@ class UserProfile extends StatelessWidget {
                               shape: StadiumBorder(),
                             ),
                             onPressed: () {
+                             // GoRouter.of(context).pushNamed(MyAppRouteConstants.settingsRouteName);
                               Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
                             },
                             child: Text(
@@ -266,5 +302,10 @@ class UserProfile extends StatelessWidget {
         },
       ),
     );
+  
+
+
+  
+
   }
 }

@@ -5,22 +5,27 @@ import 'model.dart';
 class UserMatch extends Equatable{
   final String? id;
   final String userId;
-  final User matchedUser;
-  final String chat;
+  final String name;
+  final List<dynamic> imageUrls;
+  final String verified;
+  final bool chatOpened;
+  final String timestamp;
 
-  const UserMatch({ this.id, required this.userId, required this.matchedUser, required this.chat});
+  const UserMatch({ this.id, required this.userId, required this.name, required this.imageUrls, required this.verified, required this.timestamp, required this.chatOpened});
   
   @override
   // TODO: implement props
-  List<Object?> get props => [id,userId,matchedUser,chat];
+  List<Object?> get props => [id,userId,name,imageUrls,verified,timestamp,chatOpened];
 
   static UserMatch fromSnapshoot(DocumentSnapshot snap){
     return UserMatch(
       id: snap.id, 
       userId: snap['userId'],
-      matchedUser: User(id: snap.id, name: snap['matchedUser']['name'], age: snap['matchedUser']['age'], gender: snap['matchedUser']['gender'], imageUrls: snap['matchedUser']['imageUrls'], interests: snap['matchedUser']['interests']),
-      // User.fromSnapshoot(snap['matchedUser']), 
-      chat: snap['chat'],
+      name: snap['name'],
+      imageUrls: snap['imageUrls'],
+      verified: snap['verified'],
+      timestamp: snap['timestamp'],
+      chatOpened: snap['chat'],
       );
   }
 
@@ -28,8 +33,8 @@ class UserMatch extends Equatable{
     return {
       'id' : id,
       'userId': userId,
-      'matchedUser': matchedUser.toMap(),
-      'chat': chat,
+      //'matchedUser': matchedUser.toMap(),
+      'chat': chatOpened,
     };
 
   }

@@ -5,6 +5,7 @@ import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/ui/home/home.dart';
 import 'package:lomi/src/ui/itsAmatch/itsAmatch.dart';
 import 'package:lomi/src/ui/onboarding/onboardAllScreens.dart';
+import 'package:lomi/src/ui/settings/settings.dart';
 import 'package:lomi/src/wrapper.dart';
 
 import 'ui/splash/splashscreen.dart';
@@ -153,6 +154,14 @@ class LomiAppRouter{
           },
           ),
 
+        GoRoute(
+          name: MyAppRouteConstants.settingsRouteName,
+          path: '/settings',
+          pageBuilder: (context, state) {
+            return const MaterialPage(child: Settings());
+          },
+          ),
+
 
       ],
       errorBuilder: (context, state) {
@@ -183,5 +192,6 @@ class MyAppRouteConstants {
   static const String addphotosRouteName = 'addphotos';
   static const String enablelocationRouteName = 'enablelocation';
   static const String itsamatchRouteName = 'itsamatch';
+  static const String settingsRouteName = 'settings';
 
 }

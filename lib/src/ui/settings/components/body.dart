@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 
 import '../../../Blocs/UserPreference/userpreference_bloc.dart';
 import '../../../Data/Repository/Authentication/auth_repository.dart';
@@ -14,6 +15,8 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isThereChange = false;
+    Color? cardColor = Colors.grey[900];
+    bool isDark = context.read<ThemeCubit>().state.themeMode == ThemeMode.dark;
     return BlocBuilder<UserpreferenceBloc, UserpreferenceState>(
       builder: (context, state) {
         if(state is UserPreferenceLoading){
@@ -33,7 +36,7 @@ class Body extends StatelessWidget {
             child: SingleChildScrollView(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey[100],
+                  color: context.read<ThemeCubit>().state == ThemeMode.light ? Colors.grey[100] : Colors.transparent,
                 ),
                 padding: EdgeInsets.all(15),
                 child: Column(
@@ -47,12 +50,13 @@ class Body extends StatelessWidget {
                     ),
             
                     Card(
+                      color: isDark ? cardColor : Colors.white,
                       elevation: 2,
                       child: Container(
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 10, bottom: 10,),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          //color: Colors.white,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -74,17 +78,18 @@ class Body extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
-                        color: Colors.grey[800],
+                        //color: Colors.grey[800],
                       ) 
                     ),
             
                     Card(
                       elevation: 2,
+                      color: isDark ? cardColor : Colors.white,
                       child: Container(
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5, bottom: 5,),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          //color: Colors.white,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,6 +113,7 @@ class Body extends StatelessWidget {
             
                     Card(
                       elevation: 2,
+                      color: isDark ? cardColor : Colors.white,
                       child: Column(
                         children: [
                           Padding(
@@ -153,6 +159,7 @@ class Body extends StatelessWidget {
             
                     Card(
                       elevation: 2,
+                      color: isDark ? cardColor : Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
@@ -177,6 +184,7 @@ class Body extends StatelessWidget {
             
                     Card(
                       elevation: 2,
+                      color: isDark ? cardColor : Colors.white,
                       child: Column(
                         children: [
                           Padding(
@@ -235,18 +243,19 @@ class Body extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
-                        color: Colors.grey[800],
+                        //color: Colors.grey[800],
                       ) 
                     ),
           
                     Card(
                       elevation: 2,
+                      color: isDark ? cardColor : Colors.white,
                       //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 15,vertical: 5),
                        // margin: EdgeInsets.only(top: 5, bottom: 5,),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          //color: Colors.white,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -269,12 +278,13 @@ class Body extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
-                        color: Colors.grey[800],
+                       // color: Colors.grey[800],
                       ) 
                     ),
           
                     Card(
                       elevation: 2,
+                      color: isDark ? cardColor : Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
@@ -303,6 +313,7 @@ class Body extends StatelessWidget {
           
                     Card(
                       elevation: 2,
+                      color: isDark ? cardColor : Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
@@ -333,7 +344,7 @@ class Body extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 17,
-                        color: Colors.grey[800],
+                        //color: Colors.grey[800],
                       ) 
                     ),
           
@@ -341,6 +352,7 @@ class Body extends StatelessWidget {
           
                     Card(
                       elevation: 2,
+                      color: isDark ? cardColor : Colors.white,
                       child: Column(
                         children: [
                           Padding(
@@ -389,6 +401,7 @@ class Body extends StatelessWidget {
           
                     InkWell(
                       child: Card(
+                        color: isDark ? cardColor : Colors.white,
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
@@ -403,7 +416,8 @@ class Body extends StatelessWidget {
                         //   (value) => GoRouter.of(context).pushReplacementNamed(MyAppRouteConstants.splashRouteName)
                         //   );
           
-                        GoRouter.of(context).pushNamed(MyAppRouteConstants.splashRouteName);
+                        //GoRouter.of(context).pushNamed(MyAppRouteConstants.splashRouteName);
+                        context.pop();
           
                       },
                     ),
@@ -416,6 +430,7 @@ class Body extends StatelessWidget {
           
                     InkWell(
                       child: Card(
+                        color: isDark ? cardColor : Colors.white,
                         child: Center(
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),

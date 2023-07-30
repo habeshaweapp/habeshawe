@@ -8,8 +8,8 @@ class EditProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Profile', style: TextStyle(color: Colors.black, fontWeight: FontWeight.w400, fontSize: 17),),
-        backgroundColor: Colors.white,
+        title: Text('Edit Profile', style: TextStyle( fontWeight: FontWeight.w400, fontSize: 17),),
+        //backgroundColor: Colors.white,
         leading: BackButton(
           color: Colors.green,
         ),

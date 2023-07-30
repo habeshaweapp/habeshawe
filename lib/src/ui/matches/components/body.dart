@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lomi/src/Blocs/ChatBloc/chat_bloc.dart';
 import 'package:lomi/src/Data/Models/model.dart';
+import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
 import '../../../Blocs/MatchBloc/match_bloc.dart';
 import '../../chat/chatscreen.dart';
@@ -26,8 +27,8 @@ class Body extends StatelessWidget {
           }
           
           if(state is MatchLoaded){
-            final inactiveMatches = state.matchedUsers.where((match) => match.chat== 'notOpened').toList();
-            final activeMatches = state.matchedUsers.where((match) => match.chat == 'Opened').toList(); 
+            final inactiveMatches = state.matchedUsers.where((match) => !match.chatOpened).toList();
+            final activeMatches = state.matchedUsers.where((match) => match.chatOpened).toList(); 
             return
            Padding(
           padding: EdgeInsets.all(20),
@@ -46,7 +47,7 @@ class Body extends StatelessWidget {
                   itemBuilder: (context, index){
                     return InkWell(
                       onTap: (){Navigator.push(context,MaterialPageRoute(builder: (context) => ChatScreen(inactiveMatches[index])));},
-                      child: MatchesImage(url: inactiveMatches[index].matchedUser.imageUrls[0], height: 120, width: 100,));
+                      child: MatchesImage(url: inactiveMatches[index].imageUrls[0], height: 120, width: 100,));
                   }
                   ):
                   Container(
@@ -74,7 +75,7 @@ class Body extends StatelessWidget {
                 itemBuilder: (context,index){
                   return InkWell(
                     onTap: (){
-                      context.read<ChatBloc>().add(LoadChats(userId: activeMatches[index].userId, matchedUserId: activeMatches[index].matchedUser.id));
+                      context.read<ChatBloc>().add(LoadChats(userId: activeMatches[index].userId, matchedUserId: activeMatches[index].userId));
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(activeMatches[index]) ));
                     },
                     child: Padding(
@@ -82,28 +83,58 @@ class Body extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          MatchesImage(url: activeMatches[index].matchedUser.imageUrls[0],
+                          MatchesImage(url: activeMatches[index].imageUrls[0],
                            height: 60,width: 60,shape: BoxShape.circle,),
                            Padding(
                              padding: const EdgeInsets.all(8.0),
                              child: Column(
+                              
                               crossAxisAlignment: CrossAxisAlignment.start,
                                children: [
                                 SizedBox(height: 5,),
-                                 Text(activeMatches[index].matchedUser.name,
+                                 Text(activeMatches[index].name,
                                       style: Theme.of(context).textTheme.bodyLarge,
                                  
                                  ),
                                 const SizedBox(height: 5,),
-                                               
-                                  Text(
-                                    'Hello from the other side',
 
-                                   // activeMatches[index].chat,
-                                    //activeMatches[index].chat![0].messages[0].message,
-                                      style: Theme.of(context).textTheme.bodySmall,
+                                
+                                  //width: double.infinity,
+                             StreamBuilder(
+                                    stream: DatabaseRepository().getLastMessage(activeMatches[index].userId, activeMatches[index].userId),
+                                    //context.read()<DatabaseRepository>().getLastMessage,
+                                    builder: (context, AsyncSnapshot<List<Message>> snapshot) {
+                                      return 
+                                      Row(
+                                        //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                        //mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Container(
+                                            width: 200,
+                                            child: Text(
+                                              snapshot.data![0].message, 
+                                              overflow: TextOverflow.ellipsis, 
+                                              softWrap: true, 
+                                             // maxLines: 1,
+                                              ),
+                                          ),
+                                          SizedBox(width: 20,),
+                                          Text('${snapshot.data![0].timestamp.hour}:${snapshot.data![0].timestamp.minute} PM')
+                                        ],
+                                      );
+                                      
+                                    }
+                                  ),
+                              
+                                               
+                                //   Text(
+                                //     'Hello from the other side',
+
+                                //    // activeMatches[index].chat,
+                                //     //activeMatches[index].chat![0].messages[0].message,
+                                //       style: Theme.of(context).textTheme.bodySmall,
                                  
-                                 ),
+                                //  ),
                                 //  const SizedBox(height: 5,),
                                 //  Text(
                                 //   activeMatches[index].chat,
@@ -116,12 +147,12 @@ class Body extends StatelessWidget {
                            ),
                            Spacer(),
 
-                           Padding(
-                             padding: const EdgeInsets.only(top: 15.0),
-                             child: Text('7:03 PM',
-                             style: Theme.of(context).textTheme.bodySmall,
-                             ),
-                           )
+                          //  Padding(
+                          //    padding: const EdgeInsets.only(top: 15.0),
+                          //    child: Text('7:03 PM',
+                          //    style: Theme.of(context).textTheme.bodySmall,
+                          //    ),
+                          //  )
                         ],
                       ),
                     ),

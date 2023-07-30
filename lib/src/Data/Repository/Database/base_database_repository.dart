@@ -1,5 +1,7 @@
+import 'package:location/location.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 
+import '../../Models/likes_model.dart';
 import '../../Models/userpreference_model.dart';
 
 abstract class BaseDatabaseRepository{
@@ -8,9 +10,11 @@ abstract class BaseDatabaseRepository{
   Future<void> createUser(User user);
   Future<void> updateUser(User user);
   Future<void> updateUserPictures(User user, String imageName);
-  Future<bool> userLike(String userId, User likedUser);
+  Future<bool> userLike(User user, User matchUser);
   Future<void> userPassed(String userId, User passedUser);
   Future<User> getUserbyId(String userId);
+
+ 
 
 
   Stream<List<UserMatch>> getMatches(String userId);
@@ -23,7 +27,7 @@ abstract class BaseDatabaseRepository{
 //**************** Messages Repository ****************** */
   
   Stream<List<Message>> getChats(String userId, String matchedUserId);
-  Future<Message> getLastMessage(String userId, String matchedUserId);
+  Stream<List<Message>> getLastMessage(String userId, String matchedUserId);
 
   Future<void> sendMessage(Message message);
 
@@ -32,5 +36,15 @@ abstract class BaseDatabaseRepository{
   Future<void> updateUserPreference(UserPreference userPreference);
 
   //***************888 main logic getting ussers based on preference ***********8*8***8*//
-  Future<User> getUsersBasedonPreference(String userId);
+  Future<List<User>> getUsersBasedonPreference(String userId);
+  Stream<List<User>> getNearByUsers(String userId, LocationData locationData);
+  Future<List<User>> getUsersBasedonLOmiLogic(String userId);
+
+
+  //add user on verification list
+  Future<void> addVerifyMeUser(User user, String type, String url);
+
+
+  //Habeshawe main logic
+  Future<List<User>> getUsersMainLogic(User user, UserPreference preference);
 }

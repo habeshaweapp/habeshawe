@@ -2,8 +2,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../Blocs/PhoneAuthBloc/phone_auth_bloc.dart';
 import '../../app_route_config.dart';
 
 class Verification extends StatefulWidget {
@@ -14,6 +16,7 @@ class Verification extends StatefulWidget {
 }
 
 class _VerificationState extends State<Verification> {
+  String otpInput = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,6 +87,9 @@ class _VerificationState extends State<Verification> {
                           FilteringTextInputFormatter.digitsOnly,
                         ],
                         textInputAction: TextInputAction.next,
+                        onChanged: (value){
+                          otpInput += value;  
+                        },
                         
                                          ) ,
                                        ),
@@ -93,22 +99,52 @@ class _VerificationState extends State<Verification> {
               ),
 
               SizedBox(height: 45,),
-              Center(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width*0.90,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: (){
-                      GoRouter.of(context).pushNamed(MyAppRouteConstants.welcomeRouteName);
+              BlocConsumer<PhoneAuthBloc, PhoneAuthState>(
+                listener: (context, state) {
+                  if(state is PhoneAuthVerified){
+                    GoRouter.of(context).pushNamed(MyAppRouteConstants.welcomeRouteName);
+                  }
 
-                    }, 
-                    child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
-                    style: ElevatedButton.styleFrom(
-                      shape: StadiumBorder(),
-                    ),
-                    
-                    ),
-                ),
+                  if(state is PhoneAuthError){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.error))
+                    );
+                  }
+                },
+                builder: (context, state) {
+                 // if(state is Phone)
+                 if(state is PhoneAuthLoading){
+                  return Center(child: CircularProgressIndicator(),);
+                 }
+
+                 if(state is PhoneAuthLoading){
+                 
+                  return Center(
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width*0.90,
+                                height: 50,
+                                child: ElevatedButton(
+                                  onPressed: (){
+                                    //context.read<PhoneAuthBloc>().add(VerifySentOtp(otpCode: otpInput.toString(), verificationId: state.verificationId));
+
+                                    GoRouter.of(context).pushNamed(MyAppRouteConstants.welcomeRouteName);
+              
+                                  }, 
+                                  child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
+                                  style: ElevatedButton.styleFrom(
+                                    shape: StadiumBorder(),
+                                  ),
+                                  
+                                  ),
+                              ),
+                            );
+
+                 }
+                 
+                 else{
+                  return Text('getting your code...');
+                 }
+                },
               )
           ],
         ),

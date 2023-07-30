@@ -7,8 +7,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
+import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/home/home.dart';
+
+import '../../../Blocs/UserPreference/userpreference_bloc.dart';
 
 
 
@@ -48,11 +51,11 @@ class EnableLocation extends StatelessWidget {
       body: SafeArea(
         child:BlocBuilder<OnboardingBloc, OnboardingState>(
           builder: (context, state) {
-            if(state is OnboardingLoading){
+            if(state is OnboardingLoaded){
               return Center(child: CircularProgressIndicator(),);
             }
             
-            if(state is OnboardingLoaded){
+            if(state is OnboardingLoading){
             return Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -111,10 +114,17 @@ class EnableLocation extends StatelessWidget {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () async{
-                        Position position = await _determineLocation();
-                        context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(location: GeoPoint(position.latitude, position.longitude) )));
-                        GoRouter.of(context).pushReplacementNamed(MyAppRouteConstants.homeRouteName);
+                        //Position position = await _determineLocation();
+                        //context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(location: GeoPoint(position.latitude, position.longitude) )));
+                        
                         //Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
+                        //context.read<UserpreferenceBloc>().add(EditUserPreference(preference: UserPreference(userId: state.user.id).copyWith(showMe: state.user.gender == 'Man' ? 'Women' : 'Man' )));
+                        
+
+                        GoRouter.of(context).pushReplacementNamed(MyAppRouteConstants.homeRouteName);
+                       // context.go(MyAppRouteConstants.homeRouteName);
+                       // GoRouter.of(context).goNamed(MyAppRouteConstants.homeRouteName);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
                       }, 
                       child: Text('ALLOW LOCATION', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                       style: ElevatedButton.styleFrom(

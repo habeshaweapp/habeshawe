@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,7 +7,9 @@ import 'package:swipe_cards/draggable_card.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
 import '../../../Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import '../../../Blocs/ProfileBloc/profile_bloc.dart';
 import '../../../Blocs/SwipeBloc/swipebloc_bloc.dart';
+import '../../../Data/Models/likes_model.dart';
 import '../../../Data/Repository/Authentication/auth_repository.dart';
 import '../../../dataApi/icons.dart';
 
@@ -30,6 +33,11 @@ class SwipeCard extends StatelessWidget {
               SwipeItem(
                 content: user,
                 likeAction: (){
+                  //final user = (context.read<ProfileBloc>().state as ProfileLoaded).user;
+                  SwipeRightEvent(     
+                    user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
+                    matchUser: user
+                    );
                 //   context.read<SwipeBloc>().add(
                 // SwipeLeftEvent(
                 //   userId: context.read<AuthBloc>().state.user!.uid,
@@ -37,6 +45,10 @@ class SwipeCard extends StatelessWidget {
 
                 },
                 nopeAction: (){
+                  SwipeLeftEvent(
+                    passedUser: user, 
+                    user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
+                    );
                 //   context.read<SwipeBloc>().add(
                 // SwipeLeftEvent(
                 //   userId: context.read<AuthBloc>().state.user!.uid,
@@ -61,6 +73,8 @@ class SwipeCard extends StatelessWidget {
         return Column(
           children: [
             Container(
+              margin: const EdgeInsets.only(top: 5),
+              
               height: MediaQuery.of(context).size.height * 0.79,
               //width: MediaQuery.of(context).size.width,
               //margin: EdgeInsets.only(left: 25),
@@ -68,6 +82,7 @@ class SwipeCard extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 //color: Colors.black
+                
                 borderRadius: BorderRadius.circular(20)
               ),
 
@@ -137,6 +152,7 @@ class SwipeCard extends StatelessWidget {
             SizedBox(height: 20,),
 
             Container(
+              color: Colors.transparent,
     //width: size.width,
     //height: 120,
     //decoration: BoxDecoration(color: Colors.brown),
@@ -169,20 +185,24 @@ class SwipeCard extends StatelessWidget {
             //context.read<AuthRepository>().signOut();
             _matchEngine!.rewindMatch();
           }
+          if(index == 4){
+            context.read<AuthRepository>().signOut();
+            //_matchEngine!.rewindMatch();
+          }
         },
         child: Container(
           width: item_icons[index]['size'],
           height: item_icons[index]['size'],
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                spreadRadius: 5,
-                blurRadius: 10,
-              )
-            ]
+            color: Colors.black12,
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: Colors.grey.withOpacity(0.3),
+            //     spreadRadius: 5,
+            //     blurRadius: 10,
+            //   )
+            // ]
           ),
       
           child: Center(

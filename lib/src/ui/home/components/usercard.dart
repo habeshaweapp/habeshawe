@@ -11,10 +11,12 @@ import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/itsAmatch/itsAmatch.dart';
 
 import '../../../Blocs/ContinueWith/continuewith_cubit.dart';
+import '../../../Blocs/ProfileBloc/profile_bloc.dart';
 import '../../../Data/Models/model.dart';
 import '../../../Data/Repository/Authentication/auth_repository.dart';
 import '../../../dataApi/icons.dart';
 import '../../Profile/profile.dart';
+import 'customtapgesturerecognizer.dart';
 
 class UserCard extends StatelessWidget {
    UserCard({
@@ -30,6 +32,7 @@ class UserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
+    final pageController = PageController();
     
     return BlocConsumer<SwipeBloc, SwipeState>(
       listener: (context, state) {
@@ -112,8 +115,9 @@ class UserCard extends StatelessWidget {
           if(index == 1){
             context.read<SwipeBloc>().add(
               SwipeLeftEvent(
-                userId: context.read<AuthBloc>().state.user!.uid,
-                user: state.users[0]));
+                  user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
+                  passedUser: state.users[0],
+                  ));
           }
           // if(index == 0){
           //   context.read<AuthRepository>().signOut();
@@ -121,9 +125,9 @@ class UserCard extends StatelessWidget {
           if(index == 3){
             context.read<SwipeBloc>().add(
               SwipeRightEvent(
-               userId: context.read<AuthBloc>().state.user!.uid,
-                
-                user: state.users[0]));
+               user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
+               matchUser: state.users[0]
+                ));
           }
           
 
@@ -168,173 +172,248 @@ class UserCard extends StatelessWidget {
 
 
   Widget userDrag(Size size, User user, BuildContext context) {
+    final pageController = PageController();
+    int idx = 0;
     return   Center(
-      child: SizedBox(
-              height: size.height * 0.79,
-              width: size.width * 0.9,
-              
-              child: Stack(
-                children: [
-                  Container(         
-                    decoration:  BoxDecoration(
-                      image: DecorationImage(
-                        image: 
-                        CachedNetworkImageProvider(
-                          user.imageUrls[0]
-                        ),
-                        // NetworkImage(
-                        //   user.imageUrls == null ?
-                        //   null :
-                        //   user.imageUrls[0]
-                        //   ),
-                        //AssetImage(user.image),
-                        fit: BoxFit.cover
-                        ),
+      child: GestureDetector(
+        onTapDown: (d){
+          //if(pageController.hasClients){
 
-                        borderRadius: BorderRadius.circular(15)
-                    )
-                  ),
+          pageController.animateToPage(idx + 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
           
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      gradient: LinearGradient(
-                        colors: [
-                          Color.fromARGB(200, 0, 0, 0),
-                          Color.fromARGB(0, 0, 0, 0),
-          
-                      ],
-          
-                      begin: Alignment.bottomCenter,
-                      end: Alignment.topCenter,
-                      
-                      )
-                    ),
-                  ),
-          
-                  // Positioned(
-                  //   bottom: 30,
-                  //   left: 10,
-                 //   child: 
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            
-                            child: Text('${user.name}  ${user.age}', 
-                            
-                            style: TextStyle(
-                              color: Colors.white, 
-                              fontSize: 24,
-                              decoration: TextDecoration.none,
-                              )
-                              )
-                              ),
-                          SizedBox(height: 10,),
-                          Row(
-                            children: [
-                              Container(
-                                width: 10,
-                                height: 10,
-                                decoration: const BoxDecoration(
-                                  color: Colors.green,
-                                  shape: BoxShape.circle
-                                ),
-                              ),
-                              const SizedBox(width: 10,),
-                             Container(
-                               child: const Text("Recently Active", style: TextStyle(color: Colors.white, decoration: TextDecoration.none  ),
-          
-                            
-                                ),
-                             ),
-                            ],
-                          ),
-                          SizedBox(height: 10,),
-          
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children:
-                 
-                                List.generate(user.interests.length > 3? 3 : user.interests.length, (idx) => Container(
-                                  margin: EdgeInsets.only(left: 10),
-                                   decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.4),
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: Colors.white,
-                                      width: 2
-                                    )
-                                    
-                                   ),
-          
-                                    child:   Padding(
-                                      padding: const EdgeInsets.only(left: 8,right: 10, top: 3, bottom: 3),
-                                      child: Text(
-                                        user.interests[idx],
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          decoration: TextDecoration.none
-                                          ),
-          
-                                        ),
+          idx++;
+        },
+        child: SizedBox(
+                height: size.height * 0.79,
+                width: size.width * 0.9,
+                
+                child: Stack(
+                  children: [
+                    
+                     PageView.builder(
+                        controller: pageController,
+                        itemCount: user.imageUrls.length,
+                        itemBuilder: (context,index) =>
+                        // InkWell(
+                        //   onDoubleTap: (){
+                        //     print('min taregiwalesh--------------------');
+                        //   },
+                        //   onTap: () {
+                        //     print('-----------------------------------------------');
+                        //     // if(details.globalPosition.dx < size.width * 0.9 /2 ){
+                        //     //   pageController.animateToPage(index - 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
+                        //     // }else{
+                        //     //   pageController.animateToPage(index + 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
+                        //     // }
+                        //   },
+                       // )
+                        // RawGestureDetector(
+                        //   gestures: <Type, GestureRecognizerFactory>{
+                        //     CustomTapDownGestureRecognizer: GestureRecognizerFactoryWithHandlers(
+                        //       () => CustomTapDownGestureRecognizer(
+                        //         onTapDown: (TapDownDetails details){
+                        //           print(details);
+                        //           if(details.globalPosition.dx < size.width * 0.9 /2 ){
+                        //           pageController.animateToPage(index - 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
+                        //          }else{
+                        //         pageController.animateToPage(index + 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
+                        //       }
+                    
+                        //         }), 
+                        //       (instance) { })
+                        //   }
+                          
+                    
+                        
+                             
+                                // onTapDown: (details){
+                                //   pageController.animateToPage( index + 2,duration: Duration(milliseconds: 200), curve: Curves.linear );
+                             
+                                // },
+                                  Container(         
+                                    decoration:  BoxDecoration(
+                                    image: DecorationImage(
+                                    image: 
+                                    CachedNetworkImageProvider(
+                                      user.imageUrls[index]
                                     ),
-                                  )
-                                  )
-                              ),
-    
+                                    // NetworkImage(
+                                    //   user.imageUrls == null ?
+                                    //   null :
+                                    //   user.imageUrls[0]
+                                    //   ),
+                                    //AssetImage(user.image),
+                                    fit: BoxFit.cover
+                                    ),
+                                               
+                                    borderRadius: BorderRadius.circular(15)
+                                                         )
+                                                 
+                               
+                             ),
+                         ),
+                      
+                   // ),
+            
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        height: size.height * 0.79/3,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          gradient: LinearGradient(
+                            colors: [
+                              Color.fromARGB(200, 0, 0, 0),
+                              Color.fromARGB(200, 0, 0, 0),
+                              Color.fromARGB(0, 0, 0, 0),
                               
-                                Container(
-                                  height: 20,
-                                  child: IconButton(
-                                    onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: user)));}, 
-                                    icon: Icon(LineIcons.arrowDown, color: Colors.white,)
-                                    )
-                                  ),
-                              
-                            ],
+                                
+                          ],
+                                
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          
                           )
-          
-          
-                        ],
+                        ),
                       ),
                     ),
-                 // )
+            
+                    // Positioned(
+                    //   bottom: 30,
+                    //   left: 10,
+                   //   child: 
+                  //  Container(
+                  //   child: ElevatedButton(
+                  //     onPressed: (){
+                  //       pageController.animateToPage(2, duration: Duration(milliseconds: 200), curve: Curves.linear);
+                  //     }, 
+                  //     child: Text("Next"),
+                  //     )
+                  //  ),
+      
+      
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              
+                              child: Text('${user.name}  ${user.age}', 
+                              
+                              style: TextStyle(
+                                color: Colors.white, 
+                                fontSize: 24,
+                                decoration: TextDecoration.none,
+                                )
+                                )
+                                ),
+                            SizedBox(height: 10,),
+                            Row(
+                              children: [
+                                Container(
+                                  width: 10,
+                                  height: 10,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.green,
+                                    shape: BoxShape.circle
+                                  ),
+                                ),
+                                const SizedBox(width: 10,),
+                               Container(
+                                 child: const Text("Recently Active", style: TextStyle(color: Colors.white, decoration: TextDecoration.none  ),
+            
+                              
+                                  ),
+                               ),
+                              ],
+                            ),
+                            SizedBox(height: 10,),
+            
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children:
+                   
+                                  List.generate(user.interests.length > 3? 3 : user.interests.length, (idx) => Container(
+                                    margin: EdgeInsets.only(left: 10),
+                                     decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.4),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: Colors.white,
+                                        width: 2
+                                      )
+                                      
+                                     ),
+            
+                                      child:   Padding(
+                                        padding: const EdgeInsets.only(left: 8,right: 10, top: 3, bottom: 3),
+                                        child: Text(
+                                          user.interests[idx],
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            decoration: TextDecoration.none
+                                            ),
+            
+                                          ),
+                                      ),
+                                    )
+                                    )
+                                ),
           
-                ],
+                                
+                                  Container(
+                                    height: 20,
+                                    child: IconButton(
+                                      onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: user)));}, 
+                                      icon: Icon(LineIcons.arrowDown, color: Colors.white,)
+                                      )
+                                    ),
+                                
+                              ],
+                            )
+            
+            
+                          ],
+                        ),
+                      ),
+                   // )
+            
+                  ],
+                  
+            
+                )
                 
-          
-              )
-              
-              // Card(
-              //   // wi: size.width,
-              //   // maxHeight: size.height * 0.75,
-              //   // minWidth: size.width * 0.75,
-              //   // minHeight: size.height * 0.6,
-              //   child: 
-              //   Container(
-              //   decoration: BoxDecoration(
-              //     borderRadius: BorderRadius.circular(10),
-              //     boxShadow: [
-              //       BoxShadow(
-              //         color: Colors.grey.withOpacity(0.3),
-              //         blurRadius: 5,
-              //         spreadRadius: 2
-              //       ),
-              //     ],
-              //   ),
-              //  ),
-              // ),
-          
-            ),
+                // Card(
+                //   // wi: size.width,
+                //   // maxHeight: size.height * 0.75,
+                //   // minWidth: size.width * 0.75,
+                //   // minHeight: size.height * 0.6,
+                //   child: 
+                //   Container(
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(10),
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: Colors.grey.withOpacity(0.3),
+                //         blurRadius: 5,
+                //         spreadRadius: 2
+                //       ),
+                //     ],
+                //   ),
+                //  ),
+                // ),
+            
+              ),
+      ),
     );
         }
        
       
 
           }
+
+

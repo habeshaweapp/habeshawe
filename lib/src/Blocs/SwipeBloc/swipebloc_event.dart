@@ -25,20 +25,20 @@ class UpdateHome extends SwipeEvent{
 
 class SwipeLeftEvent extends SwipeEvent{
   final User user;
-  final String userId;
-  SwipeLeftEvent({ required this.userId, required this.user});
+  final User passedUser;
+  SwipeLeftEvent({ required this.passedUser, required this.user});
   
   @override
   // TODO: implement props
-  List<Object?> get props => [userId, user];
+  List<Object?> get props => [passedUser, user];
 }
 
 class SwipeRightEvent extends SwipeEvent{
   final User user;
-  final String userId;
-  SwipeRightEvent({ required this.userId, required this.user});
+  final User matchUser;
+  SwipeRightEvent({ required this.user,required this.matchUser});
   
   @override
   // TODO: implement props
-  List<Object?> get props => [userId,user];
+  List<Object?> get props => [user,matchUser];
 }

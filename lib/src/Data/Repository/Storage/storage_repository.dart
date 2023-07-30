@@ -24,6 +24,25 @@ class StorageRepository extends BaseStorageRepository{
       
     }
   }
+
+  Future<void> uploadVerifyMeImage(User user, XFile image, String type) async{
+    try{
+      DatabaseRepository databaseRepository = DatabaseRepository();
+      await storage.ref('${user.id}/verifyMe/${image.name}')
+            .putFile(File(image.path))
+            .then((p0) async {
+              String url = await storage.ref('${user.id}/verifyMe/${image.name}').getDownloadURL();
+
+             databaseRepository.updateUser(user.copyWith(verified: 'pending'));
+             databaseRepository.addVerifyMeUser(user, type, url);
+
+             } );
+
+
+    }on Exception catch(e){
+      print(e.toString());
+    }
+  }
   
   @override
   Future<String> getDownloadURL(User user, String imageName) async {

@@ -6,6 +6,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/ui/editProfile/components/photoselector.dart';
 
 import '../../../Blocs/ProfileBloc/profile_bloc.dart';
+import '../../../Blocs/ThemeCubit/theme_cubit.dart';
 
 class Body extends StatelessWidget {
   const Body({super.key});
@@ -21,6 +22,7 @@ class Body extends StatelessWidget {
           }
           if(state is ProfileLoaded){
           int imagesCount = state.user.imageUrls.length;
+          bool isLight = context.read<ThemeCubit>().state == ThemeMode.light;
           
           return WillPopScope(
             onWillPop: ()async {
@@ -101,7 +103,7 @@ class Body extends StatelessWidget {
                   padding: EdgeInsets.only(top: 20,bottom: 10, left: 15, right: 15),
                   
                   decoration: BoxDecoration(
-                    color: Colors.grey[200]
+                  color: isLight ? Colors.grey[200]: Colors.grey[900],
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -141,7 +143,7 @@ class Body extends StatelessWidget {
                   padding: EdgeInsets.only(top: 20,bottom: 10, left: 15, right: 15),
                   
                   decoration: BoxDecoration(
-                    color: Colors.grey[200]
+                  color: isLight ? Colors.grey[200]: Colors.grey[900],
                   ),
           
                   child: Text('Interests'),
@@ -165,7 +167,7 @@ class Body extends StatelessWidget {
                   padding: EdgeInsets.only(top: 16, bottom: 8, left: 15, right: 15),
                   
                   decoration: BoxDecoration(
-                    color: Colors.grey[200]
+                    color: isLight ? Colors.grey[200]: Colors.grey[900],
                   ),
           
                   child: Text('Relationship Goals'),
@@ -197,7 +199,7 @@ class Body extends StatelessWidget {
                   padding: EdgeInsets.only(top: 16, bottom: 8, left: 15, right: 15),
                   
                   decoration: BoxDecoration(
-                    color: Colors.grey[200]
+                    color: isLight ? Colors.grey[200]: Colors.grey[900],
                   ),
           
                   child: Text('Basics'),
@@ -227,7 +229,7 @@ class Body extends StatelessWidget {
                   padding: EdgeInsets.only(top: 20,bottom: 10, left: 15, right: 15),
                   
                   decoration: BoxDecoration(
-                    color: Colors.grey[200]
+                    color: isLight ? Colors.grey[200]: Colors.grey[900],
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -263,7 +265,7 @@ class Body extends StatelessWidget {
                   padding: EdgeInsets.only(top: 20,bottom: 10, left: 15, right: 15),
                   
                   decoration: BoxDecoration(
-                    color: Colors.grey[200]
+                    color: isLight ? Colors.grey[200]: Colors.grey[900],
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -299,7 +301,7 @@ class Body extends StatelessWidget {
                   padding: EdgeInsets.only(top: 20,bottom: 10, left: 15, right: 15),
                   
                   decoration: BoxDecoration(
-                    color: Colors.grey[200]
+                    color: isLight ? Colors.grey[200]: Colors.grey[900],
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -335,7 +337,7 @@ class Body extends StatelessWidget {
                   padding: EdgeInsets.only(top: 20,bottom: 10, left: 15, right: 15),
                   
                   decoration: BoxDecoration(
-                    color: Colors.grey[200]
+                    color: isLight ? Colors.grey[200]: Colors.grey[900],
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

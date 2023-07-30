@@ -14,9 +14,10 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white.withOpacity(0.8),
+       // backgroundColor: Colors.white.withOpacity(0.8),
         elevation: 0,
         //toolbarHeight: 100,
         iconTheme: IconThemeData(
@@ -28,7 +29,7 @@ class ChatScreen extends StatelessWidget {
             onPressed: (){
               context.pop();
             }, 
-            icon: Icon(Icons.arrow_back,color: Colors.black.withOpacity(0.7)),
+            icon: Icon(Icons.arrow_back, color: !isDark ? Colors.black.withOpacity(0.7) : Colors.white),
             ),
           ),
         title: Row(
@@ -36,7 +37,7 @@ class ChatScreen extends StatelessWidget {
           children: [
             CircleAvatar(
                 radius: 20,
-                backgroundImage: NetworkImage(userMatch.matchedUser.imageUrls[0]),                       
+                backgroundImage: NetworkImage(userMatch.imageUrls[0]),                       
               ),
            
             Padding(
@@ -44,8 +45,8 @@ class ChatScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(userMatch.matchedUser.name,style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.black),),
-                  userMatch.matchedUser.age ==20?
+                  Text(userMatch.name,style: Theme.of(context).textTheme.bodyMedium,),
+                  userMatch.id != 'ds come and fix later'?
                   Row(
                     children: [
                       Container(
@@ -75,7 +76,7 @@ class ChatScreen extends StatelessWidget {
        actions: [
         IconButton(
           onPressed: (){}, 
-          icon: Icon(Icons.more_vert, ))
+          icon: Icon(Icons.more_vert, color: isDark? Colors.white : Colors.black ))
        ],
       ),
       body: Body(userMatch),

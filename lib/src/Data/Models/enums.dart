@@ -1,0 +1,1 @@
+enum VerifiedStatus { notVerified, verified, pending, queen, princess, king, gentelmen }

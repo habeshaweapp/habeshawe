@@ -31,6 +31,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<UpdateProfileImages>(_onUpdateProfileImages);
     on<EditUserProfile>(_onEditUserProfile);
 
+    on<VerifyMe>(_onVerifyMe);
+
     _authSubscription = _authBloc.stream.listen((state) { 
       if(state.user!.uid != null){
         add(LoadProfile(userId: state.user!.uid));
@@ -59,7 +61,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   }
 
   void _onEditUserProfile(EditUserProfile event, Emitter<ProfileState> emit) async{
-      await _databaseRepository.updateUser(event.user);
+      try {
+  await _databaseRepository.updateUser(event.user);
+} on Exception catch (e) {
+  // TODO
+  print(e.toString());
+}
     
   }
 
@@ -69,11 +76,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
        await _storageRepository.uploadImage(event.user!, event.image);
         
-      } catch (e) {
+      }on Exception catch (e) {
         print(e.toString());
       }
     }
   }
+
+  void _onVerifyMe(VerifyMe event, Emitter<ProfileState> emit) async{
+    try{
+      await _storageRepository.uploadVerifyMeImage(event.user, event.image, event.type!);
+    }on Exception catch (e) {
+      print(e.toString());
+
+    }
+  }
+
+
 
   @override
   Future<void> close() async{

@@ -37,6 +37,7 @@ class Body extends StatelessWidget {
     var intersts = ['startup', 'Progamming', 'coding', 'flutter', 'dart', 'aynalem', 'gete', 'jesus', 'tsinat', 'betbalew layi'];
     //
     //var km = await calculateDistance(user.location!);
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     
     return SafeArea(
       child: Stack(
@@ -93,7 +94,7 @@ class Body extends StatelessWidget {
                             Container(
                               child: Text(
                                 "${user.name},  ${user.age}", 
-                                style: TextStyle(fontSize: 24, fontFamily: 'Proxima-Nova_Extrabold', color: Colors.black,fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 24, fontFamily: 'Proxima-Nova_Extrabold', fontWeight: FontWeight.bold),
                                 ),
                             ),
                             SizedBox(width: 10,),
@@ -157,7 +158,7 @@ class Body extends StatelessWidget {
                         Container(
                           child: Text(
                                 "About Me", 
-                                style: TextStyle(fontSize: 20, fontFamily: 'Proxima-Nova-Bold', color: Colors.black, fontWeight: FontWeight.w400
+                                style: TextStyle(fontSize: 20, fontFamily: 'Proxima-Nova-Bold', fontWeight: FontWeight.w400
                         ),
                                 ),
                         ),
@@ -177,7 +178,7 @@ class Body extends StatelessWidget {
                         Container(
                           child: Text(
                                 "Interstes", 
-                                style: TextStyle(fontSize: 20, fontFamily: 'Proxima-Nova-Bold', color: Colors.black, fontWeight: FontWeight.w400
+                                style: TextStyle(fontSize: 20, fontFamily: 'Proxima-Nova-Bold', fontWeight: FontWeight.w400
                         ),
                                 ),
                         ),
@@ -199,7 +200,7 @@ class Body extends StatelessWidget {
                               style: TextStyle(
                                 fontWeight: FontWeight.w300, 
                                 
-                                color: Colors.black)
+                                )
                                 ,),
                             ),
                           )
@@ -211,7 +212,7 @@ class Body extends StatelessWidget {
                         Container(
                           child: Text(
                                 "Instagram", 
-                                style: TextStyle(fontSize: 20, fontFamily: 'Proxima-Nova-Bold', color: Colors.black, fontWeight: FontWeight.w400
+                                style: TextStyle(fontSize: 20, fontFamily: 'Proxima-Nova-Bold',  fontWeight: FontWeight.w400
                         ),
                                 ),
                         ),
@@ -239,8 +240,9 @@ class Body extends StatelessWidget {
                     onTap: (){
                       context.read<SwipeBloc>().add(
                 SwipeLeftEvent(
-                  userId: context.read<AuthBloc>().state.user!.uid,
-                  user: user));
+                  user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
+                  passedUser: user,
+                  ));
 
                     },
                     child: Container(
@@ -275,8 +277,9 @@ class Body extends StatelessWidget {
               onTap: (){
                 context.read<SwipeBloc>().add(
                 SwipeRightEvent(
-                  userId: context.read<AuthBloc>().state.user!.uid,
-                  user: user));
+                  user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
+                  matchUser: user
+                  ));
 
               },
               child: Container(

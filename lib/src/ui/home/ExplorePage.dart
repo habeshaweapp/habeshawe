@@ -44,6 +44,7 @@ class _ExplorePageState extends State<ExplorePage> {
   Widget getfooter(){
    // var size = MediaQuery.of(context).size;
     return Container(
+      //color: Colors.black,
       //width: size.width,
       //height: 120,
       //decoration: BoxDecoration(color: Colors.brown),

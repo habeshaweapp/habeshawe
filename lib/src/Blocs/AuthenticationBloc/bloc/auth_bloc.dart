@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
+import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
 
 part 'auth_event.dart';
@@ -38,19 +39,28 @@ Future<void> close(){
 
 void _authUserChanged(AuthUserChanged event, Emitter<AuthState> emit) async{
 
-  event.user != null 
-  ? emit(AuthState.authenticated(user: event.user!)) 
-  : emit(AuthState.unauthenticated());
+  try {
+  if(event.user != null ){
+    bool isUserAlreadyRegistered = await DatabaseRepository().isUserAlreadyRegistered(event.user!.uid);
+    emit(AuthState.authenticated(user: event.user!,newAccount: !isUserAlreadyRegistered ));
+  }else{
+    emit(AuthState.unauthenticated());
+  }
+} on Exception catch (e) {
+  // TODO
+  print(e.toString());
+}
 
 }
 
 Future<void> _onLogInWithGoogle(LogInWithGoogle event, Emitter<AuthState> emit) async{
   try {
         final result = await _authRepository.logInWithGoogle();
-        emit(AuthState.authenticated(user: result!));
+        bool isUserAlreadyRegistered = await DatabaseRepository().isUserAlreadyRegistered(result!.uid);
+        emit(AuthState.authenticated(user: result!, newAccount: !isUserAlreadyRegistered));
         
-      } catch (e) {
-        
+      }on Exception catch (e) {
+        print(e.toString());
       }
 }
 }

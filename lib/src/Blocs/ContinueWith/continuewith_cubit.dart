@@ -21,10 +21,25 @@ class ContinuewithCubit extends Cubit<ContinuewithState> {
           user: user,
         ));
         
-      } catch (e) {
+      }on Exception catch (e) {
         print(e.toString());
         
       }
 
+  }
+
+  Future<void> continueWithTwitter() async{
+    emit(state.copyWith(status: ContinueStatus.submitting));
+    try{
+      final user = await _authRepository.logInWithTwitter();
+
+      emit(state.copyWith(
+        status: ContinueStatus.success,
+        user: user,
+      ));
+      
+    }on Exception catch(e){
+      print(e.toString());
+    }
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/ui/home/home.dart';
+import 'package:lomi/src/ui/onboarding/onboardAllScreens.dart';
 import 'package:lomi/src/ui/onboarding/start.dart';
 import 'package:lomi/src/ui/splash/splashscreen.dart';
 
@@ -21,6 +22,9 @@ class Wrapper extends StatelessWidget{
         }
         if(state.status == AuthStatus.authenticated){
           //context.read<AuthRepository>().signOut();
+          if(state.newAccount!){
+            return WelcomeScreen();
+          }
           return const Home();
         }else{
           return Container();

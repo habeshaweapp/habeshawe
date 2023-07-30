@@ -23,7 +23,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     
     return Scaffold(
-      backgroundColor: Colors.white,
+      //backgroundColor: Colors.transparent,
       appBar: appBar(),
       body: HomeBody(),
     );
@@ -40,8 +40,9 @@ class _HomeState extends State<Home> {
 
     ];
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       leading: null,
+      automaticallyImplyLeading: false,
       elevation: 0,
       title: Padding(
         padding: const EdgeInsets.only(left: 10, right: 10),

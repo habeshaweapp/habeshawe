@@ -5,6 +5,7 @@ import 'package:equatable/equatable.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
+import '../../Data/Models/likes_model.dart';
 import '../../Data/Models/model.dart';
 
 part 'match_event.dart';

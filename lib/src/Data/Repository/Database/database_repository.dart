@@ -311,7 +311,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Stream<List<User>> getLikedMeUsers(String userId) {
+  Stream<List<Like>> getLikedMeUsers(String userId) {
    try {
   return _firebaseFirestore.collection('users')
    .doc(userId)
@@ -319,7 +319,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
    .snapshots()
    .map((snap) => 
     snap.docs
-    .map((user) => User.fromSnapshootOld(user['likedby'])).toList()
+    .map((user) => Like.fromSnapshoot(user)).toList()
    );
 }on FirebaseException catch (e){
   throw Exception(e.message);

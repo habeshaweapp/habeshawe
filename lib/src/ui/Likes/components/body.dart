@@ -63,7 +63,7 @@ class Body extends StatelessWidget {
                   itemBuilder: (context, index){
                     return InkWell(
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: state.likedMeUsers[index])));
+                       // Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(likeUser: state.likedMeUsers[index])));
                       },
                       
                       child: LikesImage(url: state.likedMeUsers[index].imageUrls[0], height: 20,));

@@ -45,7 +45,7 @@ class LikeLikedMeUser extends MatchEvent{
 
 class UpdateMatches extends MatchEvent{
   final List<UserMatch>? matchedUsers;
-  final List<User>? likedMeUsers;
+  final List<Like>? likedMeUsers;
   UpdateMatches({required this.matchedUsers, required this.likedMeUsers});
 
   @override

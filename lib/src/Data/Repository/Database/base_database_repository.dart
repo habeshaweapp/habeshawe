@@ -18,7 +18,7 @@ abstract class BaseDatabaseRepository{
 
 
   Stream<List<UserMatch>> getMatches(String userId);
-  Stream<List<User>> getLikedMeUsers(String userId);
+  Stream<List<Like>> getLikedMeUsers(String userId);
   Future<void> deleteLikedMeUser(String userId, String likedMeUserId);
   Future<void> likeLikedMeUser(String userId, User likedMeUser);
   Future<void> openChat(Message message);

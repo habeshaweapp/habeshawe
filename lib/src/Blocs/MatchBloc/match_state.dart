@@ -11,7 +11,7 @@ class MatchLoading extends MatchState {}
 
 class MatchLoaded extends MatchState{
   List<UserMatch> matchedUsers;
-  List<User> likedMeUsers;
+  List<Like> likedMeUsers;
   MatchLoaded({required this.matchedUsers, required this.likedMeUsers});
 
   @override

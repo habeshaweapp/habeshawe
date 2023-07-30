@@ -278,7 +278,7 @@ class Body extends StatelessWidget {
                 context.read<SwipeBloc>().add(
                 SwipeRightEvent(
                   user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
-                  matchUser: user
+                 matchUser: user
                   ));
 
               },

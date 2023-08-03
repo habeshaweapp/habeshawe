@@ -45,7 +45,7 @@ class Body extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemCount: inactiveMatches.length,
                   itemBuilder: (context, index){
-                    return InkWell(
+                    return GestureDetector(
                       onTap: (){Navigator.push(context,MaterialPageRoute(builder: (context) => ChatScreen(inactiveMatches[index])));},
                       child: MatchesImage(url: inactiveMatches[index].imageUrls[0], height: 120, width: 100,));
                   }

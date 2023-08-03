@@ -95,12 +95,14 @@ class SwipeCard extends StatelessWidget {
                       onStackFinished: (){
                         //_matchEngine = backUp;
                         //_matchEngine!.cycleMatch();
+                        _matchEngine!.dispose();
                       }, 
                       itemBuilder: (context, index){
                         return UserCard().userDrag(MediaQuery.of(context).size, _swipeItems[index].content, context);
                       },
                       leftSwipeAllowed: true,
                       rightSwipeAllowed: true,
+                      
 
                       likeTag: Container(
                         margin: const EdgeInsets.all(15),
@@ -174,6 +176,11 @@ class SwipeCard extends StatelessWidget {
           // }
           if(index == 3){
             _matchEngine!.currentItem?.like();
+            context.read<SwipeBloc>().add(
+                SwipeRightEvent(
+                  user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
+                 matchUser: _swipeItems[index].content
+                  ));
           }
 
           if(index == 3){

@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/dataApi/explore_json.dart';
 import 'package:lomi/src/dataApi/icons.dart';
+import 'package:lomi/src/ui/home/components/appiniocard.dart';
 import 'package:lomi/src/ui/home/components/usercard.dart';
 
 import 'components/swipecard.dart';
@@ -21,7 +22,7 @@ class _ExplorePageState extends State<ExplorePage> {
    var tempUsers = explore_json;
   @override
   Widget build(BuildContext context) {
-    return SwipeCard();
+    return AppinioCard();
     
     // Column(
     //   children: [

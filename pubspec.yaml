@@ -59,6 +59,8 @@ dependencies:
     path: packages/geoflutterfire/
 
   location: ^4.4.0
+  appinio_swiper: ^2.0.2
+  swipable_stack: ^2.0.0
   
 
 

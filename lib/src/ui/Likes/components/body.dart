@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lomi/src/Data/Models/model.dart';
+import 'package:lomi/src/ui/Likes/components/like_card.dart';
 
 import '../../../Blocs/MatchBloc/match_bloc.dart';
 import '../../Profile/profile.dart';
@@ -27,7 +28,7 @@ class Body extends StatelessWidget {
           if(state is MatchLoaded){
             return
            Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(5),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -52,9 +53,12 @@ class Body extends StatelessWidget {
                 removeTop: true,
                 child: GridView.builder(
                   
+                  
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
-                    childAspectRatio: 0.66
+                    childAspectRatio: 0.66,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8
                     ) ,
                     physics: NeverScrollableScrollPhysics(), 
                     shrinkWrap: true,
@@ -63,10 +67,12 @@ class Body extends StatelessWidget {
                   itemBuilder: (context, index){
                     return InkWell(
                       onTap: (){
-                       // Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(likeUser: state.likedMeUsers[index])));
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: state.likedMeUsers[index].user)));
                       },
                       
-                      child: LikesImage(url: state.likedMeUsers[index].imageUrls[0], height: 20,));
+                      child: LikeCard(user: state.likedMeUsers[index].user)
+                      //LikesImage(url: state.likedMeUsers[index].user.imageUrls[0], height: 20,)
+                      );
                   } ),
               ),
               

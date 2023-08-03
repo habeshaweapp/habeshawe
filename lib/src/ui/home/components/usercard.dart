@@ -61,6 +61,7 @@ class UserCard extends StatelessWidget {
                : Container(),
               onDragEnd: ((details) {
                 if(details.velocity.pixelsPerSecond.dx < 0){
+                  //details.velocity.
                  // context.read<SwipeBloc>().add(SwipeLeftEvent(user: state.users[0] ));
                   print('swiped left');
                 }else{
@@ -178,14 +179,19 @@ class UserCard extends StatelessWidget {
       child: GestureDetector(
         onTapDown: (d){
           //if(pageController.hasClients){
-
-          pageController.animateToPage(idx + 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
-          
-          idx++;
+            if(d.globalPosition.dx > MediaQuery.of(context).size.width /2){
+              pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.linear);
+         // pageController.animateToPage(idx + 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
+              idx++;
+            }else{
+             // pageController.animateToPage(idx - 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
+              pageController.previousPage(duration: Duration(milliseconds: 200), curve: Curves.linear);
+              idx--; 
+            }
         },
         child: SizedBox(
-                height: size.height * 0.79,
-                width: size.width * 0.9,
+                //height: size.height * 0.86,
+                width: size.width * 0.98,
                 
                 child: Stack(
                   children: [
@@ -193,6 +199,9 @@ class UserCard extends StatelessWidget {
                      PageView.builder(
                         controller: pageController,
                         itemCount: user.imageUrls.length,
+                       
+                      
+                        physics: NeverScrollableScrollPhysics(),
                         itemBuilder: (context,index) =>
                         // InkWell(
                         //   onDoubleTap: (){
@@ -258,7 +267,7 @@ class UserCard extends StatelessWidget {
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Container(
-                        height: size.height * 0.79/3,
+                        height: size.height * 0.79/2.3,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15.0),
                           gradient: LinearGradient(
@@ -266,6 +275,7 @@ class UserCard extends StatelessWidget {
                               Color.fromARGB(200, 0, 0, 0),
                               Color.fromARGB(200, 0, 0, 0),
                               Color.fromARGB(0, 0, 0, 0),
+                              
                               
                                 
                           ],
@@ -329,7 +339,7 @@ class UserCard extends StatelessWidget {
                                ),
                               ],
                             ),
-                            SizedBox(height: 10,),
+                            SizedBox(height: 20,),
             
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -374,7 +384,8 @@ class UserCard extends StatelessWidget {
                                     ),
                                 
                               ],
-                            )
+                            ),
+                            SizedBox(height: 70,),
             
             
                           ],

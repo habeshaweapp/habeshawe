@@ -180,7 +180,35 @@ class User extends Equatable {
 
 
 
+factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
+  final snap = snapshot['user'];
+    try {
+  return User(
+    id: snapshot.id,  
+    name: snap['name'],
+    age: snap['age'],
+    imageUrls: snap['imageUrls'],
+    gender: snap['gender'],    
+    interests: snap['interests'],
+    location: snap['location'],
+    school: snap['school'],
+    birthday: snap['birthday'],
+    aboutMe: snap['aboutMe'] ,
+    company: snap['company'] ,
+    education: snap['education'],
+    livingIn: snap['livingIn'] ,
+    jobTitle: snap['jobTitle'] ,
+    lookingFor: snap['lookingFor'],
+    geohash: snap['geohash'],
+    verified: snap.containsKey('verified') ? snap['verified'] : null,
+  );
+} on Exception catch (e) {
+  // TODO
+  print(e);
+  throw Exception(e);
+}
 
+  }
 
 
 

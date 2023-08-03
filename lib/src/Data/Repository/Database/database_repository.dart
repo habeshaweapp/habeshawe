@@ -109,7 +109,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
     // });
    // _firebaseFirestore.collection('users').where('location[0]', whereIn: [99,21] ).where('location[1]', whereIn: [20,12]);
     try {
-  return _firebaseFirestore.collection('users').where('gender', isNotEqualTo: gender).limit(3).snapshots()
+  return _firebaseFirestore.collection('users').snapshots()
   .map((snap) => snap.docs
   .map((doc) => User.fromSnapshoot(doc)).toList() );
 }on FirebaseException catch (e){
@@ -165,11 +165,8 @@ class DatabaseRepository extends BaseDatabaseRepository{
     .set(
       {
         'userId': user.id,
-        'name': user.name,
-        'age': user.age,
-        'imageUrls': user.imageUrls,
-        'verified': user.verified,
         'timestamp': FieldValue.serverTimestamp(),
+        'user': user.toMap()
       }
       //user.toMap()
 
@@ -203,11 +200,12 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .set(
         {
       'timestamp' : FieldValue.serverTimestamp(),
-      'matchedUserId': matchUser.id,
+      'userId': matchUser.id,
       'name': matchUser.name,
       'imageUrls': matchUser.imageUrls,
       'verified': matchUser.verified,
       'chatOpened': false,
+      'nameSearch': searchName(matchUser.name),
     }
     );
        // UserMatch(userId: userId, matchedUser: likedUser, chat:'notOpened').toMap());
@@ -220,11 +218,12 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .set(
         {
           'timestamp' : FieldValue.serverTimestamp(),
-          'matchedUserId': matchUser.id,
+          'userId': matchUser.id,
           'name': matchUser.name,
           'imageUrls': matchUser.imageUrls,
           'verified': matchUser.verified,
           'chatOpened': false,
+          'nameSearch': searchName(matchUser.name),
         }
         );
         
@@ -382,7 +381,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .collection('matches')
       .doc(message.receiverId)
       .update(
-        {'chat': 'Opened'}
+        {'chatOpened': true}
         ).then((value) {
          print('here');
         }
@@ -403,7 +402,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .doc(message.receiverId)
       .collection('matches')
       .doc(message.senderId)
-      .update({'chat': 'Opened'});
+      .update({'chatOpened': true});
 
       await _firebaseFirestore.collection('users')
       .doc(message.receiverId)
@@ -729,21 +728,23 @@ Stream<List<User>> getNearByUsers(String userId, LocationData locationData)  {
     .doc(user.id).collection('viewedProfiles')
     .get().then((snap) => snap.docs.map((e) => e.id,).toList() );
 
-    List<User> queens = await _firebaseFirestore
+    List<User> queensOrkings = await _firebaseFirestore
         .collection(user.gender == 'female'? 'queens' : 'kings')
-        .orderBy('number')
-        .startAfter(['values'])
-        .limit(5)
+        // .orderBy('number')
+        // .startAfter(['values'])
+        // .limit(5)
         .get()
         .then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
     
     //List<String> queensNotViewed = queens.toSet().difference(viewedProfiles.toSet()).toList();
-    queens.removeWhere((user) => viewedProfiles.contains(user.id));
-    if(queens.length < 5){
-      while(queens.length < 5){
-        
-      }
+    queensOrkings.removeWhere((user) => viewedProfiles.contains(user.id));
+
+    List<User> temp=[];
+    for(int i=0; i<5; i++){
+      int random = Random().nextInt(queensOrkings.length);
+      temp.add(queensOrkings[random]);
     }
+    queensOrkings = temp;
   //  if(user.gender == 'women'){
     List<User> princessOrgents = await _firebaseFirestore.collection('users')
       .where('gender', isEqualTo: user.gender )
@@ -766,17 +767,32 @@ Stream<List<User>> getNearByUsers(String userId, LocationData locationData)  {
     //     (querySnap) => querySnap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
     // princess.remov
     //}
+    final noOfUsers = await _firebaseFirestore.collection('users').count().get().then((value) => value.count, onError: (e)=>print('error counting'));
+    List<int> randoms = [];
+    for(int i=0; i< 10; i++){
+      randoms.add(Random().nextInt(100)); 
+    }
+
     List<User> filler = await _firebaseFirestore
       .collection('users')
       .where('gender', isEqualTo: user.gender)
-      .where('score', isGreaterThanOrEqualTo: 1)
-      .limit(5)
-      .get()
-      .then(
-        (querySnap) => 
-        querySnap.docs.map((doc) => 
-        User.fromSnapshoot(doc)).toList()
-        );
+      .where('number', whereIn: randoms)
+      .get().then(
+        (value) => value.docs.map(
+          (doc) => User.fromSnapshoot(doc)).toList()
+      );
+
+    // List<User> filler = await _firebaseFirestore
+    //   .collection('users')
+    //   .where('gender', isEqualTo: user.gender)
+    //   .where('score', isGreaterThanOrEqualTo: 1)
+    //   .limit(5)
+    //   .get()
+    //   .then(
+    //     (querySnap) => 
+    //     querySnap.docs.map((doc) => 
+    //     User.fromSnapshoot(doc)).toList()
+    //     );
 
 
      return filler;
@@ -784,6 +800,15 @@ Stream<List<User>> getNearByUsers(String userId, LocationData locationData)  {
   
 
 
+List<String> searchName(String name){
+  List<String> result = [];
+  String temp = '';
+  for(int i = 0; i < name.length; i++){
+    temp += name[i];
+    result.add(temp);
+  }
+  return result;
+}
 
 
 

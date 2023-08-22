@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/app_route_config.dart';
@@ -13,6 +14,7 @@ import 'package:lomi/src/ui/settings/settings.dart';
 import '../../Blocs/ProfileBloc/profile_bloc.dart';
 import '../../Blocs/UserPreference/userpreference_bloc.dart';
 import '../../Data/Models/enums.dart';
+import '../../Data/Models/user_model.dart';
 import '../../Data/Models/userpreference_model.dart';
 import '../../Data/Repository/Authentication/auth_repository.dart';
 import '../verifyProfile/verifyprofile.dart';
@@ -35,6 +37,7 @@ class UserProfile extends StatelessWidget {
       )
     );
   }
+  bool isDark = context.read<ThemeCubit>().state.themeMode == ThemeMode.dark ;
     return Scaffold(
       body: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
@@ -59,7 +62,7 @@ class UserProfile extends StatelessWidget {
                       Center(
                         child: Container(
                           decoration: BoxDecoration(
-                            border: Border.all(width: 4, color: Colors.teal
+                            border: Border.all(width: 4, color: isDark? Colors.teal : Colors.green
                             ),
                             shape: BoxShape.circle,
                           ),
@@ -83,7 +86,7 @@ class UserProfile extends StatelessWidget {
                         alignment: Alignment.bottomCenter,
                         child: ElevatedButton(
                             onPressed: () {
-                              context.read<DatabaseRepository>().getUsersBasedonPreference(state.user.id);
+                              //context.read<DatabaseRepository>().getUsersBasedonPreference(state.user.id);
                             },
                             style: ElevatedButton.styleFrom(
                                 // backgroundColor: Colors.green,
@@ -98,10 +101,10 @@ class UserProfile extends StatelessWidget {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfile()));
                             
                           },
-                          backgroundColor: Colors.white,
+                          backgroundColor: isDark ? Colors.grey[800]: Colors.white,
                           child: Icon(
                             Icons.edit,
-                            color: Colors.black,
+                            color: isDark? Colors.white: Colors.black,
                           ),
                         ),
                       )
@@ -278,6 +281,7 @@ class UserProfile extends StatelessWidget {
                             onPressed: () {
                              // GoRouter.of(context).pushNamed(MyAppRouteConstants.settingsRouteName);
                               Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+                            // DatabaseRepository().createDemoUsers(UserModel.users);
                             },
                             child: Text(
                               "Buy me Coffee",

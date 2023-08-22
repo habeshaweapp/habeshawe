@@ -65,6 +65,7 @@ class Body extends StatelessWidget {
                           height: 550,
                           width: MediaQuery.of(context).size.width,
                           child: PageView.builder(
+                            physics: BouncingScrollPhysics(),
                             itemCount: user.imageUrls.length,
                             itemBuilder: (context, index){
                               return SizedBox(
@@ -122,8 +123,8 @@ class Body extends StatelessWidget {
                         Container(
                           child: 
                           Text(
-                            
-                            '${ calculateDistance(profileState.user.location!, user.location!) }km away ',
+                            '0 km',
+                            //'${ calculateDistance(profileState.user.location!, user.location!) }km away ',
                             style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),
                             ),
                         ),

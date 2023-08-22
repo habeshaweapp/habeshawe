@@ -81,6 +81,7 @@ class Body extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 10.0),
                       child: Row(
+                        mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           MatchesImage(url: activeMatches[index].imageUrls[0],
@@ -110,7 +111,7 @@ class Body extends StatelessWidget {
                                         //mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Container(
-                                            width: 200,
+                                            width: MediaQuery.of(context).size.width * 0.4,
                                             child: Text(
                                               snapshot.data![0].message, 
                                               overflow: TextOverflow.ellipsis, 
@@ -118,7 +119,7 @@ class Body extends StatelessWidget {
                                              // maxLines: 1,
                                               ),
                                           ),
-                                          SizedBox(width: 20,),
+                                          SizedBox(width: MediaQuery.of(context).size.width * 0.06,),
                                           Text('${snapshot.data![0].timestamp.hour}:${snapshot.data![0].timestamp.minute} PM')
                                         ],
                                       );

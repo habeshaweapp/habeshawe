@@ -810,6 +810,12 @@ List<String> searchName(String name){
   return result;
 }
 
+Future<void> createDemoUsers(List<User> users) async{
+  users.forEach((user) async { 
+    await _firebaseFirestore.collection('users').doc().set(user.toMap());
+  });
+}
+
 
 
 }

@@ -1,0 +1,65 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "lomi",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "lomi (profile mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "lomi (release mode)",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "geoflutterfire",
+            "cwd": "packages\\geoflutterfire",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "geoflutterfire (profile mode)",
+            "cwd": "packages\\geoflutterfire",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "geoflutterfire (release mode)",
+            "cwd": "packages\\geoflutterfire",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        },
+        {
+            "name": "pay_platform_interface",
+            "cwd": "build\\flutter_assets\\packages\\pay_platform_interface",
+            "request": "launch",
+            "type": "dart"
+        },
+        {
+            "name": "pay_platform_interface (profile mode)",
+            "cwd": "build\\flutter_assets\\packages\\pay_platform_interface",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "pay_platform_interface (release mode)",
+            "cwd": "build\\flutter_assets\\packages\\pay_platform_interface",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
+        }
+    ]
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lomi/src/ui/Likes/likes.dart';
 import 'package:lomi/src/ui/home/ExplorePage.dart';
@@ -32,6 +33,7 @@ class _HomeState extends State<Home> {
   }
 
   AppBar appBar() {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
     var items = [
       pageIndex == 0 ? 'assets/images/explore_active_icon.svg' :'assets/images/explore_icon.svg',
       pageIndex == 1 ? 'assets/images/likes_active_icon.svg' :'assets/images/likes_icon.svg',
@@ -44,6 +46,12 @@ class _HomeState extends State<Home> {
       leading: null,
       automaticallyImplyLeading: false,
       elevation: 0,
+      systemOverlayStyle: 
+     // isDark? SystemUiOverlayStyle.dark : SystemUiOverlayStyle.light,
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: isDark ? Color.fromARGB(51, 182, 180, 180) : Colors.white,
+        systemNavigationBarIconBrightness: !isDark? Brightness.dark: Brightness.light,
+      ),
       title: Padding(
         padding: const EdgeInsets.only(left: 10, right: 10),
         child: Row(

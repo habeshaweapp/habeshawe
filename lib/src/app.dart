@@ -16,6 +16,7 @@ import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/user_model.dart';
 import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
+import 'package:lomi/src/Data/Repository/Payment/payment_repository.dart';
 import 'package:lomi/src/Data/Repository/Storage/storage_repository.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/dataApi/explore_json.dart';
@@ -26,6 +27,7 @@ import 'package:lomi/src/ui/onboarding/start.dart';
 import 'package:lomi/src/ui/onboarding/verificationscreen.dart';
 import 'package:lomi/theme/theme_constants.dart';
 
+import 'Blocs/PaymentBloc/payment_bloc.dart';
 import 'Blocs/PhoneAuthBloc/phone_auth_bloc.dart';
 import 'ui/UserProfile/userprofile.dart';
 import 'ui/onboarding/AfterRegistration/addphotos.dart';
@@ -76,6 +78,8 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: ((context) => PhoneAuthBloc(authRepository: context.read<AuthRepository>()))),
 
             BlocProvider(create: (context) => ThemeCubit()),
+            BlocProvider(create: (context) => PaymentBloc(paymentRepository: PaymentRepository()) ),
+            
           ],
           child: BlocBuilder<ThemeCubit, ThemeState>(
             builder: (context, state) {

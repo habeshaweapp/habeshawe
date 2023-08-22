@@ -72,7 +72,8 @@ class AppinioCard extends StatelessWidget {
                 ),
                       )
                     ),
-                  Align(alignment: Alignment.bottomCenter,
+                  Align(
+                    alignment: Alignment.bottomCenter,
                     child: Container(
                 color: Colors.transparent,
                 

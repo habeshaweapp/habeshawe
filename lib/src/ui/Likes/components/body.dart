@@ -7,7 +7,9 @@ import 'package:lomi/src/ui/Likes/components/like_card.dart';
 import '../../../Blocs/MatchBloc/match_bloc.dart';
 import '../../Profile/profile.dart';
 import '../../chat/chatscreen.dart';
+import '../../payment/payment.dart';
 import 'likes_image.dart';
+import '../../payment/showPaymentDialog.dart';
 
 class Body extends StatelessWidget {
   const Body({super.key});
@@ -67,7 +69,9 @@ class Body extends StatelessWidget {
                   itemBuilder: (context, index){
                     return InkWell(
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: state.likedMeUsers[index].user)));
+                        //Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: state.likedMeUsers[index].user)));
+                        showPaymentDialog(context);
+                       //Navigator.push(context, MaterialPageRoute(builder: (context) => Payment() ));
                       },
                       
                       child: LikeCard(user: state.likedMeUsers[index].user)

@@ -177,7 +177,7 @@ class UserCard extends StatelessWidget {
     int idx = 0;
     return   Center(
       child: GestureDetector(
-        onTapDown: (d){
+        onTapUp: (d){
           //if(pageController.hasClients){
             if(d.globalPosition.dx > MediaQuery.of(context).size.width /2){
               pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.linear);
@@ -189,78 +189,85 @@ class UserCard extends StatelessWidget {
               idx--; 
             }
         },
-        child: SizedBox(
+        child: Container(
                 //height: size.height * 0.86,
                 width: size.width * 0.98,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  color: Colors.grey[350],
+                ),
                 
                 child: Stack(
                   children: [
                     
-                     PageView.builder(
-                        controller: pageController,
-                        itemCount: user.imageUrls.length,
-                       
-                      
-                        physics: NeverScrollableScrollPhysics(),
-                        itemBuilder: (context,index) =>
-                        // InkWell(
-                        //   onDoubleTap: (){
-                        //     print('min taregiwalesh--------------------');
-                        //   },
-                        //   onTap: () {
-                        //     print('-----------------------------------------------');
-                        //     // if(details.globalPosition.dx < size.width * 0.9 /2 ){
-                        //     //   pageController.animateToPage(index - 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
-                        //     // }else{
-                        //     //   pageController.animateToPage(index + 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
-                        //     // }
-                        //   },
-                       // )
-                        // RawGestureDetector(
-                        //   gestures: <Type, GestureRecognizerFactory>{
-                        //     CustomTapDownGestureRecognizer: GestureRecognizerFactoryWithHandlers(
-                        //       () => CustomTapDownGestureRecognizer(
-                        //         onTapDown: (TapDownDetails details){
-                        //           print(details);
-                        //           if(details.globalPosition.dx < size.width * 0.9 /2 ){
-                        //           pageController.animateToPage(index - 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
-                        //          }else{
-                        //         pageController.animateToPage(index + 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
-                        //       }
-                    
-                        //         }), 
-                        //       (instance) { })
-                        //   }
-                          
-                    
+                     ScrollConfiguration(
+                      behavior: MaterialScrollBehavior().copyWith(overscroll: false),
+                       child: PageView.builder(
+                          controller: pageController,
+                          itemCount: user.imageUrls.length,
+                         
                         
-                             
-                                // onTapDown: (details){
-                                //   pageController.animateToPage( index + 2,duration: Duration(milliseconds: 200), curve: Curves.linear );
-                             
-                                // },
-                                  Container(         
-                                    decoration:  BoxDecoration(
-                                    image: DecorationImage(
-                                    image: 
-                                    CachedNetworkImageProvider(
-                                      user.imageUrls[index]
-                                    ),
-                                    // NetworkImage(
-                                    //   user.imageUrls == null ?
-                                    //   null :
-                                    //   user.imageUrls[0]
-                                    //   ),
-                                    //AssetImage(user.image),
-                                    fit: BoxFit.cover
-                                    ),
-                                               
-                                    borderRadius: BorderRadius.circular(15)
-                                                         )
-                                                 
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context,index) =>
+                          // InkWell(
+                          //   onDoubleTap: (){
+                          //     print('min taregiwalesh--------------------');
+                          //   },
+                          //   onTap: () {
+                          //     print('-----------------------------------------------');
+                          //     // if(details.globalPosition.dx < size.width * 0.9 /2 ){
+                          //     //   pageController.animateToPage(index - 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
+                          //     // }else{
+                          //     //   pageController.animateToPage(index + 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
+                          //     // }
+                          //   },
+                         // )
+                          // RawGestureDetector(
+                          //   gestures: <Type, GestureRecognizerFactory>{
+                          //     CustomTapDownGestureRecognizer: GestureRecognizerFactoryWithHandlers(
+                          //       () => CustomTapDownGestureRecognizer(
+                          //         onTapDown: (TapDownDetails details){
+                          //           print(details);
+                          //           if(details.globalPosition.dx < size.width * 0.9 /2 ){
+                          //           pageController.animateToPage(index - 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
+                          //          }else{
+                          //         pageController.animateToPage(index + 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
+                          //       }
+                                         
+                          //         }), 
+                          //       (instance) { })
+                          //   }
+                            
+                                         
+                          
                                
-                             ),
-                         ),
+                                  // onTapDown: (details){
+                                  //   pageController.animateToPage( index + 2,duration: Duration(milliseconds: 200), curve: Curves.linear );
+                               
+                                  // },
+                                    Container(         
+                                      decoration:  BoxDecoration(
+                                      image: DecorationImage(
+                                      image: 
+                                      CachedNetworkImageProvider(
+                                        user.imageUrls[index]
+                                      ),
+                                      // NetworkImage(
+                                      //   user.imageUrls == null ?
+                                      //   null :
+                                      //   user.imageUrls[0]
+                                      //   ),
+                                      //AssetImage(user.image),
+                                      fit: BoxFit.cover
+                                      ),
+                                                 
+                                      borderRadius: BorderRadius.circular(15)
+                                                           )
+                                                   
+                                 
+                               ),
+                           ),
+                     ),
                       
                    // ),
             

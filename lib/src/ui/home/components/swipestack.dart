@@ -28,125 +28,102 @@ class SwipeStack extends StatelessWidget {
 
           Column(
           children: [
-            Container(
-              margin: const EdgeInsets.only(top: 5),
-              
-              height: MediaQuery.of(context).size.height * 0.79,
-              width: MediaQuery.of(context).size.width,
-              //margin: EdgeInsets.only(left: 25),
-             
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                //color: Colors.black
+            Expanded(
+              child: Container(
+                //margin: const EdgeInsets.only(top: 5),
                 
-                borderRadius: BorderRadius.circular(20)
-              ),
-
-              child: Stack(
-                children: [
-                  Container(
+                //height: MediaQuery.of(context).size.height * 0.79,
+                width: MediaQuery.of(context).size.width,
+                //margin: EdgeInsets.only(left: 25),
+               
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  //color: Colors.black
+                  
+                  borderRadius: BorderRadius.circular(20)
+                ),
+            
+                child: Stack(
+                  children: [
+                    Container(
+                      
+                      
+                      child: SizedBox(
+              child: SwipableStack(
+                detectableSwipeDirections: const {
+                  SwipeDirection.left,
+                  SwipeDirection.right,
+                  SwipeDirection.down
+                },
+                controller: _controller,
+                onSwipeCompleted: (index, direction) {
+                  if(kDebugMode){
+                    print('$index, $direction');
+                  }
+                },
+               // horizontalSwipeThreshold: 0.8,
+                //verticalSwipeThreshold: 0.8,
+                builder: (context, swipeProperty) {
+                  final itemIndex = swipeProperty.index % state.users.length;
+                  return UserCard().userDrag(MediaQuery.of(context).size, state.users[itemIndex], context);
+                })
+                      )
+                    ),
+            
+                    Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                  color: Colors.transparent,
+                  
+                  child: Padding(
+                padding: const EdgeInsets.only(bottom: 2),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children:
+                  List.generate(item_icons.length, (index) {
+                    return InkWell(
+                      onTap: (){
+                        if(index == 1){_controller.next(swipeDirection: SwipeDirection.left);
+                        }
+                        if(index == 3){_controller.next(swipeDirection: SwipeDirection.right);}
+                        if(index == 2){_controller.next(swipeDirection: SwipeDirection.up);
+                        }
+                        if(index == 0){ _controller.rewind();}
+                        if(index == 4){ _controller.rewind();}
+                      },
+                      child: Container(
+                        width: item_icons[index]['size'],
+                        height: item_icons[index]['size'],
+                        decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.black12,
+                
+                        ),
                     
-                    child: SizedBox(
-            child: SwipableStack(
-              detectableSwipeDirections: const {
-                SwipeDirection.left,
-                SwipeDirection.right,
-                SwipeDirection.down
-              },
-              controller: _controller,
-              onSwipeCompleted: (index, direction) {
-                if(kDebugMode){
-                  print('$index, $direction');
-                }
-              },
-              horizontalSwipeThreshold: 0.8,
-              verticalSwipeThreshold: 0.8,
-              builder: (context, swipeProperty) {
-                final itemIndex = swipeProperty.index % state.users.length;
-                return UserCard().userDrag(MediaQuery.of(context).size, state.users[itemIndex], context);
-              })
-          )
+                        child: Center(
+                child: SvgPicture.asset(
+                  item_icons[index]['icon'],
+                  width: item_icons[index]['icon_size'],
+                  
                   ),
-                ],
+                        ),
+                    
+                      ),
+                    );
+              
+                  }),
+                ),
+                  ),
+              
+                ),
+                    )
+                  ],
+                ),
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(height: 10,),
 
-            Container(
-              color: Colors.transparent,
-    //width: size.width,
-    //height: 120,
-    //decoration: BoxDecoration(color: Colors.brown),
-    
-    child: Padding(
-  padding: const EdgeInsets.only(bottom: 2),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-    children:
-    List.generate(item_icons.length, (index) {
-      return InkWell(
-        onTap: (){
-
-          if(index == 1){
-            //_matchEngine!.currentItem?.nope();
-            //controller.swipeLeft();
             
-          }
-          // if(index == 0){
-          //   context.read<AuthRepository>().signOut();
-          // }
-          if(index == 3){
-           // _matchEngine!.currentItem?.like();
-           //controller.swipeRight();
-          }
-
-          if(index == 2){
-            //_matchEngine!.currentItem?.superLike();
-          //  controller.swipeUp();
-          }
-          
-
-          if(index == 0){
-            //context.read<AuthRepository>().signOut();
-            //_matchEngine!.rewindMatch();
-          }
-          if(index == 4){
-           // context.read<AuthRepository>().signOut();
-            //_matchEngine!.rewindMatch();
-           // controller.unswipe();
-          }
-        },
-        child: Container(
-          width: item_icons[index]['size'],
-          height: item_icons[index]['size'],
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.black12,
-            // boxShadow: [
-            //   BoxShadow(
-            //     color: Colors.grey.withOpacity(0.3),
-            //     spreadRadius: 5,
-            //     blurRadius: 10,
-            //   )
-            // ]
-          ),
-      
-          child: Center(
-            child: SvgPicture.asset(
-              item_icons[index]['icon'],
-              width: item_icons[index]['icon_size'],
-              
-              ),
-          ),
-      
-        ),
-      );
-
-    }),
-  ),
-    ),
-
-  ),
           ],
         );
         }

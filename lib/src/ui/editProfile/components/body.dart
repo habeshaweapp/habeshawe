@@ -22,7 +22,7 @@ class Body extends StatelessWidget {
           }
           if(state is ProfileLoaded){
           int imagesCount = state.user.imageUrls.length;
-          bool isLight = context.read<ThemeCubit>().state == ThemeMode.light;
+          bool isLight = context.read<ThemeCubit>().state.themeMode == ThemeMode.light;
           
           return WillPopScope(
             onWillPop: ()async {

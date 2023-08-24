@@ -4,19 +4,29 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Repository/Payment/payment_repository.dart';
+
+import '../../Data/Repository/Database/database_repository.dart';
 
 part 'payment_event.dart';
 part 'payment_state.dart';
 
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   final PaymentRepository _paymentRepository;
+  final DatabaseRepository _databaseRepository;
+  final AuthBloc _authBloc;
   StreamSubscription? _purchaseSubscription;
 
   PaymentBloc({
-    required PaymentRepository paymentRepository
+    required PaymentRepository paymentRepository,
+    required DatabaseRepository databaseRepository,
+    required AuthBloc authBloc,
   }): _paymentRepository = paymentRepository,
+      _databaseRepository = databaseRepository,
+      _authBloc = authBloc,
     super(PaymentInitial()) {
     on<PurchaseUpdated>(_purchaseUpdated);
     on<Subscribe>(_subscribe);
@@ -33,7 +43,11 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {}
 
-  FutureOr<void> _purchaseUpdated(PurchaseUpdated event, Emitter<PaymentState> emit)  {
+  FutureOr<void> _purchaseUpdated(PurchaseUpdated event, Emitter<PaymentState> emit) async {
+    final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid);
+    if(payment.countryCode != 'ET' && payment.country != 'Ethiopia'){
+
+    
     if(event.purchaseDetailsList.isEmpty){
       emit(NotSubscribed());
     }else{
@@ -54,10 +68,15 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
             if(purchase.pendingCompletePurchase){
               _paymentRepository.completePurchase(purchase);
               emit(Subscribed(subscribtionType: purchase.productID));
+            
+            _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, purchaseData: purchaseData, paymentType: purchase.productID);
             }
           }
         }
       }
+    }
+    }else{
+      emit(Subscribed(subscribtionType: 'ET-USER'));
     }
   }
 

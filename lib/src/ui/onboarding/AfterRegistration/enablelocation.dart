@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:go_router/go_router.dart';
+import 'package:location/location.dart' as loc;
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import 'package:lomi/src/app_route_config.dart';
@@ -17,7 +19,7 @@ import '../../../Blocs/UserPreference/userpreference_bloc.dart';
 
 class EnableLocation extends StatelessWidget {
   const EnableLocation({super.key});
-
+ 
   Future<Position> _determineLocation() async{
     bool serviceEnabled;
     LocationPermission permission;
@@ -42,7 +44,7 @@ class EnableLocation extends StatelessWidget {
       );
     }
 
-    return await Geolocator.getCurrentPosition();
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
   }
 
   @override
@@ -114,17 +116,35 @@ class EnableLocation extends StatelessWidget {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () async{
-                        //Position position = await _determineLocation();
+                        var position = await _determineLocation();
+                        List<Placemark> placeMark =[];
+                        try {
+                          placeMark = await placemarkFromCoordinates(position.latitude, position.longitude);     
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Make sure you have  stable internet connection', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),)));
+                          
+                        }
+                        print(placeMark[0]);
+
+                        if(position.isMocked){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('smart ass you will be banned user your real location', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),)));
+
+                        }else{
+                          //context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(location: GeoPoint(position.latitude, position.longitude) )));
+                          //context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(livingIn: placeMark[0].country)));
+                          //context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: placeMark[0], user: state.user, isMocked: position.isMocked));
+
+                        }
                         //context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(location: GeoPoint(position.latitude, position.longitude) )));
                         
                         //Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
                         //context.read<UserpreferenceBloc>().add(EditUserPreference(preference: UserPreference(userId: state.user.id).copyWith(showMe: state.user.gender == 'Man' ? 'Women' : 'Man' )));
                         
 
-                        GoRouter.of(context).pushReplacementNamed(MyAppRouteConstants.homeRouteName);
+                        //GoRouter.of(context).pushReplacementNamed(MyAppRouteConstants.homeRouteName);
                        // context.go(MyAppRouteConstants.homeRouteName);
                        // GoRouter.of(context).goNamed(MyAppRouteConstants.homeRouteName);
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+                       // Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
                       }, 
                       child: Text('ALLOW LOCATION', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                       style: ElevatedButton.styleFrom(

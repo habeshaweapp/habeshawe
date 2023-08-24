@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/Data/Repository/Storage/storage_repository.dart';
@@ -26,6 +27,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     on<UpdateUser>(_onUserUpdate);
     on<UpdateUserImages>(_onUpdateUserImages);
     on<EditUser>(_onEditUser);
+    on<CompleteOnboarding>(_onCompleteOnboarding);
   }
 
   void _onStartOnboarding(StartOnBoarding event, Emitter<OnboardingState> emit) async{
@@ -75,5 +77,14 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   void _onEditUser(EditUser event, Emitter<OnboardingState> emit){
     emit(OnboardingLoaded(user: event.user));
     
+  }
+
+  FutureOr<void> _onCompleteOnboarding(CompleteOnboarding event, Emitter<OnboardingState> emit) {
+    try {
+      _databaseRepository.completeOnboarding(placeMark: event.placeMark, user: event.user, isMocked: event.isMocked);
+      
+    } catch (e) {
+      
+    }
   }
 }

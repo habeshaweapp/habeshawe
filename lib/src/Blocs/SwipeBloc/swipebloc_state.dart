@@ -21,6 +21,22 @@ class SwipeLoaded extends SwipeState{
 
   @override
   List<Object> get props => [users];
+
+  factory SwipeLoaded.fromJson(List<Map<String, dynamic>> json){
+    List<User> users = json.map((user) => User.fromMap(user)).toList();
+    return SwipeLoaded(users: users);
+  }
+  Map<String, dynamic> toJson(){
+    List<Map<String, dynamic>> newUser =  [];
+    users.forEach((user) {
+      //user.location.toString();
+      newUser.add(user.toMap());
+      });
+
+    
+    return { 'users': newUser};
+   
+  }
 }
 
 class SwipeError extends SwipeState {}
@@ -33,3 +49,4 @@ class ItsaMatch extends SwipeState{
   // TODO: implement props
   List<Object> get props => [user];
 }
+

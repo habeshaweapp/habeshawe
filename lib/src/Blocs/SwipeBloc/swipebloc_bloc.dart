@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:location/location.dart';
 import 'package:lomi/src/Data/Models/user_model.dart';
 import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
@@ -16,7 +18,7 @@ import '../AuthenticationBloc/bloc/auth_bloc.dart';
 part 'swipebloc_event.dart';
 part 'swipebloc_state.dart';
 
-class SwipeBloc extends Bloc<SwipeEvent, SwipeState> {
+class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin {
   final DatabaseRepository _databaseRepository;
   final AuthBloc _authBloc;
   StreamSubscription? _authSubscription;
@@ -162,6 +164,26 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> {
   Future<void> close() async{
     _authSubscription?.cancel();
     super.close();
+  }
+  
+  @override
+  SwipeState? fromJson(Map<String, dynamic> json) {
+    // TODO: implement fromJson
+    if(json.isEmpty){
+      return null;
+    }else{
+      return SwipeLoaded.fromJson(json['users']);
+    }
+  }
+  
+  @override
+  Map<String, dynamic>? toJson(SwipeState state) {
+    // TODO: implement toJson
+    if(state is SwipeLoaded){
+      return {'users': state.toJson()};
+    }else{
+      return null;
+    }
   }
 
   

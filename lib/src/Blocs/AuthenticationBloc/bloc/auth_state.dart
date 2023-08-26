@@ -36,6 +36,29 @@ class AuthState extends Equatable {
   @override
   List<Object?> get props => [status, user, newAccount];
 
+
+  factory AuthState.fromMap(Map<String, dynamic> map){
+    return AuthState(
+      status: map['status'], 
+      user:  map['user'], 
+      newAccount: map['newAccount']
+      );
+  }
+
+  Map<String, dynamic> toMap(){
+    return {
+      'status': status.index,
+      'user': user!.uid,
+      'newAccount':newAccount
+    };
+  }
+
+  String toJson() => jsonEncode(toMap());
+ // json.encode(toMap(), toEncodable: (object) => toMap(),);
+
+  factory AuthState.fromJson(String source) =>
+    AuthState.fromMap(json.decode(source));
+    
   
 }
 

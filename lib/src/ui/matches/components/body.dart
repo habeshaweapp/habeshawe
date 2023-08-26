@@ -113,14 +113,14 @@ class Body extends StatelessWidget {
                                           Container(
                                             width: MediaQuery.of(context).size.width * 0.4,
                                             child: Text(
-                                              snapshot.data![0].message, 
+                                              snapshot.data?[0].message ?? '', 
                                               overflow: TextOverflow.ellipsis, 
                                               softWrap: true, 
                                              // maxLines: 1,
                                               ),
                                           ),
                                           SizedBox(width: MediaQuery.of(context).size.width * 0.06,),
-                                          Text('${snapshot.data![0].timestamp.hour}:${snapshot.data![0].timestamp.minute} PM')
+                                          Text('${snapshot.data?[0].timestamp.hour}:${snapshot.data?[0].timestamp.minute} PM')
                                         ],
                                       );
                                       

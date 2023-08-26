@@ -16,7 +16,7 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isThereChange = false;
     Color? cardColor = Colors.grey[900];
-    bool isDark = context.read<ThemeCubit>().state.themeMode == ThemeMode.dark;
+    bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return BlocBuilder<UserpreferenceBloc, UserpreferenceState>(
       builder: (context, state) {
         if(state is UserPreferenceLoading){
@@ -424,7 +424,7 @@ class Body extends StatelessWidget {
           
                     SizedBox(height: 25,),
                     Center(
-                      child: Text('version 1.0.0.0', style: Theme.of(context).textTheme.bodySmall),
+                      child: Text('version 1.0.0.0', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
                     ),
                     SizedBox(height: 25,),
           

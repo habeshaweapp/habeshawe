@@ -117,13 +117,14 @@ class User extends Equatable {
 
   Map<String, dynamic> toMap(){
     return {
+      'id':id,
       'name': name,
       'age': age,
       'gender': gender,
       'imageUrls': imageUrls,
       'interests': interests,
       'lookingFor': lookingFor,
-      'location': location,
+     // 'location': location,
       'school': school,
       'birthday': birthday,
       'aboutMe' : aboutMe,
@@ -190,7 +191,39 @@ factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
     imageUrls: snap['imageUrls'],
     gender: snap['gender'],    
     interests: snap['interests'],
-    location: snap['location'],
+    location: snap.containsKey('location') ?snap['location']: null,
+    school: snap['school'],
+    birthday: snap['birthday'],
+    aboutMe: snap['aboutMe'] ,
+    company: snap['company'] ,
+    education: snap['education'],
+    livingIn: snap['livingIn'] ,
+    jobTitle: snap['jobTitle'] ,
+    lookingFor: snap['lookingFor'],
+    geohash: snap['geohash'],
+    verified: snap.containsKey('verified') ? snap['verified'] : null,
+  );
+} on Exception catch (e) {
+  // TODO
+  print(e);
+  throw Exception(e);
+}
+
+  }
+
+
+
+  factory User.fromMap(Map<String ,dynamic>snap){
+  //final snap = snapshot['user'];
+    try {
+  return User(
+    id: snap['id'],  
+    name: snap['name'],
+    age: snap['age'],
+    imageUrls: snap['imageUrls'],
+    gender: snap['gender'],    
+    interests: snap['interests'],
+    location: snap.containsKey('location') ?snap['location']: null,
     school: snap['school'],
     birthday: snap['birthday'],
     aboutMe: snap['aboutMe'] ,

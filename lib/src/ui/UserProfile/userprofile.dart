@@ -37,7 +37,7 @@ class UserProfile extends StatelessWidget {
       )
     );
   }
-  bool isDark = context.read<ThemeCubit>().state.themeMode == ThemeMode.dark ;
+  bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark ;
     return Scaffold(
       body: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {

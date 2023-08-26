@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../Blocs/ProfileBloc/profile_bloc.dart';
+import '../../../Blocs/ThemeCubit/theme_cubit.dart';
 import '../../../Data/Models/user.dart';
 
 
@@ -14,6 +15,7 @@ class PhotoSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10, right: 5),
       child: Container(
@@ -23,7 +25,8 @@ class PhotoSelector extends StatelessWidget {
           border: Border.all(width: 1),
           borderRadius: BorderRadius.circular(10),
           
-          color: Colors.grey[200]!.withOpacity(0.6)
+          color: isDark ? Colors.grey[900]:
+          Colors.grey[200]!.withOpacity(0.6)
         ),
         child:
         (imageUrl == null) ?
@@ -31,7 +34,7 @@ class PhotoSelector extends StatelessWidget {
           alignment:  Alignment.bottomRight,
           
           child: IconButton(
-            icon: const Icon(Icons.add_circle,color: Colors.green,),
+            icon: const Icon(Icons.add_circle,color: Colors.teal,),
             onPressed: () async{
               ImagePicker _picker = ImagePicker();
               final XFile? _image = await _picker.pickImage(source: ImageSource.gallery);

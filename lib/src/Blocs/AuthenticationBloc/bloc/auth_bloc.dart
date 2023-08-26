@@ -1,8 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
@@ -10,7 +13,7 @@ import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 part 'auth_event.dart';
 part 'auth_state.dart';
 
-class AuthBloc extends Bloc<AuthEvent, AuthState> {
+class AuthBloc extends Bloc<AuthEvent, AuthState> with HydratedMixin {
   final AuthRepository _authRepository;
   StreamSubscription<auth.User?>? _userSubscription;
   AuthBloc({
@@ -63,6 +66,21 @@ Future<void> _onLogInWithGoogle(LogInWithGoogle event, Emitter<AuthState> emit) 
         print(e.toString());
       }
 }
+
+  @override
+  AuthState? fromJson(Map<String, dynamic> json) {
+    // TODO: implement fromJson
+    return AuthState.fromMap(json);
+  }
+
+  @override
+  Map<String, dynamic>? toJson(AuthState state) {
+    // TODO: implement toJson
+    return  state.toMap();
+    //state.toJson();
+  }
+
+  
 }
 
 

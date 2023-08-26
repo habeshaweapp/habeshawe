@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lomi/src/Blocs/ProfileBloc/profile_bloc.dart';
 import 'package:lomi/src/ui/home/components/usercard.dart';
 import 'package:swipable_stack/swipable_stack.dart';
 
@@ -17,6 +18,9 @@ class SwipeStack extends StatelessWidget {
   Widget build(BuildContext context) {
     final _controller = SwipableStackController();
     return BlocBuilder<SwipeBloc, SwipeState>(
+      buildWhen: (previous, current) {
+        return current is SwipeLoaded || previous is SwipeLoading;
+      } ,
       builder: (context, state) {
         if(state is SwipeLoading){
           return Center(child: CircularProgressIndicator());
@@ -50,6 +54,8 @@ class SwipeStack extends StatelessWidget {
                       
                       child: SizedBox(
               child: SwipableStack(
+               // dragStartCurve: Curves.bounceInOut,
+               //stackClipBehaviour: Clip.none,
                 detectableSwipeDirections: const {
                   SwipeDirection.left,
                   SwipeDirection.right,
@@ -59,6 +65,10 @@ class SwipeStack extends StatelessWidget {
                 onSwipeCompleted: (index, direction) {
                   if(kDebugMode){
                     print('$index, $direction');
+                  }
+                  if(direction == SwipeDirection.left){
+                    context.read<SwipeBloc>().add(SwipeLeftEvent(passedUser: state.users[index], user: (context.read<ProfileBloc>().state as ProfileLoaded ).user));
+
                   }
                 },
                // horizontalSwipeThreshold: 0.8,

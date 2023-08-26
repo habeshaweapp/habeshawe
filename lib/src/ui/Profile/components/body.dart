@@ -146,7 +146,7 @@ class Body extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text('Looking for', style: Theme.of(context).textTheme.bodySmall,),
-                                      Text(user.lookingFor ?? 'Someone to love', style: Theme.of(context).textTheme.bodyLarge,)
+                                      Text(user.lookingFor?.replaceAll('\n', '') ?? 'Someone to love', style: Theme.of(context).textTheme.bodyLarge,)
                                     ],
                                   )
                                 ],

@@ -13,13 +13,13 @@ class Settings extends StatelessWidget {
         title: Text('Settings', style: TextStyle( fontWeight: FontWeight.w400, fontSize: 17),),
         //backgroundColor: Colors.transparent,
         leading: BackButton(
-          color: Colors.green,
+          color: context.read<ThemeCubit>().state == ThemeMode.dark ?Colors.teal: Colors.green,
         ),
         actions: [
           Switch(
-            value: context.read<ThemeCubit>().state.themeMode == ThemeMode.dark , 
+            value: context.read<ThemeCubit>().state == ThemeMode.dark , 
           onChanged: (value){
-            context.read<ThemeCubit>().changeTheme(value);
+            context.read<ThemeCubit>().changeTheme();
           })
         ],
       ),

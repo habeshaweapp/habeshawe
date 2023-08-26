@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_geo_hash/geohash.dart' as geohash;
+import 'package:geocoding_platform_interface/src/models/placemark.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location/location.dart';
@@ -14,6 +15,7 @@ import 'package:lomi/src/Data/Repository/Storage/storage_repository.dart';
 
 import '../../Models/likes_model.dart';
 import '../../Models/model.dart';
+import '../../Models/payment_model.dart';
 import 'base_database_repository.dart';
 
 class DatabaseRepository extends BaseDatabaseRepository{
@@ -815,6 +817,60 @@ Future<void> createDemoUsers(List<User> users) async{
     await _firebaseFirestore.collection('users').doc().set(user.toMap());
   });
 }
+
+  void completeOnboarding({required Placemark placeMark, required User user, required bool isMocked}) {
+    if(isMocked){
+      _firebaseFirestore.collection('users')
+      .doc(user.id)
+      .delete();
+    }else{
+      _firebaseFirestore.collection('users')
+      .doc(user.id)
+      .collection('payment')
+      .doc('subscription')
+      .set(
+        Payment(
+          country: placeMark.country ?? '', 
+          countryCode: placeMark.isoCountryCode ?? '', 
+          placeMark: placeMark.toJson(), 
+          expireDate: '', 
+          paymentType: '', 
+          paymentDetails: {}).toMap()
+      );
+      //mark  iscompleted to true in the user doc
+      _firebaseFirestore.collection('users')
+      .doc(user.id)
+      .update({
+        'isCompleted': true
+      });
+
+    }
+  }
+
+  Future<Payment> getUserPayment({required userId}) async {
+    try {
+      
+    return await _firebaseFirestore.collection('users')
+            .doc(userId)
+            .get()
+            .then((snap) => Payment.fromSnapshoot(snap));
+
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  void updatePayment({required String userId, required Map purchaseData, required paymentType}) async {
+    await _firebaseFirestore.collection('users')
+          .doc(userId)
+          .collection('payment')
+          .doc('subscription')
+          .update({
+            'paymentDetails': purchaseData,
+            'expiredate': purchaseData['expiredate'],
+            'paymentType': paymentType
+          });
+  }
 
 
 

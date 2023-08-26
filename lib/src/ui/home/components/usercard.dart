@@ -316,6 +316,7 @@ class UserCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Container(
+                              margin: EdgeInsets.only(left: 10),
                               
                               child: Text('${user.name}  ${user.age}', 
                               
@@ -323,28 +324,34 @@ class UserCard extends StatelessWidget {
                                 color: Colors.white, 
                                 fontSize: 24,
                                 decoration: TextDecoration.none,
+                                fontWeight: FontWeight.w300
                                 )
                                 )
                                 ),
                             SizedBox(height: 10,),
-                            Row(
-                              children: [
-                                Container(
-                                  width: 10,
-                                  height: 10,
-                                  decoration: const BoxDecoration(
-                                    color: Colors.green,
-                                    shape: BoxShape.circle
+                            Container(
+                              margin: EdgeInsets.only(left: 10),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.green,
+                                      shape: BoxShape.circle
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 10,),
-                               Container(
-                                 child: const Text("Recently Active", style: TextStyle(color: Colors.white, decoration: TextDecoration.none  ),
-            
-                              
-                                  ),
-                               ),
-                              ],
+                                  const SizedBox(width: 5,),
+                                 Container(
+                                   child:  Text("Recently Active", 
+                                   style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),
+                                   //TextStyle(color: Colors.white, decoration: TextDecoration.none  ),
+                                        
+                                
+                                    ),
+                                 ),
+                                ],
+                              ),
                             ),
                             SizedBox(height: 20,),
             
@@ -357,23 +364,25 @@ class UserCard extends StatelessWidget {
                                   List.generate(user.interests.length > 3? 3 : user.interests.length, (idx) => Container(
                                     margin: EdgeInsets.only(left: 10),
                                      decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.4),
+                                     // color: Colors.white.withOpacity(0.4),
                                       borderRadius: BorderRadius.circular(10),
                                       border: Border.all(
                                         color: Colors.white,
-                                        width: 2
+                                        width: 0.5
                                       )
                                       
                                      ),
             
                                       child:   Padding(
-                                        padding: const EdgeInsets.only(left: 8,right: 10, top: 3, bottom: 3),
+                                        padding: const EdgeInsets.only(left: 8,right: 10, top: 4, bottom: 5),
                                         child: Text(
                                           user.interests[idx],
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            decoration: TextDecoration.none
-                                            ),
+                                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white)
+                                          // TextStyle(
+                                          //   color: Colors.white,
+                                          //   //decoration: TextDecoration.none,
+                                            
+                                          //   ),
             
                                           ),
                                       ),

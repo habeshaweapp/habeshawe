@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/ChatBloc/chat_bloc.dart';
 import 'package:lomi/src/Blocs/ImagesBloc/images_bloc.dart';
+import 'package:lomi/src/Blocs/InternetBloc/internet_bloc.dart';
 import 'package:lomi/src/Blocs/OnboardingBloc/onboarding_bloc.dart';
 import 'package:lomi/src/Blocs/ProfileBloc/profile_bloc.dart';
 import 'package:lomi/src/Blocs/SwipeBloc/swipebloc_bloc.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
     ],
       child: MultiBlocProvider(
           providers: [
+            BlocProvider(lazy: false, create: (context) => InternetBloc()),
             BlocProvider(create: (context) => AuthBloc(authRepository: context.read<AuthRepository>())),
             BlocProvider(
                 create: (context) =>
@@ -78,16 +80,16 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: ((context) => PhoneAuthBloc(authRepository: context.read<AuthRepository>()))),
 
             BlocProvider(create: (context) => ThemeCubit()),
-            BlocProvider(create: (context) => PaymentBloc(paymentRepository: PaymentRepository()) ),
+            BlocProvider(create: (context) => PaymentBloc(paymentRepository: PaymentRepository(), authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>() ) ),
             
           ],
-          child: BlocBuilder<ThemeCubit, ThemeState>(
+          child: BlocBuilder<ThemeCubit, ThemeMode>(
             builder: (context, state) {
               return MaterialApp.router(
                       debugShowCheckedModeBanner: false,
                       theme: lightTheme,
                       darkTheme: darkTheme,
-                      themeMode: state.themeMode,
+                      themeMode: state,
                       routeInformationParser: LomiAppRouter.router .routeInformationParser,
                       routerDelegate: LomiAppRouter.router.routerDelegate,
                       //home: AddPhotos(),

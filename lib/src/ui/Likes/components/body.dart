@@ -5,6 +5,7 @@ import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/ui/Likes/components/like_card.dart';
 
 import '../../../Blocs/MatchBloc/match_bloc.dart';
+import '../../../Blocs/PaymentBloc/payment_bloc.dart';
 import '../../Profile/profile.dart';
 import '../../chat/chatscreen.dart';
 import '../../payment/payment.dart';
@@ -69,8 +70,24 @@ class Body extends StatelessWidget {
                   itemBuilder: (context, index){
                     return InkWell(
                       onTap: (){
-                        //Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: state.likedMeUsers[index].user)));
                         showPaymentDialog(context);
+                        BlocListener<PaymentBloc, PaymentState>(
+                          listener: (context, stateP) {
+                            // TODO: implement listener
+                            if(state is NotSubscribed){
+                              showPaymentDialog(context);
+                            }
+                            if(stateP is Subscribed){
+                              //if(stateP.subscribtionType == 'ET-USER'){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: state.likedMeUsers[index].user)));
+
+                              //}
+                            }
+                          },
+                          child: Container(),
+                        );
+                        //Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: state.likedMeUsers[index].user)));
+                        
                        //Navigator.push(context, MaterialPageRoute(builder: (context) => Payment() ));
                       },
                       

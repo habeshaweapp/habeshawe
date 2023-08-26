@@ -38,3 +38,15 @@ class EditUser extends OnboardingEvent{
   @override
   List<Object?> get props => [user];
 }
+
+class CompleteOnboarding extends OnboardingEvent{
+  final Placemark placeMark;
+  final User user;
+  final bool isMocked;
+
+  const CompleteOnboarding({required this.placeMark, required this.user, required this.isMocked});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [placeMark, user, isMocked];
+}

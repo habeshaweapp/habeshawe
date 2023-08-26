@@ -14,6 +14,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isThereChange = false;
+    bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return SingleChildScrollView(
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
@@ -22,7 +23,7 @@ class Body extends StatelessWidget {
           }
           if(state is ProfileLoaded){
           int imagesCount = state.user.imageUrls.length;
-          bool isLight = context.read<ThemeCubit>().state.themeMode == ThemeMode.light;
+          bool isLight = context.read<ThemeCubit>().state == ThemeMode.light;
           
           return WillPopScope(
             onWillPop: ()async {
@@ -42,7 +43,7 @@ class Body extends StatelessWidget {
                         Text('Media'),
                         Text(
                           '+40%',
-                          style: TextStyle(color: Colors.green),
+                          style: TextStyle(color: isDark? Colors.teal: Colors.green),
                         )
                       ],
                     ),
@@ -88,7 +89,7 @@ class Body extends StatelessWidget {
                       ),
                       style: ElevatedButton.styleFrom(
                         shape: StadiumBorder(),
-                        backgroundColor: Colors.green,
+                        //backgroundColor: Colors.green,
                         ),
                         
                     ),
@@ -109,7 +110,7 @@ class Body extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('About Me',),
-                      Text('+30%', style: TextStyle(color: Colors.green),)
+                      Text('+30%', style: TextStyle(color:isDark? Colors.teal: Colors.green),)
                     ],
                   ),
                 ),
@@ -235,7 +236,7 @@ class Body extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Job Title',),
-                      Text('+5%', style: TextStyle(color: Colors.green),)
+                      Text('+5%', style: TextStyle(color: isDark? Colors.teal: Colors.green),)
                     ],
                   ),
                 ),
@@ -271,7 +272,7 @@ class Body extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Company',),
-                      Text('+5%', style: TextStyle(color: Colors.green),)
+                      Text('+5%', style: TextStyle(color: isDark? Colors.teal: Colors.green),)
                     ],
                   ),
                 ),
@@ -307,7 +308,7 @@ class Body extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('School',),
-                      Text('+5%', style: TextStyle(color: Colors.green),)
+                      Text('+5%', style: TextStyle(color: isDark? Colors.teal: Colors.green),)
                     ],
                   ),
                 ),
@@ -343,7 +344,7 @@ class Body extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Living In',),
-                      Text('+5%', style: TextStyle(color: Colors.green),)
+                      Text('+5%', style: TextStyle(color: isDark? Colors.teal: Colors.green),)
                     ],
                   ),
                 ),

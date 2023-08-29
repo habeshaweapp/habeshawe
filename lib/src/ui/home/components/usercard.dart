@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/SwipeBloc/swipebloc_bloc.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Data/Models/user_model.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/itsAmatch/itsAmatch.dart';
@@ -180,12 +181,12 @@ class UserCard extends StatelessWidget {
         onTapUp: (d){
           //if(pageController.hasClients){
             if(d.globalPosition.dx > MediaQuery.of(context).size.width /2){
-              pageController.nextPage(duration: Duration(milliseconds: 200), curve: Curves.linear);
+              pageController.nextPage(duration: Duration(milliseconds: 2), curve: Curves.linear);
          // pageController.animateToPage(idx + 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
               idx++;
             }else{
              // pageController.animateToPage(idx - 1, duration: Duration(milliseconds: 200), curve: Curves.linear);
-              pageController.previousPage(duration: Duration(milliseconds: 200), curve: Curves.linear);
+              pageController.previousPage(duration: Duration(milliseconds: 2), curve: Curves.linear);
               idx--; 
             }
         },
@@ -194,7 +195,8 @@ class UserCard extends StatelessWidget {
                 width: size.width * 0.98,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  color: Colors.grey[350],
+                  color: context.read<ThemeCubit>().state == ThemeMode.light? Colors.grey[350]: Colors.grey[800],
+                  //border: Border.all(width: 2)
                 ),
                 
                 child: Stack(
@@ -250,7 +252,8 @@ class UserCard extends StatelessWidget {
                                       image: DecorationImage(
                                       image: 
                                       CachedNetworkImageProvider(
-                                        user.imageUrls[index]
+                                        user.imageUrls[index],
+                                        
                                       ),
                                       // NetworkImage(
                                       //   user.imageUrls == null ?

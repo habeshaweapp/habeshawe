@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -25,7 +26,8 @@ class MatchesImage extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage(url)
+                  image: CachedNetworkImageProvider(url)
+                  //NetworkImage(url)
                   ),
                   borderRadius: shape == BoxShape.rectangle? BorderRadius.all(Radius.circular(10)):null,
                   border: Border.all(width: 1, color: Colors.green.withOpacity(0.3)),

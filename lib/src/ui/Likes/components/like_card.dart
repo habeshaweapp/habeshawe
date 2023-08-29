@@ -18,6 +18,7 @@ class LikeCard extends StatelessWidget {
         image: DecorationImage(
           image: CachedNetworkImageProvider(user.imageUrls[0]),
           fit: BoxFit.cover,
+          
           ),
         borderRadius: BorderRadius.all(Radius.circular(10)),
 

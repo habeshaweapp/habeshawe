@@ -483,6 +483,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
     .doc('chat')
     .collection('messages')
     .orderBy('timestamp', descending: true)
+    .limit(15)
     .snapshots()
     .map((snap) => snap.docs
     .map((doc) => Message.fromSnapshoot(doc))
@@ -870,6 +871,32 @@ Future<void> createDemoUsers(List<User> users) async{
             'expiredate': purchaseData['expiredate'],
             'paymentType': paymentType
           });
+  }
+
+  Future<List<Message>> getMoreChats({required String userId, required String matchedUserId, required Timestamp startAfter}) async {
+     
+    try{
+    return await _firebaseFirestore.collection('users')
+      .doc(userId)
+      .collection('matches')
+      .doc(matchedUserId)
+      .collection('chats')
+      .doc('chat')
+      .collection('messages')
+      .orderBy('timestamp', descending: true)
+      .startAfter([startAfter])
+      .limit(5)
+      .get().then(
+        (snap) => snap.docs.map((doc) => 
+        Message.fromSnapshoot(doc)).toList(),
+
+        onError: (e) => print('error getting messages: ${e}')
+        );
+    }catch(e){
+        throw Exception(e);
+    }
+    
+
   }
 
 

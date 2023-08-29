@@ -57,13 +57,17 @@ class ChatScreen extends StatelessWidget {
                           color: Colors.green,
                           border: Border.all(
                             width: 2,
-                            color: Colors.white,
+                            color: isDark? Colors.grey.shade800: Colors.white,
                           )
             
                         ),
                       ),
                       SizedBox(width: 3,),
-                      Text('Active now', style: TextStyle(color: Colors.grey, fontSize: 12),)
+                      Text('Active now', style: 
+                      //Theme.of(context).textTheme.bodySmall,
+                      TextStyle(color: Colors.grey, fontSize: 12
+                      ),
+                      )
                     ],
                   ): Text('last seen recently', style: TextStyle(fontSize: 12, color: Colors.grey)),
             

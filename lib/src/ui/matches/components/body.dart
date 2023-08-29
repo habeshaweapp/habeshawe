@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/ChatBloc/chat_bloc.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
@@ -75,7 +76,7 @@ class Body extends StatelessWidget {
                 itemBuilder: (context,index){
                   return InkWell(
                     onTap: (){
-                      context.read<ChatBloc>().add(LoadChats(userId: activeMatches[index].userId, matchedUserId: activeMatches[index].userId));
+                      context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, matchedUserId: activeMatches[index].userId));
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(activeMatches[index]) ));
                     },
                     child: Padding(
@@ -101,31 +102,31 @@ class Body extends StatelessWidget {
 
                                 
                                   //width: double.infinity,
-                             StreamBuilder(
-                                    stream: DatabaseRepository().getLastMessage(activeMatches[index].userId, activeMatches[index].userId),
-                                    //context.read()<DatabaseRepository>().getLastMessage,
-                                    builder: (context, AsyncSnapshot<List<Message>> snapshot) {
-                                      return 
-                                      Row(
-                                        //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                        //mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Container(
-                                            width: MediaQuery.of(context).size.width * 0.4,
-                                            child: Text(
-                                              snapshot.data?[0].message ?? '', 
-                                              overflow: TextOverflow.ellipsis, 
-                                              softWrap: true, 
-                                             // maxLines: 1,
-                                              ),
-                                          ),
-                                          SizedBox(width: MediaQuery.of(context).size.width * 0.06,),
-                                          Text('${snapshot.data?[0].timestamp.hour}:${snapshot.data?[0].timestamp.minute} PM')
-                                        ],
-                                      );
+                            //  StreamBuilder(
+                            //         stream: DatabaseRepository().getLastMessage(activeMatches[index].userId, activeMatches[index].userId),
+                            //         //context.read()<DatabaseRepository>().getLastMessage,
+                            //         builder: (context, AsyncSnapshot<List<Message>> snapshot) {
+                            //           return 
+                            //           Row(
+                            //             //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            //             //mainAxisSize: MainAxisSize.max,
+                            //             children: [
+                            //               // Container(
+                            //               //   width: MediaQuery.of(context).size.width * 0.4,
+                            //               //   child: Text(
+                            //               //     snapshot.data.isNotEmpty? snapshot.data?[0].message ?? '', 
+                            //               //     overflow: TextOverflow.ellipsis, 
+                            //               //     softWrap: true, 
+                            //               //    // maxLines: 1,
+                            //               //     ),
+                            //               // ),
+                            //               SizedBox(width: MediaQuery.of(context).size.width * 0.06,),
+                            //               Text('${snapshot.data?[0].timestamp.hour}:${snapshot.data?[0].timestamp.minute} PM')
+                            //             ],
+                            //           );
                                       
-                                    }
-                                  ),
+                            //         }
+                            //       ),
                               
                                                
                                 //   Text(

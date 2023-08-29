@@ -105,7 +105,7 @@ class ItsAMatch extends StatelessWidget {
                                 
                               ),
                               onPressed: (){
-                                BlocProvider.of<MatchBloc>(context).add(OpenChat(message: Message(id: 'non', senderId: user.id, receiverId: context.read<AuthBloc>().state.user!.uid, message: msg, timestamp: DateTime.now())));
+                                BlocProvider.of<MatchBloc>(context).add(OpenChat(message: Message(id: 'non', senderId: user.id, receiverId: context.read<AuthBloc>().state.user!.uid, message: msg,)));
                               }, 
                               child: Text('Send')
                               ),

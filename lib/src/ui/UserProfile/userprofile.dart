@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -70,10 +71,7 @@ class UserProfile extends StatelessWidget {
                             padding: const EdgeInsets.all(8.0),
                             child: CircleAvatar(
                               backgroundImage:
-                                  NetworkImage( 
-                                    state.user.imageUrls == null ?
-                                    null
-                                    :
+                                  CachedNetworkImageProvider( 
                                     state.user.imageUrls[0]
                                     
                                     ),

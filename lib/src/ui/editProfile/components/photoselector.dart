@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -57,13 +58,21 @@ class PhotoSelector extends StatelessWidget {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                Image.network(imageUrl!, fit: BoxFit.cover,),
+                CachedNetworkImage(
+                  imageUrl: imageUrl! ,
+                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+
+                  fit: BoxFit.cover,
+                ),
+                //Image.network(imageUrl!, fit: BoxFit.cover,),
                 Positioned(
-                  bottom: -15,
-                  right: -15,
+                  //alignment: Alignment.bottomRight,
+                  bottom: -12,
+                  right: -12,
                   child: IconButton(
                     onPressed: (){}, 
-                    icon: Icon(Icons.close_rounded, color: Colors.white,)
+                    icon: Icon(Icons.add_circle, color: Colors.red,)
                     ),
                 )
               ],

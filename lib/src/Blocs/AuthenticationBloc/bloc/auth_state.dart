@@ -48,7 +48,7 @@ class AuthState extends Equatable {
   Map<String, dynamic> toMap(){
     return {
       'status': status.index,
-      'user': user!.uid,
+      'user': user != null? user!.uid : null,
       'newAccount':newAccount
     };
   }

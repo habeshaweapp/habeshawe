@@ -40,6 +40,14 @@ class Chat extends Equatable{
     };
   }
 
+  static Chat fromMap(Map<String,dynamic> snap){
+    return Chat(
+      id: snap['id'], 
+      userId: snap['userId'], 
+      matchedUserId: snap['matchedUserId'], 
+      messages: snap['messages']);
+  }
+
 
 
 

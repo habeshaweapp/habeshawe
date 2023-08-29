@@ -9,7 +9,7 @@ class Message extends Equatable{
   final String message;
 
   final String? imageUrl;
-  final DateTime timestamp;
+  final Timestamp? timestamp;
 
   Message({
     required this.id,
@@ -17,7 +17,7 @@ class Message extends Equatable{
     required this.receiverId,
     required this.message,
     this.imageUrl,
-    required this.timestamp,
+     this.timestamp,
   });
   
   @override
@@ -30,7 +30,7 @@ class Message extends Equatable{
       senderId: snap['senderId'], 
       receiverId: snap['receiverId'], 
       message: snap['message'],
-      timestamp: snap['timestamp'].toDate(),
+      timestamp: snap['timestamp'],
 
 
     );
@@ -41,9 +41,21 @@ class Message extends Equatable{
       'senderId': senderId,
       'receiverId': receiverId,
       'message': message,
-      'timestamp': timestamp,
+      'timestamp': FieldValue.serverTimestamp(),
       'imageUrl': imageUrl,
     };
+  }
+
+   static Message fromMap(Map<String,dynamic> snap){
+    return Message(
+      id: snap['id'], 
+      senderId: snap['senderId'], 
+      receiverId: snap['receiverId'], 
+      message: snap['message'],
+      timestamp: snap['timestamp'].toDate(),
+
+
+    );
   }
 
 

@@ -37,3 +37,14 @@ class SendMessage extends ChatEvent{
   // TODO: implement props
   List<Object> get props => [message];
 }
+
+class LoadMoreChats extends ChatEvent{
+  String userId;
+  String matchedUserId;
+  Timestamp startAfter;
+
+  LoadMoreChats({required this.userId,required this.matchedUserId ,required this.startAfter});
+
+  @override
+  List<Object> get props => [startAfter];
+}

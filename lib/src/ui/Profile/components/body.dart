@@ -73,7 +73,8 @@ class Body extends StatelessWidget {
                                 child: CachedNetworkImage(
                                   imageUrl: user.imageUrls[index],
                                   fit: BoxFit.cover,
-                                  //placeholder: ,
+                                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                                  errorWidget: (context, url, error) => Icon(Icons.error_outline_sharp),
                                   )
                                // Image.network(user.imageUrls[index], fit: BoxFit.cover,)
                               );

@@ -55,7 +55,7 @@ class SwipeStack extends StatelessWidget {
                       child: SizedBox(
               child: SwipableStack(
                // dragStartCurve: Curves.bounceInOut,
-               //stackClipBehaviour: Clip.none,
+               stackClipBehaviour: Clip.none,
                 detectableSwipeDirections: const {
                   SwipeDirection.left,
                   SwipeDirection.right,
@@ -86,7 +86,7 @@ class SwipeStack extends StatelessWidget {
                   color: Colors.transparent,
                   
                   child: Padding(
-                padding: const EdgeInsets.only(bottom: 2),
+                padding: const EdgeInsets.only(bottom: 5),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children:

@@ -9,17 +9,18 @@ import '../../../Blocs/ChatBloc/chat_bloc.dart';
 import '../../../Blocs/MatchBloc/match_bloc.dart';
 
 class Body extends StatelessWidget {
-  const Body(this.userMatch,);
+   Body(this.userMatch,);
    final UserMatch userMatch;
- 
 
   @override
   Widget build(BuildContext context) {
     String msg= '';
     final msgController = TextEditingController();
-    final scrollController = ScrollController();
+    //final scrollController = ScrollController();
     bool chatOpened = userMatch.chatOpened;
     bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    
     return BlocBuilder<ChatBloc, ChatState>(
       builder: (context, state) {
         if(state is ChatLoaded) {
@@ -47,7 +48,7 @@ class Body extends StatelessWidget {
                       Container(
                         child: ListView.builder(
                           
-                          //controller: scrollController,
+                          controller: context.read<ChatBloc>().scrollController,
                           physics: BouncingScrollPhysics(),
                           shrinkWrap: true,
                           itemCount: state.messages!.length,
@@ -57,7 +58,7 @@ class Body extends StatelessWidget {
                           itemBuilder: ((context, index) {
                             return ListTile(
                               
-                              title: state.messages![index].senderId == userMatch.userId ?
+                              title: !(state.messages[index].senderId == userMatch.userId) ?
                               //userMatch.chat![0].messages[index].senderId == 1? 
                               Align(
                                 alignment: Alignment.topRight,
@@ -275,13 +276,13 @@ class Body extends StatelessWidget {
                     if(!chatOpened){
                       //BlocProvider.of<MatchBloc>(context).add(OpenChat(message: Message(id: 'non', senderId: user.id, receiverId: context.read<AuthBloc>().state.user!.uid, message: msg, timestamp: DateTime.now())));
     
-                      context.read<MatchBloc>().add(OpenChat(message: Message(id: 'id', senderId: userMatch.userId, receiverId: userMatch.userId, message: msgController.text, timestamp: DateTime.now())));
+                      context.read<MatchBloc>().add(OpenChat(message: Message(id: 'id', senderId: context.read<AuthBloc>().state.user!.uid, receiverId: userMatch.userId, message: msgController.text, )));
                       context.read<ChatBloc>().add(LoadChats(userId: userMatch.userId, matchedUserId: userMatch.userId));
                       chatOpened = true;
                       msgController.clear();
                     }else{
                     
-                    context.read<ChatBloc>().add(SendMessage(message: Message(id: 'id', senderId: context.read<AuthBloc>().state.user!.uid, receiverId: context.read<AuthBloc>().state.user!.uid == userMatch.userId ? userMatch.userId : userMatch.userId, message: msgController.text, timestamp: DateTime.now())));
+                    context.read<ChatBloc>().add(SendMessage(message: Message(id: 'id', senderId: context.read<AuthBloc>().state.user!.uid, receiverId: context.read<AuthBloc>().state.user!.uid == userMatch.userId ? userMatch.userId : userMatch.userId, message: msgController.text)));
                     msgController.clear();
                     }
                   },

@@ -160,15 +160,15 @@ class DatabaseRepository extends BaseDatabaseRepository{
     
    await _firebaseFirestore
     .collection('users')
-    .doc(matchUser.id)
-    .collection('likes')
     .doc(user.id)
+    .collection('likes')
+    .doc(matchUser.id)
     //.add(likedUser.toMap()..addAll({'userId' : likedUser.id}));
     .set(
       {
         'userId': user.id,
         'timestamp': FieldValue.serverTimestamp(),
-        'user': user.toMap()
+        'user': matchUser.toMap()
       }
       //user.toMap()
 
@@ -295,6 +295,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   return _firebaseFirestore.collection('users')
   .doc(userId)
   .collection('matches')
+  .orderBy('timestamp', descending: true)
   .snapshots()
   .map((snap) => snap.docs
   .map((match) => UserMatch.fromSnapshoot(match)).toList());
@@ -397,7 +398,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .doc(message.receiverId)
       .collection('chats')
       .doc('chat')
-      .set({'timestamp': DateTime.now()});
+      .set({'timestamp': FieldValue.serverTimestamp()});
       
       //for the other user
       await _firebaseFirestore.collection('users')
@@ -412,7 +413,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .doc(message.senderId)
       .collection('chats')
       .doc('chat')
-      .set({'timestamp': DateTime.now()});
+      .set({'timestamp': FieldValue.serverTimestamp()});
       //.set({'timestamp': message.timestamp})
       await sendMessage(message);
 
@@ -557,6 +558,24 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .doc('chat')
       .collection('messages')
       .add(message.toMap());
+ 
+ await _firebaseFirestore.collection('users')
+      .doc(message.senderId)
+      .collection('matches')
+      .doc(message.receiverId)
+      .update({
+        'timestamp': FieldValue.serverTimestamp()
+      });
+ await _firebaseFirestore.collection('users')
+      .doc(message.receiverId)
+      .collection('matches')
+      .doc(message.senderId)
+      .update({
+        'timestamp': FieldValue.serverTimestamp()
+      });
+      
+      
+
 } on FirebaseException catch (e){
   throw Exception(e.message);
 }

@@ -6,6 +6,7 @@ import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/ChatBloc/chat_bloc.dart';
 import 'package:lomi/src/Blocs/ImagesBloc/images_bloc.dart';
 import 'package:lomi/src/Blocs/InternetBloc/internet_bloc.dart';
+import 'package:lomi/src/Blocs/LikeBloc/like_bloc.dart';
 import 'package:lomi/src/Blocs/OnboardingBloc/onboarding_bloc.dart';
 import 'package:lomi/src/Blocs/ProfileBloc/profile_bloc.dart';
 import 'package:lomi/src/Blocs/SwipeBloc/swipebloc_bloc.dart';
@@ -59,7 +60,7 @@ class MyApp extends StatelessWidget {
       child: MultiBlocProvider(
           providers: [
             BlocProvider(lazy: false, create: (context) => InternetBloc()),
-            BlocProvider(create: (context) => AuthBloc(authRepository: context.read<AuthRepository>())),
+            BlocProvider(lazy:false, create: (context) => AuthBloc(authRepository: context.read<AuthRepository>())),
             BlocProvider(
                 create: (context) =>
                     SwipeBloc(
@@ -71,10 +72,10 @@ class MyApp extends StatelessWidget {
               create: (context) => OnboardingBloc(databaseRepository: context.read<DatabaseRepository>(), storageRepository: context.read<StorageRepository>()),          
             ),
             BlocProvider<ContinuewithCubit>(create: (context) => ContinuewithCubit(authRepository: context.read<AuthRepository>())),
+            BlocProvider(lazy: false, create: (context) => LikeBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>()) ),
+            BlocProvider(lazy: false, create: (context) => ProfileBloc(authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>(), storageRepository: context.read<StorageRepository>())) ,
 
-            BlocProvider(create: (context) => ProfileBloc(authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>(), storageRepository: context.read<StorageRepository>())..add(LoadProfile(userId: context.read<AuthBloc>().state.user!.uid))) ,
-
-            BlocProvider(create: (context) => MatchBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..add(LoadMatchs(userId: context.read<AuthBloc>().state.user!.uid)) ),
+            BlocProvider(lazy: false, create: (context) => MatchBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>()) ),
             BlocProvider(create: ((context) => ChatBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc:  context.read<AuthBloc>()))),
             BlocProvider(create: (context) => UserpreferenceBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..add(LoadUserPreference(userId: context.read<AuthBloc>().state.user!.uid))),
             BlocProvider(create: ((context) => PhoneAuthBloc(authRepository: context.read<AuthRepository>()))),

@@ -22,7 +22,7 @@ class MatchesImage extends StatelessWidget {
     return Container(
               height: height,
               width: width,
-              margin: EdgeInsets.only(top: 8, right: 8, ),
+              margin: EdgeInsets.only(top: 8, left: 8, ),
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,

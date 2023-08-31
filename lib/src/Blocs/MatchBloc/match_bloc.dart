@@ -23,15 +23,15 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   _authBloc = authBloc,
   super(MatchLoading()) {
     on<LoadMatchs>(_onLoadMatchs);
-    on<LikeLikedMeUser>(_onLikeLikedMeUser);
+    //on<LikeLikedMeUser>(_onLikeLikedMeUser);
     on<OpenChat>(_onOpenChat);
-    on<DeleteLikedMeUser>(_onDeleteLikedMeUser);
+    //on<DeleteLikedMeUser>(_onDeleteLikedMeUser);
 
     on<UpdateMatches>(_onUpdateMatches);
    // on<UpdateLikes>(_onUpdateLikes);
 
     _authSubscription = _authBloc.stream.listen((state) { 
-      if(state.user!.uid != null){
+      if(state.user != null){
         add(LoadMatchs(userId: state.user!.uid));       
       }
     });
@@ -42,11 +42,13 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
     _databaseRepository.getMatches(event.userId).listen((matches) {
 
-      _databaseRepository.getLikedMeUsers(event.userId).listen((likes) {
+      // _databaseRepository.getLikedMeUsers(event.userId).listen((likes) {
         
-        add(UpdateMatches(matchedUsers: matches, likedMeUsers: likes));
+      //   add(UpdateMatches(matchedUsers: matches, likedMeUsers: likes));
         
-      });
+      // });
+      add(UpdateMatches(matchedUsers: matches));
+
     });
 
     }on Exception catch(e){
@@ -68,7 +70,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
   void _onUpdateMatches(UpdateMatches event, Emitter<MatchState> emit){
     try {
-      emit(MatchLoaded(matchedUsers: event.matchedUsers!, likedMeUsers: event.likedMeUsers!));
+      emit(MatchLoaded(matchedUsers: event.matchedUsers!));
       
     }on Exception catch (e) {
       print(e.toString());
@@ -84,15 +86,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   //   }
   // }
 
-  void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<MatchState> emit) async{
-   try {
-  await  _databaseRepository.likeLikedMeUser(event.userId, event.likedMeUser);
-} on Exception catch (e) {
-  // TODO
-  print(e.toString());
-}
 
-  }
 
   void _onOpenChat(OpenChat event, Emitter<MatchState> emit) async{
     try {
@@ -104,13 +98,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     }
   }
 
-  void _onDeleteLikedMeUser(DeleteLikedMeUser event, Emitter<MatchState> emit) async{
-    try {
-      _databaseRepository.deleteLikedMeUser(event.userId, event.likedMeUserId);
-    }on Exception catch (e) {
-      print(e.toString());
-    }
-  }
+  
 
 
 }

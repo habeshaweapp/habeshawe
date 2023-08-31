@@ -9,6 +9,7 @@ import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
 import '../../../Blocs/MatchBloc/match_bloc.dart';
 import '../../chat/chatscreen.dart';
+import 'chat_list.dart';
 import 'matches_image_small.dart';
 
 class Body extends StatelessWidget {
@@ -32,43 +33,55 @@ class Body extends StatelessWidget {
             final activeMatches = state.matchedUsers.where((match) => match.chatOpened).toList(); 
             return
            Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("New Matches", style: Theme.of(context).textTheme.bodyLarge,),
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0, top: 20),
+                child: Text("New Matches", style: Theme.of(context).textTheme.bodyLarge,),
+              ),
               SizedBox(height: 10,),
       
-              SizedBox(
-                height: 150,
-                child: inactiveMatches.length !=0 ? ListView.builder(
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: inactiveMatches.length,
-                  itemBuilder: (context, index){
-                    return GestureDetector(
-                      onTap: (){Navigator.push(context,MaterialPageRoute(builder: (context) => ChatScreen(inactiveMatches[index])));},
-                      child: MatchesImage(url: inactiveMatches[index].imageUrls[0], height: 120, width: 100,));
-                  }
-                  ):
-                  Container(
-                height: 150,
-                width: 120,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.green),
-                  borderRadius: BorderRadius.circular(20)
+              Padding(
+                padding: const EdgeInsets.only(left:0.0),
+                child: SizedBox(
+                  height: 150,
+                  child: inactiveMatches.length !=0 ? ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: inactiveMatches.length,
+                    itemBuilder: (context, index){
+                      return GestureDetector(
+                        onTap: (){Navigator.push(context,MaterialPageRoute(builder: (context) => ChatScreen(inactiveMatches[index])));},
+                        child: MatchesImage(url: inactiveMatches[index].imageUrls[0], height: 120, width: 100,));
+                    }
+                    ):
+                    Padding(
+                      padding: const EdgeInsets.only(left:20.0),
+                      child: Container(
+                                      height: 150,
+                                      width: 120,
+                                      decoration: BoxDecoration(
+                      border: Border.all(color: Colors.green),
+                      borderRadius: BorderRadius.circular(20)
+                                      ),
+                                      child: Center(child: Text('New matches\nwill appear\n here',textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10,fontWeight: FontWeight.w300),)),
+                      ),
+                    ),
                 ),
-                child: Center(child: Text('New matches\nwill appear\n here',textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10,fontWeight: FontWeight.w300),)),
-                  ),
               ),
               Padding(
-                padding: const EdgeInsets.only(top:8.0, left: 8),
+                padding: const EdgeInsets.only(top:8.0, left: 28),
                 child: Text("Likes", style: Theme.of(context).textTheme.bodyLarge,),
               ),
               
               SizedBox(height: 25,),
       
-              Text("Messages", style: Theme.of(context).textTheme.bodyLarge,),
+              Padding(
+                padding: const EdgeInsets.only(left: 20.0),
+                child: Text("Messages", style: Theme.of(context).textTheme.bodyLarge,),
+              ),
               SizedBox(height: 25,),
               ListView.builder(
                 shrinkWrap: true,
@@ -79,26 +92,29 @@ class Body extends StatelessWidget {
                       context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, matchedUserId: activeMatches[index].userId));
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(activeMatches[index]) ));
                     },
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          MatchesImage(url: activeMatches[index].imageUrls[0],
-                           height: 60,width: 60,shape: BoxShape.circle,),
-                           Padding(
-                             padding: const EdgeInsets.all(8.0),
-                             child: Column(
+                    child: ChatList(match: activeMatches[index])
+                    
+                    
+                    // Padding(
+                    //   padding: const EdgeInsets.only(bottom: 10.0),
+                    //   child: Row(
+                    //     mainAxisSize: MainAxisSize.min,
+                    //     crossAxisAlignment: CrossAxisAlignment.start,
+                    //     children: [
+                    //       MatchesImage(url: activeMatches[index].imageUrls[0],
+                    //        height: 60,width: 60,shape: BoxShape.circle,),
+                    //        Padding(
+                    //          padding: const EdgeInsets.all(8.0),
+                    //          child: Column(
                               
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                               children: [
-                                SizedBox(height: 5,),
-                                 Text(activeMatches[index].name,
-                                      style: Theme.of(context).textTheme.bodyLarge,
+                    //           crossAxisAlignment: CrossAxisAlignment.start,
+                    //            children: [
+                    //             SizedBox(height: 5,),
+                    //              Text(activeMatches[index].name,
+                    //                   style: Theme.of(context).textTheme.bodyLarge,
                                  
-                                 ),
-                                const SizedBox(height: 5,),
+                    //              ),
+                    //             const SizedBox(height: 5,),
 
                                 
                                   //width: double.infinity,
@@ -143,11 +159,11 @@ class Body extends StatelessWidget {
                                 //   //activeMatches[index].chat![0].messages[0].timeString,
                                 //       style: Theme.of(context).textTheme.bodySmall,
                                  
-                                //  ),
-                               ],
-                             ),
-                           ),
-                           Spacer(),
+                              //     )
+                              //  ],
+                          //    );
+                          //  ),
+                          //  Spacer(),
 
                           //  Padding(
                           //    padding: const EdgeInsets.only(top: 15.0),
@@ -155,9 +171,9 @@ class Body extends StatelessWidget {
                           //    style: Theme.of(context).textTheme.bodySmall,
                           //    ),
                           //  )
-                        ],
-                      ),
-                    ),
+                    //     ],
+                    //   ),
+                    // ),
                   );
                 })
       

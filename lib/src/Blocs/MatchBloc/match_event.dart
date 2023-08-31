@@ -16,15 +16,7 @@ class LoadMatchs extends MatchEvent{
   List<Object> get props => [userId];
 }
 
-class DeleteLikedMeUser extends MatchEvent{
-  String userId;
-  String likedMeUserId;
-  DeleteLikedMeUser({required this.userId, required this.likedMeUserId});
 
-  @override
-  // TODO: implement props
-  List<Object> get props => [userId, likedMeUserId];
-}
 
 class OpenChat extends MatchEvent{
   Message message;
@@ -35,29 +27,15 @@ class OpenChat extends MatchEvent{
   List<Object> get props => [message];
 }
 
-class LikeLikedMeUser extends MatchEvent{
-  final String userId;
-  final User likedMeUser;
 
-  LikeLikedMeUser({required this.userId, required this.likedMeUser});
-
-}
 
 class UpdateMatches extends MatchEvent{
   final List<UserMatch>? matchedUsers;
-  final List<Like>? likedMeUsers;
-  UpdateMatches({required this.matchedUsers, required this.likedMeUsers});
+  //final List<Like>? likedMeUsers;
+  UpdateMatches({required this.matchedUsers});
 
   @override
   // TODO: implement props
-  List<Object?> get props => [matchedUsers, likedMeUsers];
+  List<Object?> get props => [matchedUsers];
 }
 
-class UpdateLikes extends MatchEvent{
-  final List<User>? users;
-  UpdateLikes({required this.users});
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [users];
-}

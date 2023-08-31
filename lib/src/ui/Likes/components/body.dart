@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lomi/src/Blocs/LikeBloc/like_bloc.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/ui/Likes/components/like_card.dart';
 
@@ -22,20 +23,23 @@ class Body extends StatelessWidget {
 
 
     return SingleChildScrollView(
-      child: BlocBuilder<MatchBloc, MatchState>(
+      child: BlocBuilder<LikeBloc, LikeState>(
         builder: (context, state) {
-          if(state is MatchLoading){
+          if(state is LikeLoading){
             return Center(child: CircularProgressIndicator(),);
           }
           
-          if(state is MatchLoaded){
+          if(state is LikeLoaded){
             return
            Padding(
           padding: EdgeInsets.all(5),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Likes", style: Theme.of(context).textTheme.bodyLarge,),
+              Padding(
+                padding: const EdgeInsets.only(left: 5.0),
+                child: Text("Likes", style: Theme.of(context).textTheme.bodyLarge,),
+              ),
               SizedBox(height: 10,),
       
               // SizedBox(
@@ -90,8 +94,9 @@ class Body extends StatelessWidget {
                         
                        //Navigator.push(context, MaterialPageRoute(builder: (context) => Payment() ));
                       },
+                     
                       
-                      child: LikeCard(user: state.likedMeUsers[index].user)
+                     child: LikeCard(user: state.likedMeUsers[index].user)
                       //LikesImage(url: state.likedMeUsers[index].user.imageUrls[0], height: 20,)
                       );
                   } ),

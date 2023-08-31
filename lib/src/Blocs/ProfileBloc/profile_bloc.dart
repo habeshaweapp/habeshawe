@@ -34,7 +34,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<VerifyMe>(_onVerifyMe);
 
     _authSubscription = _authBloc.stream.listen((state) { 
-      if(state.user!.uid != null){
+      if(state.user != null){
         add(LoadProfile(userId: state.user!.uid));
       }
     });

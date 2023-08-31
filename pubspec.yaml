@@ -53,7 +53,7 @@ dependencies:
   #geoflutterfire: 
   flutter_geo_hash: ^0.0.4
   swipe_cards: ^2.0.0+1
-  pay: ^1.1.1
+  #pay: ^1.1.1
   twitter_login: ^4.4.0
   geoflutterfire:
     path: packages/geoflutterfire/
@@ -66,6 +66,7 @@ dependencies:
   connectivity_plus: ^4.0.2
   hydrated_bloc: ^9.1.2
   path_provider: ^2.1.0
+  intl: ^0.18.1
 
   
 

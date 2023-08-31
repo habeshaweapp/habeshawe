@@ -11,20 +11,12 @@ class MatchLoading extends MatchState {}
 
 class MatchLoaded extends MatchState{
   List<UserMatch> matchedUsers;
-  List<Like> likedMeUsers;
-  MatchLoaded({required this.matchedUsers, required this.likedMeUsers});
+ // List<Like> likedMeUsers;
+  MatchLoaded({required this.matchedUsers});
 
   @override
   // TODO: implement props
-  List<Object> get props => [matchedUsers,likedMeUsers];
+  List<Object> get props => [matchedUsers];
 }
 
-class LikeLoaded extends MatchState{
- // List<User> matchedUsers;
-  List<User> likedMeUsers;
-  LikeLoaded({required this.likedMeUsers});
 
-  @override
-  // TODO: implement props
-  List<Object> get props => [likedMeUsers];
-}

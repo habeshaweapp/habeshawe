@@ -70,6 +70,9 @@ class SwipeStack extends StatelessWidget {
                     context.read<SwipeBloc>().add(SwipeLeftEvent(passedUser: state.users[index], user: (context.read<ProfileBloc>().state as ProfileLoaded ).user));
 
                   }
+                  if(direction == SwipeDirection.right){
+                    context.read<SwipeBloc>().add(SwipeRightEvent(user: (context.read<ProfileBloc>().state as ProfileLoaded ).user, matchUser: state.users[index]));
+                  }
                 },
                // horizontalSwipeThreshold: 0.8,
                 //verticalSwipeThreshold: 0.8,

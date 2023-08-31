@@ -18,7 +18,7 @@ import '../AuthenticationBloc/bloc/auth_bloc.dart';
 part 'swipebloc_event.dart';
 part 'swipebloc_state.dart';
 
-class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin {
+class SwipeBloc extends Bloc<SwipeEvent, SwipeState>  {
   final DatabaseRepository _databaseRepository;
   final AuthBloc _authBloc;
   StreamSubscription? _authSubscription;
@@ -38,7 +38,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin {
     on<UpdateHome>(_onUpdateHome);
 
     _authSubscription = _authBloc.stream.listen((state) {
-      if(state.user!.uid != null){
+      if(state.user != null){
       add(LoadUsers(userId: state.user!.uid));
 
       }
@@ -166,25 +166,25 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin {
     super.close();
   }
   
-  @override
-  SwipeState? fromJson(Map<String, dynamic> json) {
-    // TODO: implement fromJson
-    if(json.isEmpty){
-      return null;
-    }else{
-      return SwipeLoaded.fromJson(json['users']);
-    }
-  }
+  // @override
+  // SwipeState? fromJson(Map<String, dynamic> json) {
+  //   // TODO: implement fromJson
+  //   if(json.isEmpty){
+  //     return null;
+  //   }else{
+  //     return SwipeLoaded.fromJson(json['users']);
+  //   }
+  // }
   
-  @override
-  Map<String, dynamic>? toJson(SwipeState state) {
-    // TODO: implement toJson
-    if(state is SwipeLoaded){
-      return {'users': state.toJson()};
-    }else{
-      return null;
-    }
-  }
+  // @override
+  // Map<String, dynamic>? toJson(SwipeState state) {
+  //   // TODO: implement toJson
+  //   if(state is SwipeLoaded){
+  //     return {'users': state.toJson()};
+  //   }else{
+  //     return null;
+  //   }
+  // }
 
   
 }

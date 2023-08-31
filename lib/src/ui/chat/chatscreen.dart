@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -37,7 +38,7 @@ class ChatScreen extends StatelessWidget {
           children: [
             CircleAvatar(
                 radius: 20,
-                backgroundImage: NetworkImage(userMatch.imageUrls[0]),                       
+                backgroundImage: CachedNetworkImageProvider(userMatch.imageUrls[0]),                       
               ),
            
             Padding(

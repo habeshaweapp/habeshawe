@@ -5,14 +5,43 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../../Blocs/PaymentBloc/payment_bloc.dart';
+import 'subscriptionTypes.dart';
 
-class Payment extends StatelessWidget {
+class Payment extends StatefulWidget {
   const Payment({super.key});
+
+  @override
+  State<Payment> createState() => _PaymentState();
+}
+
+class _PaymentState extends State<Payment> {
+  int selectedIndex = -1;
 
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+    
+
+    List<Map<String, String>> subs =[
+      {
+        'name': '1',
+        'description': 'Month',
+        'price': '\$9.99'
+      },
+
+      {
+        'name': '6',
+        'description': 'Months',
+        'price': '\$49.99'
+      },
+
+      {
+        'name': '12',
+        'description': 'Months',
+        'price': '\$99.99'
+      },
+    ] ;
     return Container(
         color: Colors.transparent,
         child: Container(
@@ -48,25 +77,47 @@ class Payment extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 25,),
+
+              SizedBox(
+                height: 100,
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  children: List.generate(3, (index) => 
+                    SubscriptionType(
+                      context: context, 
+                      name: subs[index]['name']!, 
+                      description: subs[index]['description']!, 
+                      price: subs[index]['price']!,
+                      isSelected: selectedIndex == index,
+                      onTap: (){
+                        
+                        setState(() {
+                          selectedIndex = index;
+                        });
+                      }
+                      )
+                  ),
+                ),
+              ),
       
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+              //   children: [
       
-                  productDetails(
-                    context: context,
-                    name: '1',
-                    description: 'Month',
-                    price: '\$9.99'
-                    ),
-                    productDetails(
-                      context: context, name: '6', description: 'months', price: '\$49.9'),
+              //     productDetails(
+              //       context: context,
+              //       name: '1',
+              //       description: 'Month',
+              //       price: '\$9.99'
+              //       ),
+              //       productDetails(
+              //         context: context, name: '6', description: 'months', price: '\$49.9'),
                     
-                    productDetails(context: context, name: '12', description: 'months', price: '\$99.99')
+              //       productDetails(context: context, name: '12', description: 'months', price: '\$99.99')
       
                   
-                ],
-              ),
+              //   ],
+              // ),
       
               SizedBox(height: 35,),
       
@@ -91,42 +142,7 @@ class Payment extends StatelessWidget {
     );
   }
 
-  SizedBox productDetails({ required BuildContext context, required String name, required String description, required String price}) {
-    var size = MediaQuery.of(context).size;
-    return SizedBox(
-     // width: MediaQuery.of(context),
-     // height: 100,
-      child: Card(
-                    child: InkWell(
-                      onTap: (){
-                        
-                      },
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          //horizontal: size.width * 0.04,
-                         // vertical: size.width * 0.02
-                        ),
-                       
-                        height: 90,
-                        child: Column(
-                          children: [
-                            Text(name,
-                            style: Theme.of(context).textTheme.titleLarge,
-                            ),
-                          
-                            Text(description,
-                            style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          
-                            Text(price,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                            )
-                          ]),
-                      ),
-                    ),
-                  ),
-    );
-  }
+
 
   Column pageViewItem({required BuildContext context, required String image, required String title, required String description}) {
     return Column(

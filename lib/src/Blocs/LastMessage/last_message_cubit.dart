@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
@@ -13,10 +14,10 @@ class LastMessageCubit extends Cubit<LastMessageState> {
   }) : _databaseRepository = databaseRepository, 
    super(LastMessageInitial());
 
-  void getLastMessage(String userId, String matchedUserId){
+  void getLastMessage(String userId, Gender users, String matchedUserId){
     emit(LastMessageLoading());
     try {
-      _databaseRepository.getLastMessage(userId, matchedUserId).listen((message) {
+      _databaseRepository.getLastMessage(userId, users, matchedUserId).listen((message) {
       emit(LastMessageLoaded(message: message[0]));
     });
       

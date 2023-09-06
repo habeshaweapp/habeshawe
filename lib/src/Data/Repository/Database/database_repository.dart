@@ -6,12 +6,14 @@ import 'package:flutter_geo_hash/geohash.dart' as geohash;
 import 'package:geocoding_platform_interface/src/models/placemark.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:location/location.dart';
+
 import 'package:lomi/src/Data/Models/chat_model.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Models/message_model.dart';
 import 'package:lomi/src/Data/Models/user.dart';
 import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import 'package:lomi/src/Data/Repository/Storage/storage_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Models/likes_model.dart';
 import '../../Models/model.dart';
@@ -23,7 +25,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   @override
   Stream<User> getUser(String userId) {
     try {
-      return _firebaseFirestore.collection('users')
+      return _firebaseFirestore.collection(Gender.men.name)
       .doc(userId)
       .snapshots()
       .map((snap) => User.fromSnapshoot(snap));
@@ -46,7 +48,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   
     String downloadURL = await StorageRepository().getDownloadURL(user,imageName);
 
-    return await _firebaseFirestore.collection('users')
+    return await _firebaseFirestore.collection(user.gender)
             .doc(user.id)
             .update({'imageUrls': FieldValue.arrayUnion([downloadURL])});
 
@@ -64,7 +66,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   Future<void> createUser(User user) async {
     //String documentId = 
     try{
-    await _firebaseFirestore.collection('users').doc(user.id).set(user.toMap());
+    await _firebaseFirestore.collection(user.gender).doc(user.id).set(user.toMap());
     } on FirebaseException catch(e){
       print(e.message);
       throw(Exception(e.message));
@@ -83,7 +85,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   @override
   Future<void> updateUser(User user) async {
     try{
-    return await _firebaseFirestore.collection('users').doc(user.id)
+    return await _firebaseFirestore.collection(user.gender).doc(user.id)
     .update(user.toMap()).then((value) {print('user updated');});
 
     } on FirebaseException catch(e){
@@ -101,17 +103,17 @@ class DatabaseRepository extends BaseDatabaseRepository{
     //  Position myLocation = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     // geohash.MyGeoHash myGeoHash = geohash.MyGeoHash();
     // String hash = myGeoHash.geoHashForLocation(geohash.GeoPoint(myLocation.latitude, myLocation.longitude));
-    // _firebaseFirestore.collection('users').snapshots()
+    // _firebaseFirestore.collection(user.gender).snapshots()
     // .forEach((element) {
     //   element.docs.forEach((doc) {
     //    // updateUser(User.fromSnapshootOld(doc));
-    //    _firebaseFirestore.collection('users').doc(doc.id)
+    //    _firebaseFirestore.collection(user.gender).doc(doc.id)
     //    .update({'geohash': hash });
     //   });
     // });
-   // _firebaseFirestore.collection('users').where('location[0]', whereIn: [99,21] ).where('location[1]', whereIn: [20,12]);
+   // _firebaseFirestore.collection(user.gender).where('location[0]', whereIn: [99,21] ).where('location[1]', whereIn: [20,12]);
     try {
-  return _firebaseFirestore.collection('users').snapshots()
+  return _firebaseFirestore.collection(userId).snapshots()
   .map((snap) => snap.docs
   .map((doc) => User.fromSnapshoot(doc)).toList() );
 }on FirebaseException catch (e){
@@ -125,16 +127,16 @@ class DatabaseRepository extends BaseDatabaseRepository{
     
   }
 
-  Future<List<User>> getUsersWithLimit(String userId) async{
+  Future<List<User>> getUsersWithLimit(User _user) async{
     try {
-      final user = await _firebaseFirestore.collection('users').doc(userId).get()
+      final user = await _firebaseFirestore.collection(_user.gender).doc(_user.id).get()
       .then((doc) => User.fromSnapshoot(doc));
-      final preference = await _firebaseFirestore.collection('users').doc(userId).collection('userpreference').doc('preference').get().then((doc) => UserPreference.fromSnapshoot(doc));
+      final preference = await _firebaseFirestore.collection(user.gender).doc(_user.gender).collection('userpreference').doc('preference').get().then((doc) => UserPreference.fromSnapshoot(doc));
 
-      //final findWithLocation = await _firebaseFirestore.collection('users')
+      //final findWithLocation = await _firebaseFirestore.collection(user.gender)
 
 
-      return await _firebaseFirestore.collection('users')
+      return await _firebaseFirestore.collection(user.gender)
           .where('gender', isEqualTo: user.gender)
           .where('age', isLessThanOrEqualTo: preference.ageRange![1])
           .where('age', isGreaterThanOrEqualTo: preference.ageRange![0])
@@ -150,7 +152,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   Future<bool> userLike(User user, User matchUser) async {
     try {
 
-    var result = await _firebaseFirestore.collection('users')
+    var result = await _firebaseFirestore.collection(user.gender)
     .doc(user.id)
     .collection('likes')
     .doc(matchUser.id).get();
@@ -159,7 +161,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
 
     
    await _firebaseFirestore
-    .collection('users')
+    .collection(user.gender)
     .doc(user.id)
     .collection('likes')
     .doc(matchUser.id)
@@ -175,7 +177,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
 
       // Like(userId: user.id, name: user.name, age: user.age, imageUrls: user.imageUrls, timestamp: FieldValue.serverTimestamp()).toMap()
       // {
-      //   'likedby' : _firebaseFirestore.collection('users').doc(userId),
+      //   'likedby' : _firebaseFirestore.collection(user.gender).doc(userId),
       //   'timestamp' : FieldValue.serverTimestamp(),   
       // }
      // (await getUserbyId(userId)).toMap()
@@ -183,7 +185,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
 
     //var res = result;
     await _firebaseFirestore
-        .collection('users')
+        .collection(user.gender)
         .doc(user.id)
         .collection('viewedProfiles')
         .doc(matchUser.id)
@@ -195,7 +197,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
 
     if(result.exists){
       await _firebaseFirestore
-      .collection('users')
+      .collection(user.gender)
       .doc(user.id)
       .collection('matches')
       .doc(matchUser.id)
@@ -213,7 +215,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
        // UserMatch(userId: userId, matchedUser: likedUser, chat:'notOpened').toMap());
 
       await _firebaseFirestore
-      .collection('users')
+      .collection(user.gender)
       .doc(matchUser.id)
       .collection('matches')
       .doc(user.id)
@@ -232,7 +234,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
       
 
       await _firebaseFirestore
-        .collection('users')
+        .collection(user.gender)
         .doc(user.id)
         .collection('likes')
         .doc(matchUser.id)
@@ -254,26 +256,26 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Future<void> userPassed(String userId, User passedUser) async {
+  Future<void> userPassed(User user, User passedUser) async {
     try {
     
-   // await _firebaseFirestore.collection('users').doc(userId).collection('passed').doc(passedUser.id).set(passedUser.toMap());
+   // await _firebaseFirestore.collection(user.gender).doc(userId).collection('passed').doc(passedUser.id).set(passedUser.toMap());
 
     await _firebaseFirestore
-        .collection('users')
-        .doc(userId)
+        .collection(user.gender)
+        .doc(user.id)
         .collection('viewedProfiles')
         .doc(passedUser.id)
         .set({'liked' : false});
-    final result = await _firebaseFirestore.collection('users')
-        .doc(userId)
+    final result = await _firebaseFirestore.collection(user.gender)
+        .doc(user.id)
         .collection('likes')
         .doc(passedUser.id)
         .get();
 
     if(result.exists){
-      await _firebaseFirestore.collection('users')
-            .doc(userId)
+      await _firebaseFirestore.collection(user.gender)
+            .doc(user.id)
             .collection('likes')
             .doc(passedUser.id)
             .delete();
@@ -290,9 +292,9 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Stream<List<UserMatch>> getMatches(String userId)  {
+  Stream<List<UserMatch>> getMatches(String userId, Gender users)  {
     try {
-  return _firebaseFirestore.collection('users')
+  return _firebaseFirestore.collection(users.name)
   .doc(userId)
   .collection('matches')
   .orderBy('timestamp', descending: true)
@@ -313,9 +315,9 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Stream<List<Like>> getLikedMeUsers(String userId) {
+  Stream<List<Like>> getLikedMeUsers(String userId, Gender users) {
    try {
-  return _firebaseFirestore.collection('users')
+  return _firebaseFirestore.collection(users.name)
    .doc(userId)
    .collection('likes')
    .snapshots()
@@ -333,10 +335,10 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Future<void> deleteLikedMeUser(String userId, String likedMeUserId) async {
+  Future<void> deleteLikedMeUser(String userId, Gender users, String likedMeUserId) async {
     try {
   await _firebaseFirestore
-  .collection('users')
+  .collection(users.name)
   .doc(userId)
   .collection('likes')
   .doc(likedMeUserId)
@@ -352,16 +354,16 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Future<void> likeLikedMeUser(String userId, User likedMeUser) async {
+  Future<void> likeLikedMeUser(String userId,Gender users, User likedMeUser) async {
     try {
       await _firebaseFirestore
-    .collection('users')
+    .collection(users.name)
     .doc(userId)
     .collection('matches')
     .doc(likedMeUser.id)
     .set(likedMeUser.toMap());
 
-    await _firebaseFirestore.collection('users')
+    await _firebaseFirestore.collection(users.name)
     .doc(userId)
     .collection('likes')
     .doc(likedMeUser.id)
@@ -377,9 +379,9 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Future<void> openChat(Message message) async {
+  Future<void> openChat(Message message, Gender users) async {
     try {
-      await _firebaseFirestore.collection('users')
+      await _firebaseFirestore.collection(users.name)
       .doc(message.senderId)
       .collection('matches')
       .doc(message.receiverId)
@@ -392,7 +394,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
       
       ;
 
-      await _firebaseFirestore.collection('users')
+      await _firebaseFirestore.collection(users.name)
       .doc(message.senderId)
       .collection('matches')
       .doc(message.receiverId)
@@ -401,13 +403,13 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .set({'timestamp': FieldValue.serverTimestamp()});
       
       //for the other user
-      await _firebaseFirestore.collection('users')
+      await _firebaseFirestore.collection(users == Gender.men ? Gender.women.name : Gender.men.name)
       .doc(message.receiverId)
       .collection('matches')
       .doc(message.senderId)
       .update({'chatOpened': true});
 
-      await _firebaseFirestore.collection('users')
+      await _firebaseFirestore.collection(users == Gender.men ? Gender.women.name : Gender.men.name)
       .doc(message.receiverId)
       .collection('matches')
       .doc(message.senderId)
@@ -415,10 +417,10 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .doc('chat')
       .set({'timestamp': FieldValue.serverTimestamp()});
       //.set({'timestamp': message.timestamp})
-      await sendMessage(message);
+      await sendMessage(message,users);
 
       //adding messages collection
-      // await _firebaseFirestore.collection('users')
+      // await _firebaseFirestore.collection(user.gender)
       // .doc(userId)
       // .collection('matches')
       // .doc(matchedUserId)
@@ -439,10 +441,18 @@ class DatabaseRepository extends BaseDatabaseRepository{
   Future<User> getUserbyId(String userId) async {
     try {
   return await _firebaseFirestore
-      .collection('users')
+      .collection('men')
       .doc(userId)
       .get()
-      .then((doc) => User.fromSnapshoot(doc));
+      .then((doc) async { 
+        if(doc.exists){
+          return User.fromSnapshoot(doc);
+        }
+        return await _firebaseFirestore.collection('women').doc(userId).get().then((value) => User.fromSnapshoot(value));
+
+        }
+        );
+
 }on FirebaseException catch (e){
   throw Exception(e.message);
 }
@@ -454,13 +464,20 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Future<bool> isUserAlreadyRegistered(String userId) async {
+  Future<Gender> isUserAlreadyRegistered(String userId) async {
    try {
   return await _firebaseFirestore
-   .collection('users')
+   .collection('women')
    .doc(userId)
    .get()
-   .then((user) => user.exists);
+   .then((user)async {
+     if(user.exists){
+      return Gender.women;
+     }
+     return await  _firebaseFirestore.collection('men').doc(userId).get().then((value) => value.exists? Gender.men : Gender.nonExist);
+
+
+     });
 
 }on FirebaseException catch (e){
   throw Exception(e.message);
@@ -474,9 +491,9 @@ class DatabaseRepository extends BaseDatabaseRepository{
 //************************ Messages repository *******************************
 
   @override
-  Stream<List<Message>> getChats(String userId, String matchedUserId){
+  Stream<List<Message>> getChats(String userId, Gender users, String matchedUserId){
     try {
-  return _firebaseFirestore.collection('users')
+  return _firebaseFirestore.collection(users.name)
     .doc(userId)
     .collection('matches')
     .doc(matchedUserId)
@@ -500,10 +517,10 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
 
   @override
-  Stream<List<Message>> getLastMessage(String userId, String matchedUserId)  {
+  Stream<List<Message>> getLastMessage(String userId, Gender users, String matchedUserId)  {
     try {
   var result =   _firebaseFirestore
-  .collection('users')
+  .collection(users.name)
   .doc(userId)
   .collection('matches')
     .doc(matchedUserId)
@@ -539,9 +556,9 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Future<void> sendMessage(Message message) async{
+  Future<void> sendMessage(Message message, Gender users) async{
     try {
-  await _firebaseFirestore.collection('users')
+  await _firebaseFirestore.collection(users.name)
       .doc(message.senderId)
       .collection('matches')
       .doc(message.receiverId)
@@ -550,7 +567,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .collection('messages')
       .add(message.toMap());
   
-  await _firebaseFirestore.collection('users')
+  await _firebaseFirestore.collection(users == Gender.men ? Gender.women.name : Gender.men.name)
       .doc(message.receiverId)
       .collection('matches')
       .doc(message.senderId)
@@ -559,20 +576,20 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .collection('messages')
       .add(message.toMap());
  
- await _firebaseFirestore.collection('users')
-      .doc(message.senderId)
-      .collection('matches')
-      .doc(message.receiverId)
-      .update({
-        'timestamp': FieldValue.serverTimestamp()
-      });
- await _firebaseFirestore.collection('users')
-      .doc(message.receiverId)
-      .collection('matches')
-      .doc(message.senderId)
-      .update({
-        'timestamp': FieldValue.serverTimestamp()
-      });
+//  await _firebaseFirestore.collection(user.gender)
+//       .doc(message.senderId)
+//       .collection('matches')
+//       .doc(message.receiverId)
+//       .update({
+//         'timestamp': FieldValue.serverTimestamp()
+//       });
+//  await _firebaseFirestore.collection(user.gender)
+//       .doc(message.receiverId)
+//       .collection('matches')
+//       .doc(message.senderId)
+//       .update({
+//         'timestamp': FieldValue.serverTimestamp()
+//       });
       
       
 
@@ -589,10 +606,10 @@ class DatabaseRepository extends BaseDatabaseRepository{
   //**************** UserPreference Repository ****************** */
 
   @override
-  Stream<UserPreference> getUserPreference(String userId) {
+  Stream<UserPreference> getUserPreference(String userId, Gender users) {
     try {
   return  _firebaseFirestore
-      .collection('users')
+      .collection(users.name)
       .doc(userId)
       .collection('userpreference')
       .doc('preference')
@@ -608,9 +625,9 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Future<void> updateUserPreference(UserPreference userPreference) async{
+  Future<void> updateUserPreference(UserPreference userPreference, Gender users) async{
     try {
-  await _firebaseFirestore.collection('users')
+  await _firebaseFirestore.collection(users.name)
     .doc(userPreference.userId)
     .collection('userpreference')
     .doc('preference')
@@ -625,32 +642,35 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Future<List<User>> getUsersBasedonPreference(String userId)async {
+  Future<List<User>> getUsersBasedonPreference(String userId, Gender users)async {
    
     // final permission = await Geolocator.requestPermission();
     // Position myLocation = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     // geohash.MyGeoHash myGeoHash = geohash.MyGeoHash();
     // String hash = myGeoHash.geoHashForLocation(geohash.GeoPoint(myLocation.latitude, myLocation.longitude));
-    // _firebaseFirestore.collection('users').snapshots()
+    // _firebaseFirestore.collection(user.gender).snapshots()
     // .forEach((element) {
     //   element.docs.forEach((doc) {
     //    // updateUser(User.fromSnapshootOld(doc));
-    //    _firebaseFirestore.collection('users').doc(doc.id)
+    //    _firebaseFirestore.collection(user.gender).doc(doc.id)
     //    .update({'geohash': hash });
     //   });
     // });
 
     try {
-  final preference = await _firebaseFirestore.collection('users')
+  final preference = await _firebaseFirestore.collection(users.name)
   .doc(userId).collection('userpreference').doc('preference')
   .get().then((snap) => UserPreference.fromSnapshoot(snap));
+  final prefes = await SharedPreferences.getInstance();
   //.snapshots().map((snap) => UserPreference.fromSnapshoot(snap));
-  //Position myLocation = await Geolocator.getCurrentPosition();
-  final myLocation = await _firebaseFirestore.collection('users').doc(userId).get().then((value) => value.data()!['location']);
+  Position myLocation = await Geolocator.getCurrentPosition(desiredAccuracy:  LocationAccuracy.low);
+  prefes.setDouble('latitude', myLocation.latitude);
+  prefes.setDouble('longitude', myLocation.longitude);
+  //final myLocation = await _firebaseFirestore.collection(user.gender).doc(userId).get().then((value) => value.data()!['location']);
   geohash.MyGeoHash myGeoHash = geohash.MyGeoHash();
   String hash = myGeoHash.geoHashForLocation(geohash.GeoPoint(myLocation.latitude, myLocation.longitude));
   
-  // _firebaseFirestore.collection('users').get().then(
+  // _firebaseFirestore.collection(user.gender).get().then(
   //   (value) => value.docs.(doc) => doc)
   
   
@@ -660,13 +680,10 @@ class DatabaseRepository extends BaseDatabaseRepository{
   List<Future> futures = [];
   
   for(List<String> b in bounds){
-    var q = _firebaseFirestore.collection('users')
-              // .where('age', isGreaterThanOrEqualTo: 12)  
-              // .orderBy('age') 
+    var q = _firebaseFirestore.collection(users.name)
               .orderBy('geohash')
               .startAt([b[0]])
-              .endAt([b[1]])
-              ;
+              .endAt([b[1]]);
   
     futures.add(q.get());
   }
@@ -682,7 +699,16 @@ class DatabaseRepository extends BaseDatabaseRepository{
         
       
       for(var  doc in snap.docs){
-        matchingUsers.add(User.fromSnapshoot(doc));
+        var userLoc = geohash.GeoPoint(doc['location'].latitude, doc['location'].longitude);
+        
+        final distanceInKM = myGeoHash.distanceBetween(center, userLoc );
+        final distanceInM = distanceInKM * 1000;
+        if(distanceInM <= radiusInM){
+          matchingUsers.add(User.fromSnapshoot(doc));
+
+        }
+
+        
       }
       }
     }
@@ -718,27 +744,27 @@ class DatabaseRepository extends BaseDatabaseRepository{
     }
   }
   
-  @override
-Stream<List<User>> getNearByUsers(String userId, LocationData locationData)  {
-    final Geoflutterfire geo = Geoflutterfire();
+//   @override
+// Stream<List<User>> getNearByUsers(String userId, Position locationData)  {
+//     final Geoflutterfire geo = Geoflutterfire();
     
 
 
-    final center = geo.point(latitude: locationData.latitude!, longitude: locationData.longitude!);
+//     final center = geo.point(latitude: locationData.latitude!, longitude: locationData.longitude!);
 
-    final collectionReference = _firebaseFirestore.collection('users');
+//     final collectionReference = _firebaseFirestore.collection(user.gender);
 
-   return geo.collection(collectionRef: collectionReference)
-                .within(center: center, radius: 5, field: 'location')
-                .map((snap) => snap.map(
-                  (doc) => User.fromSnapshoot(doc)
-                  ).toList());
-  }
+//    return geo.collection(collectionRef: collectionReference)
+//                 .within(center: center, radius: 5, field: 'location')
+//                 .map((snap) => snap.map(
+//                   (doc) => User.fromSnapshoot(doc)
+//                   ).toList());
+//   }
   
   @override
-  Future<List<User>> getUsersBasedonLOmiLogic(String userId) {
+  Future<List<User>> getUsersBasedonLOmiLogic(String userId, Gender users) {
     
-    final preference = _firebaseFirestore.collection('users').doc(userId);
+    final preference = _firebaseFirestore.collection(users.name).doc(userId);
     // TODO: implement getUsersBasedonLOmiLogic
     throw UnimplementedError();
   }
@@ -746,40 +772,71 @@ Stream<List<User>> getNearByUsers(String userId, LocationData locationData)  {
   @override
   Future<List<User>> getUsersMainLogic(User user, UserPreference preference) async {
     // TODO: implement getUsersMainLogic
-    List<String> viewedProfiles = await _firebaseFirestore.collection('users')
+    List<int> randomsForQueens = [];
+    List<int> randomsForPrincess = [];
+    List<String> viewedProfiles = await _firebaseFirestore.collection(user.gender)
     .doc(user.id).collection('viewedProfiles')
     .get().then((snap) => snap.docs.map((e) => e.id,).toList() );
 
-    List<User> queensOrkings = await _firebaseFirestore
-        .collection(user.gender == 'female'? 'queens' : 'kings')
-        // .orderBy('number')
-        // .startAfter(['values'])
-        // .limit(5)
-        .get()
-        .then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
+    //get queens or kings based on gender
+    for(int i=1; i<=10; i++){
+      randomsForQueens.add(Random().nextInt(10));
+    }
+
+    List<User> queensOrKings = await _firebaseFirestore
+        .collection(user.gender == 'women'? 'queens' : 'kings')
+        .where(user.gender == 'women'? 'queenNumber' : 'kingNumber', whereIn: randomsForQueens)
+        .get().then(
+          (snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
+    
+    queensOrKings.removeWhere((user) => viewedProfiles.contains(user.id));
+    // List<User> queensOrkings = await _firebaseFirestore
+    //     .collection(user.gender == 'female'? 'queens' : 'kings')
+    //     // .orderBy('number')
+    //     // .startAfter(['values'])
+    //     // .limit(5)
+    //     .get()
+    //     .then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
     
     //List<String> queensNotViewed = queens.toSet().difference(viewedProfiles.toSet()).toList();
-    queensOrkings.removeWhere((user) => viewedProfiles.contains(user.id));
+    //queensOrkings.removeWhere((user) => viewedProfiles.contains(user.id));
 
-    List<User> temp=[];
-    for(int i=0; i<5; i++){
-      int random = Random().nextInt(queensOrkings.length);
-      temp.add(queensOrkings[random]);
-    }
-    queensOrkings = temp;
+    // List<User> temp=[];
+    // for(int i=0; i<5; i++){
+    //   int random = Random().nextInt(queensOrkings.length);
+    //   temp.add(queensOrkings[random]);
+    // }
+    // queensOrkings = temp;
   //  if(user.gender == 'women'){
-    List<User> princessOrgents = await _firebaseFirestore.collection('users')
-      .where('gender', isEqualTo: user.gender )
-      .where('verified', isEqualTo: user.gender == 'female'? 'princess' : 'gentlemens')
-      .orderBy('createdAt')
-      .limit(4)
-      .get()
-      .then(
-        (querySnap) => querySnap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
+
+
+    //get princess or gents 
+
+    for(int i=1; i<=10; i++){
+      randomsForPrincess.add(Random().nextInt(10));
+    }
+
+    List<User> princessOrgents = await _firebaseFirestore
+        .collection(user.gender == 'women'? 'mens' : 'womens')
+        .where('verified', isEqualTo: user.gender == 'women'? 'princess' : 'gents')
+        .where(user.gender == 'women'? 'princessNumber' : 'gentsNumber', whereIn: randomsForPrincess)
+        .get().then(
+          (snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
+    
+    princessOrgents.removeWhere((user) => viewedProfiles.contains(user.id));
+
+    // List<User> princessOrgents = await _firebaseFirestore.collection(user.gender)
+    //   .where('gender', isEqualTo: user.gender )
+    //   .where('verified', isEqualTo: user.gender == 'female'? 'princess' : 'gentlemens')
+    //   .orderBy('createdAt')
+    //   .limit(4)
+    //   .get()
+    //   .then(
+    //     (querySnap) => querySnap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
    // }
 
    // if(user.gender == 'man'){
-    // List<User> princess = await _firebaseFirestore.collection('users')
+    // List<User> princess = await _firebaseFirestore.collection(user.gender)
     //   .where('gender', isEqualTo: 'women')
     //   .where('verified', isEqualTo: 'gentlemen')
     //   .orderBy('createdAt')
@@ -789,14 +846,14 @@ Stream<List<User>> getNearByUsers(String userId, LocationData locationData)  {
     //     (querySnap) => querySnap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
     // princess.remov
     //}
-    final noOfUsers = await _firebaseFirestore.collection('users').count().get().then((value) => value.count, onError: (e)=>print('error counting'));
+    final noOfUsers = await _firebaseFirestore.collection(user.gender).count().get().then((value) => value.count, onError: (e)=>print('error counting'));
     List<int> randoms = [];
     for(int i=0; i< 10; i++){
-      randoms.add(Random().nextInt(100)); 
+      randoms.add(Random().nextInt(noOfUsers)); 
     }
 
     List<User> filler = await _firebaseFirestore
-      .collection('users')
+      .collection(user.gender)
       .where('gender', isEqualTo: user.gender)
       .where('number', whereIn: randoms)
       .get().then(
@@ -805,7 +862,7 @@ Stream<List<User>> getNearByUsers(String userId, LocationData locationData)  {
       );
 
     // List<User> filler = await _firebaseFirestore
-    //   .collection('users')
+    //   .collection(user.gender)
     //   .where('gender', isEqualTo: user.gender)
     //   .where('score', isGreaterThanOrEqualTo: 1)
     //   .limit(5)
@@ -815,9 +872,9 @@ Stream<List<User>> getNearByUsers(String userId, LocationData locationData)  {
     //     querySnap.docs.map((doc) => 
     //     User.fromSnapshoot(doc)).toList()
     //     );
+    List<User> result = [...queensOrKings, ...princessOrgents,...filler];
 
-
-     return filler;
+     return result;
   }
   
 
@@ -834,17 +891,26 @@ List<String> searchName(String name){
 
 Future<void> createDemoUsers(List<User> users) async{
   users.forEach((user) async { 
-    await _firebaseFirestore.collection('users').doc().set(user.toMap());
+    await _firebaseFirestore.collection(user.gender).doc().set(user.toMap());
   });
 }
 
-  void completeOnboarding({required Placemark placeMark, required User user, required bool isMocked}) {
-    if(isMocked){
-      _firebaseFirestore.collection('users')
-      .doc(user.id)
-      .delete();
-    }else{
-      _firebaseFirestore.collection('users')
+  Future<bool> completeOnboarding({required Placemark placeMark, required User user, required bool isMocked})async {
+    try {
+      
+    // if(isMocked){
+    //  await _firebaseFirestore.collection(user.gender)
+    //   .doc(user.id)
+    //   .delete();
+    //   return false;
+    // }else{
+      //creates the user
+
+      await _firebaseFirestore.collection(user.gender)
+          .doc(user.id)
+          .set(user.toMap());
+
+      await _firebaseFirestore.collection(user.gender)
       .doc(user.id)
       .collection('payment')
       .doc('subscription')
@@ -857,21 +923,36 @@ Future<void> createDemoUsers(List<User> users) async{
           paymentType: '', 
           paymentDetails: {}).toMap()
       );
+      //add default user preference
+      await _firebaseFirestore.collection(user.gender)
+      .doc(user.id)
+      .collection('userpreference')
+      .doc('preference')
+      .set(UserPreference(userId: user.id).toMap());
+
       //mark  iscompleted to true in the user doc
-      _firebaseFirestore.collection('users')
+     await _firebaseFirestore.collection(user.gender)
       .doc(user.id)
       .update({
         'isCompleted': true
       });
 
+      return true;
+
+    //}
+
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 
-  Future<Payment> getUserPayment({required userId}) async {
+  Future<Payment> getUserPayment({required userId, required Gender users}) async {
     try {
       
-    return await _firebaseFirestore.collection('users')
+    return await _firebaseFirestore.collection(users.name)
             .doc(userId)
+            .collection('payment')
+            .doc('subscription')
             .get()
             .then((snap) => Payment.fromSnapshoot(snap));
 
@@ -880,8 +961,8 @@ Future<void> createDemoUsers(List<User> users) async{
     }
   }
 
-  void updatePayment({required String userId, required Map purchaseData, required paymentType}) async {
-    await _firebaseFirestore.collection('users')
+  void updatePayment({required String userId, required Gender users, required Map purchaseData, required paymentType}) async {
+    await _firebaseFirestore.collection(users.name)
           .doc(userId)
           .collection('payment')
           .doc('subscription')
@@ -892,10 +973,10 @@ Future<void> createDemoUsers(List<User> users) async{
           });
   }
 
-  Future<List<Message>> getMoreChats({required String userId, required String matchedUserId, required Timestamp startAfter}) async {
+  Future<List<Message>> getMoreChats({required String userId, required Gender users, required String matchedUserId, required Timestamp startAfter}) async {
      
     try{
-    return await _firebaseFirestore.collection('users')
+    return await _firebaseFirestore.collection(users.name)
       .doc(userId)
       .collection('matches')
       .doc(matchedUserId)
@@ -915,6 +996,14 @@ Future<void> createDemoUsers(List<User> users) async{
         throw Exception(e);
     }
     
+
+  }
+
+  Future<bool> isCompleted(Gender gender, String uid)async {
+    return await _firebaseFirestore.collection(gender.name)
+      .doc(uid)
+      .get()
+      .then((value) => value['isCompleted']);
 
   }
 

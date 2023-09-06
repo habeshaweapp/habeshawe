@@ -44,7 +44,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {}
 
   FutureOr<void> _purchaseUpdated(PurchaseUpdated event, Emitter<PaymentState> emit) async {
-    final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid);
+    final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid, users: _authBloc.state.accountType!);
     if(payment.countryCode != 'ET' && payment.country != 'Ethiopia'){
 
     
@@ -69,7 +69,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
               _paymentRepository.completePurchase(purchase);
               emit(Subscribed(subscribtionType: purchase.productID));
             
-            _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, purchaseData: purchaseData, paymentType: purchase.productID);
+            _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid,users: _authBloc.state.accountType!, purchaseData: purchaseData, paymentType: purchase.productID);
             }
           }
         }

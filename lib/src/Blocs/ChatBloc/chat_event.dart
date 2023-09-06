@@ -9,13 +9,14 @@ abstract class ChatEvent extends Equatable {
 
 class LoadChats extends ChatEvent{
   final String userId;
+  final Gender users;
   final String matchedUserId;
 
-  LoadChats({required this.userId, required this.matchedUserId});
+  LoadChats({required this.userId, required this.users, required this.matchedUserId});
 
   @override
   // TODO: implement props
-  List<Object> get props => [userId, matchedUserId];
+  List<Object> get props => [userId, matchedUserId, users];
 }
 
 class UpdateChats extends ChatEvent{
@@ -30,21 +31,23 @@ class UpdateChats extends ChatEvent{
 
 class SendMessage extends ChatEvent{
   Message message;
+  Gender users;
 
-  SendMessage({required this.message});
+  SendMessage({required this.message, required this.users});
 
   @override
   // TODO: implement props
-  List<Object> get props => [message];
+  List<Object> get props => [message, users];
 }
 
 class LoadMoreChats extends ChatEvent{
   String userId;
   String matchedUserId;
   Timestamp startAfter;
+  Gender users;
 
-  LoadMoreChats({required this.userId,required this.matchedUserId ,required this.startAfter});
+  LoadMoreChats({required this.userId,required this.matchedUserId ,required this.startAfter, required this.users});
 
   @override
-  List<Object> get props => [startAfter];
+  List<Object> get props => [startAfter, userId, matchedUserId,startAfter,users];
 }

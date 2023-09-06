@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
 import '../../Data/Models/likes_model.dart';
@@ -31,8 +32,8 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
    // on<UpdateLikes>(_onUpdateLikes);
 
     _authSubscription = _authBloc.stream.listen((state) { 
-      if(state.user != null){
-        add(LoadMatchs(userId: state.user!.uid));       
+      if(state.user != null && state.accountType != Gender.nonExist){
+        add(LoadMatchs(userId: state.user!.uid, users: state.accountType!));       
       }
     });
   }
@@ -40,7 +41,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   void _onLoadMatchs(LoadMatchs event, Emitter<MatchState> emit) {
     try{
 
-    _databaseRepository.getMatches(event.userId).listen((matches) {
+    _databaseRepository.getMatches(event.userId, event.users).listen((matches) {
 
       // _databaseRepository.getLikedMeUsers(event.userId).listen((likes) {
         
@@ -90,7 +91,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
   void _onOpenChat(OpenChat event, Emitter<MatchState> emit) async{
     try {
-      _databaseRepository.openChat(event.message);
+      _databaseRepository.openChat(event.message, event.users);
       
     }on Exception catch (e) {
       print(e.toString());

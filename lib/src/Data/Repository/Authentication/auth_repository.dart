@@ -107,9 +107,9 @@ class AuthRepository extends BaseAuthRepository{
     final twitterLogin = TwitterLogin(
       apiKey: 'rLdjOZdpiItrFkbdOhdb0LDHE', 
       apiSecretKey: 'C0U6w9QXhp8EyC35d9VR5je8GndEVPezv0m4uBKo0x1QZLNOif', 
-      redirectURI: 'lomiapp://');
+      redirectURI: 'habeshawe://');
 
-    final twitterAuth = await twitterLogin.login();
+    final twitterAuth = await twitterLogin.loginV2();
 
     final twitterAuthCredential = TwitterAuthProvider.credential(
       accessToken: twitterAuth.authToken!, 

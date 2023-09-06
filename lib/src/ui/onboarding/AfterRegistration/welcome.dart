@@ -43,7 +43,7 @@ class WelcomeScreen extends StatelessWidget {
                           child:  Icon(LineIcons.lemonAlt, size: 63, color: Color.fromARGB(255, 8, 141, 13),)),
                           const SizedBox(height: 10,),
                           Center(
-                            child: Text("Welcome to Lomi.",
+                            child: Text("Welcome to HabeshaWe.",
                                 style: Theme.of(context).textTheme.headlineSmall!.copyWith(fontWeight: FontWeight.normal),
                           
                             ),

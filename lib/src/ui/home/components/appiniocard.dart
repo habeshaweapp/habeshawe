@@ -66,6 +66,7 @@ class AppinioCard extends StatelessWidget {
                 cardsCount: state.users.length,
             
                 cardsBuilder: (context, index){
+                  print(index);
                   return UserCard().userDrag(MediaQuery.of(context).size, state.users[index], context);
                 }, 
                 

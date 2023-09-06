@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:location/location.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Models/user_model.dart';
 import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
@@ -18,7 +19,7 @@ import '../AuthenticationBloc/bloc/auth_bloc.dart';
 part 'swipebloc_event.dart';
 part 'swipebloc_state.dart';
 
-class SwipeBloc extends Bloc<SwipeEvent, SwipeState>  {
+class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin  {
   final DatabaseRepository _databaseRepository;
   final AuthBloc _authBloc;
   StreamSubscription? _authSubscription;
@@ -38,9 +39,8 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState>  {
     on<UpdateHome>(_onUpdateHome);
 
     _authSubscription = _authBloc.stream.listen((state) {
-      if(state.user != null){
-      add(LoadUsers(userId: state.user!.uid));
-
+      if(state.user != null && state.accountType != Gender.nonExist){
+      //add(LoadUsers(userId: state.user!.uid));
       }
      });
 
@@ -61,19 +61,27 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState>  {
 
     // LocationData _locationData = await location.getLocation();
    // final users = explore_json;
-   try {
-    _databaseRepository.getUsers(event.userId , 'Male').listen((users) {
-      add(UpdateHome(users: users));
-    },);
-   //emit(SwipeLoaded(users: event.users));
-  //  
-  //   //final users = await _databaseRepository.getUsersBasedonPreference(event.userId);
-  //   _databaseRepository.getNearByUsers(event.userId,_locationData).listen((users) {
-      
+
+
+
+    try {
+  //  emit(SwipeLoading());
+  //   _databaseRepository.getUsers(event.userId , 'Male').listen((users) {
   //     add(UpdateHome(users: users));
-  //   });
+  //   },);
+
+
+
+   //emit(SwipeLoaded(users: event.users));
+   //  
+  
+final users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users);
+    //_databaseRepository.getNearByUsers(event.userId,_locationData).listen((users) {
+      
+      add(UpdateHome(users: users));
+   // });
     
-   //add(UpdateHome(users: users));
+  // add(UpdateHome(users: users));
      
    }on Exception catch (e) {
     print(e.toString());
@@ -96,7 +104,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState>  {
     try {
   if(state is SwipeLoaded){
     final state = this.state as SwipeLoaded;
-    List<User> users = List.from(state.users)..remove(event.user);
+    List<User> users = List.from(state.users)..remove(event.passedUser);
   
     if (users.isNotEmpty){
       emit(SwipeLoaded(users: users));
@@ -104,7 +112,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState>  {
       emit(SwipeError());
     }
   
-    await _databaseRepository.userPassed(event.user.id, event.passedUser);
+    await _databaseRepository.userPassed(event.user, event.passedUser);
   
   }
 } on Exception catch (e) {
@@ -134,16 +142,16 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState>  {
     }
   
    final result = await _databaseRepository.userLike(event.user, event.matchUser);
-   if(result){
-    emit(ItsaMatch(user: event.user));
-    List<User> users = List.from(state.users)..remove(event.user);
+  //  if(result){
+  //   emit(ItsaMatch(user: event.user));
+  //  // List<User> users = List.from(state.users)..remove(event.user);
   
-   if (users.isNotEmpty){
-      emit(SwipeLoaded(users: users));
-    }else{
-      emit(SwipeError());
-    }
-   }
+  //  if (users.isNotEmpty){
+  //    // emit(SwipeLoaded(users: users));
+  //   }else{
+  //     emit(SwipeError());
+  //   }
+  //  }
   
   }
 } on Exception catch (e) {
@@ -166,25 +174,32 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState>  {
     super.close();
   }
   
-  // @override
-  // SwipeState? fromJson(Map<String, dynamic> json) {
-  //   // TODO: implement fromJson
-  //   if(json.isEmpty){
-  //     return null;
-  //   }else{
-  //     return SwipeLoaded.fromJson(json['users']);
-  //   }
-  // }
+  @override
+  SwipeState? fromJson(Map<String, dynamic> json) {
+    // TODO: implement fromJson
+    if(json.isEmpty){
+      return null;
+    }else{
+      var u = json['ere'] ;
+      var users = json['users'] ;
+      
+      return SwipeLoaded.fromJson(users);
+    }
+  }
   
-  // @override
-  // Map<String, dynamic>? toJson(SwipeState state) {
-  //   // TODO: implement toJson
-  //   if(state is SwipeLoaded){
-  //     return {'users': state.toJson()};
-  //   }else{
-  //     return null;
-  //   }
-  // }
+  @override
+  Map<String, dynamic>? toJson(SwipeState state) {
+    // TODO: implement toJson
+    if(state is SwipeLoaded){
+      return {
+        'users' : state.toJson(),
+        'ere': 'gude',
+        'mnew': 'mnewww'
+      };
+    }else{
+      return null;
+    }
+  }
 
   
 }

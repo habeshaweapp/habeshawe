@@ -9,7 +9,8 @@ part of 'like_bloc.dart';
 
 class LoadLikes extends LikeEvent{
   final String userId;
-  const LoadLikes({required this.userId});
+  final Gender users;
+  const LoadLikes({required this.userId, required this.users});
 
   @override
   // TODO: implement props
@@ -18,8 +19,9 @@ class LoadLikes extends LikeEvent{
 
 class DeleteLikedMeUser extends LikeEvent{
   final String userId;
+  final Gender users;
   final String likedMeUserId;
-  const DeleteLikedMeUser({required this.userId, required this.likedMeUserId});
+  const DeleteLikedMeUser({required this.userId, required this.users, required this.likedMeUserId});
 
   @override
   // TODO: implement props
@@ -28,9 +30,10 @@ class DeleteLikedMeUser extends LikeEvent{
 
 class LikeLikedMeUser extends LikeEvent{
   final String userId;
+  final Gender users;
   final User likedMeUser;
 
- const LikeLikedMeUser({required this.userId, required this.likedMeUser});
+ const LikeLikedMeUser({required this.userId,required this.users, required this.likedMeUser});
  @override
   // TODO: implement props
   List<Object> get props => [userId, likedMeUser];

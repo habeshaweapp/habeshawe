@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:lomi/src/Blocs/ContinueWith/continuewith_cubit.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
 import '../../Data/Models/userpreference_model.dart';
@@ -28,8 +29,8 @@ class UserpreferenceBloc extends Bloc<UserpreferenceEvent, UserpreferenceState> 
 
 
     _authSubscription = _authBloc.stream.listen((state) { 
-      if(state.user!.uid != null){
-      add(LoadUserPreference(userId: state.user!.uid));
+      if(state.user != null && state.accountType != Gender.nonExist){
+      add(LoadUserPreference(userId: state.user!.uid, users: state.accountType!));
     
       }
     });
@@ -37,7 +38,7 @@ class UserpreferenceBloc extends Bloc<UserpreferenceEvent, UserpreferenceState> 
 
   void _onLoadUserPreference(LoadUserPreference event, Emitter<UserpreferenceState> emit) {
      try {
-  _databaseRepository.getUserPreference(event.userId).listen((userPreference) {
+  _databaseRepository.getUserPreference(event.userId, event.users).listen((userPreference) {
        add(UpdateUserPreference(preference: userPreference));
    });
 } on Exception catch (e) {
@@ -52,7 +53,7 @@ class UserpreferenceBloc extends Bloc<UserpreferenceEvent, UserpreferenceState> 
 
   void _onEditUserPreference(EditUserPreference event, Emitter<UserpreferenceState> emit) async{
       try {
-  await _databaseRepository.updateUserPreference(event.preference);
+  await _databaseRepository.updateUserPreference(event.preference, event.users);
 } on Exception catch (e) {
   // TODO
   print(e.toString());

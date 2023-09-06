@@ -2,14 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/app_route_config.dart';
 
-class LookingFor extends StatelessWidget {
+class LookingFor extends StatefulWidget {
   const LookingFor({super.key});
 
+  @override
+  State<LookingFor> createState() => _LookingForState();
+}
+
+class _LookingForState extends State<LookingFor> {
+ int selectedIndex = -1;
   @override
   Widget build(BuildContext context) {
     List<String> lookignForOpt = [
@@ -20,7 +27,17 @@ class LookingFor extends StatelessWidget {
       'New friends',
       'Stil figuring it\n out',
     ];
-    //int selectedIndex = 0;
+
+    List<Icon> icons =[
+      Icon(FontAwesomeIcons.heart, color: Colors.red,),
+      Icon(FontAwesomeIcons.faceGrinHearts, color:Colors.amber),
+      Icon(FontAwesomeIcons.champagneGlasses, color: Colors.amber,),
+      Icon(FontAwesomeIcons.comment, color: Colors.blue,),
+      Icon(FontAwesomeIcons.hand, color: Colors.amber),
+      Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.teal)
+
+    ];
+    
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
@@ -30,157 +47,105 @@ class LookingFor extends StatelessWidget {
               return Center(child: CircularProgressIndicator(),);
             }
             if( state is OnboardingLoaded){
-              return Column(
-                children: [
-                const LinearProgressIndicator(
-                  value: 0.6       
-                ),
-              Container(
-               // width: MediaQuery.of(context).size.width,
-               // height: MediaQuery.of(context).size.height,
-                margin: EdgeInsets.symmetric(horizontal:8),
-        
+              return SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    
-                   const Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(LineIcons.times,size: 35,),
-                    ),
-        
-                    Container(
-                      width: 200,
-                      margin: EdgeInsets.only(left:35, top: 35),
-                      child: Text('Right now\nI\'m looking \nfor',
-                     // textAlign: TextAlign.start,
-                      style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
+                  const LinearProgressIndicator(
+                    value: 0.6       
+                  ),
+                Container(
+                 // width: MediaQuery.of(context).size.width,
+                 // height: MediaQuery.of(context).size.height,
+                  margin: EdgeInsets.symmetric(horizontal:8),
+                      
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      
+                     const Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(LineIcons.times,size: 35,),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 35, top:10),
-                      child: Text(
-                        'Increase compatibility by sharing yours!',
-                            style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w300),
+                      
+                      Container(
+                        width: 200,
+                        margin: EdgeInsets.only(left:35, top: 35),
+                        child: Text('Right now\nI\'m looking \nfor',
+                       // textAlign: TextAlign.start,
+                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 35, top:10),
+                        child: Text(
+                          'Increase compatibility by sharing yours!',
+                              style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w300),
+                              ),
+                      ),
+                      //Spacer(flex: 1,),
+                      SizedBox(height: size.height/5 ,),
+                      
+                      Container(
+                        height: size.width *0.63,
+                        child: GridView.count(
+                          physics: NeverScrollableScrollPhysics(),
+                          crossAxisCount: 3,
+                          mainAxisSpacing: 2,
+                          crossAxisSpacing: 5,
+                          children: List.generate(6, 
+                          (index) => LookingForItem(
+                            title: lookignForOpt[index], 
+                            icon: icons[index], 
+                            isSelected: selectedIndex == index, 
+                            onTap: (){
+                              setState(() {
+                                selectedIndex = index;
+                              });
+                              
+                      
+                            }
+                            )
+                          ),
+                      
+                        ),
+                      ),
+                      
+              
+              
+              
+              
+                      
+                      
+                      SizedBox(height: size.height*0.060,),
+                      //Spacer(flex: 1,),
+                      Center(
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width*0.70,
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: (){
+                              if(selectedIndex != -1 ){ 
+                                context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(lookingFor: lookignForOpt[selectedIndex].replaceAll('\n', '') )));
+                                GoRouter.of(context).pushNamed(MyAppRouteConstants.schoolRouteName);
+                              }
+                            },
+                            child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
+                            style: ElevatedButton.styleFrom(
+                              shape: StadiumBorder(),
                             ),
-                    ),
-                    //Spacer(flex: 1,),
-                    SizedBox(height: 110,),
-        
-                    
-        
-                    Row(
-                      children: List.generate(3, (index) => 
-                          InkWell(
-                            onTap: (){
-                              context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(lookingFor: lookignForOpt[index])));
-                             // selectedIndex = index;
-                            },
-                            child: Container(
-                                              width: size.width*0.32,
-                                              height: size.height*0.18,
-                                             // margin: EdgeInsets.all(10),
-                                              child: Card(
-                                                
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                ),
-                                                elevation: 2,
-                                                color: Colors.grey[200],
-                                                child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.heart_broken, color: Colors.red,),
-                              SizedBox(height: 10,),
-                              Text(lookignForOpt[index],
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              )
-                            ],
-                                                ),
-                                              ),
-                                            ),
-                          ),
-                      )
-                    ,),
-                    //SizedBox(height: 5,),
-        
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: List.generate(3, (index) => 
-                          InkWell(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                            onTap: (){
-                              
-                              //selectedIndex = index + 3;
-                              context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(lookingFor: lookignForOpt[index+3])));
-                              
-        
-                            },
-                            child: Container(
-                                              width: size.width*0.32,
-                                              height: size.height*0.18,
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(Radius.circular(10))
-                                              ),
-                                              //margin: EdgeInsets.all(10),
-                                              child: Card(
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.circular(10),
-                                                ),
-                                                elevation: 2,
-                                                color: Colors.grey[100],
-                                                child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(LineIcons.capsules, color: Colors.purple,),
-                             //s SizedBox(height: 10,),
-                              Text(
-                                lookignForOpt[3+index],
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                              )
-                            ],
-                                                ),
-                                              ),
-                                            ),
-                          ),
-                    )
-                  ,),
-        
-        
-                    
-        
-                    
-        
-        
-                    SizedBox(height: 100,),
-                    //Spacer(flex: 1,),
-                    Center(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width*0.70,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: (){
-                            //context.read<OnboardingBloc>().add(event)
-                            GoRouter.of(context).pushNamed(MyAppRouteConstants.schoolRouteName);
-                          }, 
-                          child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
-                          style: ElevatedButton.styleFrom(
-                            shape: StadiumBorder(),
-                          ),
-                          
-                          ),
+                            
+                            ),
+                        ),
                       ),
-                    ),
-                   // const SizedBox(height: 20,)
-                   
-        
-                  ],
+                      const SizedBox(height: 20,)
+                     
+                      
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          );
+                          ],
+                        ),
+              );
         }else{
           return Center(child: Text('something went wrong...'),);
         }
@@ -193,5 +158,50 @@ class LookingFor extends StatelessWidget {
       
       )
     );
+  }
+}
+
+class LookingForItem extends StatelessWidget {
+  final String title;
+  final Icon icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+  const LookingForItem ({super.key,required this.title, required this.icon, required this.isSelected,required this.onTap });
+
+  @override
+  Widget build(BuildContext context) {
+    var size = MediaQuery.of(context).size;
+    return InkWell(
+              onTap: onTap,
+              // (){
+              //  // context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(lookingFor: lookignForOpt[index])));
+              //                // selectedIndex = index;
+              //        },
+              child: Container(
+                       width: size.width*0.32,
+                        height: size.height*0.18,
+                                             // margin: EdgeInsets.all(10),
+                        child: Card(                    
+                            shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      ),
+                            elevation: 2,
+                            color: isSelected ? Colors.grey[400]: Colors.grey[200],
+                            child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              //Icon(Icons.heart_broken, color: Colors.red,),
+                              icon,
+                              SizedBox(height: 10,),
+                              Text(title,
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: size.width * 0.03),
+                              
+                              )
+                            ],
+                                                ),
+                                              ),
+                                            ),
+                          );
   }
 }

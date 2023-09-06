@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_geo_hash/geohash.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:lomi/src/Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/editProfile/editProfile.dart';
 import 'package:lomi/src/ui/settings/settings.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Blocs/ProfileBloc/profile_bloc.dart';
 import '../../Blocs/UserPreference/userpreference_bloc.dart';
@@ -83,8 +87,17 @@ class UserProfile extends StatelessWidget {
                       Align(
                         alignment: Alignment.bottomCenter,
                         child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: ()async {
                               //context.read<DatabaseRepository>().getUsersBasedonPreference(state.user.id);
+                              // var pin = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
+                              // print(pin);
+                              // final SharedPreferences prefes = await SharedPreferences.getInstance();
+                              // prefes.setDouble('latitude', pin.latitude);
+                              // prefes.setDouble('longitude', pin.longitude);
+                              // var hash = MyGeoHash().geoHashForLocation(GeoPoint(pin.latitude, pin.longitude));
+                              // print(hash); 
+                             // context.read<SharedpreferenceCubit>().getMyLocation();
+
                             },
                             style: ElevatedButton.styleFrom(
                                 // backgroundColor: Colors.green,

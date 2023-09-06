@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/ui/home/home.dart';
@@ -22,9 +23,10 @@ class Wrapper extends StatelessWidget{
         }
         if(state.status == AuthStatus.authenticated){
           //context.read<AuthRepository>().signOut();
-          if(state.newAccount!){
+          if(state.accountType == Gender.nonExist || !state.isCompleted!){
             return WelcomeScreen();
           }
+          
           return const Home();
         }else{
           return Container();

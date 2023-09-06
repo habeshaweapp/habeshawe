@@ -31,6 +31,7 @@ import 'package:lomi/theme/theme_constants.dart';
 
 import 'Blocs/PaymentBloc/payment_bloc.dart';
 import 'Blocs/PhoneAuthBloc/phone_auth_bloc.dart';
+import 'Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import 'ui/UserProfile/userprofile.dart';
 import 'ui/onboarding/AfterRegistration/addphotos.dart';
 import 'ui/onboarding/AfterRegistration/birthday.dart';
@@ -48,8 +49,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    var users = explore_json;
-    users = users.map((user) => UserModel.fromJson(user)).toList();
+    //var users = explore_json;
+    //users = users.map((user) => UserModel.fromJson(user)).toList();
 
     return MultiRepositoryProvider(
       providers: [
@@ -62,14 +63,15 @@ class MyApp extends StatelessWidget {
             BlocProvider(lazy: false, create: (context) => InternetBloc()),
             BlocProvider(lazy:false, create: (context) => AuthBloc(authRepository: context.read<AuthRepository>())),
             BlocProvider(
+                lazy: false,
                 create: (context) =>
                     SwipeBloc(
                       databaseRepository: context.read<DatabaseRepository>(),
                       authBloc: context.read<AuthBloc>(),
-                    )..add(LoadUsers(userId: context.read<AuthBloc>().state.user!.uid ))),
+                    )),
 
             BlocProvider(
-              create: (context) => OnboardingBloc(databaseRepository: context.read<DatabaseRepository>(), storageRepository: context.read<StorageRepository>()),          
+              create: (context) => OnboardingBloc(databaseRepository: context.read<DatabaseRepository>(), storageRepository: context.read<StorageRepository>(), authBloc: context.read<AuthBloc>()),          
             ),
             BlocProvider<ContinuewithCubit>(create: (context) => ContinuewithCubit(authRepository: context.read<AuthRepository>())),
             BlocProvider(lazy: false, create: (context) => LikeBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>()) ),
@@ -77,10 +79,11 @@ class MyApp extends StatelessWidget {
 
             BlocProvider(lazy: false, create: (context) => MatchBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>()) ),
             BlocProvider(create: ((context) => ChatBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc:  context.read<AuthBloc>()))),
-            BlocProvider(create: (context) => UserpreferenceBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..add(LoadUserPreference(userId: context.read<AuthBloc>().state.user!.uid))),
+            BlocProvider(lazy: false, create: (context) => UserpreferenceBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())),
             BlocProvider(create: ((context) => PhoneAuthBloc(authRepository: context.read<AuthRepository>()))),
 
-            BlocProvider(create: (context) => ThemeCubit()),
+            BlocProvider(lazy:false, create: (context) => ThemeCubit()),
+            BlocProvider(lazy: false, create: (contet) => SharedpreferenceCubit()..getMyLocation()),
             BlocProvider(create: (context) => PaymentBloc(paymentRepository: PaymentRepository(), authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>() ) ),
             
           ],

@@ -24,47 +24,47 @@ class _InterestsState extends State<Interests> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child:SingleChildScrollView(
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const LinearProgressIndicator(
-                  value: 0.8
+        child:Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const LinearProgressIndicator(
+                value: 0.8
         
-                ),
-               const Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(LineIcons.times,size: 35,),
-                ),
+              ),
+             const Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(LineIcons.times,size: 35,),
+              ),
         
-                Container(
-                  width: 200,
-                  margin: EdgeInsets.symmetric(horizontal:35),
-                  child: Text('Intersts',
-                 // textAlign: TextAlign.start,
-                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
-                  ),
+              Container(
+                width: 200,
+                margin: EdgeInsets.symmetric(horizontal:35),
+                child: Text('Intersts',
+               // textAlign: TextAlign.start,
+                style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
                 ),
-                Container(
-                    width: MediaQuery.of(context).size.width*0.9,
-                    margin: EdgeInsets.only(top: 10,left: 35),
-                    child: Text(
-                      'Let everyone know what you\'re passionate about \nby adding it to your profile.',
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Color.fromARGB(255, 192, 189, 189)),
-                      )
-                  ),
-               // Spacer(flex: 1,),
+              ),
+              Container(
+                  width: MediaQuery.of(context).size.width*0.9,
+                  margin: EdgeInsets.only(top: 10,left: 35),
+                  child: Text(
+                    'Let everyone know what you\'re passionate about \nby adding it to your profile.',
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Color.fromARGB(255, 192, 189, 189)),
+                    )
+                ),
+             // Spacer(flex: 1,),
         
-                Padding(
-                  padding: const EdgeInsets.all(30.0),
+              Padding(
+                padding: const EdgeInsets.all(30.0),
+                child: SingleChildScrollView(
                   child: Wrap(
                     spacing: 5,
                     children: List.generate(inter.length, (index) => 
                         ChoiceChip(
-                        label: Text(inter[index],style: TextStyle(color: _selectedList.contains(inter[index])? Colors.white : Colors.black),), 
+                        label: Text(inter[index],style: TextStyle(color: _selectedList.contains(inter[index])? Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w300),), 
                         selected: _selectedList.contains(inter[index]),
                         selectedColor: Colors.green,
                        // backgroundColor: Colors.white,
@@ -77,48 +77,48 @@ class _InterestsState extends State<Interests> {
                     )
                   ),
                 ),
+              ),
+              
+        
+              
+             
+        
+        
+        
+             // Spacer(flex: 2,),
+              BlocBuilder<OnboardingBloc, OnboardingState>(
                 
-        
-                
-               
-        
-        
-        
-               // Spacer(flex: 2,),
-                BlocBuilder<OnboardingBloc, OnboardingState>(
+                builder: (context, state) {
                   
-                  builder: (context, state) {
-                    
-                    
-                  if (state is OnboardingLoaded){
-                  return Center(
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width*0.70,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: (){
-                          
-                          context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(interests: _selectedList)));
-                          GoRouter.of(context).pushNamed(MyAppRouteConstants.addphotosRouteName);
-                        }, 
-                        child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
-                        style: ElevatedButton.styleFrom(
-                          shape: StadiumBorder(),
-                        ),
+                  
+                if (state is OnboardingLoaded){
+                return Center(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width*0.70,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: (){
                         
-                        ),
-                    ),
-                  );
-                  }
-                  else{return Center(child: CircularProgressIndicator(),);}
-                  }
-                ),
+                        context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(interests: _selectedList)));
+                        GoRouter.of(context).pushNamed(MyAppRouteConstants.addphotosRouteName);
+                      }, 
+                      child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
+                      style: ElevatedButton.styleFrom(
+                        shape: StadiumBorder(),
+                      ),
+                      
+                      ),
+                  ),
+                );
+                }
+                else{return Center(child: CircularProgressIndicator(),);}
+                }
+              ),
         
-               // const SizedBox(height: 20,)
-               
+             // const SizedBox(height: 20,)
+             
         
-              ],
-            ),
+            ],
           ),
         )
       )

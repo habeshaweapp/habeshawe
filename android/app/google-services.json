@@ -1,33 +1,41 @@
 {
   "project_info": {
-    "project_number": "34443348178",
-    "project_id": "lomi-601e5",
-    "storage_bucket": "lomi-601e5.appspot.com"
+    "project_number": "37534285903",
+    "project_id": "habeshawe-1270a",
+    "storage_bucket": "habeshawe-1270a.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:34443348178:android:fb43fd2b411727062a850b",
+        "mobilesdk_app_id": "1:37534285903:android:cd859346b2f1f6b25c2a3a",
         "android_client_info": {
-          "package_name": "com.example.lomi"
+          "package_name": "com.ulend.habeshawe"
         }
       },
       "oauth_client": [
         {
-          "client_id": "34443348178-ufkb0k31qeo3dupndp8btke3ee3ogfj8.apps.googleusercontent.com",
+          "client_id": "37534285903-5rgv5nupfda55qefh5uke2bdafee04al.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ulend.habeshawe",
+            "certificate_hash": "34baba4d952b5a35c5a9c8bb0a7431ae0801f6fa"
+          }
+        },
+        {
+          "client_id": "37534285903-9g7l7uct3pm7p1lj7jkp5a1pc749ps9k.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDHQcE5IDbiWf5pVqF8cHvjDAB4nqReNso"
+          "current_key": "AIzaSyCrH607tpwW_zxzvvsJjOEAsArvPNq0-_c"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "34443348178-ufkb0k31qeo3dupndp8btke3ee3ogfj8.apps.googleusercontent.com",
+              "client_id": "37534285903-9g7l7uct3pm7p1lj7jkp5a1pc749ps9k.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

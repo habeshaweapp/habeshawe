@@ -77,7 +77,7 @@ class _HomeState extends State<Home> {
 Widget HomeBody(){
   return IndexedStack(
     index: pageIndex,
-    children: [
+    children: const [
       ExplorePage(),
       LikesScreen(),
       MatchesScreen(),

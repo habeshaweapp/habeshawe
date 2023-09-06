@@ -1,6 +1,7 @@
 import 'package:location/location.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 
+import '../../Models/enums.dart';
 import '../../Models/likes_model.dart';
 import '../../Models/userpreference_model.dart';
 
@@ -11,34 +12,34 @@ abstract class BaseDatabaseRepository{
   Future<void> updateUser(User user);
   Future<void> updateUserPictures(User user, String imageName);
   Future<bool> userLike(User user, User matchUser);
-  Future<void> userPassed(String userId, User passedUser);
+  Future<void> userPassed(User userId, User passedUser);
   Future<User> getUserbyId(String userId);
 
  
 
 
-  Stream<List<UserMatch>> getMatches(String userId);
-  Stream<List<Like>> getLikedMeUsers(String userId);
-  Future<void> deleteLikedMeUser(String userId, String likedMeUserId);
-  Future<void> likeLikedMeUser(String userId, User likedMeUser);
-  Future<void> openChat(Message message);
-  Future<bool> isUserAlreadyRegistered(String userId);
+  Stream<List<UserMatch>> getMatches(String userId,Gender users);
+  Stream<List<Like>> getLikedMeUsers(String userId, Gender users);
+  Future<void> deleteLikedMeUser(String userId,Gender users, String likedMeUserId);
+  Future<void> likeLikedMeUser(String userId, Gender users, User likedMeUser);
+  Future<void> openChat(Message message,Gender users);
+  Future<Gender> isUserAlreadyRegistered(String userId);
 
 //**************** Messages Repository ****************** */
   
-  Stream<List<Message>> getChats(String userId, String matchedUserId);
-  Stream<List<Message>> getLastMessage(String userId, String matchedUserId);
+  Stream<List<Message>> getChats(String userId,Gender users, String matchedUserId);
+  Stream<List<Message>> getLastMessage(String userId, Gender users, String matchedUserId);
 
-  Future<void> sendMessage(Message message);
+  Future<void> sendMessage(Message message,Gender users);
 
   //**************** UserPreference Repository ****************** */
-  Stream<UserPreference> getUserPreference(String userId);
-  Future<void> updateUserPreference(UserPreference userPreference);
+  Stream<UserPreference> getUserPreference(String userId, Gender users);
+  Future<void> updateUserPreference(UserPreference userPreference, Gender users);
 
   //***************888 main logic getting ussers based on preference ***********8*8***8*//
-  Future<List<User>> getUsersBasedonPreference(String userId);
-  Stream<List<User>> getNearByUsers(String userId, LocationData locationData);
-  Future<List<User>> getUsersBasedonLOmiLogic(String userId);
+  Future<List<User>> getUsersBasedonPreference(String userId, Gender users);
+  //Stream<List<User>> getNearByUsers(String userId, Position locationData);
+  Future<List<User>> getUsersBasedonLOmiLogic(String userId,Gender users);
 
 
   //add user on verification list

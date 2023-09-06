@@ -15,6 +15,7 @@ class ContinuewithCubit extends Cubit<ContinuewithState> {
   Future<void> continueWithGoogle() async{
     emit(state.copyWith(status: ContinueStatus.submitting));
     try {
+      emit(state.copyWith(status: ContinueStatus.submitting));
         final user = await _authRepository.logInWithGoogle();
         emit(state.copyWith(
           status: ContinueStatus.success,

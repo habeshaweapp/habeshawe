@@ -6,42 +6,48 @@ enum AuthStatus {unknown, authenticated, unauthenticated}
 class AuthState extends Equatable {
   final AuthStatus status;
   final auth.User? user;
-  final bool? newAccount;
+  final Gender? accountType;
+  final bool? isCompleted;
 
   AuthState({
     required this.status,
     required this.user,
-    required this.newAccount,
+    required this.accountType,
+    required this.isCompleted
   });
 
   const AuthState._({
     this.status = AuthStatus.unknown,
     this.user,
-    this.newAccount,
+    this.accountType,
+    this.isCompleted
   });
 
   const AuthState.unknown() : this._();
 
   const AuthState.authenticated({
     required auth.User user,
-    required bool newAccount
+    required Gender accountType,
+    required bool isCompleted
   }): this._(
     status: AuthStatus.authenticated,
     user:  user,
-    newAccount: newAccount,
+    accountType: accountType,
+    isCompleted: isCompleted
   );
 
   const AuthState.unauthenticated() : this._(status: AuthStatus.unauthenticated);
   
   @override
-  List<Object?> get props => [status, user, newAccount];
+  List<Object?> get props => [status, user, accountType];
 
 
   factory AuthState.fromMap(Map<String, dynamic> map){
     return AuthState(
       status: map['status'], 
       user:  map['user'], 
-      newAccount: map['newAccount']
+      accountType: map['accountType'],
+      isCompleted: map['isCompleted']
       );
   }
 
@@ -49,7 +55,8 @@ class AuthState extends Equatable {
     return {
       'status': status.index,
       'user': user != null? user!.uid : null,
-      'newAccount':newAccount
+      'accountType': accountType,
+      'isCompleted': isCompleted
     };
   }
 

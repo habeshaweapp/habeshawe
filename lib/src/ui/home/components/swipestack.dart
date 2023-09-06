@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -19,7 +21,7 @@ class SwipeStack extends StatelessWidget {
     final _controller = SwipableStackController();
     return BlocBuilder<SwipeBloc, SwipeState>(
       buildWhen: (previous, current) {
-        return current is SwipeLoaded || previous is SwipeLoading;
+        return current is SwipeLoaded && previous is SwipeLoading;
       } ,
       builder: (context, state) {
         if(state is SwipeLoading){
@@ -27,6 +29,15 @@ class SwipeStack extends StatelessWidget {
         }
 
         if(state is SwipeLoaded){
+          if(state.users.isEmpty ){
+            return Container(
+              child:   Center(
+                child: Text('No Matches to show\n come back after 24 hours',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall,
+                ),),
+            );
+          }
           return 
 
 
@@ -77,9 +88,68 @@ class SwipeStack extends StatelessWidget {
                // horizontalSwipeThreshold: 0.8,
                 //verticalSwipeThreshold: 0.8,
                 builder: (context, swipeProperty) {
+                  var tempUsers = state.users.length;
+                  
                   final itemIndex = swipeProperty.index % state.users.length;
+                  // final itemIndex = state.users.length - tempUsers;
+                  // tempUsers --;
+                   print('-------index------${swipeProperty.stackIndex }>>>>>>>${swipeProperty.index}');
+                  // if(swipeProperty.index == state.users.length +1){
+                  //   return  Container(child: Text('Thats all for today!'),);
+                  // }
                   return UserCard().userDrag(MediaQuery.of(context).size, state.users[itemIndex], context);
-                })
+                },
+                overlayBuilder: (context, properties){
+                  final opacity = min(properties.swipeProgress, 1.0);
+                  final isRight = properties.direction == SwipeDirection.right;
+                  var size = MediaQuery.of(context).size.width /1.5;
+                  if(properties.direction == SwipeDirection.left){
+                    return Opacity(
+                      opacity: min(properties.swipeProgress, 1.0),
+                      child: Transform.rotate(
+                        angle:  2.17 /4,
+                        child: Container(
+                        margin:  EdgeInsets.only(left: size  ),
+                        padding: const EdgeInsets.all(2.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.red, width: 5),
+                          borderRadius: BorderRadius.circular(10)
+
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Text('NOPE', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 30),),
+                        ),
+                      ),
+                        ),
+                      );
+                  }
+                  return Opacity(
+                    opacity: isRight ? opacity : 0,
+                    child: Transform.rotate(
+                      angle: - 2.17 / 4,
+                      child: Container(
+                        
+                          margin: const EdgeInsets.all(50),
+                          padding: const EdgeInsets.all(2.0),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.green,width: 5),
+                            borderRadius: BorderRadius.circular(10)
+                            
+                    
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Text('LIKE', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 35),),
+                          ),
+                        ),
+                    ),
+                     );
+                  }
+                  
+                  
+               
+                )
                       )
                     ),
             
@@ -101,7 +171,8 @@ class SwipeStack extends StatelessWidget {
                         if(index == 3){_controller.next(swipeDirection: SwipeDirection.right);}
                         if(index == 2){_controller.next(swipeDirection: SwipeDirection.up);
                         }
-                        if(index == 0){ _controller.rewind();}
+                        if(index == 0){ _controller.rewind();
+                        }
                         if(index == 4){ _controller.rewind();}
                       },
                       child: Container(

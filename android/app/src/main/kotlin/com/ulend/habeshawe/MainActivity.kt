@@ -1,4 +1,4 @@
-package com.example.lomi
+package com.ulend.habeshawe
 
 import io.flutter.embedding.android.FlutterActivity
 

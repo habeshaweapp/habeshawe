@@ -9,8 +9,9 @@ abstract class UserpreferenceEvent extends Equatable {
 
 class LoadUserPreference extends UserpreferenceEvent{
   final String userId;
+  final Gender users;
   
-  LoadUserPreference({required this.userId});
+  LoadUserPreference({required this.userId, required this.users});
 
   @override
   List<Object> get props => [userId];
@@ -27,7 +28,8 @@ class UpdateUserPreference extends UserpreferenceEvent{
 }
 class EditUserPreference extends UserpreferenceEvent{
   final UserPreference preference;
-  const EditUserPreference({required this.preference});
+  final Gender users;
+  const EditUserPreference({required this.preference, required this.users});
 
   @override
   // TODO: implement props

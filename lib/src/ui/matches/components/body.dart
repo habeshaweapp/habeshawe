@@ -89,7 +89,7 @@ class Body extends StatelessWidget {
                 itemBuilder: (context,index){
                   return InkWell(
                     onTap: (){
-                      context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, matchedUserId: activeMatches[index].userId));
+                      context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType! , matchedUserId: activeMatches[index].userId));
                       Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(activeMatches[index]) ));
                     },
                     child: ChatList(match: activeMatches[index])

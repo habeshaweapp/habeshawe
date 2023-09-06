@@ -4,6 +4,8 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../Data/Repository/Storage/storage_repository.dart';
 
@@ -33,11 +35,15 @@ class PhotoSelector extends StatelessWidget {
             icon: const Icon(Icons.add_circle,color: Colors.green,),
             onPressed: () async{
               ImagePicker _picker = ImagePicker();
-              final XFile? _image = await _picker.pickImage(source: ImageSource.gallery);
-  
+               XFile? _image = await _picker.pickImage(source: ImageSource.gallery);
+              final  out = await getApplicationDocumentsDirectory();
+              
               if(_image == null) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No image selected')));
 
+              }else{
+                _image = await FlutterImageCompress.compressAndGetFile(_image.path, out.path, quality: 25
+                );
               }
               if(_image !=null){
                 print('image uploading.........');

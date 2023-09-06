@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 
+import '../../../Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import '../../../Blocs/UserPreference/userpreference_bloc.dart';
 import '../../../Data/Repository/Authentication/auth_repository.dart';
 import '../../../app_route_config.dart';
@@ -28,7 +29,7 @@ class Body extends StatelessWidget {
             onWillPop: ()async{
 
               if(isThereChange == true){
-                context.read<UserpreferenceBloc>().add(EditUserPreference(preference: state.userPreference));
+                context.read<UserpreferenceBloc>().add(EditUserPreference(preference: state.userPreference, users: context.read<AuthBloc>().state.accountType!));
               }
               return true;
 
@@ -106,7 +107,7 @@ class Body extends StatelessWidget {
                       ),
                     ),
                     Text('Going global will allow you to see people nearby and from around the world.',
-                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey[600]),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
                     ),
             
                     SizedBox(height: 20,),
@@ -233,7 +234,7 @@ class Body extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text('Lomi uses these preferences to suggest matches. Some match suggestions may not fall within your desired parameters.',
-                          style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.grey[600]),
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
                       ),
                     ),
           

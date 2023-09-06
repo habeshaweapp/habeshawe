@@ -22,8 +22,8 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return 
        Scaffold(
-          body: Container(
-            child: Center(
+          body:  Container(
+            child: const Center(
               child: Icon(LineIcons.lemonAlt, size: 63, color: Color.fromARGB(255, 8, 141, 13),),
             ),
           ),

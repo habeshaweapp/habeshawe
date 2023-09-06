@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/Data/Repository/Storage/storage_repository.dart';
 
@@ -15,13 +16,16 @@ part 'onboarding_state.dart';
 class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   final DatabaseRepository _databaseRepository;
   final StorageRepository _storageRepository;
+  final AuthBloc _authBloc;
  // StreamSubscription? databaseSubscription;
   OnboardingBloc({
     required DatabaseRepository databaseRepository,
-    required StorageRepository storageRepository
+    required StorageRepository storageRepository,
+    required AuthBloc authBloc
   }) : 
   _databaseRepository = databaseRepository,
   _storageRepository = storageRepository,
+  _authBloc = authBloc,
   super(OnboardingLoading()) {
     on<StartOnBoarding>(_onStartOnboarding);
     on<UpdateUser>(_onUserUpdate);
@@ -35,7 +39,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
    // User user = User(id: '', name: '', age: 0, gender: 'gender', imageUrls: [], interests: [], school: '', birthday: '');
 
     try {
-  await _databaseRepository.createUser(event.user);
+  //await _databaseRepository.createUser(event.user);
   
   emit(OnboardingLoaded(user: event.user));
 } on Exception catch (e) {
@@ -48,7 +52,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
 
   void _onUserUpdate(UpdateUser event, Emitter<OnboardingState> emit){
     if(state is OnboardingLoaded){
-      _databaseRepository.updateUser(event.user);
+      //_databaseRepository.updateUser(event.user);
       emit(OnboardingLoaded(user: event.user));
     }
     
@@ -59,11 +63,12 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
      // databaseSubscription!.cancel();
      try {
       User user = (state as OnboardingLoaded).user;
-      await _storageRepository.uploadImage(user, event.image);
+      var url = await _storageRepository.uploadImage(user, event.image);
+      List<dynamic> imageUrls = user.imageUrls..add(url);
 
-      _databaseRepository.getUser(user.id!).listen((user) { 
-        add(UpdateUser(user: user));
-       });
+     // _databaseRepository.getUser(user.id!).listen((user) { 
+        add(UpdateUser(user: user.copyWith(imageUrls: imageUrls )));
+      // });
        
      }on Exception catch (e) {
       print(e.toString());
@@ -79,9 +84,17 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     
   }
 
-  FutureOr<void> _onCompleteOnboarding(CompleteOnboarding event, Emitter<OnboardingState> emit) {
+  FutureOr<void> _onCompleteOnboarding(CompleteOnboarding event, Emitter<OnboardingState> emit) async {
     try {
-      _databaseRepository.completeOnboarding(placeMark: event.placeMark, user: event.user, isMocked: event.isMocked);
+      //_databaseRepository.createUser(event.user.copyWith(country: event.placeMark.country, countryCode: event.placeMark.isoCountryCode));
+      if(!event.isMocked){
+      bool completed = await _databaseRepository.completeOnboarding(placeMark: event.placeMark, user: event.user, isMocked: event.isMocked);
+     
+
+      if(completed){
+        _authBloc.add(AuthUserChanged(user: _authBloc.state.user));
+      }
+      }
       
     } catch (e) {
       

@@ -12,6 +12,7 @@ import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/home/home.dart';
+import 'package:lomi/src/ui/splash/splashscreen.dart';
 
 import '../../../Blocs/UserPreference/userpreference_bloc.dart';
 
@@ -53,11 +54,11 @@ class EnableLocation extends StatelessWidget {
       body: SafeArea(
         child:BlocBuilder<OnboardingBloc, OnboardingState>(
           builder: (context, state) {
-            if(state is OnboardingLoaded){
+            if(state is OnboardingLoading){
               return Center(child: CircularProgressIndicator(),);
             }
             
-            if(state is OnboardingLoading){
+            if(state is OnboardingLoaded){
             return Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
@@ -130,14 +131,14 @@ class EnableLocation extends StatelessWidget {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('smart ass you will be banned user your real location', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),)));
 
                         }else{
-                          //context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(location: GeoPoint(position.latitude, position.longitude) )));
-                          //context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(livingIn: placeMark[0].country)));
-                          //context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: placeMark[0], user: state.user, isMocked: position.isMocked));
+                          context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(location: GeoPoint(position.latitude, position.longitude), country: placeMark[0].country, countryCode: placeMark[0].isoCountryCode )));
+                         // context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(livingIn: placeMark[0].country)));
+                          context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: placeMark[0], user: state.user, isMocked: position.isMocked));
 
                         }
                         //context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(location: GeoPoint(position.latitude, position.longitude) )));
                         
-                        //Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => Home()), (route) => false);
+                        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => SplashScreen()), (route) => false);
                         //context.read<UserpreferenceBloc>().add(EditUserPreference(preference: UserPreference(userId: state.user.id).copyWith(showMe: state.user.gender == 'Man' ? 'Women' : 'Man' )));
                         
 

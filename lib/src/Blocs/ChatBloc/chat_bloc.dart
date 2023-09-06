@@ -8,6 +8,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
+import '../../Data/Models/enums.dart';
 import '../../Data/Models/model.dart';
 
 part 'chat_event.dart';
@@ -35,7 +36,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<LoadMoreChats>(_onLoadMoreChats);
 
     _authSubscription = _authBloc.stream.listen((state) {
-      if(state.user!.uid != null){
+      if(state.user != null){
        // add(LoadChats(userId: state.user!.uid));
       }
      });
@@ -43,7 +44,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
      scrollController.addListener(() {
       if(scrollController.position.pixels == scrollController.position.maxScrollExtent){
         var msg = (state as ChatLoaded).messages.last;
-        add(LoadMoreChats(userId: userId, matchedUserId: matchedUserId, startAfter: msg.timestamp!));
+        add(LoadMoreChats(userId: _authBloc.state.user!.uid,users:_authBloc.state.accountType! , matchedUserId: matchedUserId, startAfter: msg.timestamp!));
       }
      });
   }
@@ -51,7 +52,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   void _onLoadChats(LoadChats event, Emitter<ChatState> emit) {
     
     try {
-  _databaseRepository.getChats(event.userId, event.matchedUserId).listen((messages) {
+  _databaseRepository.getChats(event.userId, event.users, event.matchedUserId).listen((messages) {
     add(UpdateChats(messages: messages));
    });
 
@@ -77,7 +78,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
 void _onSendMessage(SendMessage event, Emitter<ChatState> emit) async{
     try {
-  await _databaseRepository.sendMessage(event.message);
+  await _databaseRepository.sendMessage(event.message, event.users);
 } on Exception catch (e) {
   // TODO
   print(e);
@@ -86,7 +87,7 @@ void _onSendMessage(SendMessage event, Emitter<ChatState> emit) async{
 
 void _onLoadMoreChats(LoadMoreChats event, Emitter<ChatState> emit) async{
   try {
-    List<Message> newMessages = await _databaseRepository.getMoreChats(userId: event.userId, matchedUserId: event.matchedUserId, startAfter: event.startAfter);
+    List<Message> newMessages = await _databaseRepository.getMoreChats(userId: event.userId, users: event.users,  matchedUserId: event.matchedUserId, startAfter: event.startAfter);
     List<Message> messages = (state as ChatLoaded).messages;
     
     emit(ChatLoaded(messages: [...messages, ...newMessages]));

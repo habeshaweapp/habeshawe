@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
@@ -10,6 +12,7 @@ import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Data/Models/user_model.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/itsAmatch/itsAmatch.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Blocs/ContinueWith/continuewith_cubit.dart';
 import '../../../Blocs/ProfileBloc/profile_bloc.dart';
@@ -336,17 +339,20 @@ class UserCard extends StatelessWidget {
                               margin: EdgeInsets.only(left: 10),
                               child: Row(
                                 children: [
-                                  Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: const BoxDecoration(
-                                      color: Colors.green,
-                                      shape: BoxShape.circle
-                                    ),
-                                  ),
-                                  const SizedBox(width: 5,),
+                                  // Container(
+                                  //   width: 8,
+                                  //   height: 8,
+                                  //   decoration: const BoxDecoration(
+                                  //     color: Colors.green,
+                                  //     shape: BoxShape.circle
+                                  //   ),
+                                  // ),
+                                  Icon(Icons.location_on_outlined, color: Colors.green, size: 18,),
+                                  const SizedBox(width: 4,),
                                  Container(
-                                   child:  Text("Recently Active", 
+                                   child:  Text(
+                                    user.location != null ?'${ calculateDistance(user.location!) }km away ' : '',
+                                    //"Recently Active", 
                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),
                                    //TextStyle(color: Colors.white, decoration: TextDecoration.none  ),
                                         
@@ -440,10 +446,18 @@ class UserCard extends StatelessWidget {
               ),
       ),
     );
-        }
-       
+  }
+  //final SharedPreferences prefes =  SharedPreferences.getInstance();
+
+   int calculateDistance(GeoPoint userLocation)  {
+
+    
+    
+    return Geolocator.distanceBetween(7.3666915, 38.6714959, userLocation.latitude, userLocation.longitude)~/1000;
+   }    
       
 
-          }
+
+}
 
 

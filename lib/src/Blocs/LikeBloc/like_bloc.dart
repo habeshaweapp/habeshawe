@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
 import '../../Data/Models/likes_model.dart';
@@ -27,15 +28,15 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
     on<DeleteLikedMeUser>(_onDeleteLikedMeUser);
 
     _authSubscription = _authBloc.stream.listen((state) {
-      if(state.user != null){
-        add(LoadLikes(userId: state.user!.uid));
+      if(state.user != null && state.accountType != Gender.nonExist){
+        add(LoadLikes(userId: state.user!.uid, users: state.accountType!));
       }
     });
   }
 
 void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
    try {
-  await  _databaseRepository.likeLikedMeUser(event.userId, event.likedMeUser);
+  await  _databaseRepository.likeLikedMeUser(event.userId, event.users, event.likedMeUser);
 } on Exception catch (e) {
   // TODO
   print(e.toString());
@@ -45,7 +46,7 @@ void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
 
   FutureOr<void> _onLoadLikes(LoadLikes event, Emitter<LikeState> emit) {
     try {
-      _databaseRepository.getLikedMeUsers(event.userId).listen((users) { 
+      _databaseRepository.getLikedMeUsers(event.userId, event.users).listen((users) { 
         add(UpdateLikes(users: users));
       });
       
@@ -62,7 +63,7 @@ void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
 
   void _onDeleteLikedMeUser(DeleteLikedMeUser event, Emitter<LikeState> emit) async{
     try {
-      _databaseRepository.deleteLikedMeUser(event.userId, event.likedMeUserId);
+      _databaseRepository.deleteLikedMeUser(event.userId,event.users, event.likedMeUserId);
     }on Exception catch (e) {
       print(e.toString());
     }

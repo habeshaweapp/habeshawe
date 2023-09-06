@@ -68,11 +68,14 @@ class GenderScreen extends StatelessWidget {
                                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                                   child: SizedBox(
                                     width: MediaQuery.of(context).size.width*0.7,
-                                    child: Text(index == 0 ?' Men  ': 'Women', textAlign: TextAlign.center,)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                                      child: Text(index == 0 ? 'Men': 'Women', textAlign: TextAlign.center,),
+                                    )),
                                 ), 
-                                selected: index == 0 ? state.user.gender == 'Men' ? true : false : state.user.gender == 'Women' ? true: false,
+                                selected: index == 0 ? state.user.gender == 'men' ? true : false : state.user.gender == 'women' ? true: false,
                                 onSelected: (value) {
-                                  context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(gender: index == 0? 'Men':'Women')));
+                                  context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(gender: index == 0? 'men' : 'women')));
                                   // setState(() {
                                   //   _value = value ? index : null;
                                   // });
@@ -95,12 +98,13 @@ class GenderScreen extends StatelessWidget {
                           width: MediaQuery.of(context).size.width*0.70,
                           height: 50,
                           child: ElevatedButton(
-                            onPressed: (){
+                            onPressed: state.user.gender == ''? null : (){
                               GoRouter.of(context).pushNamed(MyAppRouteConstants.birthdayRouteName);
                             }, 
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                             style: ElevatedButton.styleFrom(
                               shape: StadiumBorder(),
+                              foregroundColor: state.user.gender == '' ?  Colors.white : null
                             ),
                             
                             ),

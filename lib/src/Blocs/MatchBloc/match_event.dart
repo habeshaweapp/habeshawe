@@ -9,7 +9,8 @@ abstract class MatchEvent extends Equatable {
 
 class LoadMatchs extends MatchEvent{
   String userId;
-  LoadMatchs({required this.userId});
+  Gender users;
+  LoadMatchs({required this.userId, required this.users});
 
   @override
   // TODO: implement props
@@ -20,11 +21,12 @@ class LoadMatchs extends MatchEvent{
 
 class OpenChat extends MatchEvent{
   Message message;
-  OpenChat({required this.message});
+  Gender users;
+  OpenChat({required this.message, required this.users});
 
   @override
   // TODO: implement props
-  List<Object> get props => [message];
+  List<Object> get props => [message, users];
 }
 
 

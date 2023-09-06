@@ -72,7 +72,17 @@ class PhotoSelector extends StatelessWidget {
                   right: -12,
                   child: IconButton(
                     onPressed: (){}, 
-                    icon: Icon(Icons.add_circle, color: Colors.red,)
+                    icon: Container(
+                      width: 22,
+                      height: 22,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        
+
+                       color: Colors.white,
+                      ),
+                      
+                      child: Icon(Icons.cancel, color: Colors.red,))
                     ),
                 )
               ],

@@ -276,13 +276,13 @@ class Body extends StatelessWidget {
                     if(!chatOpened){
                       //BlocProvider.of<MatchBloc>(context).add(OpenChat(message: Message(id: 'non', senderId: user.id, receiverId: context.read<AuthBloc>().state.user!.uid, message: msg, timestamp: DateTime.now())));
     
-                      context.read<MatchBloc>().add(OpenChat(message: Message(id: 'id', senderId: context.read<AuthBloc>().state.user!.uid, receiverId: userMatch.userId, message: msgController.text, )));
-                      context.read<ChatBloc>().add(LoadChats(userId: userMatch.userId, matchedUserId: userMatch.userId));
+                      context.read<MatchBloc>().add(OpenChat(users: context.read<AuthBloc>().state.accountType! ,message: Message(id: 'id', senderId: context.read<AuthBloc>().state.user!.uid, receiverId: userMatch.userId, message: msgController.text,  )));
+                      context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid ,users: context.read<AuthBloc>().state.accountType! ,matchedUserId: userMatch.userId));
                       chatOpened = true;
                       msgController.clear();
                     }else{
                     
-                    context.read<ChatBloc>().add(SendMessage(message: Message(id: 'id', senderId: context.read<AuthBloc>().state.user!.uid, receiverId: context.read<AuthBloc>().state.user!.uid == userMatch.userId ? userMatch.userId : userMatch.userId, message: msgController.text)));
+                    context.read<ChatBloc>().add(SendMessage(users: context.read<AuthBloc>().state.accountType!, message: Message(id: 'id', senderId: context.read<AuthBloc>().state.user!.uid, receiverId: context.read<AuthBloc>().state.user!.uid == userMatch.userId ? userMatch.id! : userMatch.userId, message: msgController.text)));
                     msgController.clear();
                     }
                   },

@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:lomi/src/Blocs/blocobserver.dart';
 import 'package:lomi/src/app.dart';
@@ -12,6 +13,8 @@ void main() async {
   Bloc.observer = MyBlocObserver();
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: await getApplicationCacheDirectory());
+  MobileAds.instance.initialize();
   runApp(const MyApp());
+  
 }
 

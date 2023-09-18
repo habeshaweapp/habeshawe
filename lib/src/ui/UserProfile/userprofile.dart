@@ -12,6 +12,7 @@ import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/app_route_config.dart';
+import 'package:lomi/src/ui/Profile/profile.dart';
 import 'package:lomi/src/ui/editProfile/editProfile.dart';
 import 'package:lomi/src/ui/settings/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,12 +24,15 @@ import '../../Data/Models/user_model.dart';
 import '../../Data/Models/userpreference_model.dart';
 import '../../Data/Repository/Authentication/auth_repository.dart';
 import '../verifyProfile/verifyprofile.dart';
+import 'components/bottomprofile.dart';
 
 class UserProfile extends StatelessWidget {
-  const UserProfile({super.key});
+   UserProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
+    //bool isDark = Theme.of(context).brightness == ThemeMode.dark;
     showVerifyDialog(User user){
     return showDialog(
       context: context, 
@@ -42,10 +46,23 @@ class UserProfile extends StatelessWidget {
       )
     );
   }
-  bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark ;
+  
+  //context.read<ThemeCubit>().state == ThemeMode.dark ;
+  
     return Scaffold(
+      //floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButton: FloatingActionButton(
+        child:  Icon(Icons.settings,
+            color: isDark? Colors.white: Colors.black,
+        ),
+        heroTag: null,
+        backgroundColor: isDark ? Colors.grey[800]: Colors.white,
+        onPressed: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+      }),
       body: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
+          
           if(state is ProfileLoading){
             return const Center(
               child:  CircularProgressIndicator(),
@@ -73,13 +90,18 @@ class UserProfile extends StatelessWidget {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: CircleAvatar(
-                              backgroundImage:
-                                  CachedNetworkImageProvider( 
-                                    state.user.imageUrls[0]
-                                    
-                                    ),
-                              radius: 80,
+                            child: GestureDetector(
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context) =>  Profile(user: state.user) ));
+                              },
+                              child: CircleAvatar(
+                                backgroundImage:
+                                    CachedNetworkImageProvider( 
+                                      state.user.imageUrls[0]
+                                      
+                                      ),
+                                radius: 80,
+                              ),
                             ),
                           ),
                         ),
@@ -88,6 +110,7 @@ class UserProfile extends StatelessWidget {
                         alignment: Alignment.bottomCenter,
                         child: ElevatedButton(
                             onPressed: ()async {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfile()));
                               //context.read<DatabaseRepository>().getUsersBasedonPreference(state.user.id);
                               // var pin = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
                               // print(pin);
@@ -110,6 +133,7 @@ class UserProfile extends StatelessWidget {
                         child: FloatingActionButton(
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfile()));
+                           // Navigator.pushNamed(context, 'editProfile');
                             
                           },
                           backgroundColor: isDark ? Colors.grey[800]: Colors.white,
@@ -126,6 +150,7 @@ class UserProfile extends StatelessWidget {
               SizedBox(
                 height: 20,
               ),
+              
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -159,39 +184,50 @@ class UserProfile extends StatelessWidget {
               SizedBox(
                 height: 50,
               ),
+              //Color.fromARGB(255, 22, 22, 22)
+              Expanded(
+                child: Container(
+                  color: isDark ? Color.fromARGB(255, 41, 41, 41): Colors.grey[200],
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20,),
+
+                    
               Padding(
                 padding: const EdgeInsets.all(8.0),
+                
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.135,
+                      height: MediaQuery.of(context).size.height * 0.115,
                       width: MediaQuery.of(context).size.width * 0.3,
                       child: Card(
+                        color: isDark? Colors.grey[900]: null,
                         elevation: 4,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(2.0),
                           child: Column(
                             children: [
                               SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               Icon(
                                 Icons.star,
                                 color: Colors.blue,
                               ),
                               SizedBox(
-                                height: 13,
+                                height: 8,
                               ),
-                              Text('0 Super Likes'),
+                              Text('0 Super Likes',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey),),
                               SizedBox(
                                 height: 5,
                               ),
                               Text(
                                 "GET MORE",
-                                style: TextStyle(color: Colors.blue),
+                                style: TextStyle(color: Colors.blue, fontSize: 12),
                               )
                             ],
                           ),
@@ -202,33 +238,34 @@ class UserProfile extends StatelessWidget {
                       width: 10,
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.135,
+                      height: MediaQuery.of(context).size.height * 0.115,
                       width: MediaQuery.of(context).size.width * 0.3,
                       child: Card(
                         elevation: 4,
+                        color: isDark? Colors.grey[900]: null,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(2.0),
                           child: Column(
                             children: [
                               SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               Icon(
                                 Icons.electric_bolt,
                                 color: Colors.purple,
                               ),
                               SizedBox(
-                                height: 13,
+                                height: 8,
                               ),
-                              Text('My Boosts'),
+                              Text('My Boosts', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey),),
                               SizedBox(
                                 height: 5,
                               ),
                               Text(
                                 "GET MORE",
-                                style: TextStyle(color: Colors.blue),
+                                style: TextStyle(color: Colors.blue, fontSize: 12),
                               )
                             ],
                           ),
@@ -239,18 +276,19 @@ class UserProfile extends StatelessWidget {
                       width: 10,
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.135,
+                      height: MediaQuery.of(context).size.height * 0.115,
                       width: MediaQuery.of(context).size.width * 0.3,
                       child: Card(
                         elevation: 4,
+                        color: isDark? Colors.grey[900]: null,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                         child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(2.0),
                           child: Column(
                             children: [
                               SizedBox(
-                                height: 20,
+                                height: 10,
                               ),
                               Icon(
                                 LineIcons.lemon,
@@ -260,7 +298,7 @@ class UserProfile extends StatelessWidget {
                               SizedBox(
                                 height: 13,
                               ),
-                              Text('Subscriptions'),
+                              Text('Subscriptions',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey),),
                               // SizedBox(height: 5,),
                               //Text("GET MORE",style: TextStyle(color: Colors.blue),)
                             ],
@@ -273,7 +311,8 @@ class UserProfile extends StatelessWidget {
               ),
               Spacer(),
               Center(
-                child: Container(
+                child: state.user.verified == VerifiedStatus.pending? 
+                Container(
                   child: Column(
                     children: [
                       Text(
@@ -300,7 +339,41 @@ class UserProfile extends StatelessWidget {
                       )
                     ],
                   ),
-                ),
+
+
+                ): state.user.verified == null ?
+                    SizedBox(
+                      height: 250,
+                      //width: 300,
+                      child: PageView(
+                        physics: const BouncingScrollPhysics(),
+                        children:const [
+                          PageViewItem(icon: LineIcons.crown,
+                          color: Colors.amber,
+                          title: 'Get Your Crown', 
+                          description: 'Get verified and we will reveal your profile and if you stand out you will get Queen tag', 
+                          buttonText: 'Apply  To Queen'
+                          ),
+                    
+                          PageViewItem(icon: LineIcons.suitcase, 
+                          color: Colors.black,
+                          title: 'Get Your GentleMan Tag', 
+                          description: 'Get verified and we will reveal your profile and if you stand out you will give you  gentlemans tag', 
+                          buttonText: 'Apply  To Queen'
+                          ),
+                    
+                          PageViewItem(icon: Icons.verified, 
+                          color: Colors.blue,
+                          title: 'Get Your Crown', 
+                          description: 'Get verified and we will reveal your profile and if you stand out you will get Queen tag', 
+                          buttonText: 'Apply  To Queen'
+                          ),
+                        ],
+                      ),
+                    )
+                    : Container()
+                
+                ,
               ),
 
               
@@ -311,6 +384,10 @@ class UserProfile extends StatelessWidget {
               //   },
               //   child: Icon(Icons.settings),
               //   ),
+              ],
+                  ),
+                  )
+                  )
             ],
           );
         }else{ return Text('somethisngs went wrong');}

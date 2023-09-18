@@ -10,9 +10,9 @@ class User extends Equatable {
   final String gender;
   final List<dynamic> imageUrls;
   final List<dynamic> interests;
-  final String? lookingFor;
+  final int? lookingFor;
   final String? jobTitle;
-  final GeoPoint? location;
+  final List<double>? location;
   final String? school;
   final String? birthday;
   final String? company;
@@ -78,7 +78,7 @@ class User extends Equatable {
     imageUrls: snap['imageUrls'],
     gender: snap['gender'],    
     interests: snap['interests'],
-    location: snap['location'],
+    location: [snap['location'].latitude, snap['location'].longitude ],
     school: snap['school'],
     birthday: snap['birthday'],
     aboutMe: snap['aboutMe'] ,
@@ -132,7 +132,7 @@ class User extends Equatable {
       'imageUrls': imageUrls,
       'interests': interests,
       'lookingFor': lookingFor,
-      'location': location ,
+      'location': GeoPoint(location![0], location![1]),
       'school': school,
       'birthday': birthday,
       'aboutMe' : aboutMe,
@@ -156,7 +156,7 @@ class User extends Equatable {
       'imageUrls': imageUrls,
       'interests': interests,
       'lookingFor': lookingFor,
-      'location': [location!.latitude, location!.longitude] ,
+      'location': location ,
       'school': school,
       'birthday': birthday,
       'aboutMe' : aboutMe,
@@ -178,8 +178,8 @@ class User extends Equatable {
     String? gender,
     List<dynamic>? imageUrls,
     List<dynamic>? interests,
-    String? lookingFor,
-    GeoPoint? location,
+    int? lookingFor,
+    List<double>? location,
     String? school,
     String? birthday,
     String? company,
@@ -229,7 +229,7 @@ factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
     imageUrls: snap['imageUrls'],
     gender: snap['gender'],    
     interests: snap['interests'],
-    location: snap.containsKey('location') ?snap['location']: null,
+    location: snap.containsKey('location') ?[snap['location'].latitude, snap['location'].longitude]: null,
     school: snap['school'],
     birthday: snap['birthday'],
     aboutMe: snap['aboutMe'] ,
@@ -263,7 +263,7 @@ factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
     imageUrls: snap['imageUrls'],
     gender: snap['gender'],    
     interests: snap['interests'],
-    location: snap.containsKey('location') ? GeoPoint(snap['location'][0], snap['location'][1]) : null,
+    location: snap['location'] ,
     school: snap['school'],
     birthday: snap['birthday'],
     aboutMe: snap['aboutMe'] ,

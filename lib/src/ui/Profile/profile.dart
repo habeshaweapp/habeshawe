@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:lomi/src/ui/Profile/components/body.dart';
+import 'package:swipable_stack/swipable_stack.dart';
 
 import '../../Data/Models/model.dart';
 
 class Profile extends StatelessWidget {
   final User user;
-   Profile({Key? key, required this.user}) : super(key: key);
+  SwipableStackController? stackController;
+  double? imgindex;
+   Profile({Key? key, required this.user, this.stackController, this.imgindex}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +25,7 @@ class Profile extends StatelessWidget {
       // ),
       // extendBodyBehindAppBar: false,
 
-      body: Body(user: user),
+      body: Body(user: user, stackController: stackController, imgindex: imgindex,),
     );
     
   }

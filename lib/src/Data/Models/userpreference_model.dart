@@ -14,6 +14,9 @@ class UserPreference extends Equatable{
   final int? maximumDistance;
   final bool? onlyShowInThisRange;
 
+  final int? discoverBy;
+
+
   UserPreference({
     required this.userId,
      this.phoneNumber,
@@ -26,13 +29,14 @@ class UserPreference extends Equatable{
      this.showDistancesIn = 'km',
      this.maximumDistance = 100,
      this.onlyShowInThisRange = false,
+     this.discoverBy = 0,
   })
   
   ;
 
   @override
   // TODO: implement props
-  List<Object?> get props => [userId,phoneNumber,global,ageRange,showDistancesIn,showMe,showMeOnLomi,recentlyActiveStatus,onlineStatus,maximumDistance,onlyShowInThisRange];
+  List<Object?> get props => [userId,phoneNumber,global,ageRange,showDistancesIn,showMe,showMeOnLomi,recentlyActiveStatus,onlineStatus,maximumDistance,onlyShowInThisRange, discoverBy];
 
   UserPreference copyWith({
     String? userId,
@@ -46,6 +50,7 @@ class UserPreference extends Equatable{
     String? showDistancesIn,
     int? maximumDistance,
     bool? onlyShowInThisRange,
+    int? discoverBy,
 
   }){
     return UserPreference(
@@ -60,6 +65,7 @@ class UserPreference extends Equatable{
       showDistancesIn: showDistancesIn ?? this.showDistancesIn,
       maximumDistance: maximumDistance ?? this.maximumDistance,
       onlyShowInThisRange: onlyShowInThisRange ?? this.onlyShowInThisRange,
+      discoverBy: discoverBy ?? this.discoverBy,
       );
   }
 
@@ -76,6 +82,7 @@ class UserPreference extends Equatable{
       showDistancesIn: snap['showDistancesIn'],
       maximumDistance: snap['maximumDistance'],
       onlyShowInThisRange: snap['onlyShowInThisRange'],
+      discoverBy: snap['discoverBy']
       );
   }
 
@@ -92,6 +99,7 @@ class UserPreference extends Equatable{
       'showDistancesIn': showDistancesIn,
       'maximumDistance': maximumDistance,
       'onlyShowInThisRange': onlyShowInThisRange,
+      'discoverBy': discoverBy,
     };
   }
 

@@ -6,8 +6,8 @@ import '../../Models/likes_model.dart';
 import '../../Models/userpreference_model.dart';
 
 abstract class BaseDatabaseRepository{
-  Stream<User> getUser(String userId);
-  Stream<List<User>> getUsers(String userId, String gender);
+  Stream<User> getUser(String userId, Gender users);
+  Stream<List<User>> getUsers(String userId, Gender users);
   Future<void> createUser(User user);
   Future<void> updateUser(User user);
   Future<void> updateUserPictures(User user, String imageName);

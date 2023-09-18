@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
@@ -32,17 +33,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<EditUserProfile>(_onEditUserProfile);
 
     on<VerifyMe>(_onVerifyMe);
+    on<DeletePhoto>(_onDeletePhoto);
 
-    _authSubscription = _authBloc.stream.listen((state) { 
-      if(state.user != null){
-        add(LoadProfile(userId: state.user!.uid));
-      }
-    });
+    // _authSubscription = _authBloc.stream.listen((state) { 
+    //   if(state.user != null && state.accountType != Gender.nonExist  ){
+    //     add(LoadProfile(userId: state.user!.uid, users: state.accountType!));
+    //   }
+    // });
+    add(LoadProfile(userId: _authBloc.state.user!.uid, users: _authBloc. state.accountType!));
   }
 
   void _onLoadProfile(LoadProfile event, Emitter<ProfileState> emit) {
        try {
-        _databaseRepository.getUser(event.userId).listen((user) { 
+        _databaseRepository.getUser(event.userId, event.users).listen((user) { 
         add(UpdateProfile(user: user));
 
       });
@@ -74,10 +77,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     if(state is ProfileLoaded){
       try {
 
-       await _storageRepository.uploadImage(event.user!, event.image);
+       String url = await _storageRepository.uploadImage(event.user!, event.image);
+       await _databaseRepository.updateUserPictures(event.user!, url);
         
       }on Exception catch (e) {
+
         print(e.toString());
+        
       }
     }
   }
@@ -95,7 +101,16 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   @override
   Future<void> close() async{
-    _authSubscription!.cancel();
+    _authSubscription?.cancel();
     super.close();
+  }
+
+  FutureOr<void> _onDeletePhoto(DeletePhoto event, Emitter<ProfileState> emit)async {
+    try {
+    await _databaseRepository.deletePhoto(imageUrl:event.imageUrl, userId: event.userId, users:event.users);
+   
+    } catch (e) {
+      print(e.toString());
+    }
   }
 }

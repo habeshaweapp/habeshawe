@@ -14,15 +14,15 @@ class StorageRepository extends BaseStorageRepository{
   @override
   Future<String> uploadImage(User user, XFile image) async {
     try {
-      await storage.ref('${user.id}/${image.name}')
+      return await storage.ref('${user.id}/${image.name}')
       .putFile(File(image.path))
       .then((p0) async {
-         return getDownloadURL(user, image.name);
+         return await getDownloadURL(user, image.name);
          }
       //DatabaseRepository().updateUserPictures(user,image.name)
       );
       
-      throw Exception('upload failed');
+      //throw Exception('upload failed');
       
     } catch (
       e

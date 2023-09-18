@@ -10,6 +10,10 @@ abstract class OnboardingEvent extends Equatable {
 class StartOnBoarding extends OnboardingEvent{
   final User user;
   StartOnBoarding({required this.user});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [user];
 }
 
 class UpdateUser extends OnboardingEvent{

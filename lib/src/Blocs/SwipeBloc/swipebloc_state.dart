@@ -50,3 +50,13 @@ class ItsaMatch extends SwipeState{
   List<Object> get props => [user];
 }
 
+class SwipeCompleted extends SwipeState{
+  final DateTime completedTime;
+  
+  SwipeCompleted({required this.completedTime});
+   
+   @override
+  // TODO: implement props
+  List<Object> get props => [completedTime];
+}
+

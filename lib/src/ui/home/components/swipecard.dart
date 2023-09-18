@@ -99,7 +99,8 @@ class SwipeCard extends StatelessWidget {
                       }, 
                       itemBuilder: (context, index){
                         print('>>>>.>>>>>>>>>>>>>>>>>>>${index}');
-                        return UserCard().userDrag(MediaQuery.of(context).size, _swipeItems[index].content, context);
+                        //return UserCard().userDrag(MediaQuery.of(context).size, _swipeItems[index].content, context);
+                        return Container();
                       },
                       leftSwipeAllowed: true,
                       rightSwipeAllowed: true,

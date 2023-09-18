@@ -39,7 +39,7 @@ class AuthState extends Equatable {
   const AuthState.unauthenticated() : this._(status: AuthStatus.unauthenticated);
   
   @override
-  List<Object?> get props => [status, user, accountType];
+  List<Object?> get props => [status, user, accountType, isCompleted];
 
 
   factory AuthState.fromMap(Map<String, dynamic> map){

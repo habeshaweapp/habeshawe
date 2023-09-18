@@ -5,7 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:lomi/src/Blocs/AdBloc/ad_bloc.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/SwipeBloc/swipebloc_bloc.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
@@ -13,6 +15,7 @@ import 'package:lomi/src/Data/Models/user_model.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/itsAmatch/itsAmatch.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:swipable_stack/swipable_stack.dart';
 
 import '../../../Blocs/ContinueWith/continuewith_cubit.dart';
 import '../../../Blocs/ProfileBloc/profile_bloc.dart';
@@ -57,11 +60,11 @@ class UserCard extends StatelessWidget {
              padding: const EdgeInsets.only(bottom: 20,left: 20, right: 20,top: 5),
              child: Draggable(
               child: Material(
-                child: userDrag(size, state.users[0], context)
+                child: userDrag(size, state.users[0], context, SwipableStackController())
                 ), 
-              feedback: Material(child: userDrag(size, state.users[0], context)),
+              feedback: Material(child: userDrag(size, state.users[0], context, SwipableStackController())),
               childWhenDragging: userCount > 1 ?
-               Material(child: userDrag(size, state.users[1], context))
+               Material(child: userDrag(size, state.users[1], context, SwipableStackController()))
                : Container(),
               onDragEnd: ((details) {
                 if(details.velocity.pixelsPerSecond.dx < 0){
@@ -176,10 +179,10 @@ class UserCard extends StatelessWidget {
 
 
 
-  Widget userDrag(Size size, User user, BuildContext context) {
+  Widget userDrag(Size size, User user, BuildContext context, SwipableStackController? stackController){
     final pageController = PageController();
     int idx = 0;
-    return   Center(
+    return (user.id != 'last') ? Center(
       child: GestureDetector(
         onTapUp: (d){
           //if(pageController.hasClients){
@@ -289,8 +292,7 @@ class UserCard extends StatelessWidget {
                               Color.fromARGB(200, 0, 0, 0),
                               Color.fromARGB(0, 0, 0, 0),
                               
-                              
-                                
+                         
                           ],
                                 
                           begin: Alignment.bottomCenter,
@@ -403,7 +405,7 @@ class UserCard extends StatelessWidget {
                                   Container(
                                     height: 20,
                                     child: IconButton(
-                                      onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: user)));}, 
+                                      onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: user, stackController: stackController, imgindex: pageController.page ,)));}, 
                                       icon: Icon(LineIcons.arrowDown, color: Colors.white,)
                                       )
                                     ),
@@ -445,15 +447,55 @@ class UserCard extends StatelessWidget {
             
               ),
       ),
+    ):
+    Center(
+      child: Container(
+        color: Colors.white,
+        // width: size.width*0.98,
+        
+        // decoration: BoxDecoration(
+        //   borderRadius: BorderRadius.circular(15),
+        //   color: Colors.grey[600],),
+        // child: Center(
+        //   child: BlocBuilder<AdBloc, AdState>(
+        //     builder: (context, state){
+        //       if(state is AdLoaded){
+        //         return Column(
+        //           children: List.generate(state.nativeAd!.length, (index) => 
+                  
+        //             Container(
+        //               padding: EdgeInsets.only(bottom: 0),
+        //       constraints: const  BoxConstraints(
+        //             maxHeight: 400,
+        //             minHeight: 320,
+        //             maxWidth: 400,
+        //             minWidth: 320
+        //       ),
+              
+        //       child: AdWidget(ad: state.nativeAd![index] as AdWithView,),
+        //     ),
+            
+            
+        //         )
+        //         );
+
+        //       }else{
+        //         return Container();
+        //       }
+        //     },
+            
+        //   ),
+        // ),
+      ),
     );
   }
   //final SharedPreferences prefes =  SharedPreferences.getInstance();
 
-   int calculateDistance(GeoPoint userLocation)  {
+   int calculateDistance(List userLocation)  {
 
     
     
-    return Geolocator.distanceBetween(7.3666915, 38.6714959, userLocation.latitude, userLocation.longitude)~/1000;
+    return Geolocator.distanceBetween(7.3666915, 38.6714959, userLocation[0], userLocation[1])~/1000;
    }    
       
 

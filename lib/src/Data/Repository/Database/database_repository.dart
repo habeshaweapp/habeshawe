@@ -23,9 +23,9 @@ import 'base_database_repository.dart';
 class DatabaseRepository extends BaseDatabaseRepository{
   final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   @override
-  Stream<User> getUser(String userId) {
+  Stream<User> getUser(String userId, Gender users) {
     try {
-      return _firebaseFirestore.collection(Gender.men.name)
+      return _firebaseFirestore.collection(users.name)
       .doc(userId)
       .snapshots()
       .map((snap) => User.fromSnapshoot(snap));
@@ -43,10 +43,10 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
 
   @override
-  Future<void> updateUserPictures(User user, String imageName) async{
+  Future<void> updateUserPictures(User user, String downloadURL) async{
     try {
   
-    String downloadURL = await StorageRepository().getDownloadURL(user,imageName);
+    //String downloadURL = await StorageRepository().getDownloadURL(user,imageName);
 
     return await _firebaseFirestore.collection(user.gender)
             .doc(user.id)
@@ -99,7 +99,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Stream<List<User>> getUsers(String userId, String gender) {
+  Stream<List<User>> getUsers(String userId, Gender users) {
     //  Position myLocation = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     // geohash.MyGeoHash myGeoHash = geohash.MyGeoHash();
     // String hash = myGeoHash.geoHashForLocation(geohash.GeoPoint(myLocation.latitude, myLocation.longitude));
@@ -113,7 +113,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
     // });
    // _firebaseFirestore.collection(user.gender).where('location[0]', whereIn: [99,21] ).where('location[1]', whereIn: [20,12]);
     try {
-  return _firebaseFirestore.collection(userId).snapshots()
+  return _firebaseFirestore.collection(users.name).snapshots()
   .map((snap) => snap.docs
   .map((doc) => User.fromSnapshoot(doc)).toList() );
 }on FirebaseException catch (e){
@@ -658,9 +658,9 @@ class DatabaseRepository extends BaseDatabaseRepository{
     // });
 
     try {
-  final preference = await _firebaseFirestore.collection(users.name)
-  .doc(userId).collection('userpreference').doc('preference')
-  .get().then((snap) => UserPreference.fromSnapshoot(snap));
+  // final preference = await _firebaseFirestore.collection(users == Gender.men ?Gender.women.name: users.name)
+  // .doc(userId).collection('userpreference').doc('preference')
+  // .get().then((snap) => UserPreference.fromSnapshoot(snap));
   final prefes = await SharedPreferences.getInstance();
   //.snapshots().map((snap) => UserPreference.fromSnapshoot(snap));
   Position myLocation = await Geolocator.getCurrentPosition(desiredAccuracy:  LocationAccuracy.low);
@@ -675,7 +675,8 @@ class DatabaseRepository extends BaseDatabaseRepository{
   
   
   geohash.GeoPoint center = geohash.GeoPoint(myLocation.latitude, myLocation.longitude);
-  double radiusInM = preference.maximumDistance! * 1000;
+  double radiusInM = 25 * 1000;
+  // preference.maximumDistance! * 1000;
   List<List<String>> bounds = myGeoHash.geohashQueryBounds(center, radiusInM);
   List<Future> futures = [];
   
@@ -1005,6 +1006,30 @@ Future<void> createDemoUsers(List<User> users) async{
       .get()
       .then((value) => value['isCompleted']);
 
+  }
+
+  Future<List<User>> getUsersWithAge(String userId, Gender gender) async{
+    var prefes = await _firebaseFirestore.collection(gender.name).doc(userId).collection('userpreference').doc('preference').get().then((value) => UserPreference.fromSnapshoot(value));
+    var userList = await _firebaseFirestore.collection(gender == Gender.men?Gender.women.name:gender.name)
+          .orderBy('age')
+          .where('age', isGreaterThanOrEqualTo: prefes.ageRange![0])
+          .where('age', isLessThanOrEqualTo: prefes.ageRange![1])
+          .limit(10)
+          .get().then((value) => 
+                                  value.docs.map((doc) => User.fromSnapshoot(doc)).toList() );
+
+    return userList;
+    
+  }
+
+ Future<void> deletePhoto({required String imageUrl, required String userId, required Gender users})async {
+    try{
+
+    await _firebaseFirestore.collection(users.name).doc(userId).update({'imageUrls': FieldValue.arrayRemove([imageUrl])});
+
+    }catch(e){
+      throw Exception(e);
+    }
   }
 
 

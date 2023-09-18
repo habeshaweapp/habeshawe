@@ -73,3 +73,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
 
 }
+
+dependencies {
+  implementation 'com.google.android.gms:play-services-ads:22.3.0'
+}

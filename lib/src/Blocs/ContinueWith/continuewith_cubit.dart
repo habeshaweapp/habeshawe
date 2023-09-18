@@ -40,6 +40,7 @@ class ContinuewithCubit extends Cubit<ContinuewithState> {
       ));
       
     }on Exception catch(e){
+      emit(state.copyWith(status: ContinueStatus.initial));
       print(e.toString());
     }
   }

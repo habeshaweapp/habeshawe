@@ -10,9 +10,10 @@ abstract class OnboardingState extends Equatable {
 class OnboardingLoading extends OnboardingState {}
 
 class OnboardingLoaded extends OnboardingState {
-  User user;
-  OnboardingLoaded({required this.user});
+  final User user;
+  const OnboardingLoaded({required this.user});
 
   @override
   List<Object> get props => [user];
 }
+

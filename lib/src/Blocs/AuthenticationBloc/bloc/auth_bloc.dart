@@ -32,6 +32,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<AuthUserChanged>(_authUserChanged);
     on<LogInWithGoogle>(_onLogInWithGoogle);
+    on<LogOut>(_onLogOut);
   }
 
 
@@ -62,6 +63,13 @@ void _authUserChanged(AuthUserChanged event, Emitter<AuthState> emit) async{
   // TODO
   print(e.toString());
 }
+
+}
+
+FutureOr<void> _onLogOut(LogOut event, Emitter<AuthState> emit) async {
+  emit(const AuthState.unknown());
+  await _authRepository.signOut();
+  await HydratedBloc.storage.clear();
 
 }
 

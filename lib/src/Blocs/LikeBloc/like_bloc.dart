@@ -27,11 +27,11 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
     on<LikeLikedMeUser>(_onLikeLikedMeUser);
     on<DeleteLikedMeUser>(_onDeleteLikedMeUser);
 
-    _authSubscription = _authBloc.stream.listen((state) {
-      if(state.user != null && state.accountType != Gender.nonExist){
-        add(LoadLikes(userId: state.user!.uid, users: state.accountType!));
-      }
-    });
+    // _authSubscription = _authBloc.stream.listen((state) {
+    //   if(state.user != null && state.accountType != Gender.nonExist){
+    //     add(LoadLikes(userId: state.user!.uid, users: state.accountType!));
+    //   }
+    // });
   }
 
 void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
@@ -67,5 +67,11 @@ void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
     }on Exception catch (e) {
       print(e.toString());
     }
+  }
+
+  @override
+  Future<void> close() {
+    // TODO: implement close
+    return super.close();
   }
 }

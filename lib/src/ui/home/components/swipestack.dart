@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lomi/src/Blocs/ProfileBloc/profile_bloc.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/ui/home/components/usercard.dart';
 import 'package:swipable_stack/swipable_stack.dart';
 
@@ -21,14 +22,37 @@ class SwipeStack extends StatelessWidget {
     final _controller = SwipableStackController();
     return BlocBuilder<SwipeBloc, SwipeState>(
       buildWhen: (previous, current) {
-        return current is SwipeLoaded && previous is SwipeLoading;
+        return (current is SwipeLoaded && previous is SwipeLoading) || current is SwipeCompleted;
       } ,
       builder: (context, state) {
         if(state is SwipeLoading){
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(strokeWidth: 2));
         }
 
+        if(state is SwipeCompleted){
+          final now =DateTime.now();
+          final remain  = now.difference(state.completedTime);
+          return Center(
+            child: Container(
+              height: 200,
+              child: Column(
+                children: [
+                  Text('Thats it for today \ncome back Tomorrow!'),
+                  Text(
+                    '${remain.inHours}:${remain.inMinutes}:${remain.inSeconds} remains',
+                    style: Theme.of(context).textTheme.bodyLarge,
+
+                  )
+                ],
+              ),
+            )
+          );
+        }
+
+
         if(state is SwipeLoaded){
+          int noOfSwipedCards = 0;
+          int totalCard = state.users.length;
           if(state.users.isEmpty ){
             return Container(
               child:   Center(
@@ -79,10 +103,12 @@ class SwipeStack extends StatelessWidget {
                   }
                   if(direction == SwipeDirection.left){
                     context.read<SwipeBloc>().add(SwipeLeftEvent(passedUser: state.users[index], user: (context.read<ProfileBloc>().state as ProfileLoaded ).user));
+                    noOfSwipedCards++;
 
                   }
                   if(direction == SwipeDirection.right){
                     context.read<SwipeBloc>().add(SwipeRightEvent(user: (context.read<ProfileBloc>().state as ProfileLoaded ).user, matchUser: state.users[index]));
+                    noOfSwipedCards++;
                   }
                 },
                // horizontalSwipeThreshold: 0.8,
@@ -93,11 +119,16 @@ class SwipeStack extends StatelessWidget {
                   final itemIndex = swipeProperty.index % state.users.length;
                   // final itemIndex = state.users.length - tempUsers;
                   // tempUsers --;
-                   print('-------index------${swipeProperty.stackIndex }>>>>>>>${swipeProperty.index}');
+                   print('-------index------${swipeProperty.stackIndex }>>>>>stack no>>${itemIndex}');
                   // if(swipeProperty.index == state.users.length +1){
                   //   return  Container(child: Text('Thats all for today!'),);
                   // }
-                  return UserCard().userDrag(MediaQuery.of(context).size, state.users[itemIndex], context);
+                  if(noOfSwipedCards == totalCard-1){
+                    context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
+                    return Container();
+                  }
+
+                  return UserCard().userDrag(MediaQuery.of(context).size, state.users[itemIndex], context,_controller);
                 },
                 overlayBuilder: (context, properties){
                   final opacity = min(properties.swipeProgress, 1.0);

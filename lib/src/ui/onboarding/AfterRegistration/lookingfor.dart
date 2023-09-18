@@ -7,6 +7,9 @@ import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/app_route_config.dart';
+import 'package:lomi/src/ui/onboarding/AfterRegistration/schoolname.dart';
+
+import 'widgets/lookingforitem.dart';
 
 class LookingFor extends StatefulWidget {
   const LookingFor({super.key});
@@ -125,8 +128,9 @@ class _LookingForState extends State<LookingFor> {
                           child: ElevatedButton(
                             onPressed: (){
                               if(selectedIndex != -1 ){ 
-                                context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(lookingFor: lookignForOpt[selectedIndex].replaceAll('\n', '') )));
-                                GoRouter.of(context).pushNamed(MyAppRouteConstants.schoolRouteName);
+                                context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(lookingFor: selectedIndex )));
+                                //GoRouter.of(context).pushNamed(MyAppRouteConstants.schoolRouteName);
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => const SchoolName()));
                               }
                             },
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
@@ -161,47 +165,3 @@ class _LookingForState extends State<LookingFor> {
   }
 }
 
-class LookingForItem extends StatelessWidget {
-  final String title;
-  final Icon icon;
-  final bool isSelected;
-  final VoidCallback onTap;
-  const LookingForItem ({super.key,required this.title, required this.icon, required this.isSelected,required this.onTap });
-
-  @override
-  Widget build(BuildContext context) {
-    var size = MediaQuery.of(context).size;
-    return InkWell(
-              onTap: onTap,
-              // (){
-              //  // context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(lookingFor: lookignForOpt[index])));
-              //                // selectedIndex = index;
-              //        },
-              child: Container(
-                       width: size.width*0.32,
-                        height: size.height*0.18,
-                                             // margin: EdgeInsets.all(10),
-                        child: Card(                    
-                            shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      ),
-                            elevation: 2,
-                            color: isSelected ? Colors.grey[400]: Colors.grey[200],
-                            child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              //Icon(Icons.heart_broken, color: Colors.red,),
-                              icon,
-                              SizedBox(height: 10,),
-                              Text(title,
-                              textAlign: TextAlign.center,
-                              style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: size.width * 0.03),
-                              
-                              )
-                            ],
-                                                ),
-                                              ),
-                                            ),
-                          );
-  }
-}

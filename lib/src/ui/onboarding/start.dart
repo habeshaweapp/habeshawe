@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +21,18 @@ class StartScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
+    var _controller = ValueNotifier<bool>(isDark);
+
+    _controller.addListener(() {
+      context.read<ThemeCubit>().changeTheme();
+    },);
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: isDark ? const Color.fromARGB(51, 182, 180, 180) : Colors.white,
+        systemNavigationBarIconBrightness: !isDark? Brightness.dark: Brightness.light,
+      ),
+    );
     return Scaffold(
       body: Container(
         width: size.width,
@@ -27,7 +41,7 @@ class StartScreen extends StatelessWidget {
         //   image: DecorationImage(
         //     image: AssetImage('assets/images/habeshabg2.png'),
         //     alignment: Alignment.topLeft,
-            
+
         //     //fit: BoxFit.
         //     )
         //     gradient: LinearGradient(
@@ -37,44 +51,76 @@ class StartScreen extends StatelessWidget {
         //       Colors.green,
         //       Color.fromARGB(255, 13, 66, 15),
         //     ])
-       // ),
+        // ),
         child: SingleChildScrollView(
           child: Container(
-            //height: size.height,
-          //    decoration: const BoxDecoration(
-          // image: DecorationImage(
-          //   image: AssetImage('assets/images/habeshabg2.png'),
-          //   alignment: Alignment.bottomRight,
-            
-          //   //fit: BoxFit.
-          //   )
-          //    ),
+              //height: size.height,
+              //    decoration: const BoxDecoration(
+              // image: DecorationImage(
+              //   image: AssetImage('assets/images/habeshabg2.png'),
+              //   alignment: Alignment.bottomRight,
+
+              //   //fit: BoxFit.
+              //   )
+              //    ),
 
               child: Stack(
-                children: [
-                  Positioned(
-                    //alignment: Alignment.topLeft,
-                    left: 5,
-                    child: Image.asset('assets/images/habeshabg2.png',
-                    height: 500,
-                    fit: BoxFit.cover,
-                    width: 127,),
-                  ),
-                  Center(
-                    child: BlocBuilder<ContinuewithCubit, ContinuewithState>(
-                      builder: (context, state) {
-                        if(state.status == ContinueStatus.submitting){
-                          return CircularProgressIndicator();
-                        }
-                        return Container();
-                      },
-                    ),
-                  ),
-                  Column(
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            //mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
+              Positioned(
+                right: 10,
+                top: 50,
+                child: UnconstrainedBox(
+        
+            child: AdvancedSwitch(
+              controller: _controller,
+              enabled: true,
+              height: 30,
+              //width: 100,
+              //
+              //inactiveColor: Colors.amber,
+              activeColor: Colors.grey[800]!,
+              inactiveColor: Colors.grey,
+              //inactiveChild: const Text('Dark'),
+              //activeChild: const Text('Light'),
+              thumb: ValueListenableBuilder<bool>(
+                valueListenable: _controller, 
+                builder: (_,value,__){
+                  return Icon(value? Icons.lightbulb: Icons.lightbulb_outline);
+                }),
+            ),
+          ),
+                ),
+              Positioned(
+                //alignment: Alignment.topLeft,
+                left: 5,
+                child: Image.asset(
+                  'assets/images/habeshabg2.png',
+                  height: 500,
+                  fit: BoxFit.cover,
+                  width: 127,
+                ),
+              ),
+              Positioned(
+                top: size.height/1.8,
+                left: size.width*0.45,
+                child: Center(
+                  child: BlocBuilder<ContinuewithCubit, ContinuewithState>(
+                    builder: (context, state) {
+                      if (state.status == ContinueStatus.submitting) {
+                        return CircularProgressIndicator(
+                          strokeWidth: 2,
+                        );
+                      }
+                      return Container();
+                    },
+                  ),
+                ),
+               ),
+              Column(
+                // crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
                   SizedBox(
                     height: size.height * 0.2,
                   ),
@@ -85,7 +131,7 @@ class StartScreen extends StatelessWidget {
                       "HABESHAWE",
                       style: TextStyle(
                         fontSize: 35,
-                       // fontWeight: FontWeight.w300,
+                        // fontWeight: FontWeight.w300,
                         color: Colors.grey,
                       ),
                     ),
@@ -103,10 +149,10 @@ class StartScreen extends StatelessWidget {
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 40),
                         child: const Text(
-                          'By clicking Log In, you agree with our Terms. Learn how we process your data in our Privacy Policy and Cookies Policy.',
+                          'By clicking Log In, you agree with our Terms. Learn how we process your data in our Privacy Policy and \nCookies Policy.',
                           style: TextStyle(
                             //color: Colors.white,
-                            fontSize: 12,
+                            fontSize: 11,
                             fontWeight: FontWeight.w300,
                           ),
                           textAlign: TextAlign.center,
@@ -210,6 +256,7 @@ class StartScreen extends StatelessWidget {
                         text: "CONTINUE WITH GOOGLE",
                         icon: 'assets/icons/googleTransp2.png',
                         color: Colors.red,
+                        isDark: isDark,
                         onPressed: () async {
                           // BlocProvider.of<AuthBloc>(context).add(LogInWithGoogle());
                           // final nextstate = await AuthBloc.s
@@ -240,29 +287,30 @@ class StartScreen extends StatelessWidget {
                           //   GoRouter.of(context)
                           //       .pushNamed(MyAppRouteConstants.phoneRouteName);
 
-                         // } else {
-                            //GoRouter.of(context).pushNamed(MyAppRouteConstants.homeRouteName);
-                            //  await context.read<DatabaseRepository>().updateUserPreference(
-                            //     context.read<ContinuewithCubit>().state.user!.uid,
-                            //     UserPreference(phoneNumber: '251703398088', showMe: 'women'));
-                         // }
+                          // } else {
+                          //GoRouter.of(context).pushNamed(MyAppRouteConstants.homeRouteName);
+                          //  await context.read<DatabaseRepository>().updateUserPreference(
+                          //     context.read<ContinuewithCubit>().state.user!.uid,
+                          //     UserPreference(phoneNumber: '251703398088', showMe: 'women'));
+                          // }
                         },
                       ),
 
                       SizedBox(
                         height: 15,
                       ),
+                      
 
                       signInButton(
                           context: context,
-                          text: "CONTINUE WITH TWITTER",
+                          text: "CONTINUE WITH X",
                           icon: 'assets/icons/twitterlogo.png',
                           color: Colors.blue,
+                          isDark: isDark,
                           onPressed: () async {
                             await context
                                 .read<ContinuewithCubit>()
                                 .continueWithTwitter();
-
 
                             // if (!await context
                             //     .read<DatabaseRepository>()
@@ -280,18 +328,18 @@ class StartScreen extends StatelessWidget {
                             //       imageUrls: [],
                             //       interests: []);
 
-                              // //if(Paint.enableDithering)
-                              // context
-                              //     .read<OnboardingBloc>()
-                              //     .add(StartOnBoarding(user: user));
-                              // GoRouter.of(context)
-                              //     .pushNamed(MyAppRouteConstants.phoneRouteName);
-                           // } else {
-                              //GoRouter.of(context).pushNamed(MyAppRouteConstants.homeRouteName);
-                              //  await context.read<DatabaseRepository>().updateUserPreference(
-                              //     context.read<ContinuewithCubit>().state.user!.uid,
-                              //     UserPreference(phoneNumber: '251703398088', showMe: 'women'));
-                           // }
+                            // //if(Paint.enableDithering)
+                            // context
+                            //     .read<OnboardingBloc>()
+                            //     .add(StartOnBoarding(user: user));
+                            // GoRouter.of(context)
+                            //     .pushNamed(MyAppRouteConstants.phoneRouteName);
+                            // } else {
+                            //GoRouter.of(context).pushNamed(MyAppRouteConstants.homeRouteName);
+                            //  await context.read<DatabaseRepository>().updateUserPreference(
+                            //     context.read<ContinuewithCubit>().state.user!.uid,
+                            //     UserPreference(phoneNumber: '251703398088', showMe: 'women'));
+                            // }
                           }),
                       // SizedBox(
                       //   height: 15,
@@ -317,7 +365,7 @@ class StartScreen extends StatelessWidget {
                             //color: Colors.white
                             fontSize: 12,
                             fontWeight: FontWeight.w300,
-                            ),
+                          ),
                         ),
                       ),
                       //Spacer(),
@@ -326,10 +374,14 @@ class StartScreen extends StatelessWidget {
                       )
                     ],
                   )
-            ],
-          ),
                 ],
-              )),
+              ),
+              
+               
+              
+            ],
+          )
+          ),
         ),
       ),
     );
@@ -340,15 +392,17 @@ class StartScreen extends StatelessWidget {
       required String text,
       required String icon,
       required Color color,
+      required bool isDark,
       required void Function() onPressed}) {
-        bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
+    //bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Container(
       width: MediaQuery.of(context).size.width * 0.85,
       height: 50,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(isDark? Colors.grey[800]: Colors.white),
+          backgroundColor: MaterialStateProperty.all(
+              isDark ? Colors.grey[800] : Colors.white),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),
@@ -368,7 +422,9 @@ class StartScreen extends StatelessWidget {
             ),
             Text(text,
                 style: TextStyle(
-                    color: isDark ? Colors.white.withOpacity(0.6) : Colors.black.withOpacity(0.4),
+                    color: isDark
+                        ? Colors.white.withOpacity(0.6)
+                        : Colors.black.withOpacity(0.4),
                     fontWeight: FontWeight.bold,
                     fontSize: MediaQuery.of(context).size.width * 0.03,
                     overflow: TextOverflow.ellipsis)),

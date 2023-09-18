@@ -36,15 +36,20 @@ class PhotoSelector extends StatelessWidget {
             onPressed: () async{
               ImagePicker _picker = ImagePicker();
                XFile? _image = await _picker.pickImage(source: ImageSource.gallery);
-              final  out = await getApplicationDocumentsDirectory();
+              //final  out = await getApplicationDocumentsDirectory();
+              var img;
               
               if(_image == null) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No image selected')));
 
               }else{
-                _image = await FlutterImageCompress.compressAndGetFile(_image.path, out.path, quality: 25
+                final lastIndex = _image.path.lastIndexOf(new RegExp(r'.jp'));
+                final splitted = _image.path.substring(0, (lastIndex));
+                final outPath = "${splitted}_out${_image.path.substring(lastIndex)}";
+                 img = await FlutterImageCompress.compressAndGetFile(_image.path, outPath, quality: 25
                 );
               }
+              print(img!.path);
               if(_image !=null){
                 print('image uploading.........');
                // StorageRepository().uploadImage(_image);

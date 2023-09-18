@@ -64,11 +64,12 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
      try {
       User user = (state as OnboardingLoaded).user;
       var url = await _storageRepository.uploadImage(user, event.image);
-      List<dynamic> imageUrls = user.imageUrls..add(url);
-
-     // _databaseRepository.getUser(user.id!).listen((user) { 
-        add(UpdateUser(user: user.copyWith(imageUrls: imageUrls )));
-      // });
+      List<dynamic> imageUrls = [...user.imageUrls, url];
+      //List<dynamic> imageUrls = user.imageUrls;
+      //imageUrls.add(url);   this code doesnt work and its your greatest finding in flutter it doesnt copy but changes the user
+      //user.imageUrls..add(url);
+      add(UpdateUser(user: user.copyWith(imageUrls: imageUrls)));
+    
        
      }on Exception catch (e) {
       print(e.toString());

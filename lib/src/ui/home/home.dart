@@ -22,18 +22,18 @@ class _HomeState extends State<Home> {
   
   @override
   Widget build(BuildContext context) {
-    
+     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       //backgroundColor: Colors.transparent,
-      appBar: appBar(),
+      appBar: appBar(isDark),
       body: HomeBody(),
     );
 
     
   }
 
-  AppBar appBar() {
-    bool isDark = Theme.of(context).brightness == Brightness.dark;
+  AppBar appBar(bool isDark) {
+    //bool isDark = Theme.of(context).brightness == Brightness.dark;
     var items = [
       pageIndex == 0 ? 'assets/images/explore_active_icon.svg' :'assets/images/explore_icon.svg',
       pageIndex == 1 ? 'assets/images/likes_active_icon.svg' :'assets/images/likes_icon.svg',
@@ -77,7 +77,7 @@ class _HomeState extends State<Home> {
 Widget HomeBody(){
   return IndexedStack(
     index: pageIndex,
-    children: const [
+    children:  [
       ExplorePage(),
       LikesScreen(),
       MatchesScreen(),

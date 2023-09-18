@@ -169,6 +169,12 @@ class LomiAppRouter{
         return Text("error");
       },
 
+      redirect: (context, state) {
+        
+      },
+
+     // refreshListenable: BlocL
+
       );
 
      

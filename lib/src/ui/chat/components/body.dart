@@ -51,7 +51,7 @@ class Body extends StatelessWidget {
                           controller: context.read<ChatBloc>().scrollController,
                           physics: BouncingScrollPhysics(),
                           shrinkWrap: true,
-                          itemCount: state.messages!.length,
+                          itemCount: state.messages.length,
                           reverse: true,
                           
                           //userMatch.chat![0].messages.length,
@@ -74,7 +74,7 @@ class Body extends StatelessWidget {
                                     color: Colors.green.shade200,
                                   ),
                                   child: Text(
-                                    state.messages![index].message,                                    
+                                    state.messages[index].message,                                    
                                     //userMatch.chat![0].messages[index].message,
                                     style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black)
                                     //TextStyle(color: Colors.black)
@@ -93,9 +93,9 @@ class Body extends StatelessWidget {
                                     alignment: Alignment.topLeft,
                                     child: Container(
                                       constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.83),
-                                      padding: EdgeInsets.all(10),
+                                      padding:const EdgeInsets.all(10),
                                       decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.only(
+                                        borderRadius:const BorderRadius.only(
                                       bottomRight: Radius.circular(20),
                                       topLeft: Radius.circular(20),
                                       topRight: Radius.circular(20)
@@ -103,7 +103,7 @@ class Body extends StatelessWidget {
                                         color: Colors.grey.shade200,
                                       ),
                                       child: Text(
-                                        state.messages![index].message,
+                                        state.messages[index].message,
                                         //userMatch.chat![0].messages[index].message,
                                         style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black),))
                                     ),

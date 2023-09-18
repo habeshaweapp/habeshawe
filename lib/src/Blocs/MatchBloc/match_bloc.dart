@@ -31,11 +31,11 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     on<UpdateMatches>(_onUpdateMatches);
    // on<UpdateLikes>(_onUpdateLikes);
 
-    _authSubscription = _authBloc.stream.listen((state) { 
-      if(state.user != null && state.accountType != Gender.nonExist){
-        add(LoadMatchs(userId: state.user!.uid, users: state.accountType!));       
-      }
-    });
+    // _authSubscription = _authBloc.stream.listen((state) { 
+    //   if(state.user != null && state.accountType != Gender.nonExist){
+    //     add(LoadMatchs(userId: state.user!.uid, users: state.accountType!));       
+    //   }
+    // });
   }
 
   void _onLoadMatchs(LoadMatchs event, Emitter<MatchState> emit) {

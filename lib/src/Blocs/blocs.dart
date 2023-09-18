@@ -2,3 +2,8 @@ export 'AuthenticationBloc/bloc/auth_bloc.dart';
 export 'SwipeBloc/swipebloc_bloc.dart';
 export 'OnboardingBloc/onboarding_bloc.dart';
 export 'MatchBloc/match_bloc.dart';
+export 'LikeBloc/like_bloc.dart';
+export 'ChatBloc/chat_bloc.dart';
+export "ProfileBloc/profile_bloc.dart";
+export 'PaymentBloc/payment_bloc.dart';
+export 'UserPreference/userpreference_bloc.dart';

@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 
 import '../../../Blocs/ProfileBloc/profile_bloc.dart';
 import '../../../Blocs/ThemeCubit/theme_cubit.dart';
@@ -38,17 +40,32 @@ class PhotoSelector extends StatelessWidget {
             icon: const Icon(Icons.add_circle,color: Colors.teal,),
             onPressed: () async{
               ImagePicker _picker = ImagePicker();
-              final XFile? _image = await _picker.pickImage(source: ImageSource.gallery);
+               List<XFile?> _image = await _picker.pickMultiImage();
+               //_picker.pickImage(source: ImageSource.values[ImageSource.Gall,ImageSource.CameraDevice]);
+               List<XFile> images =[];
   
-              if(_image == null) {
+              if(_image.isEmpty) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No image selected')));
 
+              }
+
+              else{
+                for(var img in _image){
+
+                final lastIndex = img!.path.lastIndexOf(new RegExp(r'.jp'));
+                final splitted = img.path.substring(0, (lastIndex));
+                final outPath = "${splitted}_out${img.path.substring(lastIndex)}";
+                var image = await FlutterImageCompress.compressAndGetFile(img.path, outPath, quality: 50
+                );
+                //images.add(image!);
+                context.read<ProfileBloc>().add(UpdateProfileImages(user: user, image: image!));
+              }
               }
               if(_image !=null){
                 print('image uploading.........');
                // StorageRepository().uploadImage(_image);
                // context.read<OnboardingBloc>().add(UpdateUserImages(image: _image));
-               context.read<ProfileBloc>().add(UpdateProfileImages(user: user, image: _image));
+               //context.read<ProfileBloc>().add(UpdateProfileImages(user: user, image: _image));
               }
             },
             )
@@ -60,18 +77,20 @@ class PhotoSelector extends StatelessWidget {
               children: [
                 CachedNetworkImage(
                   imageUrl: imageUrl! ,
-                  placeholder: (context, url) => Center(child: CircularProgressIndicator()),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  //placeholder: (context, url) => Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => Icon(Icons.image_not_supported),
 
                   fit: BoxFit.cover,
                 ),
                 //Image.network(imageUrl!, fit: BoxFit.cover,),
                 Positioned(
                   //alignment: Alignment.bottomRight,
-                  bottom: -12,
-                  right: -12,
+                  top: -15,
+                  left: -15,
                   child: IconButton(
-                    onPressed: (){}, 
+                    onPressed: (){
+                      context.read<ProfileBloc>().add(DeletePhoto(imageUrl: imageUrl!, userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType!, ));
+                    }, 
                     icon: Container(
                       width: 22,
                       height: 22,
@@ -79,10 +98,10 @@ class PhotoSelector extends StatelessWidget {
                         shape: BoxShape.circle,
                         
 
-                       color: Colors.white,
+                       color: Colors.black.withOpacity(0.5),
                       ),
                       
-                      child: Icon(Icons.cancel, color: Colors.red,))
+                      child: Icon(Icons.cancel, color: Colors.white,))
                     ),
                 )
               ],

@@ -98,6 +98,7 @@ class AuthRepository extends BaseAuthRepository{
   @override
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+    await _googleSignIn.disconnect();
   }
   
   @override
@@ -109,7 +110,7 @@ class AuthRepository extends BaseAuthRepository{
       apiSecretKey: 'C0U6w9QXhp8EyC35d9VR5je8GndEVPezv0m4uBKo0x1QZLNOif', 
       redirectURI: 'habeshawe://');
 
-    final twitterAuth = await twitterLogin.loginV2();
+    final twitterAuth = await twitterLogin.login();
 
     final twitterAuthCredential = TwitterAuthProvider.credential(
       accessToken: twitterAuth.authToken!, 

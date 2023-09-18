@@ -4,7 +4,9 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/app_route_config.dart';
+import 'package:lomi/src/ui/onboarding/AfterRegistration/birthday.dart';
 
 import '../../../Blocs/OnboardingBloc/onboarding_bloc.dart';
 
@@ -75,7 +77,7 @@ class GenderScreen extends StatelessWidget {
                                 ), 
                                 selected: index == 0 ? state.user.gender == 'men' ? true : false : state.user.gender == 'women' ? true: false,
                                 onSelected: (value) {
-                                  context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(gender: index == 0? 'men' : 'women')));
+                                  context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(gender: index == 0? Gender.men.name : Gender.women.name)));
                                   // setState(() {
                                   //   _value = value ? index : null;
                                   // });
@@ -99,7 +101,8 @@ class GenderScreen extends StatelessWidget {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: state.user.gender == ''? null : (){
-                              GoRouter.of(context).pushNamed(MyAppRouteConstants.birthdayRouteName);
+                              //GoRouter.of(context).pushNamed(MyAppRouteConstants.birthdayRouteName);
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const Birthday()));
                             }, 
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                             style: ElevatedButton.styleFrom(

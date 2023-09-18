@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/dataApi/interestslist.dart';
+import 'package:lomi/src/ui/onboarding/AfterRegistration/enablelocation.dart';
 
 import '../../../Blocs/ImagesBloc/images_bloc.dart';
 import '../../../Blocs/blocs.dart';
@@ -165,7 +166,8 @@ class _AddPhotosState extends State<AddPhotos> {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: (){
-                              GoRouter.of(context).pushNamed(MyAppRouteConstants.enablelocationRouteName);
+                              //GoRouter.of(context).pushNamed(MyAppRouteConstants.enablelocationRouteName);
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => const EnableLocation()));
                             }, 
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                             style: ElevatedButton.styleFrom(

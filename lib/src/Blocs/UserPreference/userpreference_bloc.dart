@@ -27,13 +27,14 @@ class UserpreferenceBloc extends Bloc<UserpreferenceEvent, UserpreferenceState> 
     on<UpdateUserPreference>(_onUpdateUserPreference);
     on<EditUserPreference>(_onEditUserPreference);
 
-
-    _authSubscription = _authBloc.stream.listen((state) { 
-      if(state.user != null && state.accountType != Gender.nonExist){
-      add(LoadUserPreference(userId: state.user!.uid, users: state.accountType!));
     
-      }
-    });
+    add(LoadUserPreference(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!));
+    // _authSubscription = _authBloc.stream.listen((state) { 
+    //   if(state.user != null && state.accountType != Gender.nonExist){
+    //   add(LoadUserPreference(userId: state.user!.uid, users: state.accountType!));
+    
+    //   }
+    // });
   }
 
   void _onLoadUserPreference(LoadUserPreference event, Emitter<UserpreferenceState> emit) {
@@ -64,7 +65,7 @@ class UserpreferenceBloc extends Bloc<UserpreferenceEvent, UserpreferenceState> 
 
   @override
   Future<void> close() async {
-    _authSubscription!.cancel();
+    _authSubscription?.cancel();
     super.close();
   }
 }

@@ -9,20 +9,28 @@ import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/dataApi/interestslist.dart';
 import 'package:lomi/src/ui/onboarding/AfterRegistration/addphotos.dart';
 
-class Interests extends StatefulWidget {
-  const Interests({super.key});
+import '../../../Blocs/ThemeCubit/theme_cubit.dart';
+
+class EditInterests extends StatefulWidget {
+  final List<String>? userInterests;
+  const EditInterests({ this.userInterests});
 
   @override
-  State<Interests> createState() => _InterestsState();
+  State<EditInterests> createState() => _EditInterestsState();
 }
 
-class _InterestsState extends State<Interests> {
+class _EditInterestsState extends State<EditInterests> {
  // bool _isSelected = false;
   List<String> _selectedList = [];
   //OnboardingState st;
+  
+
+  
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
+    if(widget. userInterests != null) _selectedList = widget.userInterests! ;
     return Scaffold(
       body: SafeArea(
         child:Container(
@@ -45,7 +53,7 @@ class _InterestsState extends State<Interests> {
                 margin: EdgeInsets.symmetric(horizontal:35),
                 child: Text('Intersts',
                // textAlign: TextAlign.start,
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
+                style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.grey),
                 ),
               ),
               Container(
@@ -53,7 +61,7 @@ class _InterestsState extends State<Interests> {
                   margin: EdgeInsets.only(top: 10,left: 35),
                   child: Text(
                     'Let everyone know what you\'re passionate about \nby adding it to your profile.',
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Color.fromARGB(255, 192, 189, 189)),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Color.fromARGB(255, 192, 189, 189)),
                     )
                 ),
              // Spacer(flex: 1,),
@@ -61,7 +69,7 @@ class _InterestsState extends State<Interests> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height *0.67,
+                  height: MediaQuery.of(context).size.height *0.69,
                   child: SingleChildScrollView(
                     physics: BouncingScrollPhysics(),
                     child: Wrap(
@@ -70,7 +78,7 @@ class _InterestsState extends State<Interests> {
                           ChoiceChip(
                           label: Text(inter[index],style: TextStyle(color: _selectedList.contains(inter[index])? Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w300),), 
                           selected: _selectedList.contains(inter[index]),
-                          selectedColor: Colors.green,
+                          selectedColor: isDark? Colors.teal: Colors.green,
                           //backgroundColor: Colors.teal,
                           onSelected: (value) {
                             setState(() {
@@ -90,25 +98,29 @@ class _InterestsState extends State<Interests> {
         
         
         
-             // Spacer(flex: 2,),
-              BlocBuilder<OnboardingBloc, OnboardingState>(
+              Spacer(flex: 2,),
+              BlocBuilder<ProfileBloc, ProfileState>(
                 
                 builder: (context, state) {
                   
                   
-                if (state is OnboardingLoaded){
-                return Center(
+                if (state is ProfileLoaded){
+               return
+                 Center(
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width*0.70,
-                    height: 50,
+                    width: MediaQuery.of(context).size.width*0.50,
+                    height: 35,
                     child: ElevatedButton(
                       onPressed: (){
-                        
-                        context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(interests: _selectedList)));
+                        context.read<ProfileBloc>().add(EditUserProfile(user: state.user.copyWith(interests: _selectedList) ));
+                        FocusManager.instance.primaryFocus!.unfocus();
+                        Navigator.pop(context);
+
+                        //context.read<OnboardingBloc>().add(UpdateUser(user: state.user.copyWith(interests: _selectedList)));
                        // GoRouter.of(context).pushNamed(MyAppRouteConstants.addphotosRouteName);
-                       Navigator.push(context, MaterialPageRoute(builder: (context) => const AddPhotos()));
+                      // Navigator.push(context, MaterialPageRoute(builder: (context) => const AddPhotos()));
                       }, 
-                      child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
+                      child: Text('DONE',),
                       style: ElevatedButton.styleFrom(
                         shape: StadiumBorder(),
                       ),
@@ -121,7 +133,7 @@ class _InterestsState extends State<Interests> {
                 }
               ),
         
-             // const SizedBox(height: 20,)
+             const SizedBox(height: 20,)
              
         
             ],

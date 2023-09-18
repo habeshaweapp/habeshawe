@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/app_route_config.dart';
+import 'package:lomi/src/ui/onboarding/AfterRegistration/showme.dart';
 
 class Birthday extends StatefulWidget {
   const Birthday({super.key});
@@ -91,7 +92,8 @@ class _BirthdayState extends State<Birthday> {
                         int mth = Today.month - date.month;
                         if (mth < 0) age = age -1;
                         context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(age: age, birthday: '${date.year}-${date.month}-${date.day}')));
-                        GoRouter.of(context).pushNamed(MyAppRouteConstants.showmeRouteName);
+                       // GoRouter.of(context).pushNamed(MyAppRouteConstants.showmeRouteName);
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const ShowMe()));
                       }, 
                       child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                       style: ElevatedButton.styleFrom(

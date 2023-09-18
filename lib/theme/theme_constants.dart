@@ -14,6 +14,9 @@ ThemeData lightTheme =  ThemeData(
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: Colors.teal,
+  scaffoldBackgroundColor: Colors.grey[900]
+  //Color.fromARGB(255, 22, 22, 22),
+
 
 );
 

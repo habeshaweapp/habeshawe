@@ -9,11 +9,12 @@ abstract class ProfileEvent extends Equatable {
 
 class LoadProfile extends ProfileEvent{
   final String userId;
-  const LoadProfile({required this.userId});
+  final Gender users;
+  const LoadProfile({required this.userId, required this.users});
 
   @override
   // TODO: implement props
-  List<Object?> get props => [userId];
+  List<Object?> get props => [userId,users];
 }
 
 class UpdateProfile extends ProfileEvent{
@@ -54,4 +55,15 @@ class VerifyMe extends ProfileEvent{
   @override
   // TODO: implement props
   List<Object?> get props => [user, image, type];
+}
+
+class DeletePhoto extends ProfileEvent{
+  final String imageUrl;
+  final String userId;
+  final Gender users;
+  const DeletePhoto({required this.imageUrl, required this.userId, required this.users});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [imageUrl];
 }

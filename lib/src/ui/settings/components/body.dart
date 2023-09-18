@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 
 import '../../../Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import '../../../Blocs/UserPreference/userpreference_bloc.dart';
@@ -16,7 +17,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isThereChange = false;
-    Color? cardColor = Colors.grey[900];
+    Color? cardColor = Color.fromARGB(255, 41, 39, 39);
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return BlocBuilder<UserpreferenceBloc, UserpreferenceState>(
       builder: (context, state) {
@@ -45,7 +46,7 @@ class Body extends StatelessWidget {
                   children: [
                     Text('Account Settings',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        //fontWeight: FontWeight.bold,
                         fontSize: 16
                       ) 
                     ),
@@ -70,14 +71,14 @@ class Body extends StatelessWidget {
                     ),
             
                     Text('Verify a Phone Number to help secure your account.',
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
                     ),
             
                     SizedBox(height: 25,),
             
                     Text('Discovery Settings',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                        //fontWeight: FontWeight.bold,
                         fontSize: 17,
                         //color: Colors.grey[800],
                       ) 
@@ -85,23 +86,32 @@ class Body extends StatelessWidget {
             
                     Card(
                       elevation: 2,
-                      color: isDark ? cardColor : Colors.white,
+                      color: isDark ? state.userPreference.discoverBy ==0?  cardColor :Colors.grey[900] : state.userPreference.discoverBy ==0? Colors.grey[400]: Colors.white,
                       child: Container(
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5, bottom: 5,),
                         decoration: BoxDecoration(
                           //color: Colors.white,
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text('Global'),
-                            Switch(value: state.userPreference.global!, 
-                            onChanged: (value){
-                              
-                              context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(global: value)));
-                              isThereChange = true;
-                            }),
+                            
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Discover By - HabeshaWe Logic'),
+                                Switch(value: state.userPreference.discoverBy! == 0, 
+                                onChanged: (value){
+                                  
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: 0)));
+                                  isThereChange = true;
+                                }),
+                              ],
+                            ),
+                            Text('HabeshaWe algorithm gives you the best profiles who is rated beautiful Habesha profile around the world.',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                    ),
                           ],
                         ),
                       ),
@@ -114,81 +124,32 @@ class Body extends StatelessWidget {
             
                     Card(
                       elevation: 2,
-                      color: isDark ? cardColor : Colors.white,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Maximum Distance', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17)),
-                                Text('${state.userPreference.maximumDistance}KM.')
-                              ],
-                            ),
-                          ),
-                          Slider(
-                            value: state.userPreference.maximumDistance!.toDouble(), 
-                            max: 100,
-                            onChanged: (value){
-                             context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(maximumDistance: value.toInt())));
-                             isThereChange = true;
-                            }
-                          ),
-            
-            
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-                        
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Only show people in this range'),
-                            Switch(value: state.userPreference.onlyShowInThisRange!, 
-                            onChanged: (value){
-                              context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(onlyShowInThisRange: value)));
-                              isThereChange = true;
-                            }),
-                          ],
-                        ),
-                      ),
-                        ],
-                      ),
-                    ),
-            
-                    SizedBox(height: 15,),
-            
-                    Card(
-                      elevation: 2,
-                      color: isDark ? cardColor : Colors.white,
+                      color: isDark ? state.userPreference.discoverBy ==1?  cardColor :Colors.grey[900]  : state.userPreference.discoverBy ==1? Colors.grey[400]: Colors.white,
                       child: Padding(
-                        padding: const EdgeInsets.all(15.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Show Me', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17),),
-                            SizedBox(height: 10,),
+                      
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(state.userPreference.showMe!),
-                                Text('>')
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-          
-                    SizedBox(height: 15,),
-            
-            
-                    Card(
-                      elevation: 2,
-                      color: isDark ? cardColor : Colors.white,
-                      child: Column(
-                        children: [
-                          Padding(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Discover By - Preference'),
+                                  Switch(value: state.userPreference.discoverBy! == 1, 
+                                  onChanged: (value){
+                                    
+                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: 1)));
+                                    isThereChange = true;
+                                  }),
+                                ],
+                              ),
+                              Text('You will get matches based on your preferences once in a day. your preference include all your profile information including age range that will probably will match with your choice and profile information.',
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                                          ),
+
+                              SizedBox(height: 20,),
+
+
+                              Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -199,50 +160,150 @@ class Body extends StatelessWidget {
                             ),
                           ),
                           
-                          RangeSlider(
-                            max: 70,
-                            min:18,
-                            values: RangeValues(state.userPreference.ageRange![0].toDouble(),state.userPreference.ageRange![1].toDouble()), 
-                            onChanged: (values){
-                              context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(ageRange: [values.start.toInt(),values.end.toInt()])));
-                              isThereChange = true;
-                            }
-                            ),
-            
-            
-                          Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-                        
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Only show people in this range'),
-                            Switch(
-                              value: state.userPreference.onlyShowInThisRange!, 
-                              onChanged: (value){
-                                context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(onlyShowInThisRange: value)));
+                          AbsorbPointer(
+                            absorbing: state.userPreference.discoverBy != 1,
+                            child: RangeSlider(
+                              max: 70,
+                              min:18,
+                              values: RangeValues(state.userPreference.ageRange![0].toDouble(),state.userPreference.ageRange![1].toDouble()), 
+                              onChanged: (values){
+                                context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(ageRange: [values.start.toInt(),values.end.toInt()])));
                                 isThereChange = true;
-                       
-                            }),
+                              }
+                              ),
+                          ),
+
+                           // SizedBox(height: 10,),
+                      
+                      
+                            // Padding(
+                            //   padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                           
+                                  
+                                  
+                            AbsorbPointer(
+                              absorbing: state.userPreference.discoverBy != 1,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                                                      
+                              child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Only show people in this range', style: Theme.of(context).textTheme.bodySmall, ),
+                                Switch(value: state.userPreference.onlyShowInThisRange!, 
+                                onChanged: (value){
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(onlyShowInThisRange: value)));
+                                  isThereChange = true;
+                                }),
+                              ],
+                             ),
+                             ),
+                            ),
+
+
+                             //SizedBox(height: 0,), 
+                                  
+                            AbsorbPointer(
+                              absorbing: state.userPreference.discoverBy != 1,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                                                      
+                              child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Only show people from my City\ncurrent city (${(context.read<ProfileBloc>().state as ProfileLoaded).user.country}).', 
+                                style: Theme.of(context).textTheme.bodySmall, ),
+                                Switch(value: state.userPreference.onlyShowInThisRange!, 
+                                onChanged: (value){
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(onlyShowInThisRange: value)));
+                                  isThereChange = true;
+                                }),
+                              ],
+                             ),
+                             ),
+                            ),
+                            // Positioned(
+                            //   left: 5,
+                            //   child: Text(
+                            //     'current city (${(context.read<ProfileBloc>().state as ProfileLoaded).user.country}).',
+                            //     textAlign: TextAlign.left,
+                            //     style: Theme.of(context).textTheme.bodySmall,
+                            //     ),
+                            // )
                           ],
                         ),
                       ),
-                        ],
+                    ),
+            
+                    SizedBox(height: 15,),
+            
+                    Card(
+                      elevation: 2,
+                      color: isDark ? state.userPreference.discoverBy ==2?  cardColor :Colors.grey[900] : state.userPreference.discoverBy ==2? Colors.grey[400]: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Discover By - Nearby Matches'),
+                                  Switch(value: state.userPreference.discoverBy! == 2, 
+                                  onChanged: (value){
+                                    
+                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: 2)));
+                                    isThereChange = true;
+                                  }),
+                                ],
+                              ),
+                              Text('find peoples nearby within 2km away from you. this method is free you can use it anytime of the day with out time limit if there are peoples near you they will appear.',
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                                          ),
+                              Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Maximum Distance', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17)),
+                                  Text('${state.userPreference.maximumDistance}KM.')
+                                ],
+                              ),
+                            ),
+                              AbsorbPointer(
+                                absorbing: state.userPreference.discoverBy != 2,
+                                child: Slider(
+                                value: state.userPreference.maximumDistance!.toDouble(), 
+                                max: 2,
+                                
+                                divisions: 2,
+                                onChanged: (value){
+                                 context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(maximumDistance: value.toInt())));
+                                 isThereChange = true;
+                                }
+                                                          ),
+                              ),
+                          ],
+                        ),
                       ),
                     ),
+          
+                    //SizedBox(height: 15,),
+            
+            
             
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text('Lomi uses these preferences to suggest matches. Some match suggestions may not fall within your desired parameters.',
+                      child: Text('HabeshaWe uses these preferences to suggest matches. Some match suggestions may not fall within your desired parameters.',
                           style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
                       ),
                     ),
           
                     SizedBox(height: 20,),
           
-                    Text('Show me on Lomi',
+                    Text('Show me on HabeshaWe',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                       // fontWeight: FontWeight.bold,
                         fontSize: 17,
                         //color: Colors.grey[800],
                       ) 
@@ -261,7 +322,7 @@ class Body extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Show me on Lomi'),
+                            Text('Show me on HabeshaWe'),
                             Switch(
                               value: state.userPreference.showMeOnLomi!
                             , onChanged: (value){
@@ -291,7 +352,7 @@ class Body extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Recently Active Status', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17),),
+                            Text('Recently Active Status', style: TextStyle(fontSize: 17, color: Colors.grey)),
                             //SizedBox(height: 10,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -320,7 +381,10 @@ class Body extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Online', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17),),
+                            Text('Online', 
+                            style: TextStyle(fontSize: 17, color: Colors.grey)
+                            //Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17),
+                            ),
                            // SizedBox(height: 10,),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -343,7 +407,7 @@ class Body extends StatelessWidget {
           
                     Text('App Settings',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                       // fontWeight: FontWeight.bold,
                         fontSize: 17,
                         //color: Colors.grey[800],
                       ) 
@@ -361,7 +425,7 @@ class Body extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Show Distances in', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17)),
+                                Text('Show Distances in', style: TextStyle(fontSize: 17, color: Colors.grey)),
                                 Text(state.userPreference.showDistancesIn!)
                               ],
                             ),
@@ -384,7 +448,7 @@ class Body extends StatelessWidget {
                                   },
                                   //borderRadius: BorderRadius.all(Radius.circular(30),),
                                               //selectedBorderColor: Colors.green,
-                                              selectedColor: Colors.green,
+                                              selectedColor: isDark? Colors.teal: Colors.green,
                                               //fillColor: Colors.white,
                                               //borderWidth: ,
                                   ),
@@ -412,13 +476,22 @@ class Body extends StatelessWidget {
                       ),
           
                       onTap: () {
-                        context.read<AuthRepository>().signOut();
+                        //context.read<AuthRepository>().signOut();
+                        context.read<AuthBloc>().add(LogOut());
+                        context.read<ProfileBloc>().close();
+                        context.read<UserpreferenceBloc>().close();
+                        Future.delayed(Duration(milliseconds: 300), (){
+                             Navigator.pop(context); 
+                        });
+                        
                         // .then(
                         //   (value) => GoRouter.of(context).pushReplacementNamed(MyAppRouteConstants.splashRouteName)
                         //   );
           
                         //GoRouter.of(context).pushNamed(MyAppRouteConstants.splashRouteName);
-                        context.pop();
+                        //context.pop();
+                        
+                        
           
                       },
                     ),

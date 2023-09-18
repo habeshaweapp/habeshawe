@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/app_route_config.dart';
+import 'package:lomi/src/ui/onboarding/AfterRegistration/interests.dart';
 
 import '../../../Blocs/OnboardingBloc/onboarding_bloc.dart';
 
@@ -82,7 +83,8 @@ class SchoolName extends StatelessWidget {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: (){
-                      GoRouter.of(context).pushNamed(MyAppRouteConstants.interestsRouteName);
+                     // GoRouter.of(context).pushNamed(MyAppRouteConstants.interestsRouteName);
+                     Navigator.push(context, MaterialPageRoute(builder: (context) => const Interests()));
                     }, 
                     child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                     style: ElevatedButton.styleFrom(

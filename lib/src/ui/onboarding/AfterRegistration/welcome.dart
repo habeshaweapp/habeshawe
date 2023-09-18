@@ -7,6 +7,8 @@ import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/app_route_config.dart';
+import 'package:lomi/src/ui/onboarding/AfterRegistration/namescreen.dart';
+import 'package:lomi/src/ui/onboarding/onboardAllScreens.dart';
 
 import '../../../Blocs/OnboardingBloc/onboarding_bloc.dart';
 import '../../../Data/Models/user.dart';
@@ -152,7 +154,8 @@ class WelcomeScreen extends StatelessWidget {
                         
                         //if(Paint.enableDithering)
                         context.read<OnboardingBloc>().add(StartOnBoarding(user: user));
-                        GoRouter.of(context).pushNamed(MyAppRouteConstants.nameRouteName);
+                       // GoRouter.of(context).pushNamed(MyAppRouteConstants.nameRouteName);
+                       Navigator.push(context, MaterialPageRoute(builder: (context) => const Phone()));
                       }, 
                       child: Text('I Agree', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                       style: ElevatedButton.styleFrom(

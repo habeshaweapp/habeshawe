@@ -43,3 +43,12 @@ class SwipeRightEvent extends SwipeEvent{
   // TODO: implement props
   List<Object?> get props => [user,matchUser];
 }
+
+class SwipeEnded extends SwipeEvent{
+  final DateTime completedTime;
+  SwipeEnded({required this.completedTime});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [completedTime];
+}

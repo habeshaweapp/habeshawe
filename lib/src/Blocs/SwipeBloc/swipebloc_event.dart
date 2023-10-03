@@ -10,10 +10,11 @@ abstract class SwipeEvent extends Equatable {
 class LoadUsers extends SwipeEvent{
   final String userId;
   final Gender users;
+  //final UserPreference prefes;
    LoadUsers({required this.userId, required this.users});
 
   @override
-  List<Object?> get props => [userId];
+  List<Object?> get props => [userId, users];
 }
 
 class UpdateHome extends SwipeEvent{
@@ -37,11 +38,13 @@ class SwipeLeftEvent extends SwipeEvent{
 class SwipeRightEvent extends SwipeEvent{
   final User user;
   final User matchUser;
-  SwipeRightEvent({ required this.user,required this.matchUser});
+  final bool superLike; 
+  
+  SwipeRightEvent({ required this.user,required this.matchUser, this.superLike = false});
   
   @override
   // TODO: implement props
-  List<Object?> get props => [user,matchUser];
+  List<Object?> get props => [user,matchUser, superLike];
 }
 
 class SwipeEnded extends SwipeEvent{

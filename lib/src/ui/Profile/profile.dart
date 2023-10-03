@@ -10,8 +10,8 @@ import '../../Data/Models/model.dart';
 class Profile extends StatelessWidget {
   final User user;
   SwipableStackController? stackController;
-  double? imgindex;
-   Profile({Key? key, required this.user, this.stackController, this.imgindex}) : super(key: key);
+
+   Profile({Key? key, required this.user, this.stackController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class Profile extends StatelessWidget {
       // ),
       // extendBodyBehindAppBar: false,
 
-      body: Body(user: user, stackController: stackController, imgindex: imgindex,),
+      body: Body(user: user, stackController: stackController),
     );
     
   }

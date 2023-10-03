@@ -11,7 +11,7 @@ abstract class BaseDatabaseRepository{
   Future<void> createUser(User user);
   Future<void> updateUser(User user);
   Future<void> updateUserPictures(User user, String imageName);
-  Future<bool> userLike(User user, User matchUser);
+  Future<bool> userLike(User user, User matchUser, bool superLike);
   Future<void> userPassed(User userId, User passedUser);
   Future<User> getUserbyId(String userId);
 
@@ -37,7 +37,7 @@ abstract class BaseDatabaseRepository{
   Future<void> updateUserPreference(UserPreference userPreference, Gender users);
 
   //***************888 main logic getting ussers based on preference ***********8*8***8*//
-  Future<List<User>> getUsersBasedonPreference(String userId, Gender users);
+  Future<List<User>> getUsersBasedonNearBy(String userId, Gender users);
   //Stream<List<User>> getNearByUsers(String userId, Position locationData);
   Future<List<User>> getUsersBasedonLOmiLogic(String userId,Gender users);
 
@@ -47,5 +47,5 @@ abstract class BaseDatabaseRepository{
 
 
   //Habeshawe main logic
-  Future<List<User>> getUsersMainLogic(User user, UserPreference preference);
+  Future<List<User>> getUsersMainLogic(String userId, Gender gender, UserPreference preference);
 }

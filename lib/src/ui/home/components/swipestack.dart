@@ -7,6 +7,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lomi/src/Blocs/ProfileBloc/profile_bloc.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/ui/home/components/usercard.dart';
 import 'package:swipable_stack/swipable_stack.dart';
@@ -15,7 +16,7 @@ import '../../../Blocs/SwipeBloc/swipebloc_bloc.dart';
 import '../../../dataApi/icons.dart';
 
 class SwipeStack extends StatelessWidget {
-  const SwipeStack({super.key});
+  const SwipeStack();
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +27,13 @@ class SwipeStack extends StatelessWidget {
       } ,
       builder: (context, state) {
         if(state is SwipeLoading){
+          // BlocListener<UserpreferenceBloc, UserpreferenceState>(
+          //   listener: (context, st){
+          //     if(st is UserPreferenceLoaded){
+          //       context.read<SwipeBloc>().add(LoadUsers(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType!, prefes: st.userPreference));
+          //     }
+
+          //   });
           return const Center(child: CircularProgressIndicator(strokeWidth: 2));
         }
 
@@ -42,6 +50,23 @@ class SwipeStack extends StatelessWidget {
                     '${remain.inHours}:${remain.inMinutes}:${remain.inSeconds} remains',
                     style: Theme.of(context).textTheme.bodyLarge,
 
+                  ),
+
+                  SizedBox(height: 25,),
+                  ElevatedButton(
+                    onPressed: (){
+                      context.read<SwipeBloc>().add(LoadUsers(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType!));
+                    }, 
+                    child: Text('get Matches')),
+                  
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: FloatingActionButton(
+                      onPressed: (){
+                        showPrefesSheet(context: context);
+                      },
+                      child: Icon(Icons.settings),
+                    ),
                   )
                 ],
               ),
@@ -118,17 +143,20 @@ class SwipeStack extends StatelessWidget {
                   
                   final itemIndex = swipeProperty.index % state.users.length;
                   // final itemIndex = state.users.length - tempUsers;
+
                   // tempUsers --;
-                   print('-------index------${swipeProperty.stackIndex }>>>>>stack no>>${itemIndex}');
+                   print('-------index------${swipeProperty.index }>>>>>item index>>${itemIndex}>>>>   swipeProperty.index % state.users.length>>>>>${swipeProperty.index % state.users.length}');
                   // if(swipeProperty.index == state.users.length +1){
                   //   return  Container(child: Text('Thats all for today!'),);
                   // }
                   if(noOfSwipedCards == totalCard-1){
                     context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
+                   // _controller.dispose();
                     return Container();
                   }
+                  return Container();
 
-                  return UserCard().userDrag(MediaQuery.of(context).size, state.users[itemIndex], context,_controller);
+                //  return UserCard().userDrag(MediaQuery.of(context).size, state.users[itemIndex], context,_controller,);
                 },
                 overlayBuilder: (context, properties){
                   final opacity = min(properties.swipeProgress, 1.0);
@@ -249,5 +277,131 @@ class SwipeStack extends StatelessWidget {
         
       },
     );
+  }
+  
+  void showPrefesSheet({required BuildContext context}) {
+    var state = context.read<UserpreferenceBloc>().state as UserPreferenceLoaded;
+    bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
+    showModalBottomSheet(
+      context: context, 
+      builder: (context){
+        return SizedBox(
+          //height: MediaQuery.of(context).size.height*0.4,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              children: [
+                SizedBox(height: 35,),
+                  
+                Card(
+                        elevation: 2,
+                        color: 
+                        isDark ? state.userPreference.discoverBy ==0?  Colors.grey :Colors.grey[900] : state.userPreference.discoverBy ==0? Colors.grey[400]: Colors.white,
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          margin: EdgeInsets.only(top: 5, bottom: 5,),
+                          decoration: BoxDecoration(
+                            //color: Colors.white,
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Discover By - HabeshaWe Logic'),
+                                  Switch(value: 
+                                  state.userPreference.discoverBy! == 0, 
+                                  onChanged: (value){
+                                    
+                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: 0)));
+                                   // isThereChange = true;
+                                   Navigator.pop(context);
+                                  }),
+                                ],
+                              ),
+                              Text('HabeshaWe algorithm gives you the best profiles who is rated beautiful Habesha profile around the world.',
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                      ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: 5,),
+                  
+                  
+              Card(
+                        elevation: 2,
+                        color: isDark ? state.userPreference.discoverBy ==1?  Colors.grey[800] :Colors.grey[900]  : state.userPreference.discoverBy ==1? Colors.grey[400]: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                          child: Column(
+                            children: [
+                        
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Discover By - Preference'),
+                                    Switch(value: state.userPreference.discoverBy! == 1, 
+                                    onChanged: (value){
+                                      
+                                      context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: 1)));
+                                     // isThereChange = true;
+                                     Navigator.pop(context);
+                                    }),
+                                  ],
+                                ),
+                                Text('You will get matches based on your preferences once in a day. your preference include all your profile information including age range that will probably will match with your choice and profile information.',
+                            style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                                            ),
+                  
+                          
+                
+                            ],
+                          ),
+                        ),
+                      ),
+                    SizedBox(height: 5,),
+                  
+                      Card(
+                        elevation: 2,
+                        color: isDark ? state.userPreference.discoverBy ==2?  Colors.grey :Colors.grey[900] : state.userPreference.discoverBy ==2? Colors.grey[400]: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Discover By - Nearby Matches'),
+                                    Switch(value: state.userPreference.discoverBy! == 2, 
+                                    onChanged: (value){
+                                      
+                                      context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: 2)));
+                                     // isThereChange = true;
+                                     Navigator.pop(context);
+                                    }),
+                                  ],
+                                ),
+                                Text('find peoples nearby within 2km away from you. this method is free you can use it anytime of the day with out time limit if there are peoples near you they will appear.',
+                            style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                                            ),
+                             
+                            ],
+                          ),
+                        ),
+                      ),
+                  
+                  
+                  
+              ],
+            ),
+          ),
+        );
+      }
+      );
   }
 }

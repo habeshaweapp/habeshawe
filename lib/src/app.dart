@@ -74,11 +74,11 @@ class MyApp extends StatelessWidget {
             // ),
             BlocProvider<ContinuewithCubit>(create: (context) => ContinuewithCubit(authRepository: context.read<AuthRepository>())),
             // BlocProvider(lazy: false, create: (context) => LikeBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>()) ),
-             BlocProvider( create: (context) => ProfileBloc(authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>(), storageRepository: context.read<StorageRepository>())) ,
+            // BlocProvider( create: (context) => ProfileBloc(authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>(), storageRepository: context.read<StorageRepository>())) ,
 
             //BlocProvider(lazy: false, create: (context) => MatchBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>()) ),
             // BlocProvider(create: ((context) => ChatBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc:  context.read<AuthBloc>()))),
-             BlocProvider( create: (context) => UserpreferenceBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())),
+            // BlocProvider( create: (context) => UserpreferenceBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())),
             BlocProvider(create: ((context) => PhoneAuthBloc(authRepository: context.read<AuthRepository>()))),
 
             BlocProvider(lazy:false, create: (context) => ThemeCubit()),
@@ -100,7 +100,7 @@ class MyApp extends StatelessWidget {
                       initialRoute: '/',
                       routes: {
                         '/':(context) => const Wrapper(),
-                        '/start' : (context) => const StartScreen()
+                        //'/start' : (context) =>  StartScreen()
               
                       },
                     );

@@ -18,6 +18,11 @@ class AdRepository{
       'ca-app-pub-3940256099942544/1044960115' : '';
   }
 
+  static String get InterstitialAdUnitId{
+    return Platform.isAndroid ?
+      'ca-app-pub-3940256099942544/1033173712' : '';
+  }
+
   void createRewardAd({required void Function(RewardedAd) onAdLoaded, required void Function(LoadAdError) onAdFailedToLoad} ){
     RewardedAd.load(
       adUnitId: rewardAdUnitId, 
@@ -44,6 +49,16 @@ class AdRepository{
         )
 
     )..load();
+  }
+
+  void createInterstitialAd({required void Function(InterstitialAd) onAdLoaded, required void Function(LoadAdError) onAdFailedToLoad}){
+    InterstitialAd.load(
+      adUnitId: InterstitialAdUnitId, 
+      request: AdRequest(), 
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: onAdLoaded, 
+        onAdFailedToLoad: onAdFailedToLoad)
+      );
   }
 
 

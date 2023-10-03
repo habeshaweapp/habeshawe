@@ -7,8 +7,12 @@ import 'package:lomi/src/Blocs/ChatBloc/chat_bloc.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
+import '../../../Blocs/AdBloc/ad_bloc.dart';
 import '../../../Blocs/MatchBloc/match_bloc.dart';
+import '../../../Blocs/PaymentBloc/payment_bloc.dart';
+import '../../../Data/Models/enums.dart';
 import '../../chat/chatscreen.dart';
+import '../../payment/showPaymentDialog.dart';
 import 'chat_list.dart';
 import 'matches_image_small.dart';
 
@@ -53,7 +57,34 @@ class Body extends StatelessWidget {
                     itemCount: inactiveMatches.length,
                     itemBuilder: (context, index){
                       return GestureDetector(
-                        onTap: (){Navigator.push(context,MaterialPageRoute(builder: (context) => ChatScreen(inactiveMatches[index])));},
+                        onTap: (){
+                         // Navigator.push(context,MaterialPageRoute(builder: (context) => ChatScreen(inactiveMatches[index])));
+
+                            if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
+                                      if(context.read<AdBloc>().state.isLoadedRewardedAd ==true){
+                                       context.read<AdBloc>().add(ShowRewardedAd());
+                                       Navigator.push(context, MaterialPageRoute(
+                                                builder: (ctx) =>
+                                                    BlocProvider.value(value: context.read<ChatBloc>(),
+                                                        child: ChatScreen(inactiveMatches[index]) )));
+
+
+
+                                      }else{
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...')));
+                                      }
+
+                                    }else
+                                    if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly||context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months){
+                                      Navigator.push(context, MaterialPageRoute(
+                                                builder: (ctx) =>
+                                                    BlocProvider.value(value: context.read<ChatBloc>(),
+                                                        child: ChatScreen(inactiveMatches[index]) )));
+
+                                    }else{
+                                      showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
+                                    }
+                          },
                         child: MatchesImage(url: inactiveMatches[index].imageUrls[0], height: 120, width: 100,));
                     }
                     ):

@@ -49,7 +49,7 @@ class _HomeState extends State<Home> {
       systemOverlayStyle: 
      // isDark? SystemUiOverlayStyle.dark : SystemUiOverlayStyle.light,
       SystemUiOverlayStyle(
-        systemNavigationBarColor: isDark ? Color.fromARGB(51, 182, 180, 180) : Colors.white,
+        systemNavigationBarColor: isDark ? Color.fromARGB(51, 182, 180, 180) : Colors.white, //Color.fromARGB(51, 182, 180, 180)
         systemNavigationBarIconBrightness: !isDark? Brightness.dark: Brightness.light,
       ),
       title: Padding(

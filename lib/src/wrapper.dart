@@ -11,6 +11,7 @@ import 'package:lomi/src/ui/onboarding/start.dart';
 import 'package:lomi/src/ui/splash/splashscreen.dart';
 
 import 'Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import 'Blocs/ThemeCubit/theme_cubit.dart';
 import 'Blocs/blocs.dart';
 import 'Data/Repository/Payment/payment_repository.dart';
 import 'Data/Repository/Storage/storage_repository.dart';
@@ -24,7 +25,12 @@ class Wrapper extends StatelessWidget{
           return const SplashScreen();
         }
         if(state.status == AuthStatus.unauthenticated){
-          return const StartScreen();
+          return BlocBuilder<ThemeCubit,ThemeMode>(
+
+        builder: (context,state) {
+          return  StartScreen();
+        });
+      
         }
         if(state.status == AuthStatus.authenticated){
           //context.read<AuthRepository>().signOut();
@@ -44,10 +50,10 @@ class Wrapper extends StatelessWidget{
               
               BlocProvider(lazy: false, create: (context) => LikeBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..add(LoadLikes(userId: state.user!.uid, users: state.accountType!)) ),
               BlocProvider(lazy: false, create: (context) => MatchBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..add(LoadMatchs(userId: state.user!.uid, users: state.accountType!)) ),
-              //BlocProvider(lazy: false, create: (context) => ProfileBloc(authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>(), storageRepository: context.read<StorageRepository>())..add(LoadProfile(userId: state.user!.uid, users: state.accountType!))) ,
+              BlocProvider(lazy: false, create: (context) => ProfileBloc(authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>(), storageRepository: context.read<StorageRepository>())..add(LoadProfile(userId: state.user!.uid, users: state.accountType!))) ,
               BlocProvider(create: ((context) => ChatBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc:  context.read<AuthBloc>()))),
-              //BlocProvider(lazy: false, create: (context) => UserpreferenceBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..add(LoadUserPreference(userId: state.user!.uid, users: state.accountType!))),
-              BlocProvider(create: (context) => PaymentBloc(paymentRepository: PaymentRepository(), authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>() ) ),
+              BlocProvider(lazy: false, create: (context) => UserpreferenceBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..add(LoadUserPreference(userId: state.user!.uid, users: state.accountType!))),
+              BlocProvider(lazy:false,create: (context) => PaymentBloc(paymentRepository: PaymentRepository(), authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>() ) ),
 
             ], 
 

@@ -25,8 +25,8 @@ import '../../../dataApi/icons.dart';
 import '../../Profile/profile.dart';
 import 'customtapgesturerecognizer.dart';
 
-class UserCard extends StatelessWidget {
-   UserCard({
+class UserCardOld extends StatelessWidget {
+   UserCardOld({
     Key? key,
  
     
@@ -56,29 +56,29 @@ class UserCard extends StatelessWidget {
     return
        Column(
          children: [
-           Padding(
-             padding: const EdgeInsets.only(bottom: 20,left: 20, right: 20,top: 5),
-             child: Draggable(
-              child: Material(
-                child: userDrag(size, state.users[0], context, SwipableStackController())
-                ), 
-              feedback: Material(child: userDrag(size, state.users[0], context, SwipableStackController())),
-              childWhenDragging: userCount > 1 ?
-               Material(child: userDrag(size, state.users[1], context, SwipableStackController()))
-               : Container(),
-              onDragEnd: ((details) {
-                if(details.velocity.pixelsPerSecond.dx < 0){
-                  //details.velocity.
-                 // context.read<SwipeBloc>().add(SwipeLeftEvent(user: state.users[0] ));
-                  print('swiped left');
-                }else{
-                //  context.read<SwipeBloc>().add(SwipeRightEvent(users: state.users));
-                //BlocProvider.of<SwipeBloc>(context).add(SwipeRightEvent(user: state.users[0]));
-                  print('swiped right');
-                }
-              }),
-              ),
-           ),
+          //  Padding(
+          //    padding: const EdgeInsets.only(bottom: 20,left: 20, right: 20,top: 5),
+          //    child: Draggable(
+          //     child: Material(
+          //       child: userDrag(size, state.users[0], context, SwipableStackController())
+          //       ), 
+          //     feedback: Material(child: userDrag(size, state.users[0], context, SwipableStackController())),
+          //     childWhenDragging: userCount > 1 ?
+          //      Material(child: userDrag(size, state.users[1], context, SwipableStackController()))
+          //      : Container(),
+          //     onDragEnd: ((details) {
+          //       if(details.velocity.pixelsPerSecond.dx < 0){
+          //         //details.velocity.
+          //        // context.read<SwipeBloc>().add(SwipeLeftEvent(user: state.users[0] ));
+          //         print('swiped left');
+          //       }else{
+          //       //  context.read<SwipeBloc>().add(SwipeRightEvent(users: state.users));
+          //       //BlocProvider.of<SwipeBloc>(context).add(SwipeRightEvent(user: state.users[0]));
+          //         print('swiped right');
+          //       }
+          //     }),
+          //     ),
+          //  ),
 
 
 
@@ -178,13 +178,18 @@ class UserCard extends StatelessWidget {
 
 
 
-
-  Widget userDrag(Size size, User user, BuildContext context, SwipableStackController? stackController){
-    final pageController = PageController();
+int initpage =0;
+final pageController =  PageController(keepPage: true, initialPage: 1);
+  Widget userDragold(Size size, User user, BuildContext context, SwipableStackController? stackController,int index,int leftcards,int total){
+    
+    
+  
     int idx = 0;
+    //pageController.animateToPage(0, duration: Duration(milliseconds: 0), curve: Curves.linear );
     return (user.id != 'last') ? Center(
       child: GestureDetector(
         onTapUp: (d){
+        
           //if(pageController.hasClients){
             if(d.globalPosition.dx > MediaQuery.of(context).size.width /2){
               pageController.nextPage(duration: Duration(milliseconds: 2), curve: Curves.linear);
@@ -195,6 +200,8 @@ class UserCard extends StatelessWidget {
               pageController.previousPage(duration: Duration(milliseconds: 2), curve: Curves.linear);
               idx--; 
             }
+
+         
         },
         child: Container(
                 //height: size.height * 0.86,
@@ -209,14 +216,18 @@ class UserCard extends StatelessWidget {
                   children: [
                     
                      ScrollConfiguration(
-                      behavior: MaterialScrollBehavior().copyWith(overscroll: false),
+                      behavior:  MaterialScrollBehavior().copyWith(overscroll: false),
                        child: PageView.builder(
+                
                           controller: pageController,
                           itemCount: user.imageUrls.length,
+                          findChildIndexCallback: (key){
+                            print(key);
+                          },
                          
                         
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context,index) =>
+                          physics:  NeverScrollableScrollPhysics(),
+                          itemBuilder: (context,index) {
                           // InkWell(
                           //   onDoubleTap: (){
                           //     print('min taregiwalesh--------------------');
@@ -253,14 +264,21 @@ class UserCard extends StatelessWidget {
                                   //   pageController.animateToPage( index + 2,duration: Duration(milliseconds: 200), curve: Curves.linear );
                                
                                   // },
-                                    Container(         
+                                  
+                                 return   Container(         
                                       decoration:  BoxDecoration(
                                       image: DecorationImage(
                                       image: 
+                                      //idx ==0 ?
+                                      // CachedNetworkImageProvider(
+                                      //   user.imageUrls[initpage],
+                                        
+                                      // ): 
                                       CachedNetworkImageProvider(
                                         user.imageUrls[index],
                                         
-                                      ),
+                                      )
+                                      ,
                                       // NetworkImage(
                                       //   user.imageUrls == null ?
                                       //   null :
@@ -274,7 +292,8 @@ class UserCard extends StatelessWidget {
                                                            )
                                                    
                                  
-                               ),
+                               );
+                          }
                            ),
                      ),
                       
@@ -405,7 +424,9 @@ class UserCard extends StatelessWidget {
                                   Container(
                                     height: 20,
                                     child: IconButton(
-                                      onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (context) => Profile(user: user, stackController: stackController, imgindex: pageController.page ,)));}, 
+                                      onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(
+                                        value: context.read<ProfileBloc>(),
+                                        child: Profile(user: user, stackController: stackController ,))));}, 
                                       icon: Icon(LineIcons.arrowDown, color: Colors.white,)
                                       )
                                     ),
@@ -450,7 +471,7 @@ class UserCard extends StatelessWidget {
     ):
     Center(
       child: Container(
-        color: Colors.white,
+        color: context.read<ThemeCubit>().state == ThemeMode.light? Colors.white: Colors.grey[900],
         // width: size.width*0.98,
         
         // decoration: BoxDecoration(
@@ -493,8 +514,6 @@ class UserCard extends StatelessWidget {
 
    int calculateDistance(List userLocation)  {
 
-    
-    
     return Geolocator.distanceBetween(7.3666915, 38.6714959, userLocation[0], userLocation[1])~/1000;
    }    
       

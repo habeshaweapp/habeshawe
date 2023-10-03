@@ -15,7 +15,7 @@ import 'package:lomi/src/app_route_config.dart';
 import '../../Data/Models/userpreference_model.dart';
 
 class StartScreen extends StatelessWidget {
-  const StartScreen({super.key});
+   StartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -79,13 +79,13 @@ class StartScreen extends StatelessWidget {
               //
               //inactiveColor: Colors.amber,
               activeColor: Colors.grey[800]!,
-              inactiveColor: Colors.grey,
+              inactiveColor: Colors.grey[300]!,
               //inactiveChild: const Text('Dark'),
               //activeChild: const Text('Light'),
               thumb: ValueListenableBuilder<bool>(
                 valueListenable: _controller, 
                 builder: (_,value,__){
-                  return Icon(value? Icons.lightbulb: Icons.lightbulb_outline);
+                  return Icon(value?Icons.lightbulb_outline: Icons.lightbulb);
                 }),
             ),
           ),

@@ -11,10 +11,16 @@ class LoadNativeAd extends AdEvent{}
 
 class LoadRewardedAd extends AdEvent{}
 
-class OnAdLoaded extends AdEvent{
+class LoadInterstitialAd extends AdEvent{}
+
+class ShowInterstitialAd extends AdEvent{}
+
+class ShowRewardedAd extends AdEvent{}
+
+class OnNativeAdLoaded extends AdEvent{
   final Ad ad;
 
-  const OnAdLoaded({required this.ad});
+  const OnNativeAdLoaded({required this.ad});
 
   @override
   // TODO: implement props
@@ -40,3 +46,27 @@ class OnRewarededAdLoaded extends AdEvent{
   // TODO: implement props
   List<Object> get props => [ad];
 }
+
+class InterstitialAdLoaded extends AdEvent{
+  final InterstitialAd ad;
+  
+  const InterstitialAdLoaded({required this.ad});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [ad];
+}
+class RewardEarned extends AdEvent{
+  final RewardItem reward;
+  
+  const RewardEarned({required this.reward});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [reward];
+}
+
+class ResetReward extends AdEvent{}
+
+class InterstitialAdFailedToLoad extends AdEvent{}
+class RewardedAdFailedToLoad extends AdEvent{}

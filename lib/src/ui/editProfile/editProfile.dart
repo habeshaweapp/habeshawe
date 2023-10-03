@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 import '../../Blocs/ThemeCubit/theme_cubit.dart';
 import 'components/body.dart';
 
 class EditProfile extends StatelessWidget {
+  // final ProfileBloc profileBloc;
+  // final BuildContext ctx;
   const EditProfile({super.key});
 
   @override

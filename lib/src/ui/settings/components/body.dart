@@ -101,7 +101,7 @@ class Body extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Discover By - HabeshaWe Logic'),
-                                Switch(value: state.userPreference.discoverBy! == 0, 
+                                Switch(value: state.userPreference.discoverBy == 0 , 
                                 onChanged: (value){
                                   
                                   context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: 0)));
@@ -211,7 +211,7 @@ class Body extends StatelessWidget {
                               child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Only show people from my City\ncurrent city (${(context.read<ProfileBloc>().state as ProfileLoaded).user.country}).', 
+                                Text('Only show people from my City\ncurrent city (${(context.read<ProfileBloc>().state as ProfileLoaded).user.countryCode}).', 
                                 style: Theme.of(context).textTheme.bodySmall, ),
                                 Switch(value: state.userPreference.onlyShowInThisRange!, 
                                 onChanged: (value){
@@ -478,8 +478,8 @@ class Body extends StatelessWidget {
                       onTap: () {
                         //context.read<AuthRepository>().signOut();
                         context.read<AuthBloc>().add(LogOut());
-                        context.read<ProfileBloc>().close();
-                        context.read<UserpreferenceBloc>().close();
+                        // context.read<ProfileBloc>().close();
+                        // context.read<UserpreferenceBloc>().close();
                         Future.delayed(Duration(milliseconds: 300), (){
                              Navigator.pop(context); 
                         });
@@ -498,7 +498,7 @@ class Body extends StatelessWidget {
           
                     SizedBox(height: 25,),
                     Center(
-                      child: Text('version 1.0.0.0', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
+                      child: Text('version 1.0.0.3', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
                     ),
                     SizedBox(height: 25,),
           

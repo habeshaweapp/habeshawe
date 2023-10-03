@@ -4,9 +4,11 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Repository/Payment/payment_repository.dart';
 
 import '../../Data/Repository/Database/database_repository.dart';
@@ -20,6 +22,10 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   final AuthBloc _authBloc;
   StreamSubscription? _purchaseSubscription;
 
+  List<String> subIds = ['monthly', 'yearly', '6months','premium'];
+  List<String> boostsIds = ['1boost', '5boosts', '10boosts'];
+  List<String> likesIds = ['3superlikes','15superlikes', '30superlikes'];
+
   PaymentBloc({
     required PaymentRepository paymentRepository,
     required DatabaseRepository databaseRepository,
@@ -30,8 +36,15 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     super(PaymentInitial()) {
     on<PurchaseUpdated>(_purchaseUpdated);
     on<Subscribe>(_subscribe);
+    on<PaymentStarted>(_onPaymentStarted);
+    on<BuyBoosts>(_onBuyBoosts);
+    on<BuySuperLikes>(_onBuySuperLikes);
+    on<ConsumeBoost>(_onConsumeBoost);
+    on<ConsumeSuperLike>(_onConsumeSuperLike);
 
-    _purchaseSubscription =  paymentRepository.purchaseStream().listen((List<PurchaseDetails> purchaseDetailsList) { 
+    add(PaymentStarted());
+
+    paymentRepository.purchaseStream().listen((List<PurchaseDetails> purchaseDetailsList) { 
         add(PurchaseUpdated(purchaseDetailsList: purchaseDetailsList));
     },onDone: (){
       _purchaseSubscription!.cancel();
@@ -44,40 +57,108 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {}
 
   FutureOr<void> _purchaseUpdated(PurchaseUpdated event, Emitter<PaymentState> emit) async {
-    final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid, users: _authBloc.state.accountType!);
-    if(payment.countryCode != 'ET' && payment.country != 'Ethiopia'){
+    // final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid, users: _authBloc.state.accountType!);
+    // if(payment.countryCode != 'ET' && payment.country != 'Ethiopia'){
 
     
     if(event.purchaseDetailsList.isEmpty){
-      emit(NotSubscribed());
+      //emit(NotSubscribed());
+      emit(state.copyWith(subscribtionStatus: SubscribtionStatus.notSubscribed, purchaseDetails: event.purchaseDetailsList));
+      _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: {}, subscribtionStatus: SubscribtionStatus.notSubscribed.index, paymentType: SubscribtionStatus.notSubscribed.name );
     }else{
       for(var purchase in event.purchaseDetailsList){
         if(purchase.status == PurchaseStatus.restored || purchase.status == PurchaseStatus.purchased){
+         // if(subIds.contains(purchase.productID)){
+
+          
           Map purchaseData = json.decode(purchase.verificationData.localVerificationData);
-          if(purchaseData['acknowledged']){
-            emit(Subscribed(subscribtionType: purchase.productID));
+          if(subIds.contains(purchase.productID) && purchaseData['acknowledged']){
+            //emit(Subscribed(subscribtionType: purchase.productID));
+            SubscribtionStatus type = SubscribtionStatus.notSubscribed;
+            if(purchase.productID == 'monthly' ){
+              type = SubscribtionStatus.subscribedMonthly;
+            }else if(purchase.productID == 'yearly'){
+              type = SubscribtionStatus.subscribedYearly;
+            }else{
+              type = SubscribtionStatus.subscribed6Months;
+            }
+            emit(state.copyWith(subscribtionStatus: type));
+            _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: purchaseData, subscribtionStatus: type.index, paymentType: type.name);
+           //}//end of subscribtion or nonConsumable
+
+           //for the consumables
+            // if(boostsIds.contains(purchase.productID) || likesIds.contains(purchase.productID)){
+
+           // }
 
           }else{
             //consume
             if(Platform.isAndroid){ 
               //final InAppPurchaseAndroidPlatformAddition androidPlatformAddition = 
-               _paymentRepository.consumePurchaseAndroid(purchase);
-              emit(Subscribed(subscribtionType: purchase.productID));
+              await _paymentRepository.consumePurchaseAndroid(purchase);
+              //emit(Subscribed(subscribtionType: purchase.productID));
+              
             }
 
             if(purchase.pendingCompletePurchase){
-              _paymentRepository.completePurchase(purchase);
-              emit(Subscribed(subscribtionType: purchase.productID));
-            
-            _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid,users: _authBloc.state.accountType!, purchaseData: purchaseData, paymentType: purchase.productID);
+              await _paymentRepository.completePurchase(purchase);
+              
+
+              if(subIds.contains(purchase.productID)){
+                SubscribtionStatus type = SubscribtionStatus.notSubscribed;
+                if(purchase.productID == 'monthly' ){
+                 type = SubscribtionStatus.subscribedMonthly;
+                }else if(purchase.productID == 'yearly'){
+                  type = SubscribtionStatus.subscribedYearly;
+                }else{
+                  type = SubscribtionStatus.subscribed6Months;
+                }
+
+                emit(state.copyWith(subscribtionStatus: type));
+
+                _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: purchaseData, 
+                subscribtionStatus: type.index, paymentType: purchase.productID);
+              }
+            //boosts complete
+              if(boostsIds.contains(purchase.productID)){
+                int boost = 0;
+                if(purchase.productID == boostsIds[0]){
+                  boost = 1;
+                }else if(purchase.productID == boostsIds[1]){
+                  boost = 5;
+                }else if(purchase.productID == boostsIds[2]){
+                  boost = 10;
+                }
+
+                emit(state.copyWith(boosts: state.boosts??0 + boost ));
+                _databaseRepository.updateConsumable(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: state.boosts??0 + boost);
+              }
+
+              //superlikes complete
+              if(likesIds.contains(purchase.productID)){
+                int likes = 0;
+                if(purchase.productID == likesIds[0]){
+                  likes = 3;
+                }else if(purchase.productID == likesIds[1]){
+                  likes = 15;
+                }else if(purchase.productID == likesIds[2]){
+                  likes = 30;
+                }
+
+                emit(state.copyWith(superLikes: state.superLikes??0 + likes ));
+                _databaseRepository.updateConsumable(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: state.superLikes??0 + likes);
+              }
+
+
             }
           }
         }
       }
     }
-    }else{
-      emit(Subscribed(subscribtionType: 'ET-USER'));
-    }
+    // }else{
+    //  // emit(Subscribed(subscribtionType: 'ET-USER'));
+    //  emit(state.copyWith(subscribtionStatus: SubscribtionStatus.ET_USER ));
+    // }
   }
 
   FutureOr<void> _subscribe(Subscribe event, Emitter<PaymentState> emit) {
@@ -90,5 +171,67 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     // TODO: implement close
     _purchaseSubscription!.cancel();
     return super.close();
+  }
+
+  FutureOr<void> _onPaymentStarted(PaymentStarted event, Emitter<PaymentState> emit)async {
+    final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid, users: _authBloc.state.accountType!);
+    if(payment.countryCode != 'ET' && payment.country != 'Ethiopia'){
+    final products = await _paymentRepository.getProducts();
+    //emit(SubscribtionState(productDetails: products));
+    emit(state.copyWith(productDetails: products, subscribtionStatus: SubscribtionStatus.values[payment.subscribtionStatus], boosts: payment.boosts, superLikes: payment.superLikes ));
+  }
+  else{
+    emit(state.copyWith(subscribtionStatus: SubscribtionStatus.ET_USER));
+
+  }
+}
+
+  FutureOr<void> _onBuyBoosts(BuyBoosts event, Emitter<PaymentState> emit) async{
+    try {
+      
+     await _paymentRepository.purchaseConsumable(event.product);
+     int boost = 0;
+     if(event.product.id == boostsIds[0]){
+      boost = 1;
+     }
+     if(event.product.id == boostsIds[1]){
+      boost = 5;
+     }
+     if(event.product.id == boostsIds[2]){
+      boost = 10;
+     }
+     _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: boost);
+
+     } catch (e) {
+      debugPrint(e.toString());
+      
+    }
+
+  }
+
+  FutureOr<void> _onBuySuperLikes(BuySuperLikes event, Emitter<PaymentState> emit) async {
+    await _paymentRepository.purchaseConsumable(event.product);
+
+    int likes = 0;
+     if(event.product.id == likesIds[0]){
+      likes = 3;
+     }
+     if(event.product.id == likesIds[1]){
+      likes = 15;
+     }
+     if(event.product.id == likesIds[2]){
+      likes = 30;
+     }
+     _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'superLikes', value: likes);
+
+  }
+
+  FutureOr<void> _onConsumeBoost(ConsumeBoost event, Emitter<PaymentState> emit) {
+    _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: state.boosts! -1);
+  }
+
+  FutureOr<void> _onConsumeSuperLike(ConsumeSuperLike event, Emitter<PaymentState> emit) {
+        _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'superlikes', value: state.superLikes! -1);
+
   }
 }

@@ -82,7 +82,7 @@ class UserPreference extends Equatable{
       showDistancesIn: snap['showDistancesIn'],
       maximumDistance: snap['maximumDistance'],
       onlyShowInThisRange: snap['onlyShowInThisRange'],
-      discoverBy: snap['discoverBy']
+      discoverBy: (snap.data() as Map<String, dynamic>).containsKey('discoverBy') ? snap['discoverBy'] : null,
       );
   }
 

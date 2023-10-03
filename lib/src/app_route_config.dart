@@ -46,7 +46,7 @@ class LomiAppRouter{
           name: MyAppRouteConstants.startRouteName,
           path: '/start',
           pageBuilder: (context, state) {
-            return const MaterialPage(child: StartScreen());
+            return  MaterialPage(child: StartScreen());
           },
           ),
 

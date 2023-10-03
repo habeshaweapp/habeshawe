@@ -11,14 +11,17 @@ class PaymentRepository{
   final List<ProductDetails> _products = <ProductDetails>[];
 
   //list of store products
-  Set<String> _KIds = <String>{'monthly', 'yearly', '6monthly'};
+  Set<String> _KIds = <String>{'premium','1boost', '5boosts', '10boosts','3superlikes','15superlikes', '30superlikes'};
+
+  Set<String> products = <String>['android.test.purchased'].toSet();
 
   Future<List<ProductDetails>> getProducts() async{
     final isAvailable = await _inAppPurchase.isAvailable();
     if(isAvailable){
      final response = await _inAppPurchase.queryProductDetails(_KIds);
         
-      _products.addAll(response.productDetails);
+      //_products.addAll(response.productDetails);
+      
       return response.productDetails;
         
     }else{
@@ -30,10 +33,18 @@ Stream<List<PurchaseDetails>> purchaseStream(){
   return purchase;
 }
 
-void purchaseSubscription(ProductDetails productDetails) async{
+Future<void> purchaseSubscription(ProductDetails productDetails) async{
   await _inAppPurchase.buyNonConsumable(purchaseParam: PurchaseParam(productDetails: productDetails));
 }
 
+Future<void> purchaseConsumable(ProductDetails productDetails)async{
+  try {
+    
+  await _inAppPurchase.buyConsumable(purchaseParam: PurchaseParam(productDetails: productDetails));
+  } catch (e) {
+    throw(Exception(e));
+  }
+}
 
   
 
@@ -68,13 +79,13 @@ void purchaseSubscription(ProductDetails productDetails) async{
   
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {}
 
- void consumePurchaseAndroid(PurchaseDetails purchase)async {
+ Future<void> consumePurchaseAndroid(PurchaseDetails purchase)async {
   final androidPlatformAddition = _inAppPurchase.getPlatformAddition<InAppPurchaseAndroidPlatformAddition>();
   
   await androidPlatformAddition.consumePurchase(purchase);
  }
 
-  void completePurchase(PurchaseDetails purchase) async {
+  Future<void> completePurchase(PurchaseDetails purchase) async {
     await _inAppPurchase.completePurchase(purchase);
   }
 

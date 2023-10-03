@@ -4,11 +4,13 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_geo_hash/geohash.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/app_route_config.dart';
@@ -23,6 +25,7 @@ import '../../Data/Models/enums.dart';
 import '../../Data/Models/user_model.dart';
 import '../../Data/Models/userpreference_model.dart';
 import '../../Data/Repository/Authentication/auth_repository.dart';
+import '../payment/showPaymentDialog.dart';
 import '../verifyProfile/verifyprofile.dart';
 import 'components/bottomprofile.dart';
 
@@ -36,12 +39,12 @@ class UserProfile extends StatelessWidget {
     showVerifyDialog(User user){
     return showDialog(
       context: context, 
-      builder: (context) => AlertDialog(
+      builder: (ctx) => AlertDialog(
         //title: Text('Who are you'),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(30))
         ),
-        content: VerifyProfile(user:user),
+        content: VerifyProfile(user:user, profileContext: context),
         
       )
     );
@@ -57,10 +60,48 @@ class UserProfile extends StatelessWidget {
         ),
         heroTag: null,
         backgroundColor: isDark ? Colors.grey[800]: Colors.white,
-        onPressed: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+        onPressed: () async{
+
+
+          // var position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
+          //                 String hash = MyGeoHash().geoHashForLocation(GeoPoint(position.latitude, position.longitude));
+          //                 var placeMark = await placemarkFromCoordinates(position.latitude, position.longitude);
+          //                 int rep = 0;
+          //                 while(placeMark.isEmpty){
+          //                   if(rep == 5)  break;
+          //                   placeMark = await placemarkFromCoordinates(position.latitude, position.longitude);
+          //                   rep ++;
+
+          //                 }
+          //                 if(context.mounted && placeMark.isNotEmpty ){
+          //                   for(int i=0; i< UserModel.users.length; i++){
+          //                     DatabaseRepository().completeOnboarding(placeMark: placeMark[0], user: UserModel.users[i].copyWith(location: [position.latitude,position.longitude]), isMocked: position.isMocked);
+          //                   }
+          //                   // context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: placeMark[0], user: state.user.copyWith(geohash: hash,location: [position.latitude, position.longitude], country: placeMark[0].country, countryCode: placeMark[0].isoCountryCode ), isMocked: position.isMocked));
+          //                   // Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+          //                                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('done users are setup')));
+
+          //                 }
+
+          //                 if(placeMark.isEmpty){
+          //                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('somethings not up...check your phone and Try Again')));
+          //                 }
+
+
+          Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
+                              BlocProvider.value(
+                                value: context.read<UserpreferenceBloc>(),
+                                child: BlocProvider.value(
+                                value: context.read<ProfileBloc>(),
+                                child:  Settings()
+                              )
+                              )
+                              ));
+          
+       // Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
       }),
       body: BlocBuilder<ProfileBloc, ProfileState>(
+        
         builder: (context, state) {
           
           if(state is ProfileLoading){
@@ -92,7 +133,11 @@ class UserProfile extends StatelessWidget {
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
                               onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context) =>  Profile(user: state.user) ));
+                                Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
+                                  BlocProvider.value(
+                                    value: context.read<ProfileBloc>() ,
+                                    child: Profile(user: state.user)) 
+                                ));
                               },
                               child: CircleAvatar(
                                 backgroundImage:
@@ -110,7 +155,12 @@ class UserProfile extends StatelessWidget {
                         alignment: Alignment.bottomCenter,
                         child: ElevatedButton(
                             onPressed: ()async {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfile()));
+                              Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
+                              BlocProvider.value(
+                                value: context.read<ProfileBloc>(),
+                                child: const EditProfile()
+                              )
+                              ));
                               //context.read<DatabaseRepository>().getUsersBasedonPreference(state.user.id);
                               // var pin = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
                               // print(pin);
@@ -132,8 +182,12 @@ class UserProfile extends StatelessWidget {
                         top: 30,
                         child: FloatingActionButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfile()));
-                           // Navigator.pushNamed(context, 'editProfile');
+                            Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
+                              BlocProvider.value(
+                                value: context.read<ProfileBloc>(),
+                                child: const EditProfile()
+                              )
+                              ));
                             
                           },
                           backgroundColor: isDark ? Colors.grey[800]: Colors.white,
@@ -173,7 +227,9 @@ class UserProfile extends StatelessWidget {
                      //context.read<UserpreferenceBloc>().add(EditUserPreference(preference: UserPreference(userId: state.user.id).copyWith(showMe: state.user.gender == 'Man' ? 'Women' : 'Man' )));
 
                       //Navigator.push(context, MaterialPageRoute(builder: (context) => VerifyProfile()));
-                      state.user.verified == VerifiedStatus.notVerified.name ?
+                      state.user.verified == null
+                     // VerifiedStatus.notVerified.name 
+                      ?
                       showVerifyDialog(state.user)
                       :null;
 
@@ -199,113 +255,40 @@ class UserProfile extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.115,
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      child: Card(
-                        color: isDark? Colors.grey[900]: null,
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Icon(
-                                Icons.star,
-                                color: Colors.blue,
-                              ),
-                              SizedBox(
-                                height: 8,
-                              ),
-                              Text('0 Super Likes',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey),),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "GET MORE",
-                                style: TextStyle(color: Colors.blue, fontSize: 12),
-                              )
-                            ],
-                          ),
-                        ),
+                    ProfileBox(
+                      isDark: isDark, 
+                      onTap: () => showPaymentDialog(context:context, paymentUi: PaymentUi.superlikes) ,
+                      title: 'Super Likes',
+                      superLikes: 0,
+                      icon: Icons.star,
+                      color: Colors.blue,
                       ),
-                    ),
                     SizedBox(
                       width: 10,
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.115,
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      child: Card(
-                        elevation: 4,
-                        color: isDark? Colors.grey[900]: null,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Icon(
-                                Icons.electric_bolt,
-                                color: Colors.purple,
-                              ),
-                              SizedBox(
-                                height: 8,
-                              ),
-                              Text('My Boosts', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey),),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                "GET MORE",
-                                style: TextStyle(color: Colors.blue, fontSize: 12),
-                              )
-                            ],
-                          ),
-                        ),
+                    ProfileBox(
+                      isDark: isDark, 
+                      title: 'My Boosts', 
+                      icon: Icons.electric_bolt, 
+                      onTap: ()=> showBoostsSheet(context, 2),
+                      color: Colors.purple,
+
                       ),
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.115,
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      child: Card(
-                        elevation: 4,
-                        color: isDark? Colors.grey[900]: null,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Column(
-                            children: [
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Icon(
-                                LineIcons.lemon,
-                                color: Colors.green,
-                                size: 30,
-                              ),
-                              SizedBox(
-                                height: 13,
-                              ),
-                              Text('Subscriptions',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey),),
-                              // SizedBox(height: 5,),
-                              //Text("GET MORE",style: TextStyle(color: Colors.blue),)
-                            ],
-                          ),
-                        ),
+
+                      SizedBox(width: 10,),
+
+                      ProfileBox(
+                        isDark: isDark,
+                        title: 'Subscriptions',
+                        icon: Icons.monetization_on,
+                        color: Colors.green,
+                        onTap: ()=> showPaymentDialog(context: context, paymentUi: PaymentUi.subscription),
                       ),
-                    ),
+
+                   
+                
+                    
+                    
                   ],
                 ),
               ),
@@ -399,5 +382,152 @@ class UserProfile extends StatelessWidget {
 
   
 
+  }
+
+
+    void showBoostsSheet(BuildContext context, int boosts){
+    
+    showModalBottomSheet(
+      context: context, 
+      builder: (ctx){
+        return SizedBox(
+          height: 250,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              
+              Align(
+                alignment: Alignment.topLeft,
+                child: Padding(
+                padding: const EdgeInsets.only(left:15.0, top: 25, bottom: 15),
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
+                  },
+                  child: Icon(Icons.close)),
+              ) ,
+                ),
+              
+              Text('My Boosts',
+               textAlign: TextAlign.center,
+               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+               ),
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Be a top profile everywhere in the world for 30 minutes to get more matches', 
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w300),
+
+                  ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 15),
+                child: Row(
+                  children: [
+                    Icon(Icons.electric_bolt, color: Colors.purple, size: 35,),
+                    SizedBox(width: 10,),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start
+                      ,
+                      children: [
+                        Text('Boosts'),
+                        Text('0 left', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w300), textAlign: TextAlign.start,)
+                      ],
+                    )
+                  ],
+                ),
+              ),
+
+
+              ElevatedButton(
+                onPressed: (){
+                  showPaymentDialog(context:context, paymentUi: PaymentUi.boosts);
+                },
+               child: Padding(
+                 padding: const EdgeInsets.all(8.0),
+                 child: Text('Get more Boosts',style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white),),
+               ),
+               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple[400],
+                shape: const StadiumBorder()
+               ),
+               )
+              
+
+            ],
+          ),
+        );
+      }
+      );
+  }
+}
+
+class ProfileBox extends StatelessWidget {
+  const ProfileBox({
+    super.key,
+    required this.isDark,
+    required this.title,
+    required this.icon,
+    required this.onTap,
+     this.superLikes,
+     this.color
+  });
+
+  final bool isDark;
+  final IconData icon;
+  final String title;
+  final void Function() onTap;
+  final Color? color;
+
+  final int? superLikes;
+  
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * 0.115,
+      width: MediaQuery.of(context).size.width * 0.3,
+      child: Card(
+        color: isDark? Colors.grey[900]: null,
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10)),
+        child: InkWell(
+          onTap: onTap,
+          // (){
+          //   showPaymentDialog(context:context, paymentUi: PaymentUi.superlikes);
+          // },
+          child: Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: Column(
+              children: [
+                SizedBox(
+                  height:title != 'Subscriptions'? 5:15,
+                ),
+                Icon(
+                  icon,
+                  color: color,
+                ),
+                SizedBox(
+                  height: 8,
+                ),
+                Text( superLikes != null? '$superLikes $title' : title
+                  ,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey),),
+               title != 'Subscriptions'? SizedBox(
+                  height: 5,
+                ):SizedBox(),
+                title != 'Subscriptions'?
+                Text(
+                  "GET MORE",
+                  style: TextStyle(color: Colors.blue, fontSize: 12),
+                ):SizedBox()
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

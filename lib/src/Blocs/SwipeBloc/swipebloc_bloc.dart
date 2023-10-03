@@ -21,7 +21,7 @@ import '../AuthenticationBloc/bloc/auth_bloc.dart';
 part 'swipebloc_event.dart';
 part 'swipebloc_state.dart';
 
-class SwipeBloc extends Bloc<SwipeEvent, SwipeState>   {
+class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   final DatabaseRepository _databaseRepository;
   final AuthBloc _authBloc;
   final AdBloc _adBloc;
@@ -51,71 +51,34 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState>   {
     //   }
     //  });
 
-    add(LoadUsers(userId: _authBloc. state.user!.uid, users: _authBloc. state.accountType!));
+    add(LoadUsers(userId: _authBloc. state.user!.uid, users: _authBloc. state.accountType! ));
 
     
   }
 
   void _loadusers(LoadUsers event, Emitter<SwipeState> emit) async {
-    // Location location = Location();
-
-    // bool _serviceEnabled = await location.serviceEnabled();
-    // if(!_serviceEnabled){
-    //   _serviceEnabled = await location.requestService();
-    // }
-    // PermissionStatus _permissionGranted = await location.hasPermission();
-    // if(_permissionGranted == PermissionStatus.denied){
-    //   _permissionGranted = await location.requestPermission();
-    // }
-
-    // LocationData _locationData = await location.getLocation();
-   // final users = explore_json;
-
-
-
+    
     try {
-  //  emit(SwipeLoading());
-  //   _databaseRepository.getUsers(event.userId , 'Male').listen((users) {
-  //     add(UpdateHome(users: users));
-  //   },);
+    emit(SwipeLoading());
+     List<User> users;
+     var prefes = await _databaseRepository.getPreference(event.userId, event.users);
 
+    if(prefes.discoverBy == 0){
+      users = await _databaseRepository.getUsersMainLogic(event.userId, event.users, prefes);
+    }
+    if(prefes.discoverBy == 1){
+      users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users, prefes);
+    }else{
 
-
-   //emit(SwipeLoaded(users: event.users));
-   //  
-  
-final users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users == Gender.men? Gender.women : event.users );
+     users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users == Gender.men? Gender.women : event.users );
+    }
     //_databaseRepository.getNearByUsers(event.userId,_locationData).listen((users) {
       //var ads = [];
-      var last = const User(id: 'last', name: 'last', age: 0, gender: 'last', imageUrls: [], interests: []);
-      //List<dynamic> usersads = [...users, User(id: id, name: name, age: age, gender: gender, imageUrls: imageUrls, interests: interests)];
-      users.add(last);
-      // _adBloc.add(LoadNativeAd());
-      // _adBloc.add(LoadNativeAd());
-      // _adBloc.add(LoadNativeAd());
+    var last = const User(id: 'last', name: 'last', age: 0, gender: 'last', imageUrls: [], interests: []);
+     // users.add(last);
 
-      // _adBloc.stream.listen((adstate) {
-      //   if(adstate is AdLoaded){
-      //     ads.add(adstate.nativeAd);
-      //   }
-        
-      // },);
-      //var ad = AdRepository().createNativeAd(onAdLoaded: (ad){}, onAdFailedToLoad: (ad,er){});
-      
-      
-
-     // usersads.insert(1,'ad');
-      
-
-      // for(int i = usersads.length - 2; i>=0; i-1){
-      //   int j=0;
-      //   usersads.insert(i, ads[j]);
-      //   j++;
-      // }
-      
-      //add(UpdateHome(users: users));
-      emit(SwipeLoaded(users: users));
-   // });
+    emit(SwipeLoaded(users: users.sublist(0,3)));
+  
     
   // add(UpdateHome(users: users));
      
@@ -141,14 +104,9 @@ final users = await _databaseRepository.getUsersBasedonPreference(event.userId, 
   if(state is SwipeLoaded){
     final state = this.state as SwipeLoaded;
     List<User> users = List.from(state.users)..remove(event.passedUser);
-  
-    if (users.isNotEmpty){
-      emit(SwipeLoaded(users: users));
-    }else{
-      emit(SwipeError());
-    }
-  
-    await _databaseRepository.userPassed(event.user, event.passedUser);
+
+     // emit(SwipeLoaded(users: users));
+      await _databaseRepository.userPassed(event.user, event.passedUser);
   
   }
 } on Exception catch (e) {
@@ -166,28 +124,14 @@ final users = await _databaseRepository.getUsersBasedonPreference(event.userId, 
   void _swipedRight(SwipeRightEvent event, Emitter<SwipeState> emit) async{
     
     try {
-  if(state is SwipeLoaded){
+      if(state is SwipeLoaded){
     
-    final state = this.state as SwipeLoaded;
-    List<User> users = List.from(state.users)..remove(event.user);
+      final state = this.state as SwipeLoaded;
+      List<User> users = List.from(state.users)..remove(event.user);
   
-    if (users.isNotEmpty){
-      emit(SwipeLoaded(users: users));
-    }else{
-      emit(SwipeError());
-    }
-  
-   final result = await _databaseRepository.userLike(event.user, event.matchUser);
-  //  if(result){
-  //   emit(ItsaMatch(user: event.user));
-  //  // List<User> users = List.from(state.users)..remove(event.user);
-  
-  //  if (users.isNotEmpty){
-  //    // emit(SwipeLoaded(users: users));
-  //   }else{
-  //     emit(SwipeError());
-  //   }
-  //  }
+     // emit(SwipeLoaded(users: users));
+    
+   final result = await _databaseRepository.userLike(event.user, event.matchUser,event.superLike);
   
   }
 } on Exception catch (e) {
@@ -210,32 +154,54 @@ final users = await _databaseRepository.getUsersBasedonPreference(event.userId, 
     super.close();
   }
   
-  // @override
-  // SwipeState? fromJson(Map<String, dynamic> json) {
-  //   // TODO: implement fromJson
-  //   if(json.isEmpty){
-  //     return null;
-  //   }else{
-  //     var u = json['ere'] ;
-  //     var users = json['users'] ;
-      
-  //     return SwipeLoaded.fromJson(users);
-  //   }
-  // }
+  @override
+  SwipeState? fromJson(Map<String, dynamic> json) {
+    // TODO: implement fromJson
+    if(json.isEmpty){
+      return null;
+
+    }
+     
+    if(json['stateType'] == 'SwipeCompleted'){
+      return SwipeCompleted.fromJson(json);
+
+    }
+    
+    if(json['stateType'] == 'SwipeLoaded'){
   
-  // @override
-  // Map<String, dynamic>? toJson(SwipeState state) {
-  //   // TODO: implement toJson
-  //   if(state is SwipeLoaded){
-  //     return {
-  //       'users' : state.toJson(),
-  //       'ere': 'gude',
-  //       'mnew': 'mnewww'
-  //     };
-  //   }else{
-  //     return null;
-  //   }
-  // }
+      var users = json['users'] ;
+      
+      return SwipeLoaded.fromJson(users);
+    }
+    if(json['stateType'] == 'SwipeLoading'){
+      return SwipeLoading();
+    }
+    else{
+      return null;
+    }
+  }
+  
+  @override
+  Map<String, dynamic>? toJson(SwipeState state) {
+    // TODO: implement toJson
+    if(state is SwipeLoaded){
+      return {
+        'users' : state.toJson(),
+        'stateType': 'SwipeLoaded',
+        
+      };
+    }else if(state is SwipeCompleted){
+      return state.toJson();
+
+    }else if(state is SwipeLoading){
+
+      return {'stateType': 'SwipeLoading'};
+
+    }
+    else{
+      return null;
+    }
+  }
 
   
 

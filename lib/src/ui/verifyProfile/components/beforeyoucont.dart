@@ -13,7 +13,8 @@ import '../../../Data/Models/model.dart';
 
 class BeforeyouContinue extends StatelessWidget {
   final User user;
-  const BeforeyouContinue({super.key, required this.user});
+  final BuildContext profileContext;
+  const BeforeyouContinue({super.key, required this.user, required this.profileContext});
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +86,7 @@ class BeforeyouContinue extends StatelessWidget {
                               }
 
                               if(_image != null){
-                                context.read<ProfileBloc>().add(VerifyMe(user: user, image: _image, type: 'queen'));
+                                profileContext.read<ProfileBloc>().add(VerifyMe(user: user, image: _image, type: 'queen'));
                               }
                               
                               

@@ -21,8 +21,8 @@ import '../../onboarding/AfterRegistration/widgets/lookingforitem.dart';
 class Body extends StatelessWidget {
   final User user;
   SwipableStackController? stackController;
-  double? imgindex;
-   Body({Key? key, required this.user, this.stackController, this.imgindex}) : super(key: key);
+
+   Body({Key? key, required this.user, this.stackController,}) : super(key: key);
 
    Future<Position> getCurrentPosition()async{
     return await Geolocator.getCurrentPosition();
@@ -44,6 +44,9 @@ class Body extends StatelessWidget {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     PageController pageController = PageController();
+    // if(imgindex != null){
+    //                             pageController.animateToPage(imgindex!.toInt(), duration: Duration(milliseconds: 300), curve: Curves.linear);
+    //                           }
     
     return SafeArea(
       child: Stack(
@@ -76,9 +79,7 @@ class Body extends StatelessWidget {
                             itemCount: user.imageUrls.length,
                             controller: pageController ,
                             itemBuilder: (context, index){
-                              if(imgindex != null){
-                                pageController.animateToPage(imgindex!.toInt(), duration: Duration(milliseconds: 300), curve: Curves.linear);
-                              }
+                              
                               return SizedBox(
                                 width: MediaQuery.of(context).size.width,
                                 child: CachedNetworkImage(
@@ -159,7 +160,7 @@ class Body extends StatelessWidget {
                                     children: [
                                       Text('Looking for', style: Theme.of(context).textTheme.bodySmall,),
                                       //Text(user.lookingFor?.replaceAll('\n', '') ?? 'Someone to love', style: Theme.of(context).textTheme.bodyLarge,)
-                                      Text(LookingForItem.lookignForOpt[user.lookingFor!].replaceAll('\n', '') ?? 'Someone to love')
+                                      Text( LookingForItem.lookignForOpt[user.lookingFor ?? 0].replaceAll('\n', '') )
                                     ],
                                   )
                                 ],

@@ -58,5 +58,16 @@ class SwipeCompleted extends SwipeState{
    @override
   // TODO: implement props
   List<Object> get props => [completedTime];
+
+  Map<String,dynamic> toJson(){
+    return {
+      'completedTime': completedTime.toIso8601String(),
+      'stateType': 'SwipeCompleted',
+    };
+  }
+
+  factory SwipeCompleted.fromJson(Map<String,dynamic> json){
+    return SwipeCompleted(completedTime: DateTime.parse(json['completedTime']));
+  }
 }
 

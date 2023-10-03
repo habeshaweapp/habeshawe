@@ -39,13 +39,18 @@ class _EditInterestsState extends State<EditInterests> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const LinearProgressIndicator(
-                value: 0.8
+              // const LinearProgressIndicator(
+              //   value: 1
         
-              ),
-             const Padding(
+              // ),
+              Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Icon(LineIcons.times,size: 35,),
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.pop(context);
+
+                  },
+                  child: Icon(LineIcons.times,size: 35,)),
               ),
         
               Container(

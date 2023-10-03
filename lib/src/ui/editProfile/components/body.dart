@@ -13,6 +13,7 @@ import '../../onboarding/AfterRegistration/widgets/lookingforitem.dart';
 import 'editInterests.dart';
 
 class Body extends StatelessWidget {
+
   const Body({super.key});
 
   @override
@@ -57,6 +58,7 @@ class Body extends StatelessWidget {
               return true;
             },
             child: Container(
+              
               child: Column(
                 children: [
                   Padding(
@@ -144,7 +146,12 @@ class Body extends StatelessWidget {
                   child: TextField(
                     minLines: 1,
                     maxLines: 11,
+                    onTapOutside: (event){
+                      FocusManager.instance.primaryFocus!.unfocus();
+
+                    },
                     decoration: InputDecoration(
+                      
                       border: InputBorder.none,
                       hintText: state.user.aboutMe ?? 'About Me',
                       
@@ -181,7 +188,9 @@ class Body extends StatelessWidget {
                 
                 GestureDetector(
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => EditInterests(userInterests: state.user.interests.cast<String>() ,)));
+                    Navigator.push(context, MaterialPageRoute(builder: (cont) => BlocProvider.value(
+                      value: context.read<ProfileBloc>(),
+                      child: EditInterests(userInterests: state.user.interests.cast<String>() ,))));
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -258,7 +267,7 @@ class Body extends StatelessWidget {
                     ),
                   ),
                   onTap: (){
-                    showEduLevel(context, 1);
+                    showEduLevel(context, state.user.education ?? '', state.user);
                   },
                 ),
           
@@ -428,12 +437,12 @@ class Body extends StatelessWidget {
     );
   }
   
-  void showEduLevel(BuildContext context, int index){
+  void showEduLevel(BuildContext context, String edu, User user){
     List<String> caps = ['Bachelors', 'In College', 'High School', 'PhD', 'In Grad School', 'Masters','Life'];
-    int selectedIndex = index;
+    int selectedIndex = caps.indexOf(edu);
     showModalBottomSheet(
       context: context, 
-      builder: (context){
+      builder: (ctx){
         return SizedBox(
           height: 200,
           child: Column(
@@ -455,6 +464,8 @@ class Body extends StatelessWidget {
                       disabledColor: Colors.grey[300],
                       onSelected: (value) {
                         selectedIndex = index;
+                        context.read<ProfileBloc>().add(UpdateProfile(user: user.copyWith(education: caps[index])));
+                         Navigator.pop(context);
                       }),
                       )
                   )
@@ -469,7 +480,7 @@ class Body extends StatelessWidget {
   }
   void showLookingForSheet(BuildContext context, int index, User user) {
     showModalBottomSheet(context: context, 
-    builder: (context){
+    builder: (ctx){
       bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
       int selectedIndex = index;
 

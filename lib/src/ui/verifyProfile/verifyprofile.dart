@@ -11,7 +11,8 @@ import 'components/beforeyoucont.dart';
 
 class VerifyProfile extends StatelessWidget {
   final User user;
-  const VerifyProfile({super.key, required this.user});
+  final BuildContext profileContext;
+  const VerifyProfile({super.key, required this.user, required this.profileContext});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +47,8 @@ class VerifyProfile extends StatelessWidget {
 
           ElevatedButton(
                             onPressed: () {
-                              context.pop();
+                              //context.pop();
+                              Navigator.pop(context);
                               //context.read<DatabaseRepository>().getUsersBasedonPreference(state.user.id);
                               showDialog(
                               context: context, 
@@ -56,7 +58,7 @@ class VerifyProfile extends StatelessWidget {
                                     borderRadius: BorderRadius.all(Radius.circular(30)),
                                   ),
 
-                                  content: BeforeyouContinue(user: user),
+                                  content: BeforeyouContinue(user: user, profileContext: profileContext),
                                 );
                                 
                               }));

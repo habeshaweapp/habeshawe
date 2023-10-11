@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,6 +29,7 @@ import '../../Data/Repository/Authentication/auth_repository.dart';
 import '../payment/showPaymentDialog.dart';
 import '../verifyProfile/verifyprofile.dart';
 import 'components/bottomprofile.dart';
+import 'components/gettag.dart';
 
 class UserProfile extends StatelessWidget {
    UserProfile({super.key});
@@ -111,6 +113,21 @@ class UserProfile extends StatelessWidget {
           }
           
           if(state is ProfileLoaded){
+            Icon verifiedIcon =  Icon(Icons.verified_outlined);
+            if(state.user.verified == VerifiedStatus.notVerified.name){
+              verifiedIcon = const Icon(Icons.verified_outlined);
+            }else if(state.user.verified == VerifiedStatus.verified.name){
+              verifiedIcon = const Icon(Icons.verified, color: Colors.blue,);
+            }else if(state.user.verified == VerifiedStatus.queen.name){
+              verifiedIcon = const Icon(LineIcons.crown, color: Colors.amber,);
+            }else if(state.user.verified == VerifiedStatus.princess.name){
+              verifiedIcon = const Icon(LineIcons.crown, color: Colors.blue,);
+            }else if(state.user.verified == VerifiedStatus.king.name){
+              verifiedIcon = const Icon(LineIcons.crown, color: Colors.amber,);
+            }else if(state.user.verified == VerifiedStatus.gentelmen.name){
+              verifiedIcon = const Icon(LineIcons.suitcase, color: Colors.blue,);
+            }
+            
           return Column(
             children: [
               SizedBox(
@@ -132,11 +149,15 @@ class UserProfile extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
+                              onLongPress: (){
+                                Clipboard.setData(ClipboardData(text: 'Find me on Habeshawe id: ${state.user.id}'));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('id generated! good luck...',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),)));
+                              },
                               onTap: (){
                                 Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
                                   BlocProvider.value(
                                     value: context.read<ProfileBloc>() ,
-                                    child: Profile(user: state.user)) 
+                                    child: Profile(user: state.user, profileFrom: ProfileFrom.profile,)) 
                                 ));
                               },
                               child: CircleAvatar(
@@ -219,20 +240,10 @@ class UserProfile extends StatelessWidget {
                   //   width: 1,
                   // ),
                   IconButton(
-                    
-                    icon: state.user.verified == VerifiedStatus.queen.name ?
-                      Icon(LineIcons.crown, color: Colors.amber, )
-                    : Icon(state.user.verified == VerifiedStatus.verified.name ? Icons.verified_outlined : Icons.verified),
+                    icon: verifiedIcon,
                     onPressed: (){
-                     //context.read<UserpreferenceBloc>().add(EditUserPreference(preference: UserPreference(userId: state.user.id).copyWith(showMe: state.user.gender == 'Man' ? 'Women' : 'Man' )));
-
-                      //Navigator.push(context, MaterialPageRoute(builder: (context) => VerifyProfile()));
-                      state.user.verified == null
-                     // VerifiedStatus.notVerified.name 
-                      ?
-                      showVerifyDialog(state.user)
-                      :null;
-
+                      state.user.verified == VerifiedStatus.notVerified.name?
+                      showVerifyDialog(state.user): null;
                     },
                     )
                 ],
@@ -293,71 +304,7 @@ class UserProfile extends StatelessWidget {
                 ),
               ),
               Spacer(),
-              Center(
-                child: state.user.verified == VerifiedStatus.pending? 
-                Container(
-                  child: Column(
-                    children: [
-                      Text(
-                        "Lomi Gold and Platinum \nNOT Avaiable",
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.7,
-                        child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              shape: StadiumBorder(),
-                            ),
-                            onPressed: () {
-                             // GoRouter.of(context).pushNamed(MyAppRouteConstants.settingsRouteName);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
-                            // DatabaseRepository().createDemoUsers(UserModel.users);
-                            },
-                            child: Text(
-                              "Buy me Coffee",
-                            )),
-                      )
-                    ],
-                  ),
-
-
-                ): state.user.verified == null ?
-                    SizedBox(
-                      height: 250,
-                      //width: 300,
-                      child: PageView(
-                        physics: const BouncingScrollPhysics(),
-                        children:const [
-                          PageViewItem(icon: LineIcons.crown,
-                          color: Colors.amber,
-                          title: 'Get Your Crown', 
-                          description: 'Get verified and we will reveal your profile and if you stand out you will get Queen tag', 
-                          buttonText: 'Apply  To Queen'
-                          ),
-                    
-                          PageViewItem(icon: LineIcons.suitcase, 
-                          color: Colors.black,
-                          title: 'Get Your GentleMan Tag', 
-                          description: 'Get verified and we will reveal your profile and if you stand out you will give you  gentlemans tag', 
-                          buttonText: 'Apply  To Queen'
-                          ),
-                    
-                          PageViewItem(icon: Icons.verified, 
-                          color: Colors.blue,
-                          title: 'Get Your Crown', 
-                          description: 'Get verified and we will reveal your profile and if you stand out you will get Queen tag', 
-                          buttonText: 'Apply  To Queen'
-                          ),
-                        ],
-                      ),
-                    )
-                    : Container()
-                
-                ,
-              ),
+              GetTag(user: state.user,),
 
               
               Spacer(),
@@ -463,6 +410,8 @@ class UserProfile extends StatelessWidget {
       );
   }
 }
+
+
 
 class ProfileBox extends StatelessWidget {
   const ProfileBox({

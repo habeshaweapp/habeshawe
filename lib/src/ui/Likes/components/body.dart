@@ -95,7 +95,8 @@ class Body extends StatelessWidget {
                                        Navigator.push(context, MaterialPageRoute(
                                                 builder: (ctx) =>
                                                     BlocProvider.value(value: context.read<ProfileBloc>(),
-                                                        child: Profile(user: state.likedMeUsers[index].user))));
+                                                        child: BlocProvider.value(value: context.read<LikeBloc>(),
+                                                        child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index],)))));
 
 
 
@@ -108,7 +109,8 @@ class Body extends StatelessWidget {
                                       Navigator.push(context, MaterialPageRoute(
                                                 builder: (ctx) =>
                                                     BlocProvider.value(value: context.read<ProfileBloc>(),
-                                                        child: Profile(user: state.likedMeUsers[index].user))));
+                                                        child: BlocProvider.value(value: context.read<LikeBloc>(),
+                                                        child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index] )))));
 
                                     }else{
                                       showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);

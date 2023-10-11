@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/ui/Likes/likes.dart';
 import 'package:lomi/src/ui/home/ExplorePage.dart';
 import 'package:lomi/src/ui/matches/matches_screen.dart';
@@ -16,7 +19,40 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // TODO: implement didChangeAppLifecycleState
+    super.didChangeAppLifecycleState(state);
+
+    if(state == AppLifecycleState.resumed){
+      //online
+      context.read<DatabaseRepository>().updateOnlinestatus(
+        userId: context.read<AuthBloc>().state.user!.uid, 
+        gender: context.read<AuthBloc>().state.accountType!, 
+        online: true
+        );
+
+    }else{
+      //offline
+      context.read<DatabaseRepository>().updateOnlinestatus(
+        userId: context.read<AuthBloc>().state.user!.uid, 
+        gender: context.read<AuthBloc>().state.accountType!, 
+        online: false
+        );
+
+    }
+  }
+
+
   int pageIndex = 0;
  
   

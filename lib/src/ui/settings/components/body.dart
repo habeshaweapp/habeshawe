@@ -9,6 +9,7 @@ import 'package:lomi/src/Blocs/blocs.dart';
 import '../../../Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import '../../../Blocs/UserPreference/userpreference_bloc.dart';
 import '../../../Data/Repository/Authentication/auth_repository.dart';
+import '../../../Data/Repository/Database/database_repository.dart';
 import '../../../app_route_config.dart';
 
 class Body extends StatelessWidget {
@@ -477,6 +478,11 @@ class Body extends StatelessWidget {
           
                       onTap: () {
                         //context.read<AuthRepository>().signOut();
+                        context.read<DatabaseRepository>().updateOnlinestatus(
+                            userId: context.read<AuthBloc>().state.user!.uid, 
+                            gender: context.read<AuthBloc>().state.accountType!, 
+                            online: false
+                             );
                         context.read<AuthBloc>().add(LogOut());
                         // context.read<ProfileBloc>().close();
                         // context.read<UserpreferenceBloc>().close();

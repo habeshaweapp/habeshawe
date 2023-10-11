@@ -6,6 +6,7 @@ class Like extends Equatable{
   final String userId;
   final String timestamp;
   final User user;
+  final bool? superLike;
   // final String name;
   // final int age;
   // final List<dynamic> imageUrl
@@ -16,13 +17,15 @@ class Like extends Equatable{
    Like({
     required this.userId,
     required this.timestamp,
-    required this.user
+    required this.user,
+     this.superLike = false,
   });
 
   factory Like.fromSnapshoot(DocumentSnapshot snap){
     return Like(
       userId: snap['userId'],
       timestamp: snap['timestamp'].toString(),
+      superLike: (snap.data() as Map<String, dynamic>).containsKey('superLike') ? snap['superLike'] : false,
       user: User.fromSnapshootMapType(snap)
       );
   }
@@ -31,13 +34,14 @@ class Like extends Equatable{
     return {
       'userId': userId,
       'timestamp': FieldValue.serverTimestamp(),
+      'superLike': superLike,
       'user': user.toMap()
     };
   }
   
   @override
   // TODO: implement props
-  List<Object?> get props => [userId,timestamp,user];
+  List<Object?> get props => [userId,timestamp,superLike,user];
 
 
 }

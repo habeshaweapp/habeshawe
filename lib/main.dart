@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
   await Firebase.initializeApp();
   Bloc.observer = MyBlocObserver();
   HydratedBloc.storage = await HydratedStorage.build(

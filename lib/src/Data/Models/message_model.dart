@@ -10,6 +10,7 @@ class Message extends Equatable{
 
   final String? imageUrl;
   final Timestamp? timestamp;
+  final Timestamp? seen;
 
   Message({
     required this.id,
@@ -17,7 +18,8 @@ class Message extends Equatable{
     required this.receiverId,
     required this.message,
     this.imageUrl,
-     this.timestamp,
+    this.timestamp,
+    this.seen
   });
   
   @override
@@ -31,8 +33,7 @@ class Message extends Equatable{
       receiverId: snap['receiverId'], 
       message: snap['message'],
       timestamp: snap['timestamp'],
-
-
+      seen: (snap.data() as Map<String,dynamic>).containsKey('seen')?snap['seen']:null
     );
   }
 
@@ -43,6 +44,7 @@ class Message extends Equatable{
       'message': message,
       'timestamp': FieldValue.serverTimestamp(),
       'imageUrl': imageUrl,
+      'seen': seen
     };
   }
 
@@ -56,6 +58,27 @@ class Message extends Equatable{
 
 
     );
+  }
+
+  Message copyWith({
+   String? id,
+   String? senderId,
+   String? receiverId,
+   String? message,
+   String? imageUrl,
+   Timestamp? timestamp,
+   Timestamp? seen,
+
+  }){
+    return Message(
+      id: id?? this.id, 
+      senderId: senderId?? this.senderId, 
+      receiverId: receiverId??this.receiverId, 
+      message: message?? this.message,
+      imageUrl: imageUrl??this.imageUrl,
+      timestamp: timestamp??this.timestamp,
+      seen: seen??this.seen
+      );
   }
 
 

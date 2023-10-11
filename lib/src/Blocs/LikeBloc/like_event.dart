@@ -29,14 +29,14 @@ class DeleteLikedMeUser extends LikeEvent{
 }
 
 class LikeLikedMeUser extends LikeEvent{
-  final String userId;
-  final Gender users;
-  final User likedMeUser;
+  final User user;
+  final Like likedMeUser;
+  final bool? isSuperLike;
 
- const LikeLikedMeUser({required this.userId,required this.users, required this.likedMeUser});
+ const LikeLikedMeUser({required this.user, required this.likedMeUser, this.isSuperLike = false});
  @override
   // TODO: implement props
-  List<Object> get props => [userId, likedMeUser];
+  List<Object> get props => [user, likedMeUser];
 }
 
 class UpdateLikes extends LikeEvent{

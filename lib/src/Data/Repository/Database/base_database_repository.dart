@@ -21,7 +21,7 @@ abstract class BaseDatabaseRepository{
   Stream<List<UserMatch>> getMatches(String userId,Gender users);
   Stream<List<Like>> getLikedMeUsers(String userId, Gender users);
   Future<void> deleteLikedMeUser(String userId,Gender users, String likedMeUserId);
-  Future<void> likeLikedMeUser(String userId, Gender users, User likedMeUser);
+  Future<void> likeLikedMeUser(User user, Like likedMeUser, bool isSuperLike);
   Future<void> openChat(Message message,Gender users);
   Future<Gender> isUserAlreadyRegistered(String userId);
 

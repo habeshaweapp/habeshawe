@@ -130,8 +130,8 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
                   boost = 10;
                 }
 
-                emit(state.copyWith(boosts: state.boosts??0 + boost ));
-                _databaseRepository.updateConsumable(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: state.boosts??0 + boost);
+                emit(state.copyWith(boosts: state.boosts! + boost ));
+                _databaseRepository.updateConsumable(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: state.boosts!);
               }
 
               //superlikes complete
@@ -146,7 +146,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
                 }
 
                 emit(state.copyWith(superLikes: state.superLikes??0 + likes ));
-                _databaseRepository.updateConsumable(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: state.superLikes??0 + likes);
+                _databaseRepository.updateConsumable(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: state.superLikes!);
               }
 
 
@@ -169,7 +169,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   @override
   Future<void> close() async {
     // TODO: implement close
-    _purchaseSubscription!.cancel();
+    _purchaseSubscription?.cancel();
     return super.close();
   }
 
@@ -190,17 +190,17 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     try {
       
      await _paymentRepository.purchaseConsumable(event.product);
-     int boost = 0;
-     if(event.product.id == boostsIds[0]){
-      boost = 1;
-     }
-     if(event.product.id == boostsIds[1]){
-      boost = 5;
-     }
-     if(event.product.id == boostsIds[2]){
-      boost = 10;
-     }
-     _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: boost);
+    //  int boost = 0;
+    //  if(event.product.id == boostsIds[0]){
+    //   boost = 1;
+    //  }
+    //  if(event.product.id == boostsIds[1]){
+    //   boost = 5;
+    //  }
+    //  if(event.product.id == boostsIds[2]){
+    //   boost = 10;
+    //  }
+     //_databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: boost);
 
      } catch (e) {
       debugPrint(e.toString());
@@ -212,17 +212,17 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   FutureOr<void> _onBuySuperLikes(BuySuperLikes event, Emitter<PaymentState> emit) async {
     await _paymentRepository.purchaseConsumable(event.product);
 
-    int likes = 0;
-     if(event.product.id == likesIds[0]){
-      likes = 3;
-     }
-     if(event.product.id == likesIds[1]){
-      likes = 15;
-     }
-     if(event.product.id == likesIds[2]){
-      likes = 30;
-     }
-     _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'superLikes', value: likes);
+    // int likes = 0;
+    //  if(event.product.id == likesIds[0]){
+    //   likes = 3;
+    //  }
+    //  if(event.product.id == likesIds[1]){
+    //   likes = 15;
+    //  }
+    //  if(event.product.id == likesIds[2]){
+    //   likes = 30;
+    //  }
+    // _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'superLikes', value: likes);
 
   }
 
@@ -231,7 +231,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   }
 
   FutureOr<void> _onConsumeSuperLike(ConsumeSuperLike event, Emitter<PaymentState> emit) {
-        _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'superlikes', value: state.superLikes! -1);
+        _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'superlikes', value:state.boosts! -1);
 
   }
 }

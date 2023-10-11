@@ -29,6 +29,8 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     //on<DeleteLikedMeUser>(_onDeleteLikedMeUser);
 
     on<UpdateMatches>(_onUpdateMatches);
+    on<SearchName>(_onSearchName);
+    
    // on<UpdateLikes>(_onUpdateLikes);
 
     // _authSubscription = _authBloc.stream.listen((state) { 
@@ -91,7 +93,8 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
   void _onOpenChat(OpenChat event, Emitter<MatchState> emit) async{
     try {
-      _databaseRepository.openChat(event.message, event.users);
+       _databaseRepository.openChat(event.message, event.users);
+      //await _databaseRepository.sendMessage(event.message, event.users);
       
     }on Exception catch (e) {
       print(e.toString());
@@ -101,5 +104,32 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
   
 
+  @override
+  Future<void> close() {
+    // TODO: implement close
+    
+    return super.close();
+  }
 
+  FutureOr<void> _onSearchName(SearchName event, Emitter<MatchState> emit)async {
+    try {
+      if(event.name != ''){
+
+     List<UserMatch> result = await _databaseRepository.searchMatchName(userId: event.userId, gender: event.gender, name: event.name.replaceFirst(event.name[0], event.name[0].toUpperCase()) );
+     if(state is MatchLoaded){
+      var stateLoad= state as MatchLoaded;
+      emit(stateLoad.copyWith(searchResult: result, isUserSearching: true));
+     }
+
+      }else{
+        var stateLoad= state as MatchLoaded;
+        emit(stateLoad.copyWith(searchResult: null, isUserSearching: false));
+      }
+      
+    } catch (e) {
+      
+    }
+  }
+
+  
 }

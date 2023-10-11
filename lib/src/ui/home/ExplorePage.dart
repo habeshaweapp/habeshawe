@@ -23,7 +23,7 @@ class _ExplorePageState extends State<ExplorePage> {
    var tempUsers = explore_json;
   @override
   Widget build(BuildContext context) {
-    return  AppinioCard();
+    return const SwipeCard();
    
     //const SwipeStack();
     

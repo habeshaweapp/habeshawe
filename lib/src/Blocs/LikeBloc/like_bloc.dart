@@ -36,7 +36,7 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
 
 void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
    try {
-  await  _databaseRepository.likeLikedMeUser(event.userId, event.users, event.likedMeUser);
+  await  _databaseRepository.likeLikedMeUser(event.user, event.likedMeUser, event.isSuperLike!);
 } on Exception catch (e) {
   // TODO
   print(e.toString());

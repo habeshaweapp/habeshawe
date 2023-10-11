@@ -35,7 +35,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   _databaseRepository = databaseRepository,
   _authBloc = authBloc,
   _adBloc = adBloc,
-   super(SwipeLoading()) 
+   super(const SwipeState()) 
   {
     on<LoadUsers>(_loadusers);
 
@@ -44,6 +44,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     on<SwipeRightEvent>(_swipedRight);
     on<UpdateHome>(_onUpdateHome);
     on<SwipeEnded>(_onSwipeEnded);
+    on<BoostedLoaded>(_onBoostedLoaded);
 
     // _authSubscription = _authBloc.stream.listen((state) {
     //   if(state.user != null && state.accountType != Gender.nonExist){
@@ -53,13 +54,17 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
 
     add(LoadUsers(userId: _authBloc. state.user!.uid, users: _authBloc. state.accountType! ));
 
+    _databaseRepository.boostedUsers(_authBloc.state.accountType!).listen((boosted) {
+      add(BoostedLoaded(users: boosted));
+     });
+
     
   }
 
   void _loadusers(LoadUsers event, Emitter<SwipeState> emit) async {
     
     try {
-    emit(SwipeLoading());
+    emit(state.copyWith(swipeStatus: SwipeStatus.loading));
      List<User> users;
      var prefes = await _databaseRepository.getPreference(event.userId, event.users);
 
@@ -77,7 +82,11 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     var last = const User(id: 'last', name: 'last', age: 0, gender: 'last', imageUrls: [], interests: []);
      // users.add(last);
 
-    emit(SwipeLoaded(users: users.sublist(0,3)));
+    //emit(SwipeLoaded(users:users.length>3? users.sublist(0,3): users ));
+
+       // emit(SwipeLoaded(users: users ));
+        emit(state.copyWith(swipeStatus: SwipeStatus.loaded, users: users ));
+
   
     
   // add(UpdateHome(users: users));
@@ -94,15 +103,16 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   void _onUpdateHome(UpdateHome event, Emitter<SwipeState> emit)  {
       
       if(event.users != null){
-      emit(SwipeLoaded(users: event.users!));
+      //emit(SwipeLoaded(users: event.users!));
+      emit(state.copyWith(swipeStatus: SwipeStatus.loaded, users: event.users ));
       }
   }
 
   void _swipedLeft(SwipeLeftEvent event, Emitter<SwipeState> emit) async{
 
     try {
-  if(state is SwipeLoaded){
-    final state = this.state as SwipeLoaded;
+  if(state.swipeStatus == SwipeStatus.loaded){
+    //final state = this.state as SwipeLoaded;
     List<User> users = List.from(state.users)..remove(event.passedUser);
 
      // emit(SwipeLoaded(users: users));
@@ -124,9 +134,9 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   void _swipedRight(SwipeRightEvent event, Emitter<SwipeState> emit) async{
     
     try {
-      if(state is SwipeLoaded){
+      if(state.swipeStatus == SwipeStatus.loaded){
     
-      final state = this.state as SwipeLoaded;
+      //final state = this.state as SwipeLoaded;
       List<User> users = List.from(state.users)..remove(event.user);
   
      // emit(SwipeLoaded(users: users));
@@ -157,55 +167,24 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   @override
   SwipeState? fromJson(Map<String, dynamic> json) {
     // TODO: implement fromJson
-    if(json.isEmpty){
-      return null;
-
-    }
-     
-    if(json['stateType'] == 'SwipeCompleted'){
-      return SwipeCompleted.fromJson(json);
-
-    }
-    
-    if(json['stateType'] == 'SwipeLoaded'){
-  
-      var users = json['users'] ;
-      
-      return SwipeLoaded.fromJson(users);
-    }
-    if(json['stateType'] == 'SwipeLoading'){
-      return SwipeLoading();
-    }
-    else{
-      return null;
-    }
+    return SwipeState.fromJson(json);
   }
   
   @override
   Map<String, dynamic>? toJson(SwipeState state) {
     // TODO: implement toJson
-    if(state is SwipeLoaded){
-      return {
-        'users' : state.toJson(),
-        'stateType': 'SwipeLoaded',
-        
-      };
-    }else if(state is SwipeCompleted){
-      return state.toJson();
-
-    }else if(state is SwipeLoading){
-
-      return {'stateType': 'SwipeLoading'};
-
-    }
-    else{
-      return null;
-    }
+    return state.toJson();
+ 
   }
 
   
 
   FutureOr<void> _onSwipeEnded(SwipeEnded event, Emitter<SwipeState> emit) {
-    emit(SwipeCompleted(completedTime: event.completedTime));
+   // emit(SwipeCompleted(completedTime: event.completedTime));
+    emit(state.copyWith(completedTime: event.completedTime, swipeStatus: SwipeStatus.completed));
+  }
+
+  FutureOr<void> _onBoostedLoaded(BoostedLoaded event, Emitter<SwipeState> emit) {
+    emit(state.copyWith(boostedUsers: event.users));
   }
 }

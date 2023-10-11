@@ -2,16 +2,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:lomi/src/Data/Models/likes_model.dart';
 import 'package:lomi/src/ui/Profile/components/body.dart';
 import 'package:swipable_stack/swipable_stack.dart';
+import 'package:swipe_cards/swipe_cards.dart';
 
+import '../../Data/Models/enums.dart';
 import '../../Data/Models/model.dart';
 
 class Profile extends StatelessWidget {
   final User user;
-  SwipableStackController? stackController;
+  final ProfileFrom profileFrom;
+  final Like? likedMeUser;
+  final MatchEngine? matchEngine;
+  
 
-   Profile({Key? key, required this.user, this.stackController}) : super(key: key);
+   Profile({Key? key, required this.user,required this.profileFrom, this.likedMeUser, this.matchEngine }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +31,7 @@ class Profile extends StatelessWidget {
       // ),
       // extendBodyBehindAppBar: false,
 
-      body: Body(user: user, stackController: stackController),
+      body: Body(user: user, profileFrom: profileFrom, likedMeUser: likedMeUser, matchEngine: matchEngine),
     );
     
   }

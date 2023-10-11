@@ -10,19 +10,26 @@ import 'package:geolocator/geolocator.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/ProfileBloc/profile_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/dataApi/icons.dart';
 import 'package:swipable_stack/swipable_stack.dart';
+import 'package:swipe_cards/swipe_cards.dart';
 
 import '../../../Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import '../../../Blocs/SwipeBloc/swipebloc_bloc.dart';
+import '../../../Data/Models/enums.dart';
+import '../../../Data/Models/likes_model.dart';
 import '../../../Data/Models/user.dart';
+import '../../home/components/userdrag.dart';
 import '../../onboarding/AfterRegistration/widgets/lookingforitem.dart';
 
 class Body extends StatelessWidget {
   final User user;
-  SwipableStackController? stackController;
+  final ProfileFrom profileFrom;
+  final Like? likedMeUser;
+  final MatchEngine? matchEngine;
 
-   Body({Key? key, required this.user, this.stackController,}) : super(key: key);
+   Body({Key? key, required this.user, required this.profileFrom,this.likedMeUser, this.matchEngine}) : super(key: key);
 
    Future<Position> getCurrentPosition()async{
     return await Geolocator.getCurrentPosition();
@@ -59,7 +66,7 @@ class Body extends StatelessWidget {
                           SliverAppBar(
                             backgroundColor: Colors.transparent,
                             //collapsedHeight: 12,
-                            toolbarHeight: 0,
+                            //toolbarHeight: 28,
                             
                             //snap: true,
                             expandedHeight: 550,
@@ -74,27 +81,39 @@ class Body extends StatelessWidget {
                               background: SizedBox(
                           height: 550,
                           width: MediaQuery.of(context).size.width,
-                          child: PageView.builder(
-                            physics: BouncingScrollPhysics(),
-                            itemCount: user.imageUrls.length,
-                            controller: pageController ,
-                            itemBuilder: (context, index){
-                              
-                              return SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                child: CachedNetworkImage(
-                                  imageUrl: user.imageUrls[index],
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Center(child: CircularProgressIndicator(strokeWidth: 2,)),
-                                  errorWidget: (context, url, error) => Icon(Icons.error_outline_sharp),
-                                  )
-                               // Image.network(user.imageUrls[index], fit: BoxFit.cover,)
-                              );
+                          child: Stack(
+                            children: [
+                              PageView.builder(
+                                physics: BouncingScrollPhysics(),
+                                itemCount: user.imageUrls.length,
+                                controller: pageController ,
+                                itemBuilder: (context, index){
+                                  
+                                  return SizedBox(
+                                    width: MediaQuery.of(context).size.width,
+                                    child: CachedNetworkImage(
+                                      imageUrl: user.imageUrls[index],
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Center(child: CircularProgressIndicator(strokeWidth: 2,)),
+                                      errorWidget: (context, url, error) => Icon(Icons.error_outline_sharp),
+                                      )
+                                   // Image.network(user.imageUrls[index], fit: BoxFit.cover,)
+                                  );
     
-                            }),
+                                }),
+                                Align(
+                                  alignment: Alignment.topCenter,
+                                  child: LineIndicator(user: user, pageController: pageController)
+                                ),
+                            ],
+                          ),
                         ),
                             ),
                           ),
+
+                          
+
+                         
     
                           SliverToBoxAdapter(
                             child: Padding(
@@ -253,24 +272,17 @@ class Body extends StatelessWidget {
                     //radius: 100,
                     borderRadius: BorderRadius.circular(30),
                     onTap: (){
-                      
-                //       context.read<SwipeBloc>().add(
-                // SwipeLeftEvent(
-                //   user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
-                //   passedUser: user,
-                  
-                //   ));
-
-                  Navigator.pop(context);
-                  Future.delayed(Duration(milliseconds: 300), (){
-                             stackController?.next(swipeDirection: SwipeDirection.left); 
+                      if(profileFrom == ProfileFrom.swipe){
+                        Navigator.pop(context);
+                        Future.delayed(Duration(milliseconds: 400), (){  
+                             matchEngine?.currentItem?.nope();
                         });
-                  
-
+                        
+                      }
                     },
                     child: Container(
-                              width: 60,
-                              height: 60,
+                              width: 50,
+                              height: 50,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.white,
@@ -284,20 +296,60 @@ class Body extends StatelessWidget {
                               ),
                           
                               child: Center(
-                                child: SvgPicture.asset(
-                                  item_icons[1]['icon'],
-                                  width: item_icons[1]['icon_size'],
-                                  
-                                  ),
+                                
+                                child: Icon(Icons.close, color: Colors.red,),
                               ),
                           
                             ),
                   ),
-            SizedBox(width: 35,),
+            //SizedBox(width: 35,),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: InkWell(
+                      //radius: 100,
+                      borderRadius: BorderRadius.circular(30),
+                      onTap: (){
+                        if(profileFrom == ProfileFrom.swipe){
+                          Navigator.pop(context);
+
+                         // matchEngine?.currentItem?.superLike();
+                          Future.delayed(Duration(milliseconds: 400), (){  
+                             matchEngine?.currentItem?.superLike();
+                        });
+                        }
+                      },
+                      child: Container(
+                                width: 40,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.3),
+                      spreadRadius: 5,
+                      blurRadius: 10,
+                                    )
+                                  ]
+                                ),
+                            
+                                child: Center(
+                                  // child: SvgPicture.asset(
+                                  //   item_icons[1]['icon'],
+                                  //   width: item_icons[1]['icon_size'],
+                                    
+                                  //   ),
+                                  child: Icon(Icons.star, color: Colors.blue,),
+                                ),
+                            
+                              ),
+                    ),
+            ),
 
             InkWell(
               borderRadius: BorderRadius.circular(0),
               onTap: (){
+                if(profileFrom == ProfileFrom.swipe){
                 // context.read<SwipeBloc>().add(
                 // SwipeRightEvent(
                 //   user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
@@ -305,14 +357,22 @@ class Body extends StatelessWidget {
                 //   ));
 
                 Navigator.pop(context);
-                  Future.delayed(Duration(milliseconds: 300), (){
-                             stackController?.next(swipeDirection: SwipeDirection.right); 
+                
+                  Future.delayed(Duration(milliseconds: 400), (){
+                             //stackController?.next(swipeDirection: SwipeDirection.right); 
+                             matchEngine?.currentItem?.like();
                         });
+
+                }
+
+                if(profileFrom == ProfileFrom.like){
+                  context.read<LikeBloc>().add(LikeLikedMeUser(user: user, likedMeUser: likedMeUser!));
+                }
 
               },
               child: Container(
-              width: 60,
-              height: 60,
+              width: 50,
+              height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
@@ -328,7 +388,7 @@ class Body extends StatelessWidget {
               child: Center(
                 child: SvgPicture.asset(
                   item_icons[3]['icon'],
-                  width: item_icons[3]['icon_size'],
+                  width: 20,
                   
                   ),
               ),
@@ -339,6 +399,18 @@ class Body extends StatelessWidget {
               ),
             
             ),
+
+           // Icon(Icons.arrow_back),
+            // IconButton(
+            //   onPressed: (){
+            //     Navigator.pop(context);
+            //   }, 
+            //   icon: Icon(Icons.arrow_back),
+            //   )
+            // Align(
+            //         alignment: Alignment.topCenter,
+            //         child: LineIndicator(user: user, pageController: pageController)
+            //         ),
         ],
       ),
     );

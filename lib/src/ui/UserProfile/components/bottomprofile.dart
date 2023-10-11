@@ -11,7 +11,8 @@ class PageViewItem extends StatelessWidget {
   final String description;
   final String buttonText;
   final Color color;
-  const PageViewItem({super.key, required this.color, required this.icon, required this.title, required this.description, required this.buttonText});
+  final void Function() ontap;
+  const PageViewItem({super.key, required this.color, required this.icon, required this.title, required this.description, required this.buttonText, required this.ontap});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class PageViewItem extends StatelessWidget {
 
                         ElevatedButton(
                           
-                          onPressed: (){}, 
+                          onPressed: ontap, 
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 45,vertical: 10),
                             child: Text(buttonText,style: TextStyle(color:isDark ? Colors.grey: Colors.black),),

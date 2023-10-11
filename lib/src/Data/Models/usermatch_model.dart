@@ -10,12 +10,14 @@ class UserMatch extends Equatable{
    String? verified;
   final bool chatOpened;
   final String timestamp;
+  final bool? superLike;
+  final String gender;
 
-   UserMatch({ this.id, required this.userId, required this.name, required this.imageUrls,  this.verified, required this.timestamp, required this.chatOpened});
+   UserMatch({ this.id, required this.userId, required this.name,required this.gender, required this.imageUrls,  this.verified, required this.timestamp, required this.chatOpened, required this.superLike});
   
   @override
   // TODO: implement props
-  List<Object?> get props => [id,userId,name,imageUrls,verified,timestamp,chatOpened];
+  List<Object?> get props => [id,userId,name,imageUrls,verified,timestamp,chatOpened,superLike,gender];
 
   static UserMatch fromSnapshoot(DocumentSnapshot snap){
     return UserMatch(
@@ -26,6 +28,8 @@ class UserMatch extends Equatable{
       verified: (snap.data() as Map<String, dynamic>).containsKey('verified') ? snap['verified'] : null,
       timestamp: snap['timestamp'].toString(),
       chatOpened: snap['chatOpened'],
+      superLike:(snap.data() as Map<String, dynamic>).containsKey('superLike') ? snap['superLike'] : null,
+      gender: (snap.data() as Map<String, dynamic>).containsKey('gender') ? snap['gender'] : 'women',
       );
   }
 
@@ -33,8 +37,12 @@ class UserMatch extends Equatable{
     return {
       'id' : id,
       'userId': userId,
-      //'matchedUser': matchedUser.toMap(),
-      'chat': chatOpened,
+      'name': name,
+      'imageUrls': imageUrls,
+      'verified': verified,
+      'timestamp': timestamp,
+      'chatOpened': chatOpened,
+      'superLike': superLike,
     };
 
   }

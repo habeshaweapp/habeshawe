@@ -1,10 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Models/model.dart';
+import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
+import '../report/report.dart';
 import 'components/body.dart';
 import 'components/bottomsendmessage.dart';
 
@@ -28,7 +35,7 @@ class ChatScreen extends StatelessWidget {
           padding: EdgeInsets.only(left: 10),
           child: IconButton(
             onPressed: (){
-              context.pop();
+              Navigator.pop(context);
             }, 
             icon: Icon(Icons.arrow_back, color: !isDark ? Colors.black.withOpacity(0.7) : Colors.white),
             ),
@@ -48,28 +55,50 @@ class ChatScreen extends StatelessWidget {
                 children: [
                   Text(userMatch.name,style: Theme.of(context).textTheme.bodyMedium,),
                   userMatch.id != 'ds come and fix later'?
-                  Row(
-                    children: [
-                      Container(
-                        height: 10,
-                        width: 10,
-                        decoration: BoxDecoration(
-                          shape:  BoxShape.circle,
-                          color: Colors.green,
-                          border: Border.all(
-                            width: 2,
-                            color: isDark? Colors.grey.shade800: Colors.white,
-                          )
+                  StreamBuilder(
+                    stream: context.read<DatabaseRepository>().onlineStatusChanged(userId: userMatch.userId, gender: userMatch.gender),
+                    builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String,dynamic>>> snapshot) {
+                      if(snapshot.hasData){
+
+                      return snapshot.data?['online']? Row(
+                        children: [
+                          
+                          Container(
+                            height: 10,
+                            width: 10,
+                            decoration: BoxDecoration(
+                              shape:  BoxShape.circle,
+                              color: Colors.green,
+                              border: Border.all(
+                                width: 2,
+                                color: isDark? Colors.grey.shade800: Colors.white,
+                              )
             
-                        ),
-                      ),
-                      SizedBox(width: 3,),
-                      Text('Active now', style: 
-                      //Theme.of(context).textTheme.bodySmall,
-                      TextStyle(color: Colors.grey, fontSize: 12
-                      ),
-                      )
-                    ],
+                            ),
+                          ),
+                          SizedBox(width: 3,),
+                          Text('Active now', style: 
+                          //Theme.of(context).textTheme.bodySmall,
+                          TextStyle(color: Colors.grey, fontSize: 12
+                          ),
+                          )
+                        ],
+                      ):
+
+                      Text(
+                        'last Seen ${DateFormat('hh:mm a').format(snapshot.data?['lastseen'].toDate())}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                        )
+                      ;
+
+                    }else{
+                      return Text('updating...');
+                    }
+
+
+
+
+                    }
                   ): Text('last seen recently', style: TextStyle(fontSize: 12, color: Colors.grey)),
             
             
@@ -80,7 +109,28 @@ class ChatScreen extends StatelessWidget {
        // leading: Icon(Icons.arrow_back_ios_new, color: Colors.black,),
        actions: [
         IconButton(
-          onPressed: (){}, 
+         onPressed: (){
+          showbottomchatoptions(context);
+         },
+            // PopupMenuButton(
+            //   onSelected: (value){
+                
+            //   },
+            //   itemBuilder: (context){
+            //     return const [
+            //       PopupMenuItem(
+            //         child: Text('UnMatch')
+            //         ),
+                  
+            //       PopupMenuItem(
+            //         child: Text('Bloc and Report')
+            //         )
+
+            //     ];
+            //   }
+              // )
+          
+          
           icon: Icon(Icons.more_vert, color: isDark? Colors.white : Colors.black ))
        ],
       ),
@@ -90,4 +140,312 @@ class ChatScreen extends StatelessWidget {
     );
     
   }
+
+  void showbottomchatoptions(BuildContext context){
+    showModalBottomSheet(
+      context: context,
+      builder: ((ctx) {
+        return SizedBox(
+          height: 120,
+          child: Column(
+            children: [
+              SizedBox(height: 20,),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.pop(context);
+                      showUnMatchSheet(context, userMatch);
+                     
+              
+                    },
+                    child: Center(child: Text('UnMatch')),
+                  )
+                ),
+              ),
+
+              Divider(),
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: InkWell(
+                    onTap: (){
+                      Navigator.pop(context);
+                      showReportOptions(context);
+              
+                    },
+                    child: Center(child: Text('Block And Report')),
+                  )
+                ),
+              ),
+            ]
+          ),
+        );
+        
+      }
+    ));
+  }
+
+
+   void showUnMatchSheet(BuildContext context, UserMatch userMatch){
+    showModalBottomSheet(
+      context: context,
+      builder: ((ctx) {
+        return SizedBox(
+          height: 290,
+          child: Column(
+            children: [
+              //SizedBox(height: 20,),
+              Container(
+                color: Colors.green,
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Text('Unmatch this person', style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white, fontSize: 18),),
+                    )
+                    ,Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+                      child: Text(
+                        
+                   '''when you unmatch someone, you\n won't be able to contact each other\n and you wont't see each other/'s profiles.\n if unmatching someone isn't enough,\nwe'd urge you to block and report them\n - your safty comes first''',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Colors.white),
+                      ),
+                    )
+                  ],
+                )
+              ),
+              Padding(
+                padding: const EdgeInsets.all(13.0),
+                child: Center(
+                  child: InkWell(
+                    onTap: (){
+                      showDialog(
+                        context: context, 
+                        builder: (ctx)=> AlertDialog(
+                          title: const Text('Are you sure?'),
+                          content: const Text('This can\'t be undone!'),
+                          actions: [
+                            TextButton(
+                              onPressed: (){
+                                Navigator.pop(context);
+                              },
+                               child: Text('No')),
+
+                             TextButton(
+                              onPressed: (){
+                                context.read<ChatBloc>().add(UnMatch(
+                                  userId: context.read<AuthBloc>().state.user!.uid, 
+                                  gender: context.read<AuthBloc>().state.accountType!, 
+                                  matchUser: userMatch
+                                  ));
+                                   Navigator.pop(context);
+                                    Navigator.pop(context);
+                              },
+                               child: Text('Yes')), 
+                          ],
+                        ));
+              
+                    },
+                    child: Center(child: Text('UnMatch')),
+                  )
+                ),
+              ),
+
+              Divider(),
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: InkWell(
+                    onTap: (){
+              
+                    },
+                    child: Center(child: Text('Unmatch And Report')),
+                  )
+                ),
+              ),
+
+              
+            ]
+          ),
+        );
+        
+      }
+    ));
+  }
+
+  void showReportOptions(BuildContext context){
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: ((ctx) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.66,
+          child: ListView(
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              Column(
+                children: [
+                  SizedBox(height: 20,),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal:30),
+                    child: Text('Bloc and report this person',
+                        style: TextStyle(fontSize: 18),
+                    ),
+                    ),
+                    Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    child: Text('Don\'t worry, your feedback is anonymous and\n they won\'t know that you\'ve blocked or reported them.',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                    ),
+                    SizedBox(height: 10,),
+                    const Divider(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Report() ));
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.person_off, color: Colors.green,),
+                          SizedBox(width: 10,),
+                          Text('Fake profile')
+                        
+                        ]
+                        ),
+                    ),
+                  ),
+
+                  const Divider(),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: (){
+                      },
+                      child: Row(children: [
+                        Icon(Icons.chat_bubble, color: Colors.green),
+                        SizedBox(width: 10),
+                        Text('Rude or abusive behavior')
+                        
+                        ]
+                        ),
+                    ),
+                  ),
+
+                  const Divider(),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: (){
+                      },
+                      child: Row(children: [
+                        Icon(Icons.warning, color:Colors.green),
+                        SizedBox(width: 10,),
+                        Text('Inappropriate content')
+                        
+                        ]
+                        ),
+                    ),
+                  ),
+                  const Divider(),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: (){
+                      },
+                      child: Row(children: [
+                        Icon(Icons.flag, color:Colors.green),
+                        SizedBox(width: 10),
+                        Text('Scam or commercial')
+                        
+                        ]
+                        ),
+                    ),
+                  ),
+                  const Divider(),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: (){
+                      },
+                      child: Row(children: [
+                        Icon(Icons.record_voice_over, color: Colors.green),
+                        SizedBox(width: 10),
+                        Text('Identity-based hate')
+                        
+                        ]
+                        ),
+                    ),
+                  ),
+                  const Divider(),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: (){
+                      },
+                      child: Row(children: [
+                        Icon(Icons.block, color:Colors.green),
+                        SizedBox(width: 10),
+                        Text('Off Habeshawi behavior')
+                        
+                        ]
+                        ),
+                    ),
+                  ),
+                  const Divider(),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: (){
+                      },
+                      child: Row(children: [
+                        Icon(Icons.access_time_filled_sharp, color:Colors.green),
+                        SizedBox(width: 10),
+                        Text('Underage')
+                        
+                        ]
+                        ),
+                    ),
+                  ),
+                  const Divider(),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: (){
+                      },
+                      child: Row(children: [
+                        Icon(Icons.emoji_emotions, color:Colors.green),
+                        SizedBox(width: 10),
+                        Text('Too Much beautiful...')
+                        
+                        ]
+                        ),
+                    ),
+                  ),
+                ]
+              ),
+            ],
+          ),
+        );
+        
+      }
+    ));
+  }
+
+
 }

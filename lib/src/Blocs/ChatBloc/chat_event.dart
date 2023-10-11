@@ -51,3 +51,39 @@ class LoadMoreChats extends ChatEvent{
   @override
   List<Object> get props => [startAfter, userId, matchedUserId,startAfter,users];
 }
+
+class FirstMessageSent extends ChatEvent{
+  final Message message;
+
+  const FirstMessageSent({required this.message});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [message];
+}
+
+class SeenMessage extends ChatEvent{
+  final Message message;
+  final Gender users;
+  const SeenMessage({required this.message, required this.users});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [message,users];
+}
+
+class UnMatch extends ChatEvent{
+  final String userId;
+  final Gender gender;
+  final UserMatch matchUser;
+
+  const UnMatch({
+    required this.userId,
+    required this.gender,
+    required this.matchUser
+  });
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [userId, gender, matchUser];
+}

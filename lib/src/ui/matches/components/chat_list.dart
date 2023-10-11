@@ -30,8 +30,10 @@ class ChatList extends StatelessWidget {
       style: Theme.of(context).textTheme.bodyLarge,
       ),
       subtitle: StreamBuilder(
+    
         stream:  context.read<DatabaseRepository>().getChats(context.read<AuthBloc>().state.user!.uid, context.read<AuthBloc>().state.accountType!, match.userId),
         builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot){
+          if(snapshot.hasData){
           var lastMessage = snapshot.data?.first;
          // time = lastMessage
           return Text(
@@ -42,6 +44,12 @@ class ChatList extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall,
             
           );
+          }
+          if(snapshot.hasError){
+            return  Text('');
+          }else{
+            return  Text('');
+          }
 
         }
         ),
@@ -51,7 +59,9 @@ class ChatList extends StatelessWidget {
       //     ),
       trailing: StreamBuilder(
         stream:  context.read<DatabaseRepository>().getChats(context.read<AuthBloc>().state.user!.uid,context.read<AuthBloc>().state.accountType!, match.userId),
+       
         builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot){
+          if(snapshot.hasData){
           var time = snapshot.data?.first.timestamp?.toDate();
           var time2 = '';
           if(time != null){
@@ -68,6 +78,13 @@ class ChatList extends StatelessWidget {
           ):
             Icon(Icons.access_time, size: 17,)
           ;
+          }
+
+          if(snapshot.hasError){
+            return  Text('');
+          }else{
+            return  Text('');
+          }
 
         }
         ),

@@ -170,10 +170,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
       {
         'userId': user.id,
         'timestamp': FieldValue.serverTimestamp(),
-        'name': user.name,
-        'imageUrls': user.imageUrls,
-        'verified': user.verified,
-        'superlike': superLike,
+        'user': user.toMap()
 
       }
       //user.toMap()
@@ -200,53 +197,56 @@ class DatabaseRepository extends BaseDatabaseRepository{
     }
 
     if(result.exists){
-      await _firebaseFirestore
-      .collection(user.gender)
-      .doc(user.id)
-      .collection('matches')
-      .doc(matchUser.id)
-      .set(
-        {
-      'timestamp' : FieldValue.serverTimestamp(),
-      'userId': matchUser.id,
-      'name': matchUser.name,
-      'imageUrls': matchUser.imageUrls,
-      'verified': matchUser.verified,
-      'chatOpened': false,
-      'nameSearch': searchName(matchUser.name),
-      'superlike': superLike,
-    }
-    );
+      var likedMeUser = Like.fromSnapshoot(result);
+      await likeLikedMeUser(user, likedMeUser, superLike);
+      return true;
+    //   await _firebaseFirestore
+    //   .collection(user.gender)
+    //   .doc(user.id)
+    //   .collection('matches')
+    //   .doc(matchUser.id)
+    //   .set(
+    //     {
+    //   'timestamp' : FieldValue.serverTimestamp(),
+    //   'userId': matchUser.id,
+    //   'name': matchUser.name,
+    //   'imageUrls': matchUser.imageUrls,
+    //   'verified': matchUser.verified,
+    //   'chatOpened': false,
+    //   'nameSearch': searchName(matchUser.name),
+    //   'superlike': superLike,
+    // }
+    // );
        // UserMatch(userId: userId, matchedUser: likedUser, chat:'notOpened').toMap());
 
-      await _firebaseFirestore
-      .collection(user.gender)
-      .doc(matchUser.id)
-      .collection('matches')
-      .doc(user.id)
-      .set(
-        {
-          'timestamp' : FieldValue.serverTimestamp(),
-          'userId': matchUser.id,
-          'name': matchUser.name,
-          'imageUrls': matchUser.imageUrls,
-          'verified': matchUser.verified,
-          'chatOpened': false,
-          'nameSearch': searchName(matchUser.name),
-          'superlike': superLike,
-        }
-        );
+      // await _firebaseFirestore
+      // .collection(user.gender)
+      // .doc(matchUser.id)
+      // .collection('matches')
+      // .doc(user.id)
+      // .set(
+      //   {
+      //     'timestamp' : FieldValue.serverTimestamp(),
+      //     'userId': matchUser.id,
+      //     'name': matchUser.name,
+      //     'imageUrls': matchUser.imageUrls,
+      //     'verified': matchUser.verified,
+      //     'chatOpened': false,
+      //     'nameSearch': searchName(matchUser.name),
+      //     'superlike': superLike,
+      //   }
+      //   );
         
       
 
-      await _firebaseFirestore
-        .collection(user.gender)
-        .doc(user.id)
-        .collection('likes')
-        .doc(matchUser.id)
-        .delete();
+      // await _firebaseFirestore
+      //   .collection(user.gender)
+      //   .doc(user.id)
+      //   .collection('likes')
+      //   .doc(matchUser.id)
+      //   .delete();
 
-      return true;
+     // return true;
 
       
     }
@@ -361,19 +361,50 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Future<void> likeLikedMeUser(String userId,Gender users, User likedMeUser) async {
+  Future<void> 
+  likeLikedMeUser(User user, Like likedMeUser, bool isSuperLike) async {
     try {
-      await _firebaseFirestore
-    .collection(users.name)
-    .doc(userId)
+    await _firebaseFirestore
+    .collection(user.gender)
+    .doc(user.id)
     .collection('matches')
-    .doc(likedMeUser.id)
-    .set(likedMeUser.toMap());
+    .doc(likedMeUser.userId)
+    .set({
+          'timestamp' : FieldValue.serverTimestamp(),
+          'userId': likedMeUser.userId,
+          'name': likedMeUser.user.name,
+          'imageUrls': likedMeUser.user.imageUrls,
+          'verified': likedMeUser.user.verified,
+          'chatOpened': false,
+          'nameSearch': searchName(likedMeUser.user.name),
+          'superlike': likedMeUser.superLike?? false,
+          'gender': likedMeUser.user.gender
 
-    await _firebaseFirestore.collection(users.name)
-    .doc(userId)
+    });
+
+    await _firebaseFirestore
+    .collection(likedMeUser.user.gender)
+    .doc(likedMeUser.userId)
+    .collection('matches')
+    .doc(user.id)
+    .set({
+          'timestamp' : FieldValue.serverTimestamp(),
+          'userId': user.id,
+          'name': user.name,
+          'imageUrls': user.imageUrls,
+          'verified': user.verified,
+          'chatOpened': false,
+          'nameSearch': searchName(user.name),
+          'superlike': isSuperLike,
+          'gender': user.gender
+      
+      
+    });
+
+    await _firebaseFirestore.collection(user.gender)
+    .doc(user.id)
     .collection('likes')
-    .doc(likedMeUser.id)
+    .doc(likedMeUser.userId)
     .delete();
       
     }on FirebaseException catch (e){
@@ -388,18 +419,8 @@ class DatabaseRepository extends BaseDatabaseRepository{
   @override
   Future<void> openChat(Message message, Gender users) async {
     try {
-      await _firebaseFirestore.collection(users.name)
-      .doc(message.senderId)
-      .collection('matches')
-      .doc(message.receiverId)
-      .update(
-        {'chatOpened': true}
-        ).then((value) {
-         print('here');
-        }
-         )
+      //await sendMessage(message,users);
       
-      ;
 
       await _firebaseFirestore.collection(users.name)
       .doc(message.senderId)
@@ -435,6 +456,23 @@ class DatabaseRepository extends BaseDatabaseRepository{
       // .doc('chat')
       // .collection('messages')
       // ;
+
+      await _firebaseFirestore.collection(users.name)
+      .doc(message.senderId)
+      .collection('matches')
+      .doc(message.receiverId)
+      .update(
+        {'chatOpened': true}
+        ).then((value) {
+         print('here');
+        }
+         );
+
+        await _firebaseFirestore.collection(users == Gender.men ? Gender.women.name : Gender.men.name)
+      .doc(message.receiverId)
+      .collection('matches')
+      .doc(message.senderId)
+      .update({'chatOpened': true});
       
     }on FirebaseException catch (e){
     throw Exception(e.message);
@@ -565,7 +603,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   @override
   Future<void> sendMessage(Message message, Gender users) async{
     try {
-  await _firebaseFirestore.collection(users.name)
+  var docRef =await _firebaseFirestore.collection(users.name)
       .doc(message.senderId)
       .collection('matches')
       .doc(message.receiverId)
@@ -581,22 +619,23 @@ class DatabaseRepository extends BaseDatabaseRepository{
       .collection('chats')
       .doc('chat')
       .collection('messages')
-      .add(message.toMap());
+      .doc(docRef.id)
+      .set(message.toMap());
  
-//  await _firebaseFirestore.collection(user.gender)
-//       .doc(message.senderId)
-//       .collection('matches')
-//       .doc(message.receiverId)
-//       .update({
-//         'timestamp': FieldValue.serverTimestamp()
-//       });
-//  await _firebaseFirestore.collection(user.gender)
-//       .doc(message.receiverId)
-//       .collection('matches')
-//       .doc(message.senderId)
-//       .update({
-//         'timestamp': FieldValue.serverTimestamp()
-//       });
+ await _firebaseFirestore.collection(users.name)
+      .doc(message.senderId)
+      .collection('matches')
+      .doc(message.receiverId)
+      .update({
+        'timestamp': FieldValue.serverTimestamp()
+      });
+ await _firebaseFirestore.collection(users == Gender.men ? Gender.women.name : Gender.men.name)
+      .doc(message.receiverId)
+      .collection('matches')
+      .doc(message.senderId)
+      .update({
+        'timestamp': FieldValue.serverTimestamp()
+      });
       
       
 
@@ -962,7 +1001,9 @@ Future<void> createDemoUsers(List<User> users) async{
             .collection('payment')
             .doc('subscription')
             .get()
-            .then((snap) => Payment.fromSnapshoot(snap));
+            .then(
+             
+              (snap) => Payment.fromSnapshoot(snap));
 
     } catch (e) {
       throw Exception(e.toString());
@@ -1069,7 +1110,106 @@ Future<void> createDemoUsers(List<User> users) async{
 
   }
 
+  void seenMessage({required Message message, required Gender gender})async {
+    await _firebaseFirestore.collection(gender == Gender.women ? Gender.men.name: gender.name)
+      .doc(message.senderId)
+      .collection('matches')
+      .doc(message.receiverId)
+      .collection('chats')
+      .doc('chat')
+      .collection('messages')
+      .doc(message.id)
+      .update({
+        'seen': message.seen
+      });
 
+      await _firebaseFirestore.collection(gender.name)
+      .doc(message.receiverId)
+      .collection('matches')
+      .doc(message.senderId)
+      .collection('chats')
+      .doc('chat')
+      .collection('messages')
+      .doc(message.id)
+      .update({
+        'seen': message.seen
+      });
+  }
+
+  Future<List<UserMatch>> searchMatchName({required String userId, required Gender gender, required String name})async {
+    try {
+
+      return await _firebaseFirestore.collection(gender.name)
+            .doc(userId)
+            .collection('matches')
+            .where('nameSearch',arrayContains: name)
+            .get()
+            .then((value) => value.docs.map((doc) => UserMatch.fromSnapshoot(doc)).toList() );
+      
+    }catch(e){
+      throw Exception(e);
+      
+    }
+  }
+
+  void unMatch({required String userId, required Gender gender, required UserMatch matchUser}) async{
+    try {
+      _firebaseFirestore.collection(gender.name)
+        .doc(userId)
+        .collection('matches')
+        .doc(matchUser.id)
+        .update({
+          'imageUrls': [],
+          'unMatched': true,
+
+        });
+      
+    } catch (e) {
+      
+    }
+
+  }
+
+  Stream<List<User>> boostedUsers(Gender gender){
+    return  _firebaseFirestore.collection('boosted')
+            .doc(gender == Gender.men? Gender.women.name: Gender.men.name)
+            .collection('boosted')
+            .snapshots()
+            .map((snap) => snap.docs
+            .map((doc) => User.fromSnapshoot(doc)).toList());
+
+  }
+
+  void updateOnlinestatus({required String userId,required Gender gender ,required bool online})async{
+    try {
+      await _firebaseFirestore.collection(gender.name)
+        .doc(userId)
+        .update({
+          'online': online,
+          'lastseen': FieldValue.serverTimestamp()
+        });
+
+      await _firebaseFirestore.collection(gender.name)
+        .doc(userId)
+        .collection('online')
+        .doc('status')
+        .update({
+          'online': online,
+          'lastseen': FieldValue.serverTimestamp()
+        });
+      
+    } catch (e) {
+      
+    }
+  }
+
+  Stream<DocumentSnapshot<Map<String,dynamic>>> onlineStatusChanged({required String userId,required String gender }){
+    return _firebaseFirestore.collection(gender)
+            .doc(userId)
+            .collection('online')
+            .doc('status')
+            .snapshots();
+  }
 
 }
 

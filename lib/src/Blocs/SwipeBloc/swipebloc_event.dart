@@ -55,3 +55,13 @@ class SwipeEnded extends SwipeEvent{
   // TODO: implement props
   List<Object?> get props => [completedTime];
 }
+
+class BoostedLoaded extends SwipeEvent{
+  final List<User> users;
+  
+   BoostedLoaded({required this.users});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [users];
+}

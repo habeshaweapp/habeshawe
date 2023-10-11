@@ -14,7 +14,7 @@ class LoadMatchs extends MatchEvent{
 
   @override
   // TODO: implement props
-  List<Object> get props => [userId];
+  List<Object> get props => [userId, users];
 }
 
 
@@ -40,4 +40,17 @@ class UpdateMatches extends MatchEvent{
   // TODO: implement props
   List<Object?> get props => [matchedUsers];
 }
+
+class SearchName extends MatchEvent{
+  final String userId;
+  final Gender gender;
+  final String name;
+
+  const SearchName({required this.userId, required this.gender, required this.name});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [userId, gender, name];
+}
+
 

@@ -8,7 +8,8 @@ class SwipeState extends Equatable {
     this.users = const [],
     this.matchedUser,
     this.completedTime,
-    this.boostedUsers=const []
+    this.boostedUsers=const [],
+    
   });
 
   final SwipeStatus swipeStatus;
@@ -16,6 +17,7 @@ class SwipeState extends Equatable {
   final User? matchedUser;
   final DateTime? completedTime;
   final List<User> boostedUsers;
+  
 
 
   SwipeState copyWith({
@@ -23,14 +25,16 @@ class SwipeState extends Equatable {
     List<User>? users,
     User? matchedUser,
     DateTime? completedTime,
-    List<User>? boostedUsers
+    List<User>? boostedUsers,
+   
   }){
     return SwipeState(
       swipeStatus: swipeStatus ?? this.swipeStatus,
       users: users?? this.users,
       matchedUser: matchedUser?? this.matchedUser,
       completedTime: completedTime?? this.completedTime,
-      boostedUsers: boostedUsers?? this.boostedUsers
+      boostedUsers: boostedUsers?? this.boostedUsers,
+      
     );
   }
 
@@ -52,7 +56,8 @@ class SwipeState extends Equatable {
       'users': newUser,
       'completedTime': completedTime?.toIso8601String(),
       'matchedUser': matchedUser?.toJson(),
-      'boostedUsers': boosted
+      'boostedUsers': boosted,
+     
     };
    
   }
@@ -65,14 +70,14 @@ class SwipeState extends Equatable {
       users: users,
       completedTime: DateTime.parse(json['completedTime']),
       matchedUser: User.fromMap(json['matchedUser']),
-      boostedUsers: boosted
+      boostedUsers: boosted,
+      
     );
   }
 
-
-  
   @override
   List<Object?> get props => [swipeStatus,users,matchedUser,completedTime];
+  
 }
 
 //class SwipeblocInitial extends SwipeState {}

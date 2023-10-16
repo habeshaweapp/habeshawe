@@ -5,17 +5,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
 import '../../Data/Models/enums.dart';
 import '../../Data/Models/model.dart';
+import '../../Data/Repository/Storage/storage_repository.dart';
 
 part 'chat_event.dart';
 part 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final DatabaseRepository _databaseRepository;
+  final StorageRepository _storageRepository;
   final AuthBloc _authBloc;
   StreamSubscription? _authSubscription;
 
@@ -26,9 +29,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc({
     required DatabaseRepository databaseRepository,
     required AuthBloc authBloc,
+    required StorageRepository storageRepository
   }) : 
   _databaseRepository = databaseRepository,
   _authBloc = authBloc,
+  _storageRepository = storageRepository,
   super(ChatLoading()) {
     on<LoadChats>(_onLoadChats);
     on<UpdateChats>(_onUpdateChats);
@@ -81,7 +86,14 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
 void _onSendMessage(SendMessage event, Emitter<ChatState> emit) async{
     try {
-  await _databaseRepository.sendMessage(event.message, event.users);
+      if(event.image == null){
+        await _databaseRepository.sendMessage(event.message, event.users);
+      }
+      else{
+        var imageUrl = await _storageRepository.sendMessageImage(userId: event.message.senderId,gender: event.users, image: event.image!,);
+        await _databaseRepository.sendMessage(event.message.copyWith(imageUrl: imageUrl), event.users);
+      }
+  
 } on Exception catch (e) {
   // TODO
   print(e);
@@ -153,6 +165,14 @@ void _onLoadMoreChats(LoadMoreChats event, Emitter<ChatState> emit) async{
     } catch (e) {
       
     }
+  }
+
+  @override
+  Future<void> close() {
+    // TODO: implement close
+    _authSubscription?.cancel();
+    
+    return super.close();
   }
 
 }

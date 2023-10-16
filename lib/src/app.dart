@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
       child: MultiBlocProvider(
           providers: [
             BlocProvider(lazy: false, create: (context) => InternetBloc()),
-            BlocProvider(lazy:false, create: (context) => AuthBloc(authRepository: context.read<AuthRepository>())),
+            BlocProvider(lazy:false, create: (context) => AuthBloc(authRepository: context.read<AuthRepository>(), databaseRepository: context.read<DatabaseRepository>() )),
             // BlocProvider(
             //     lazy: false,
             //     create: (context) =>

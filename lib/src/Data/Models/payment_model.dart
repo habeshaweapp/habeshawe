@@ -9,7 +9,7 @@ class Payment extends Equatable{
   final String countryCode;
   final Map<String, dynamic> placeMark;
   final String paymentType;
-  final String expireDate;
+  final int expireDate;
   final Map<String, dynamic> paymentDetails;
   final int subscribtionStatus;
   final int boosts;

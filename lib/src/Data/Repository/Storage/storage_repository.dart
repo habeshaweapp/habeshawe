@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/Data/Repository/Storage/base_storage_repository.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -56,6 +57,21 @@ class StorageRepository extends BaseStorageRepository{
     String downloadURL = await storage.ref('${user.id}/${imageName}').getDownloadURL();
     
     return downloadURL;
+  }
+
+  Future<String> sendMessageImage({required String userId, required Gender gender,required XFile image})async {
+    try {
+      return await storage.ref('${userId}/messages/${image.name}')
+              .putFile(File(image.path))
+              .then((p0) async {
+                return await storage.ref('${userId}/messages/${image.name}').getDownloadURL();
+              });
+      
+    } catch (e) {
+      throw Exception(e);
+      
+    }
+
   }
   
 }

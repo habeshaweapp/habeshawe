@@ -32,8 +32,9 @@ class UpdateChats extends ChatEvent{
 class SendMessage extends ChatEvent{
   Message message;
   Gender users;
+  XFile? image;
 
-  SendMessage({required this.message, required this.users});
+  SendMessage({required this.message, required this.users, this.image});
 
   @override
   // TODO: implement props

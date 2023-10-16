@@ -27,6 +27,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   final AdBloc _adBloc;
   StreamSubscription? _authSubscription;
   StreamSubscription? _adSubscription;
+  StreamSubscription? _boostedSubscription;
   SwipeBloc({
     required DatabaseRepository databaseRepository,
     required AuthBloc authBloc,
@@ -45,6 +46,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     on<UpdateHome>(_onUpdateHome);
     on<SwipeEnded>(_onSwipeEnded);
     on<BoostedLoaded>(_onBoostedLoaded);
+    on<LoadUserAd>(_onLoadUserAd);
 
     // _authSubscription = _authBloc.stream.listen((state) {
     //   if(state.user != null && state.accountType != Gender.nonExist){
@@ -52,11 +54,13 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     //   }
     //  });
 
-    add(LoadUsers(userId: _authBloc. state.user!.uid, users: _authBloc. state.accountType! ));
+    //add(LoadUsers(userId: _authBloc. state.user!.uid, users: _authBloc. state.accountType! ));
 
-    _databaseRepository.boostedUsers(_authBloc.state.accountType!).listen((boosted) {
+    _boostedSubscription = _databaseRepository.boostedUsers(_authBloc.state.accountType!).listen((boosted) {
       add(BoostedLoaded(users: boosted));
-     });
+     },onDone: () {
+       
+     },);
 
     
   }
@@ -65,21 +69,26 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     
     try {
     emit(state.copyWith(swipeStatus: SwipeStatus.loading));
-     List<User> users;
-     var prefes = await _databaseRepository.getPreference(event.userId, event.users);
+     List<User> users =[];
+     //var prefes = await _databaseRepository.getPreference(event.userId, event.users);
 
-    if(prefes.discoverBy == 0){
-      users = await _databaseRepository.getUsersMainLogic(event.userId, event.users, prefes);
+    if(event.prefes.discoverBy == 0){
+      users = await _databaseRepository.getUsersMainLogic(event.userId, event.users, event.prefes);
     }
-    if(prefes.discoverBy == 1){
-      users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users, prefes);
-    }else{
+    if(event.prefes.discoverBy == 1){
+      users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users, event.prefes, event.user);
+    }
+    if(event.prefes.discoverBy == 2){
 
-     users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users == Gender.men? Gender.women : event.users );
+     users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users );
     }
+    if(event.prefes.discoverBy == 3){
+      users = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users);
+    }
+
     //_databaseRepository.getNearByUsers(event.userId,_locationData).listen((users) {
       //var ads = [];
-    var last = const User(id: 'last', name: 'last', age: 0, gender: 'last', imageUrls: [], interests: []);
+    //var last = const User(id: 'last', name: 'last', age: 0, gender: 'last', imageUrls: [], interests: []);
      // users.add(last);
 
     //emit(SwipeLoaded(users:users.length>3? users.sublist(0,3): users ));
@@ -161,6 +170,8 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   @override
   Future<void> close() async{
     _authSubscription?.cancel();
+    _adSubscription?.cancel();
+    _boostedSubscription?.cancel();
     super.close();
   }
   
@@ -186,5 +197,16 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
 
   FutureOr<void> _onBoostedLoaded(BoostedLoaded event, Emitter<SwipeState> emit) {
     emit(state.copyWith(boostedUsers: event.users));
+  }
+
+  FutureOr<void> _onLoadUserAd(LoadUserAd event, Emitter<SwipeState> emit)async {
+    
+    if(event.discoverBy == DiscoverBy.online){
+      var user = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users,limit:event.limit);
+
+      emit(state.copyWith(users: user, swipeStatus: SwipeStatus.loaded) );
+
+    }
+
   }
 }

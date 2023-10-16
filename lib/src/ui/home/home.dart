@@ -41,7 +41,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         online: true
         );
 
-    }else{
+    }
+    if(state == AppLifecycleState.paused){
       //offline
       context.read<DatabaseRepository>().updateOnlinestatus(
         userId: context.read<AuthBloc>().state.user!.uid, 
@@ -50,6 +51,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         );
 
     }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
 
@@ -85,7 +93,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       systemOverlayStyle: 
      // isDark? SystemUiOverlayStyle.dark : SystemUiOverlayStyle.light,
       SystemUiOverlayStyle(
-        systemNavigationBarColor: isDark ? Color.fromARGB(51, 182, 180, 180) : Colors.white, //Color.fromARGB(51, 182, 180, 180)
+        systemNavigationBarColor: isDark ? Colors.grey[900]: Colors.white, //Color.fromARGB(51, 182, 180, 180)
         systemNavigationBarIconBrightness: !isDark? Brightness.dark: Brightness.light,
       ),
       title: Padding(

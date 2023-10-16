@@ -203,7 +203,9 @@ class Body extends StatelessWidget {
                           width: size.width * 0.85,
                           child: Text(
                             user.aboutMe ?? '-',
-                            style: TextStyle(fontSize: 13, fontFamily: 'Proxima-Nova-Bold',fontWeight: FontWeight.w300,),
+                            style: Theme.of(context).textTheme.bodySmall
+                            
+                           // TextStyle(fontFamily: 'Proxima-Nova-Bold',fontWeight: FontWeight.w300,),
                            //style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13),
                             ),
                         ),
@@ -233,6 +235,7 @@ class Body extends StatelessWidget {
                               child: Text(user.interests[index], 
                               style: TextStyle(
                                 fontWeight: FontWeight.w300, 
+                                fontSize: 13
                                 
                                 )
                                 ,),

@@ -15,6 +15,8 @@ class UserPreference extends Equatable{
   final bool? onlyShowInThisRange;
 
   final int? discoverBy;
+  final bool? onlyShowFromMyCity;
+  final bool? onlyShowOnlineMatches;
 
 
   UserPreference({
@@ -27,16 +29,18 @@ class UserPreference extends Equatable{
      this.recentlyActiveStatus = true,
      this.onlineStatus = true,
      this.showDistancesIn = 'km',
-     this.maximumDistance = 100,
-     this.onlyShowInThisRange = false,
+     this.maximumDistance = 2,
+     this.onlyShowInThisRange = true,
      this.discoverBy = 0,
+     this.onlyShowFromMyCity=false,
+     this.onlyShowOnlineMatches=false
   })
   
   ;
 
   @override
   // TODO: implement props
-  List<Object?> get props => [userId,phoneNumber,global,ageRange,showDistancesIn,showMe,showMeOnLomi,recentlyActiveStatus,onlineStatus,maximumDistance,onlyShowInThisRange, discoverBy];
+  List<Object?> get props => [userId,phoneNumber,global,ageRange,showDistancesIn,showMe,showMeOnLomi,recentlyActiveStatus,onlineStatus,maximumDistance,onlyShowInThisRange, discoverBy,onlyShowFromMyCity, onlyShowOnlineMatches];
 
   UserPreference copyWith({
     String? userId,
@@ -51,6 +55,8 @@ class UserPreference extends Equatable{
     int? maximumDistance,
     bool? onlyShowInThisRange,
     int? discoverBy,
+    bool? onlyShowFromMyCity,
+    bool? onlyShowOnlineMatches
 
   }){
     return UserPreference(
@@ -66,10 +72,13 @@ class UserPreference extends Equatable{
       maximumDistance: maximumDistance ?? this.maximumDistance,
       onlyShowInThisRange: onlyShowInThisRange ?? this.onlyShowInThisRange,
       discoverBy: discoverBy ?? this.discoverBy,
+      onlyShowFromMyCity: onlyShowFromMyCity ?? this.onlyShowFromMyCity,
+      onlyShowOnlineMatches: onlyShowOnlineMatches?? this.onlyShowOnlineMatches
       );
   }
 
   static UserPreference fromSnapshoot(DocumentSnapshot snap){
+    var asMap = snap.data() as Map<String, dynamic>;
     return UserPreference(
       userId: snap['userId'],
       phoneNumber: snap['phoneNumber'], 
@@ -83,6 +92,8 @@ class UserPreference extends Equatable{
       maximumDistance: snap['maximumDistance'],
       onlyShowInThisRange: snap['onlyShowInThisRange'],
       discoverBy: (snap.data() as Map<String, dynamic>).containsKey('discoverBy') ? snap['discoverBy'] : null,
+      onlyShowFromMyCity: asMap.containsKey('onlyShowFromMyCity') ? snap['onlyShowFromMyCity']: null,
+      onlyShowOnlineMatches: asMap.containsKey('onlyShowOnlineMatches') ? snap['onlyShowOnlineMatches']: null,
       );
   }
 
@@ -100,6 +111,8 @@ class UserPreference extends Equatable{
       'maximumDistance': maximumDistance,
       'onlyShowInThisRange': onlyShowInThisRange,
       'discoverBy': discoverBy,
+      'onlyShowFromMyCity': onlyShowFromMyCity,
+      'onlyShowOnlineMatches':onlyShowOnlineMatches
     };
   }
 

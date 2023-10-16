@@ -41,6 +41,8 @@ class Wrapper extends StatelessWidget{
             );
             
           }
+
+          context.read<DatabaseRepository>().updateOnlinestatus(userId: state.user!.uid, gender: state.accountType!, online: true);
           
           return MultiBlocProvider(
             providers: [
@@ -50,8 +52,8 @@ class Wrapper extends StatelessWidget{
               
               BlocProvider(lazy: false, create: (context) => LikeBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..add(LoadLikes(userId: state.user!.uid, users: state.accountType!)) ),
               BlocProvider(lazy: false, create: (context) => MatchBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..add(LoadMatchs(userId: state.user!.uid, users: state.accountType!)) ),
-              BlocProvider(lazy: false, create: (context) => ProfileBloc(authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>(), storageRepository: context.read<StorageRepository>())..add(LoadProfile(userId: state.user!.uid, users: state.accountType!))) ,
-              BlocProvider(lazy:false, create: ((context) => ChatBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc:  context.read<AuthBloc>()))),
+              BlocProvider(lazy: false, create: (context) => ProfileBloc(authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>(), storageRepository: context.read<StorageRepository>())) ,
+              BlocProvider(lazy:false, create: ((context) => ChatBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc:  context.read<AuthBloc>(), storageRepository: context.read<StorageRepository>() ))),
               BlocProvider(lazy: false, create: (context) => UserpreferenceBloc(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..add(LoadUserPreference(userId: state.user!.uid, users: state.accountType!))),
               BlocProvider(lazy:false,create: (context) => PaymentBloc(paymentRepository: PaymentRepository(), authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>() ) ),
 

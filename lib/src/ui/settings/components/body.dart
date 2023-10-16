@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 
 import '../../../Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import '../../../Blocs/UserPreference/userpreference_bloc.dart';
@@ -87,7 +88,7 @@ class Body extends StatelessWidget {
             
                     Card(
                       elevation: 2,
-                      color: isDark ? state.userPreference.discoverBy ==0?  cardColor :Colors.grey[900] : state.userPreference.discoverBy ==0? Colors.grey[400]: Colors.white,
+                      color: isDark ? state.userPreference.discoverBy == DiscoverBy.habeshawelogic.index ?  cardColor :Colors.grey[900] : state.userPreference.discoverBy == DiscoverBy.habeshawelogic.index? Colors.grey[400]: Colors.white,
                       child: Container(
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5, bottom: 5,),
@@ -102,10 +103,10 @@ class Body extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Discover By - HabeshaWe Logic'),
-                                Switch(value: state.userPreference.discoverBy == 0 , 
+                                Switch(value: state.userPreference.discoverBy == DiscoverBy.habeshawelogic.index , 
                                 onChanged: (value){
                                   
-                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: 0)));
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: DiscoverBy.habeshawelogic.index)));
                                   isThereChange = true;
                                 }),
                               ],
@@ -125,7 +126,7 @@ class Body extends StatelessWidget {
             
                     Card(
                       elevation: 2,
-                      color: isDark ? state.userPreference.discoverBy ==1?  cardColor :Colors.grey[900]  : state.userPreference.discoverBy ==1? Colors.grey[400]: Colors.white,
+                      color: isDark ? state.userPreference.discoverBy == DiscoverBy.preference.index?  cardColor :Colors.grey[900]  : state.userPreference.discoverBy == DiscoverBy.preference.index? Colors.grey[400]: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         child: Column(
@@ -135,10 +136,10 @@ class Body extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Discover By - Preference'),
-                                  Switch(value: state.userPreference.discoverBy! == 1, 
+                                  Switch(value: state.userPreference.discoverBy! == DiscoverBy.preference.index, 
                                   onChanged: (value){
                                     
-                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: 1)));
+                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: DiscoverBy.preference.index)));
                                     isThereChange = true;
                                   }),
                                 ],
@@ -162,7 +163,7 @@ class Body extends StatelessWidget {
                           ),
                           
                           AbsorbPointer(
-                            absorbing: state.userPreference.discoverBy != 1,
+                            absorbing: state.userPreference.discoverBy != DiscoverBy.preference.index,
                             child: RangeSlider(
                               max: 70,
                               min:18,
@@ -183,7 +184,7 @@ class Body extends StatelessWidget {
                                   
                                   
                             AbsorbPointer(
-                              absorbing: state.userPreference.discoverBy != 1,
+                              absorbing: state.userPreference.discoverBy != DiscoverBy.preference.index,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
                                                       
@@ -205,7 +206,7 @@ class Body extends StatelessWidget {
                              //SizedBox(height: 0,), 
                                   
                             AbsorbPointer(
-                              absorbing: state.userPreference.discoverBy != 1,
+                              absorbing: state.userPreference.discoverBy != DiscoverBy.preference.index,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
                                                       
@@ -240,7 +241,7 @@ class Body extends StatelessWidget {
             
                     Card(
                       elevation: 2,
-                      color: isDark ? state.userPreference.discoverBy ==2?  cardColor :Colors.grey[900] : state.userPreference.discoverBy ==2? Colors.grey[400]: Colors.white,
+                      color: isDark ? state.userPreference.discoverBy == DiscoverBy.nearby.index ?  cardColor :Colors.grey[900] : state.userPreference.discoverBy == DiscoverBy.nearby.index ? Colors.grey[400]: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
@@ -250,10 +251,10 @@ class Body extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Discover By - Nearby Matches'),
-                                  Switch(value: state.userPreference.discoverBy! == 2, 
+                                  Switch(value: state.userPreference.discoverBy! == DiscoverBy.nearby.index, 
                                   onChanged: (value){
                                     
-                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: 2)));
+                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: DiscoverBy.nearby.index)));
                                     isThereChange = true;
                                   }),
                                 ],
@@ -272,7 +273,7 @@ class Body extends StatelessWidget {
                               ),
                             ),
                               AbsorbPointer(
-                                absorbing: state.userPreference.discoverBy != 2,
+                                absorbing: state.userPreference.discoverBy != DiscoverBy.nearby.index,
                                 child: Slider(
                                 value: state.userPreference.maximumDistance!.toDouble(), 
                                 max: 2,
@@ -309,6 +310,52 @@ class Body extends StatelessWidget {
                         //color: Colors.grey[800],
                       ) 
                     ),
+
+
+                    
+                    
+            
+                    SizedBox(height: 20,),
+
+
+                    Card(
+                      elevation: 2,
+                      color: isDark ? state.userPreference.discoverBy == DiscoverBy.online.index?  cardColor :Colors.grey[900] : state.userPreference.discoverBy == DiscoverBy.online.index? Colors.grey[400]: Colors.white,
+                      child: Container(
+                        padding: EdgeInsets.all(10),
+                        margin: EdgeInsets.only(top: 5, bottom: 5,),
+                        decoration: BoxDecoration(
+                          //color: Colors.white,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Discover By - Online Matches'),
+                                Switch(value: state.userPreference.discoverBy == DiscoverBy.online.index , 
+                                onChanged: (value){
+                                  
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: DiscoverBy.online.index)));
+                                  isThereChange = true;
+                                }),
+                              ],
+                            ),
+                            Text('Online Matches gives you matches who is currently online the world.',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                    ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Text('Going global will allow you to see people nearby and from around the world.',
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                    ),
+            
+                    SizedBox(height: 20,),
+
           
                     Card(
                       elevation: 2,
@@ -484,6 +531,7 @@ class Body extends StatelessWidget {
                             online: false
                              );
                         context.read<AuthBloc>().add(LogOut());
+                        
                         // context.read<ProfileBloc>().close();
                         // context.read<UserpreferenceBloc>().close();
                         Future.delayed(Duration(milliseconds: 300), (){

@@ -74,6 +74,7 @@ dependencies:
   google_mobile_ads: ^3.0.0
   #google_fonts: ^6.0.0
   flutter_advanced_switch: ^3.0.1
+  full_screen_image: ^2.0.0
 
   
 

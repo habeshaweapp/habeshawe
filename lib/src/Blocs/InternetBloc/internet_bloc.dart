@@ -25,4 +25,11 @@ class InternetBloc extends Bloc<InternetEvent, InternetState> {
       emit(const InternetStatus(isConnected: true));
     }
   }
+  
+  @override
+  Future<void> close() {
+    // TODO: implement close
+    _subscription?.cancel();
+    return super.close();
+  }
 }

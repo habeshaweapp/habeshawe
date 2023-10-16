@@ -344,6 +344,7 @@ class LineIndicator extends StatefulWidget {
 
 class _LineIndicatorState extends State<LineIndicator> {
   int selectedIndex = 0;
+  
   @override
   void initState() {
     // TODO: implement initState
@@ -355,6 +356,7 @@ class _LineIndicatorState extends State<LineIndicator> {
     
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(

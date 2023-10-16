@@ -10,9 +10,13 @@ import 'package:swipe_cards/swipe_cards.dart';
 import '../../../Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import '../../../Blocs/ProfileBloc/profile_bloc.dart';
 import '../../../Blocs/SwipeBloc/swipebloc_bloc.dart';
+import '../../../Blocs/ThemeCubit/theme_cubit.dart';
+import '../../../Blocs/UserPreference/userpreference_bloc.dart';
+import '../../../Data/Models/enums.dart';
 import '../../../Data/Models/likes_model.dart';
 import '../../../Data/Repository/Authentication/auth_repository.dart';
 import '../../../dataApi/icons.dart';
+import 'swipecompleted.dart';
 
 class SwipeCard extends StatelessWidget {
   const SwipeCard({super.key});
@@ -27,6 +31,12 @@ class SwipeCard extends StatelessWidget {
         if(state.swipeStatus == SwipeStatus.loaded){
           List<SwipeItem> _swipeItems = [];
           MatchEngine? _matchEngine;
+          if(state.users.isEmpty ){
+            Future.delayed(Duration(seconds: 2),(){
+
+             context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
+             });
+          }
           //state.users.forEach((user)
           for(var user in state.users)
            {
@@ -95,9 +105,7 @@ class SwipeCard extends StatelessWidget {
                       child: SwipeCards(
                         matchEngine: _matchEngine, 
                         onStackFinished: (){
-                          //_matchEngine = backUp;
-                          //_matchEngine!.cycleMatch();
-                          //_matchEngine!.dispose();
+                      
                           context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
                         }, 
                         itemBuilder: (context, index){
@@ -295,41 +303,10 @@ class SwipeCard extends StatelessWidget {
 
 
         }
-        if(state.swipeStatus == SwipeStatus.completed){
-          final now =DateTime.now();
-          final remain  = now.difference(state.completedTime!);
-          return Center(
-            child: Container(
-              height: 200,
-              child: Column(
-                children: [
-                  Text('Thats it for today \ncome back Tomorrow!'),
-                  Text(
-                    '${remain.inHours}:${remain.inMinutes}:${remain.inSeconds} remains',
-                    style: Theme.of(context).textTheme.bodyLarge,
-
-                  ),
-
-                  SizedBox(height: 25,),
-                  ElevatedButton(
-                    onPressed: (){
-                      context.read<SwipeBloc>().add(LoadUsers(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType!));
-                    }, 
-                    child: Text('get Matches')),
-                  
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: FloatingActionButton(
-                      onPressed: (){
-                        //showPrefesSheet(context: context);
-                      },
-                      child: Icon(Icons.settings),
-                    ),
-                  )
-                ],
-              ),
-            )
-          );
+        if(state.swipeStatus == SwipeStatus.completed || state.swipeStatus == SwipeStatus.initial){
+          // final now =DateTime.now();
+          // final remain  = now.difference(state.completedTime!);
+          return SwipeCompletedWidget(state: state,);
         }
         
         else{
@@ -338,4 +315,11 @@ class SwipeCard extends StatelessWidget {
       },
     );
   }
+
+
+
+
+
+
+
 }

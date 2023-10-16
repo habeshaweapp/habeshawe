@@ -17,10 +17,12 @@ part 'auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
   StreamSubscription<auth.User?>? _userSubscription;
-  final DatabaseRepository _databaseRepo = DatabaseRepository();
+  final DatabaseRepository _databaseRepository;
   AuthBloc({
-    required AuthRepository authRepository
+    required AuthRepository authRepository,
+    required DatabaseRepository databaseRepository
   }) : _authRepository = authRepository,
+       _databaseRepository = databaseRepository,
   super(AuthState.unknown()) {
 
     _userSubscription = _authRepository.user.listen(
@@ -47,15 +49,16 @@ void _authUserChanged(AuthUserChanged event, Emitter<AuthState> emit) async{
 
   try {
   if(event.user != null ){
-    Gender isUserAlreadyRegistered = await _databaseRepo.isUserAlreadyRegistered(event.user!.uid);
+    Gender isUserAlreadyRegistered = await _databaseRepository.isUserAlreadyRegistered(event.user!.uid);
     bool isCompleted;
     if(isUserAlreadyRegistered == Gender.nonExist){
       isCompleted = false;
     }else{
-     isCompleted = await _databaseRepo.isCompleted(isUserAlreadyRegistered,event.user!.uid);
+     isCompleted = await _databaseRepository.isCompleted(isUserAlreadyRegistered,event.user!.uid);
     }
     
     emit(AuthState.authenticated(user: event.user!,accountType: isUserAlreadyRegistered , isCompleted: isCompleted));
+    
   }else{
     emit(AuthState.unauthenticated());
   }
@@ -96,8 +99,8 @@ Future<void> _onLogInWithGoogle(LogInWithGoogle event, Emitter<AuthState> emit) 
   //   return  state.toMap();
   //   //state.toJson();
   // }
-
   
+
 }
 
 

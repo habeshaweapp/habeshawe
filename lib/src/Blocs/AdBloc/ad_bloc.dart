@@ -162,7 +162,7 @@ class AdBloc extends Bloc<AdEvent, AdState> {
   }
 
   FutureOr<void> _onRewardEarned(RewardEarned event, Emitter<AdState> emit) {
-    emit(state.copyWith(reward: event.reward));
+    emit(state.copyWith(reward: event.reward, adWatchedQueen:state.adWatchedQueen! + event.reward.amount  ));
   }
 
   FutureOr<void> _onResetReward(ResetReward event, Emitter<AdState> emit) {

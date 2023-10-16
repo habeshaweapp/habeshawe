@@ -89,5 +89,9 @@ Future<void> purchaseConsumable(ProductDetails productDetails)async{
     await _inAppPurchase.completePurchase(purchase);
   }
 
+  Future<void> restorePurchase()async {
+    await _inAppPurchase.restorePurchases();
+  }
+
 
 }

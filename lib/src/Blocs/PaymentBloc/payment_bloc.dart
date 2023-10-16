@@ -7,6 +7,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:intl/intl.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Repository/Payment/payment_repository.dart';
@@ -57,14 +58,14 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   void _listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {}
 
   FutureOr<void> _purchaseUpdated(PurchaseUpdated event, Emitter<PaymentState> emit) async {
-    // final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid, users: _authBloc.state.accountType!);
+     final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid, users: _authBloc.state.accountType!);
     // if(payment.countryCode != 'ET' && payment.country != 'Ethiopia'){
 
     
     if(event.purchaseDetailsList.isEmpty){
       //emit(NotSubscribed());
       emit(state.copyWith(subscribtionStatus: SubscribtionStatus.notSubscribed, purchaseDetails: event.purchaseDetailsList));
-      _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: {}, subscribtionStatus: SubscribtionStatus.notSubscribed.index, paymentType: SubscribtionStatus.notSubscribed.name );
+      _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: {}, subscribtionStatus: SubscribtionStatus.notSubscribed.index, paymentType: SubscribtionStatus.notSubscribed.name,expireDate: payment.expireDate );
     }else{
       for(var purchase in event.purchaseDetailsList){
         if(purchase.status == PurchaseStatus.restored || purchase.status == PurchaseStatus.purchased){
@@ -74,7 +75,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
           Map purchaseData = json.decode(purchase.verificationData.localVerificationData);
           if(subIds.contains(purchase.productID) && purchaseData['acknowledged']){
             //emit(Subscribed(subscribtionType: purchase.productID));
-            SubscribtionStatus type = SubscribtionStatus.notSubscribed;
+            SubscribtionStatus type = SubscribtionStatus.subscribedMonthly;
             if(purchase.productID == 'monthly' ){
               type = SubscribtionStatus.subscribedMonthly;
             }else if(purchase.productID == 'yearly'){
@@ -82,9 +83,25 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
             }else{
               type = SubscribtionStatus.subscribed6Months;
             }
+
+            int add = 0;
+            if(payment.subscribtionStatus == SubscribtionStatus.subscribedMonthly.index){
+              add = 30;
+             }else if(payment.subscribtionStatus == SubscribtionStatus.subscribed6Months.index){
+             add = 182;
+            }else if(payment.subscribtionStatus == SubscribtionStatus.subscribedYearly.index){
+             add = 366;
+            }
+            var expireDate = DateTime.fromMillisecondsSinceEpoch(payment.expireDate);
+
+           var newExpireDate = expireDate.add(const Duration(minutes: 5));
             emit(state.copyWith(subscribtionStatus: type));
-            _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: purchaseData, subscribtionStatus: type.index, paymentType: type.name);
+            _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: purchaseData, subscribtionStatus: type.index, paymentType: type.name, expireDate: newExpireDate.millisecondsSinceEpoch );
            //}//end of subscribtion or nonConsumable
+
+           if(purchase.pendingCompletePurchase){
+              await _paymentRepository.completePurchase(purchase);
+            }
 
            //for the consumables
             // if(boostsIds.contains(purchase.productID) || likesIds.contains(purchase.productID)){
@@ -116,8 +133,20 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
 
                 emit(state.copyWith(subscribtionStatus: type));
 
+                int add = 0;
+                if(payment.subscribtionStatus == SubscribtionStatus.subscribedMonthly.index){
+                  add = 30;
+                }else if(payment.subscribtionStatus == SubscribtionStatus.subscribed6Months.index){
+                 add = 182;
+                 }else if(payment.subscribtionStatus == SubscribtionStatus.subscribedYearly.index){
+                  add = 366;
+                 }
+                var expireDate = DateTime.fromMillisecondsSinceEpoch(purchaseData['purchaseTime']);
+
+                var newExpireDate = expireDate.add(const Duration(minutes: 5));
+
                 _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: purchaseData, 
-                subscribtionStatus: type.index, paymentType: purchase.productID);
+                subscribtionStatus: type.index, paymentType: purchase.productID, expireDate: newExpireDate.millisecondsSinceEpoch );
               }
             //boosts complete
               if(boostsIds.contains(purchase.productID)){
@@ -178,6 +207,14 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     if(payment.countryCode != 'ET' && payment.country != 'Ethiopia'){
     final products = await _paymentRepository.getProducts();
     //emit(SubscribtionState(productDetails: products));
+    var expireDate = DateTime.fromMillisecondsSinceEpoch(payment.expireDate, isUtc: true);
+    int diff = DateTime.now().difference(expireDate).inMinutes;
+    if(diff >=2){
+      
+      _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: {}, subscribtionStatus: SubscribtionStatus.notSubscribed.index, paymentType: SubscribtionStatus.notSubscribed.name, expireDate: payment.expireDate);
+
+      await _paymentRepository.restorePurchase();
+    }
     emit(state.copyWith(productDetails: products, subscribtionStatus: SubscribtionStatus.values[payment.subscribtionStatus], boosts: payment.boosts, superLikes: payment.superLikes ));
   }
   else{
@@ -234,4 +271,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
         _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'superlikes', value:state.boosts! -1);
 
   }
+
+
+  
 }

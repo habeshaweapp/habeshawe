@@ -107,7 +107,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   @override
   Future<void> close() {
     // TODO: implement close
-    
+    _authSubscription?.cancel();
     return super.close();
   }
 
@@ -130,6 +130,8 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
       
     }
   }
+
+  
 
   
 }

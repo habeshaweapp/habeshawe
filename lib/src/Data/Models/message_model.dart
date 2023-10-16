@@ -33,6 +33,7 @@ class Message extends Equatable{
       receiverId: snap['receiverId'], 
       message: snap['message'],
       timestamp: snap['timestamp'],
+      imageUrl: snap['imageUrl'],
       seen: (snap.data() as Map<String,dynamic>).containsKey('seen')?snap['seen']:null
     );
   }

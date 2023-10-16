@@ -4,6 +4,7 @@ import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
@@ -85,7 +86,7 @@ class StartScreen extends StatelessWidget {
               thumb: ValueListenableBuilder<bool>(
                 valueListenable: _controller, 
                 builder: (_,value,__){
-                  return Icon(value?Icons.lightbulb_outline: Icons.lightbulb);
+                  return Icon(value?Icons.lightbulb : LineIcons.moon );
                 }),
             ),
           ),

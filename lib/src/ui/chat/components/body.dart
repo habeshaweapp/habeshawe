@@ -2,11 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/InternetBloc/internet_bloc.dart';
 import 'package:lomi/src/Data/Models/model.dart';
+import 'package:lomi/src/ui/chat/components/fullimage.dart';
 
 import '../../../Blocs/ChatBloc/chat_bloc.dart';
 import '../../../Blocs/MatchBloc/match_bloc.dart';
@@ -65,6 +68,7 @@ class Body extends StatelessWidget {
                                 
                                 title: !(state.messages[index].senderId == userMatch.userId) ?
                                 //userMatch.chat![0].messages[index].senderId == 1? 
+                                state.messages[index].imageUrl ==null?
                                 Align(
                                   alignment: Alignment.topRight,
                                   child: Container(
@@ -78,7 +82,7 @@ class Body extends StatelessWidget {
                                         ),
                                       color: Colors.green.shade200,
                                     ),
-                                    child: Column(
+                                    child:  Column(
                                       crossAxisAlignment: CrossAxisAlignment.end,
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -104,8 +108,40 @@ class Body extends StatelessWidget {
                                             ],
                                           )
                                       ],
-                                    ))
-                                  ) :
+                                    )
+                                  )
+                                )
+                                  :Align(
+                                    alignment: Alignment.topRight,
+                                    child:GestureDetector(
+                                      onTap: (){
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=> FullScreenImage(imageUrl: state.messages[index].imageUrl!)) );
+
+                                      },
+                                      child: UnconstrainedBox(
+                                        child: Container(
+                                          alignment: Alignment.topRight,
+                                          constraints: BoxConstraints(
+                                            maxWidth: MediaQuery.of(context).size.width * 0.73,
+                                            minHeight: 10
+                                            ),
+                                          decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(15),
+                                         // color: Colors.green.shade200,
+                                                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(15),
+                                            child: CachedNetworkImage(
+                                              imageUrl: state.messages[index].imageUrl!,
+                                              fit: BoxFit.cover,
+                                              height: 300,
+                                              ),
+                                          )),
+                                      ),
+                                    )
+                                    ) 
+                                  
+                                   :
               
                                   // Row(
                                   //   children: [
@@ -115,6 +151,7 @@ class Body extends StatelessWidget {
                     
                                   //          ),
                                   //          SizedBox(width: 10,),
+                                  state.messages[index].imageUrl == null?
                                       Align(
                                       alignment: Alignment.topLeft,
                                       child: Container(
@@ -147,13 +184,49 @@ class Body extends StatelessWidget {
                                                 ],
                                               )
                                           ],
-                                        ))
-                                      ),
+                                        )
+                                      )
                                   //   ],
                                   // )
               
               
-                              );
+                              ):Align(
+                                    alignment: Alignment.topLeft,
+                                    child:GestureDetector(
+                                      onTap: (){
+                                        Navigator.push(context, MaterialPageRoute(builder: (context)=> FullScreenImage(imageUrl: state.messages[index].imageUrl!)) );
+
+                                      },
+                                      child: Container(
+                                        alignment: Alignment.topLeft,
+                                        constraints: BoxConstraints(
+                                           minHeight: 10,
+                                           //maxHeight: 300,
+                                          // maxWidth: 300,
+                                          // minWidth: 100
+                                          maxWidth: MediaQuery.of(context).size.width * 0.73,
+                                          //maxHeight: MediaQuery.of(context).size.height * 0.33
+                                          ),
+                                        // height: 300,
+                                        // width: 150,
+                                        decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(15),
+                                        //color: Colors.green.shade200,
+                                                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(15),
+                                          child: CachedNetworkImage(
+                                            imageUrl: state.messages[index].imageUrl!,
+                                            fit: BoxFit.cover,
+                                            height: 300,
+                                            //width: 300,
+                                            
+                                            ),
+                                        )),
+                                    )
+                                    )
+                                )
+                              ;
                             })),
                         ):
                         SizedBox(),
@@ -273,7 +346,7 @@ class Body extends StatelessWidget {
                       msg = value;
                     },
                    // cursorColor: is Colors.black,
-                    decoration: const InputDecoration(
+                    decoration:  InputDecoration(
                       border: InputBorder.none,
                       
                       //contentPadding: EdgeInsets.zero,
@@ -283,11 +356,36 @@ class Body extends StatelessWidget {
                       //hintStyle: Theme.of(context).textTheme.bodySmall,
                       icon: Padding(
                         padding: const EdgeInsets.all(0),
-                        child: Icon(
-                          FontAwesomeIcons.faceSmile, 
-                          color: Colors.grey,
-                          size: 20,
-                          ),
+                        child: GestureDetector(
+                          onTap: ()async{
+                            final picker = ImagePicker();
+                            final img = await picker.pickImage(source: ImageSource.gallery);
+                            if(img != null){
+                            final lastIndex = img.path.lastIndexOf(RegExp(r'.jp'));
+                            final splitted = img.path.substring(0, (lastIndex));
+                            final outPath = "${splitted}_out${img.path.substring(lastIndex)}";
+                            var image = await FlutterImageCompress.compressAndGetFile(img.path, outPath, quality: 75
+                            );
+
+                            context.read<ChatBloc>().add(SendMessage(
+                              message: Message(
+                                id: '', 
+                                senderId: context.read<AuthBloc>().state.user!.uid, 
+                                receiverId: userMatch.userId, 
+                                message: '',
+                                ),
+                                users: context.read<AuthBloc>().state.accountType!,
+                                image: image
+                                 ));
+
+                            }
+                          },
+                          child: Icon(
+                            FontAwesomeIcons.image, 
+                            color: Colors.grey,
+                            size: 20,
+                            ),
+                        ),
                       ),
                         suffix: Icon(
                           FontAwesomeIcons.paperclip,

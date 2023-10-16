@@ -463,7 +463,7 @@ class ProfileBox extends StatelessWidget {
                   height: 8,
                 ),
                 Text( superLikes != null? '$superLikes $title' : title
-                  ,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey),),
+                  ,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey,),),
                title != 'Subscriptions'? SizedBox(
                   height: 5,
                 ):SizedBox(),

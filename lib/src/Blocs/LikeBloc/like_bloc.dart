@@ -72,6 +72,7 @@ void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
   @override
   Future<void> close() {
     // TODO: implement close
+    _authSubscription?.cancel();
     return super.close();
   }
 }

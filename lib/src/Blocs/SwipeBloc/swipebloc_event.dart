@@ -10,8 +10,9 @@ abstract class SwipeEvent extends Equatable {
 class LoadUsers extends SwipeEvent{
   final String userId;
   final Gender users;
-  //final UserPreference prefes;
-   LoadUsers({required this.userId, required this.users});
+  final User user;
+  final UserPreference prefes;
+   LoadUsers({required this.userId, required this.users, required this.user, required this.prefes });
 
   @override
   List<Object?> get props => [userId, users];
@@ -64,4 +65,15 @@ class BoostedLoaded extends SwipeEvent{
   @override
   // TODO: implement props
   List<Object?> get props => [users];
+}
+
+class LoadUserAd extends SwipeEvent{
+  final String userId;
+  final Gender users;
+  final DiscoverBy discoverBy;
+  final int limit;
+   LoadUserAd({required this.userId, required this.users, required this.discoverBy, required this.limit});
+
+  @override
+  List<Object?> get props => [userId, users,discoverBy,limit];
 }

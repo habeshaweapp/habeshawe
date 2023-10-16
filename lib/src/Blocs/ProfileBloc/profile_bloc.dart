@@ -18,6 +18,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final DatabaseRepository _databaseRepository;
   final StorageRepository _storageRepository;
    StreamSubscription? _authSubscription;
+  StreamSubscription? _profileSubscription;
   ProfileBloc({
     required AuthBloc authBloc,
     required DatabaseRepository databaseRepository,
@@ -45,7 +46,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void _onLoadProfile(LoadProfile event, Emitter<ProfileState> emit) {
        try {
-        _databaseRepository.getUser(event.userId, event.users).listen((user) { 
+        _profileSubscription= _databaseRepository.getUser(event.userId, event.users).listen((user) { 
         add(UpdateProfile(user: user));
 
       });
@@ -102,6 +103,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   @override
   Future<void> close() async{
     _authSubscription?.cancel();
+    _profileSubscription?.cancel();
     super.close();
   }
 

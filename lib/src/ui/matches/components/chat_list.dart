@@ -19,7 +19,7 @@ class ChatList extends StatelessWidget {
       //MatchesImage(url: imageUrl),
       ClipRRect(
         borderRadius: BorderRadius.circular(50),
-        child: CachedNetworkImage(imageUrl: match.imageUrls[0], 
+        child: CachedNetworkImage(imageUrl: match.imageUrls.isNotEmpty? match.imageUrls[0]: 'placeholder', 
           fit: BoxFit.cover, 
           height: 50,
           width: 50,

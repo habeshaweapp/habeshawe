@@ -1,6 +1,7 @@
 part of 'swipebloc_bloc.dart';
 
 enum SwipeStatus{initial, loading, loaded, completed, itsamatch,error }
+enum LoadFor{daily, ad }
 
 class SwipeState extends Equatable {
   const SwipeState({
@@ -9,6 +10,7 @@ class SwipeState extends Equatable {
     this.matchedUser,
     this.completedTime,
     this.boostedUsers=const [],
+    this.loadFor
     
   });
 
@@ -17,6 +19,7 @@ class SwipeState extends Equatable {
   final User? matchedUser;
   final DateTime? completedTime;
   final List<User> boostedUsers;
+  final LoadFor? loadFor;
   
 
 
@@ -26,6 +29,7 @@ class SwipeState extends Equatable {
     User? matchedUser,
     DateTime? completedTime,
     List<User>? boostedUsers,
+    LoadFor? loadFor,
    
   }){
     return SwipeState(
@@ -34,6 +38,7 @@ class SwipeState extends Equatable {
       matchedUser: matchedUser?? this.matchedUser,
       completedTime: completedTime?? this.completedTime,
       boostedUsers: boostedUsers?? this.boostedUsers,
+      loadFor: loadFor??this.loadFor
       
     );
   }
@@ -57,6 +62,7 @@ class SwipeState extends Equatable {
       'completedTime': completedTime?.toIso8601String(),
       'matchedUser': matchedUser?.toJson(),
       'boostedUsers': boosted,
+      'loadFor': loadFor?.index
      
     };
    
@@ -66,17 +72,18 @@ class SwipeState extends Equatable {
     List<User> users = json['users'].map((user) => User.fromMap(user)).toList();
     List<User> boosted = json['boostedUsers'].map((user) => User.fromMap(user)).toList();
     return SwipeState(
-      swipeStatus: json['swipeStatus'],
+      swipeStatus: SwipeStatus.values[ json['swipeStatus']],
       users: users,
       completedTime: DateTime.parse(json['completedTime']),
       matchedUser: User.fromMap(json['matchedUser']),
       boostedUsers: boosted,
+      loadFor: LoadFor.values[json['loadFor']]
       
     );
   }
 
   @override
-  List<Object?> get props => [swipeStatus,users,matchedUser,completedTime];
+  List<Object?> get props => [swipeStatus,users,matchedUser,completedTime, loadFor];
   
 }
 

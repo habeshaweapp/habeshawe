@@ -47,6 +47,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     on<SwipeEnded>(_onSwipeEnded);
     on<BoostedLoaded>(_onBoostedLoaded);
     on<LoadUserAd>(_onLoadUserAd);
+    on<AdSwipeEnded>(_onAdSwipeEnded);
 
     // _authSubscription = _authBloc.stream.listen((state) {
     //   if(state.user != null && state.accountType != Gender.nonExist){
@@ -68,21 +69,22 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   void _loadusers(LoadUsers event, Emitter<SwipeState> emit) async {
     
     try {
-    emit(state.copyWith(swipeStatus: SwipeStatus.loading));
+    emit(state.copyWith(swipeStatus: SwipeStatus.loading, loadFor: LoadFor.daily));
      List<User> users =[];
-     //var prefes = await _databaseRepository.getPreference(event.userId, event.users);
+     if(event.prefes ==null) event.prefes = await _databaseRepository.getPreference(event.userId, event.users);
+     //event.p
 
-    if(event.prefes.discoverBy == 0){
-      users = await _databaseRepository.getUsersMainLogic(event.userId, event.users, event.prefes);
+    if(event.prefes!.discoverBy == 0){
+      users = await _databaseRepository.getUsersMainLogic(event.userId, event.users, event.prefes!);
     }
-    if(event.prefes.discoverBy == 1){
-      users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users, event.prefes, event.user);
+    if(event.prefes!.discoverBy == 1){
+      users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users, event.prefes!, event.user!);
     }
-    if(event.prefes.discoverBy == 2){
+    if(event.prefes!.discoverBy == 2){
 
      users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users );
     }
-    if(event.prefes.discoverBy == 3){
+    if(event.prefes!.discoverBy == 3){
       users = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users);
     }
 
@@ -192,6 +194,11 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
 
   FutureOr<void> _onSwipeEnded(SwipeEnded event, Emitter<SwipeState> emit) {
    // emit(SwipeCompleted(completedTime: event.completedTime));
+   if(state.completedTime != null){
+    Future.delayed(const Duration(hours: 24), (){ 
+      
+      add(LoadUsers(userId: _authBloc.state.user!.uid , users: _authBloc.state.accountType! )); });
+   }
     emit(state.copyWith(completedTime: event.completedTime, swipeStatus: SwipeStatus.completed));
   }
 
@@ -200,13 +207,18 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   }
 
   FutureOr<void> _onLoadUserAd(LoadUserAd event, Emitter<SwipeState> emit)async {
+    emit(state.copyWith(swipeStatus: SwipeStatus.loading, loadFor: LoadFor.ad));
     
     if(event.discoverBy == DiscoverBy.online){
       var user = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users,limit:event.limit);
 
-      emit(state.copyWith(users: user, swipeStatus: SwipeStatus.loaded) );
+      emit(state.copyWith(users: user, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad) );
 
     }
 
+  }
+
+  FutureOr<void> _onAdSwipeEnded(AdSwipeEnded event, Emitter<SwipeState> emit) {
+    emit(state.copyWith(swipeStatus: SwipeStatus.completed));
   }
 }

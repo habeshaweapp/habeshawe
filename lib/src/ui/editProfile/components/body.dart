@@ -28,6 +28,7 @@ class Body extends StatelessWidget {
     TextEditingController jobTitle = TextEditingController();
     TextEditingController companyController = TextEditingController();
     TextEditingController schoolController = TextEditingController();
+    TextEditingController heightController = TextEditingController();
     return SingleChildScrollView(
       child: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
@@ -42,6 +43,7 @@ class Body extends StatelessWidget {
           jobTitle.text = state.user.jobTitle??'';
           companyController.text = state.user.company??'';
           schoolController.text = state.user.school??'';
+          heightController.text = state.user.height !=null?state.user.height.toString():'';
 
           return WillPopScope(
             onWillPop: ()async {
@@ -52,7 +54,8 @@ class Body extends StatelessWidget {
                     livingIn: addCityController.text,
                     jobTitle: jobTitle.text,
                     company: companyController.text,
-                    school: schoolController.text
+                    school: schoolController.text,
+                    height: heightController.text == ''?null: int.parse(heightController.text)
                     )));
               }
               return true;
@@ -233,6 +236,49 @@ class Body extends StatelessWidget {
                   onTap: (){
                     showLookingForSheet(context,state.user.lookingFor ?? 0, state.user);
                   },
+                ),
+
+
+                Container(
+                  //height: 50,
+                  padding: EdgeInsets.only(top: 20,bottom: 10, left: 15, right: 15),
+                  
+                  decoration: BoxDecoration(
+                    color: isLight ? Colors.grey[200]: darkContainer,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Height',),
+                      Text('+5%', style: TextStyle(color: isDark? Colors.teal: Colors.green),)
+                    ],
+                  ),
+                ),
+                
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal:15),
+                  child: TextField(
+                    //minLines: 1,
+                    maxLines: 1,
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'In cm', 
+                      icon: Icon(LineIcons.rulerVertical, size:18, color:Colors.black ),
+                      counterText: ''        
+                    ),
+                    keyboardType: TextInputType.number,
+                    maxLength: 3,
+                    controller: heightController,
+                    style: TextStyle(color: Colors.grey, fontSize:13,),
+          
+                    onChanged: (value){
+                      //context.read<ProfileBloc>().add(UpdateProfile(user: state.user.copyWith(height: int.parse(value) )));
+                      isThereChange = true;
+                    },
+          
+                    
+                    
+                  ),
                 ),
           
           
@@ -464,7 +510,7 @@ class Body extends StatelessWidget {
                       disabledColor: Colors.grey[300],
                       onSelected: (value) {
                         selectedIndex = index;
-                        context.read<ProfileBloc>().add(UpdateProfile(user: user.copyWith(education: caps[index])));
+                        context.read<ProfileBloc>().add(EditUserProfile(user: user.copyWith(education: caps[index])));
                          Navigator.pop(context);
                       }),
                       )
@@ -519,7 +565,7 @@ class Body extends StatelessWidget {
                                     icon:LookingForItem. icons[index], 
                                     isSelected: selectedIndex == index, 
                                     onTap: (){
-                                      context.read<ProfileBloc>().add(UpdateProfile(user: user.copyWith(lookingFor: index)));
+                                      context.read<ProfileBloc>().add(EditUserProfile(user: user.copyWith(lookingFor: index)));
                                       Navigator.pop(context);
                                     }
                                     )

@@ -263,10 +263,13 @@ class StartScreen extends StatelessWidget {
                           // final nextstate = await AuthBloc.s
 
                           //await context.read<AuthBloc>().add(LogInWithGoogle());
-
+                          try{
                           await context
                               .read<ContinuewithCubit>()
                               .continueWithGoogle();
+                          }catch(e){
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()),));
+                          }
 
                           // if (!await context
                           //     .read<DatabaseRepository>()

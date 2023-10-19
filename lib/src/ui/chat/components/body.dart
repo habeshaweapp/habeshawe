@@ -118,25 +118,14 @@ class Body extends StatelessWidget {
                                         Navigator.push(context, MaterialPageRoute(builder: (context)=> FullScreenImage(imageUrl: state.messages[index].imageUrl!)) );
 
                                       },
-                                      child: UnconstrainedBox(
-                                        child: Container(
-                                          alignment: Alignment.topRight,
-                                          constraints: BoxConstraints(
-                                            maxWidth: MediaQuery.of(context).size.width * 0.73,
-                                            minHeight: 10
-                                            ),
-                                          decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(15),
-                                         // color: Colors.green.shade200,
-                                                                          ),
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.circular(15),
-                                            child: CachedNetworkImage(
-                                              imageUrl: state.messages[index].imageUrl!,
-                                              fit: BoxFit.cover,
-                                              height: 300,
-                                              ),
-                                          )),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: CachedNetworkImage(
+                                          imageUrl: state.messages[index].imageUrl!,
+                                          fit: BoxFit.cover,
+                                          height: 300,
+                                          width: MediaQuery.of(context).size.width*0.5,
+                                          ),
                                       ),
                                     )
                                     ) 
@@ -190,41 +179,29 @@ class Body extends StatelessWidget {
                                   // )
               
               
-                              ):Align(
-                                    alignment: Alignment.topLeft,
-                                    child:GestureDetector(
-                                      onTap: (){
-                                        Navigator.push(context, MaterialPageRoute(builder: (context)=> FullScreenImage(imageUrl: state.messages[index].imageUrl!)) );
+                              ):GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=> FullScreenImage(imageUrl: state.messages[index].imageUrl!)) );
 
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.topLeft,
-                                        constraints: BoxConstraints(
-                                           minHeight: 10,
-                                           //maxHeight: 300,
-                                          // maxWidth: 300,
-                                          // minWidth: 100
-                                          maxWidth: MediaQuery.of(context).size.width * 0.73,
-                                          //maxHeight: MediaQuery.of(context).size.height * 0.33
-                                          ),
-                                        // height: 300,
-                                        // width: 150,
-                                        decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(15),
-                                        //color: Colors.green.shade200,
-                                                                        ),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.circular(15),
-                                          child: CachedNetworkImage(
-                                            imageUrl: state.messages[index].imageUrl!,
-                                            fit: BoxFit.cover,
-                                            height: 300,
-                                            //width: 300,
-                                            
-                                            ),
-                                        )),
-                                    )
-                                    )
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(15),
+                                      child: CachedNetworkImage(
+                                        imageUrl: state.messages[index].imageUrl!,
+                                        fit: BoxFit.cover,
+                                        height: 300,
+                                        //width: 300,
+                                        width: MediaQuery.of(context).size.width * 0.5,
+                                        
+                                        ),
+                                    ),
+                                  ],
+                                ),
+                              )
                                 )
                               ;
                             })),

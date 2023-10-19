@@ -58,6 +58,9 @@ class ChatScreen extends StatelessWidget {
                   StreamBuilder(
                     stream: context.read<DatabaseRepository>().onlineStatusChanged(userId: userMatch.userId, gender: userMatch.gender),
                     builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String,dynamic>>> snapshot) {
+                      if(snapshot.hasError){
+                        return SizedBox();
+                      }
                       if(snapshot.hasData){
 
                       return snapshot.data?['online']? Row(
@@ -173,7 +176,7 @@ class ChatScreen extends StatelessWidget {
                   child: InkWell(
                     onTap: (){
                       Navigator.pop(context);
-                      showReportOptions(context);
+                      showReportOptions(context, userMatch);
               
                     },
                     child: Center(child: Text('Block And Report')),
@@ -243,7 +246,9 @@ class ChatScreen extends StatelessWidget {
                                   gender: context.read<AuthBloc>().state.accountType!, 
                                   matchUser: userMatch
                                   ));
+
                                    Navigator.pop(context);
+                                    Navigator.pop(context);
                                     Navigator.pop(context);
                               },
                                child: Text('Yes')), 
@@ -263,6 +268,8 @@ class ChatScreen extends StatelessWidget {
                 child: Center(
                   child: InkWell(
                     onTap: (){
+                      Navigator.pop(context);
+                      showReportOptions(context, userMatch);
               
                     },
                     child: Center(child: Text('Unmatch And Report')),
@@ -279,7 +286,7 @@ class ChatScreen extends StatelessWidget {
     ));
   }
 
-  void showReportOptions(BuildContext context){
+  void showReportOptions(BuildContext context, UserMatch userMatch){
     showModalBottomSheet(
       isScrollControlled: true,
       context: context,
@@ -311,7 +318,7 @@ class ChatScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Report() ));
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Report(matchedUser: userMatch, index: 0,name:'Fake Profile', ctx: context,) ));
                       },
                       child: Row(
                         children: [
@@ -330,6 +337,7 @@ class ChatScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: (){
+                         Navigator.push(context, MaterialPageRoute(builder: (context)=> Report(matchedUser: userMatch,index: 1,name:'Rude or abusive behavior', ctx: context,) ));
                       },
                       child: Row(children: [
                         Icon(Icons.chat_bubble, color: Colors.green),
@@ -347,6 +355,7 @@ class ChatScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Report(matchedUser: userMatch, index: 2,name:'Inappropriate content',ctx: context,) ));
                       },
                       child: Row(children: [
                         Icon(Icons.warning, color:Colors.green),
@@ -363,6 +372,7 @@ class ChatScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Report(matchedUser: userMatch,index: 3,name:'Scam or commercial',ctx: context,) ));
                       },
                       child: Row(children: [
                         Icon(Icons.flag, color:Colors.green),
@@ -379,6 +389,7 @@ class ChatScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Report(matchedUser: userMatch,index: 4,name:'Identity-based hate',ctx: context,) ));
                       },
                       child: Row(children: [
                         Icon(Icons.record_voice_over, color: Colors.green),
@@ -395,6 +406,7 @@ class ChatScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Report(matchedUser: userMatch,index: 5,name:'Off Habeshawi behavior',ctx: context,) ));
                       },
                       child: Row(children: [
                         Icon(Icons.block, color:Colors.green),
@@ -411,6 +423,7 @@ class ChatScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Report(matchedUser: userMatch,index: 6,name:'Underage',ctx: context,) ));
                       },
                       child: Row(children: [
                         Icon(Icons.access_time_filled_sharp, color:Colors.green),
@@ -427,6 +440,10 @@ class ChatScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: InkWell(
                       onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (contextb)=> BlocProvider.value(
+                            value: context.read<ChatBloc>(),
+                            child: Report(matchedUser: userMatch, index: 7,name:'Too Much beautiful...',ctx: context,),
+                          ) ));
                       },
                       child: Row(children: [
                         Icon(Icons.emoji_emotions, color:Colors.green),

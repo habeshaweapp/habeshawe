@@ -24,13 +24,13 @@ class FullScreenImage extends StatelessWidget {
       ),
       body: SafeArea(
         child: Center(
-          child: Hero(
-            tag: 'fullscreen',
-            child: CachedNetworkImage(
+          child: 
+            
+             CachedNetworkImage(
                   imageUrl: imageUrl,
                   fit: BoxFit.cover,
                 ) ,
-          ),
+          
         )
         
         
@@ -38,7 +38,7 @@ class FullScreenImage extends StatelessWidget {
         //   disposeLevel: DisposeLevel.Low,
         //   backgroundColor: Colors.black,
         //   child: Center(
-        //     child: Hero(
+      
         //       tag: "smallImage",
         //       child: ClipRRect(
         //         borderRadius: BorderRadius.circular(16),

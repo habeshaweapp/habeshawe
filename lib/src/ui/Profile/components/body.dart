@@ -10,15 +10,18 @@ import 'package:geolocator/geolocator.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/ProfileBloc/profile_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/dataApi/icons.dart';
 import 'package:swipable_stack/swipable_stack.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
 import '../../../Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import '../../../Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import '../../../Blocs/SwipeBloc/swipebloc_bloc.dart';
 import '../../../Data/Models/enums.dart';
 import '../../../Data/Models/likes_model.dart';
+import '../../../Data/Models/tag_helper.dart';
 import '../../../Data/Models/user.dart';
 import '../../home/components/userdrag.dart';
 import '../../onboarding/AfterRegistration/widgets/lookingforitem.dart';
@@ -34,7 +37,7 @@ class Body extends StatelessWidget {
    Future<Position> getCurrentPosition()async{
     return await Geolocator.getCurrentPosition();
    }
-   int calculateDistance(GeoPoint currentPosition, List<double> userPosition) {
+   int calculateDistance(Position currentPosition, List<double> userPosition) {
     //Position currentPosition =  getCurrentPosition();
     return Geolocator.distanceBetween(currentPosition.latitude, currentPosition.longitude, userPosition[0], userPosition[1])~/1000;
    }
@@ -51,6 +54,8 @@ class Body extends StatelessWidget {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     PageController pageController = PageController();
+    bool isDart = context.read<ThemeCubit>().state == ThemeMode.dark;
+    int distance = calculateDistance(context.read<SharedpreferenceCubit>().state.myLocation!, user.location!);
     // if(imgindex != null){
     //                             pageController.animateToPage(imgindex!.toInt(), duration: Duration(milliseconds: 300), curve: Curves.linear);
     //                           }
@@ -126,40 +131,110 @@ class Body extends StatelessWidget {
                           children: [
                             Container(
                               child: Text(
-                                "${user.name},  ${user.age}", 
-                                style: TextStyle(fontSize: 24, fontFamily: 'Proxima-Nova_Extrabold', fontWeight: FontWeight.bold),
+                                "${user.name}  ${user.age}", 
+                                style: TextStyle(fontSize: 24, fontFamily: 'Proxima-Nova_Extrabold', fontWeight: FontWeight.bold,  ),
                                 ),
                             ),
-                            SizedBox(width: 10,),
-                            ClipOval(
+                            SizedBox(width: 5,),
+                            user.online ==true? ClipOval(
                               child: Container(
-                                height: 10,
-                                width: 10,
+                                height: 8,
+                                width: 8,
                                 decoration: BoxDecoration(color: Colors.green),
                               ),
                               
-                            )
+                            ):const SizedBox(),
+                            //Icon( Icons.verified, color: user.verified == 'verified'? Colors.blue: Colors.blue )
                           ],
                         ),
-                      
                         SizedBox(height: 10,),
+                        user.verified!=null? SizedBox(
+                          child: Row(
+                            children: [
+                              //Icon(Icons.verified,color: Colors.blue, size:18,),
+                              TagHelper.getTag(name: user.verified!, size: 20),
+                              SizedBox(width: 7,),
+                              Text(user.verified! ,style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
+                            ],
+                          ),
+                        ):SizedBox(),
                       
-                        Container(
-                          child: Text(
-                            'Flutter developer at my own startup ',
-                            style: TextStyle(fontSize: 14, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),
-                            ),
+                        SizedBox(height:user.verified!=null? 5:0,),
+                        
+               user.height !=null ? SizedBox(
+                          child: Row(
+                            children: [
+                              Icon(FontAwesomeIcons.ruler, size: 16,color:Colors.grey),
+                              SizedBox(width: 7,),
+                              Text('${user.height}cm',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),)
+                              
+                            ],
+                          ),
+                        ):SizedBox(),
+
+                        SizedBox(height: user.height!=null?5:0,),
+
+               user.jobTitle !=null || user.company!=null? SizedBox(
+                          child: Row(
+                            children: [
+                              Icon(Icons.work, size: 18,color:Colors.grey),
+                              SizedBox(width: 7,),
+                              user.jobTitle !=null && user.company!=null? Text('${user.jobTitle} at ${user.company}',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),):
+                              Text(user.jobTitle !=null?'${user.jobTitle}':'${user.company}',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),)
+                              ,
+
+                            ],
+                          ),
+                        ):SizedBox(),
+
+                        
+                      
+                        // Container(
+                        //   child: Text(
+                        //     'Flutter developer at my own startup ',
+                        //     style: TextStyle(fontSize: 14, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),
+                        //     ),
+                        // ),
+                        SizedBox(height: 5,),
+                        user.school!=null?SizedBox(
+                          child: Row(
+                            children: [
+                              Icon(LineIcons.graduationCap, color: Colors.grey, size: 18,  ),
+                              SizedBox(width: 7,),
+                              Text(user.school!, style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),)
+                            ],
+                          ),
+                        ):SizedBox(),
+                        
+                        SizedBox(height: user.school!=null? 5:0,),
+                        SizedBox(
+                          child: Row(
+                            children: [
+                              Icon(Icons.home,color: Colors.grey, size:18,),
+                              SizedBox(width: 7,),
+                              Text(user.country!,style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 10,),
+
+                        SizedBox(height: 5,),
                       
-                        Container(
+
+                      
+                       profileFrom != ProfileFrom.profile? Container(
                           child: 
-                          Text(
-                            '0 km',
-                            //'${ calculateDistance(profileState.user.location!, user.location!) }km away ',
-                            style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),
-                            ),
-                        ),
+                          Row(
+                            children: [
+                              Icon(Icons.location_pin, color: Colors.grey,size: 18,),
+                              SizedBox(width: 7,),
+                              Text(
+                                
+                                distance == 0? 'less than a km away' :'${distance}km away',
+                                style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),
+                                ),
+                            ],
+                          ),
+                        ):SizedBox(),
                       
                         SizedBox(height: 15,),
     
@@ -172,14 +247,14 @@ class Body extends StatelessWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(LineIcons.glassCheers),
+                                  TagHelper.getLookingFor(user.lookingFor!)[0],
                                   SizedBox(width: 10,),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text('Looking for', style: Theme.of(context).textTheme.bodySmall,),
                                       //Text(user.lookingFor?.replaceAll('\n', '') ?? 'Someone to love', style: Theme.of(context).textTheme.bodyLarge,)
-                                      Text( LookingForItem.lookignForOpt[user.lookingFor ?? 0].replaceAll('\n', '') )
+                                      Text( TagHelper.getLookingFor(user.lookingFor ?? 0 )[1].replaceAll('\n', ''))
                                     ],
                                   )
                                 ],
@@ -203,13 +278,15 @@ class Body extends StatelessWidget {
                           width: size.width * 0.85,
                           child: Text(
                             user.aboutMe ?? '-',
-                            style: Theme.of(context).textTheme.bodySmall
+                            style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13, fontWeight: FontWeight.w300)
                             
                            // TextStyle(fontFamily: 'Proxima-Nova-Bold',fontWeight: FontWeight.w300,),
                            //style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13),
                             ),
                         ),
                         SizedBox(height: 30,),
+
+                        const Divider(),
                       
                         Container(
                           child: Text(
@@ -229,13 +306,15 @@ class Body extends StatelessWidget {
                               //height: 35,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(20),
-                                color: index.isEven ? Color(0xFF12B2B2).withOpacity(0.25) : Color(0xFF9933FF).withOpacity(0.25),
+                                //color: index.isEven ? Color(0xFF12B2B2).withOpacity(0.25) : Color(0xFF9933FF).withOpacity(0.25),
+                                border: Border.all(width:1, color: Colors.grey)
                               ),
                               padding: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                              child: Text(user.interests[index], 
+                              child: Text(
+                                user.interests[index], 
                               style: TextStyle(
                                 fontWeight: FontWeight.w300, 
-                                fontSize: 13
+                                fontSize: 12
                                 
                                 )
                                 ,),
@@ -244,16 +323,81 @@ class Body extends StatelessWidget {
                         ),
                   
                   
-                        SizedBox(height: 30,),
-                      
-                        Container(
-                          child: Text(
-                                "Instagram", 
-                                style: TextStyle(fontSize: 20, fontFamily: 'Proxima-Nova-Bold',  fontWeight: FontWeight.w400
-                        ),
+                        SizedBox(height: 20,),
+
+                        user.education !=null? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Divider(),
+
+                             Container(
+                              child: const Text(
+                                    "Basics", 
+                                    style: TextStyle(fontSize: 20, fontFamily: 'Proxima-Nova-Bold', fontWeight: FontWeight.w400
+                            ),
+                                    ),
+                            ),
+                            const SizedBox(height: 20,),
+
+                            SizedBox(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(width: 1, color: Colors.grey)
                                 ),
+                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(LineIcons.graduationCap, size: 18 , color: Colors.grey),
+                                    SizedBox(width: 5,),
+                                    Text(
+                                      user.education??'',
+                                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ):SizedBox(),
+                        
+                      
+                        // Container(
+                        //   child: Text(
+                        //         "Instagram", 
+                        //         style: TextStyle(fontSize: 20, fontFamily: 'Proxima-Nova-Bold',  fontWeight: FontWeight.w400
+                        // ),
+                        //         ),
+                        // ),
+                        SizedBox(height: 20,),
+                        Divider(),
+                        SizedBox(
+                          width: double.infinity,
+                          child: GestureDetector(
+                            onTap: (){
+
+                            },
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text('Report ${user.name}', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18) ,textAlign: TextAlign.center, ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom:8.0),
+                                  child: Text('Don\'t worry-we won\'t tell them.', style: Theme.of(context).textTheme.bodySmall,),
+                                )
+                              ],
+                            ),
+                          ),
                         ),
-                        SizedBox(height: 400,),
+                        const Divider(),
+
+                        SizedBox(height: 50,),
+
                       ],
                     ),
                   ),
@@ -288,10 +432,10 @@ class Body extends StatelessWidget {
                               height: 50,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.white,
+                                color: isDark? Colors.grey[900]: Colors.white,
                                 boxShadow: [
                                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
+                    color:isDark? Colors.black.withOpacity(0.3): Colors.grey.withOpacity(0.3),
                     spreadRadius: 5,
                     blurRadius: 10,
                                   )
@@ -326,10 +470,10 @@ class Body extends StatelessWidget {
                                 height: 40,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.white,
+                                  color:isDark? Colors.grey[900]: Colors.white,
                                   boxShadow: [
                                     BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
+                      color: isDark? Colors.black.withOpacity(0.3): Colors.grey.withOpacity(0.3),
                       spreadRadius: 5,
                       blurRadius: 10,
                                     )
@@ -378,10 +522,10 @@ class Body extends StatelessWidget {
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white,
+                color: isDark? Colors.grey[900]: Colors.white,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
+                    color: isDark? Colors.black.withOpacity(0.3): Colors.grey.withOpacity(0.3),
                     spreadRadius: 5,
                     blurRadius: 10,
                   )

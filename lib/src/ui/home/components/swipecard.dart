@@ -34,7 +34,7 @@ class SwipeCard extends StatelessWidget {
           if(state.users.isEmpty ){
             Future.delayed(Duration(seconds: 2),(){
 
-             context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
+             context.read<SwipeBloc>().add(SwipeEnded(completedTime: state.completedTime??DateTime.now()));
              });
           }
           //state.users.forEach((user)
@@ -105,8 +105,13 @@ class SwipeCard extends StatelessWidget {
                       child: SwipeCards(
                         matchEngine: _matchEngine, 
                         onStackFinished: (){
+                          if(state.loadFor == LoadFor.daily){
+                            context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
+
+                          }else{
                       
-                          context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
+                          context.read<SwipeBloc>().add(SwipeEnded(completedTime: state.completedTime));
+                          }
                         }, 
                         itemBuilder: (context, index){
                           print('>>>>.>>>>>>>>>>>>>>>>>>>${index}');

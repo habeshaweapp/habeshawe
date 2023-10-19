@@ -1074,7 +1074,7 @@ Future<void> createDemoUsers(List<User> users) async{
     List<User> users = await query
       .where('lookingFor', isEqualTo: my.lookingFor)
       .where('interests', arrayContainsAny: my.interests )
-      .where('number', isGreaterThanOrEqualTo: random)
+      .where('number', isGreaterThan: random)
       .limit(30)
       .get().then((value) => 
       value.docs.map((doc) => User.fromSnapshoot(doc)).toList()
@@ -1227,11 +1227,7 @@ Future<void> createDemoUsers(List<User> users) async{
         .doc(userId)
         .collection('matches')
         .doc(matchUser.id)
-        .update({
-          'imageUrls': [],
-          'unMatched': true,
-
-        });
+        .delete();
       
     } catch (e) {
       
@@ -1328,6 +1324,33 @@ Future<void> createDemoUsers(List<User> users) async{
       
     }
   }
+
+  reportMatch({required String userId, required Gender gender,required UserMatch reportedUser, required int index, 
+              required String reportName, required String description})async {
+
+                try {
+                  await _firebaseFirestore.collection('report')
+                        
+                        .add({
+                          'reportName': reportName,
+                          'reportIndex': index,
+                          'description': description,
+                          'reportedBy': {'id': userId,'gender':gender.name},
+                          'reportedUser': {'id': reportedUser.id,'gender':reportedUser.gender},
+                          'timestamp': FieldValue.serverTimestamp()
+                        });
+
+                  _firebaseFirestore.collection(gender.name)
+                    .doc(userId)
+                    .collection('matches')
+                    .doc(reportedUser.id)
+                    .delete();
+
+                  
+                } catch (e) {
+                  throw Exception(e);
+                }
+              }
 
 }
 

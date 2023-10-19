@@ -88,3 +88,26 @@ class UnMatch extends ChatEvent{
   // TODO: implement props
   List<Object> get props => [userId, gender, matchUser];
 }
+
+class ReportMatch extends ChatEvent{
+  final String userId;
+  final Gender gender;
+  final UserMatch matchUser;
+  final int index;
+  final String reportName;
+  final String description;
+
+  const ReportMatch({
+    required this.userId,
+    required this.gender,
+    required this.matchUser,
+    required this.index,
+    required this.reportName,
+    required this.description
+  });
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [userId, gender, matchUser, index, reportName, description];
+
+}

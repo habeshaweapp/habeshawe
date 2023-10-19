@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
+import 'package:slide_countdown/slide_countdown.dart';
 
 import '../../../Blocs/AdBloc/ad_bloc.dart';
 import '../../../Blocs/ThemeCubit/theme_cubit.dart';
@@ -16,119 +17,161 @@ class SwipeCompletedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final now =DateTime.now();
-    final remain  = now.difference(state.completedTime?? now);
-    return  Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
+    Duration remain;
+    if(state.completedTime == null){
+      remain = Duration();
+    }else
+    if(state.loadFor == LoadFor.daily){
+      remain = const Duration(hours: 24);
       
-                children: [
-                  Text('Thats it for today \ncome back Tomorrow!'),
-                  Text(
-                    '${remain.inHours}:${remain.inMinutes}:${remain.inSeconds} remains',
-                    style: Theme.of(context).textTheme.bodyLarge,
+    }else{
+      var diff = now.difference(state.completedTime!);
+      remain = Duration(seconds: 86400 - diff.inSeconds, );
 
-                  ),
+    }
+    
+    // var remain2  =state.completedTime ==null? Duration(seconds: 60) : Duration(seconds: 60 - now.difference(state.completedTime!).inSeconds);
+    // if(state.completedTime != null){
+    //   var isLong =now.difference(state.completedTime!).inSeconds;
+    //   if(now.difference(state.completedTime!).inSeconds <3) remain = const Duration(seconds: 60);
+    // }
 
-                  SizedBox(height: 25,),
-                  ElevatedButton(
-                    onPressed: (){
-                      context.read<SwipeBloc>().add(LoadUsers(
-                        userId: context.read<AuthBloc>().state.user!.uid, 
-                        users: context.read<AuthBloc>().state.accountType!,
-                        user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
-                        prefes: (context.read<UserpreferenceBloc>().state as UserPreferenceLoaded).userPreference
-                        ));
-                    }, 
-                    child: Text('get Matches')
-                    
+    return  SizedBox(
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        
+                  children: [
+                    // Text('Thats it for today \ncome back Tomorrow!'),
+                    // Text(
+                    //   '${remain.inHours}:${remain.inMinutes}:${remain.inSeconds} remains',
+                    //   style: Theme.of(context).textTheme.bodyLarge,
+    
+                    // ),
+                    SizedBox(height:45),
+    
+                     SlideCountdownSeparated(
+                      duration: remain,
+                      height: 60,
+                      width: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[600],
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      textStyle: TextStyle(fontSize: 25, color: Colors.white),
+                      padding: EdgeInsets.all(10),
+                     
                     ),
+                    SizedBox(height: 15,),
+                    Text('Thats it for today \ncome back Tomorrow!',
+                        style: Theme.of(context).textTheme.bodySmall,
+                        textAlign: TextAlign.center,
+                    ),
+    
+                    const SizedBox(height: 25,),
+                    const Divider(),
+                    const SizedBox(height: 25,),
 
                     ElevatedButton(
                       onPressed: (){
-                        if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                          context.read<AdBloc>().add(ShowRewardedAd());
-                        
-                          context.read<SwipeBloc>().add(LoadUserAd(
+                        context.read<SwipeBloc>().add(LoadUsers(
                           userId: context.read<AuthBloc>().state.user!.uid, 
                           users: context.read<AuthBloc>().state.accountType!,
-                          discoverBy: DiscoverBy.online,
-                          limit: 1
+                          user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
+                          prefes: (context.read<UserpreferenceBloc>().state as UserPreferenceLoaded).userPreference
                           ));
-
-                        }
-
                       }, 
-
-
-
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                          Icon(Icons.video_collection),
-                          Text('Watch 10 Ads to get 1 queen user (${context.read<AdBloc>().state.adWatchedQueen }-watched)')
-                        ],),
-                      )
+                      child: Text('get Matches')
+                      
                       ),
-
-                  
-                  ElevatedButton(
-                      onPressed: (){
-                        if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                          context.read<AdBloc>().add(ShowRewardedAd());
-                        
-                          context.read<SwipeBloc>().add(LoadUserAd(
-                          userId: context.read<AuthBloc>().state.user!.uid, 
-                          users: context.read<AuthBloc>().state.accountType!,
-                          discoverBy: DiscoverBy.online,
-                          limit: 1
-                          ));
-
-                        }
-
-                        if(context.read<AdBloc>().state.reward!.amount >= 50){
-
-                          context.read<SwipeBloc>().add(LoadUserAd(
-                          userId: context.read<AuthBloc>().state.user!.uid, 
-                          users: context.read<AuthBloc>().state.accountType!,
-                          discoverBy: DiscoverBy.online,
-                          limit: 1
-                          ));
-
-
-                        }
-
-                      }, 
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          //mainAxisSize: MainAxisSize.min,
-                          children: [
-                          Icon(Icons.video_collection),
-                          Text('Watch an Ad get 1 online user')
-                        ],),
-                      )
-                      ),
-
-
-                  
-                  
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: FloatingActionButton(
+    
+                      ElevatedButton(
                         onPressed: (){
-                          showPrefesSheet(context: context);
-                        },
-                        child: Icon(Icons.settings),
+                          if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                            context.read<AdBloc>().add(ShowRewardedAd());
+                          
+                            context.read<SwipeBloc>().add(LoadUserAd(
+                            userId: context.read<AuthBloc>().state.user!.uid, 
+                            users: context.read<AuthBloc>().state.accountType!,
+                            discoverBy: DiscoverBy.online,
+                            limit: 1
+                            ));
+    
+                          }
+    
+                        }, 
+    
+    
+    
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                            Icon(Icons.video_collection),
+                            Text('Watch 10 Ads to get 1 queen user (${context.read<AdBloc>().state.adWatchedQueen }-watched)')
+                          ],),
+                        )
+                        ),
+    
+                    
+                    ElevatedButton(
+                        onPressed: (){
+                          if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                            context.read<AdBloc>().add(ShowRewardedAd());
+                          
+                            context.read<SwipeBloc>().add(LoadUserAd(
+                            userId: context.read<AuthBloc>().state.user!.uid, 
+                            users: context.read<AuthBloc>().state.accountType!,
+                            discoverBy: DiscoverBy.online,
+                            limit: 1
+                            ));
+    
+                          }
+    
+                          if(context.read<AdBloc>().state.reward!.amount >= 50){
+    
+                            context.read<SwipeBloc>().add(LoadUserAd(
+                            userId: context.read<AuthBloc>().state.user!.uid, 
+                            users: context.read<AuthBloc>().state.accountType!,
+                            discoverBy: DiscoverBy.online,
+                            limit: 1
+                            ));
+    
+    
+                          }
+    
+                        }, 
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            //mainAxisSize: MainAxisSize.min,
+                            children: [
+                            Icon(Icons.video_collection),
+                            Text('Watch an Ad get 1 online user')
+                          ],),
+                        )
+                        ),
+    
+    
+                    
+                    
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: FloatingActionButton(
+                          onPressed: (){
+                            showPrefesSheet(context: context);
+                          },
+                          child: Icon(Icons.settings),
+                        ),
                       ),
-                    ),
-                  )
-                ],
-              
-            );
+                    )
+                  ],
+                
+              ),
+    );
   }
 
 

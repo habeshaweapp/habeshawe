@@ -45,7 +45,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
 
     add(PaymentStarted());
 
-    paymentRepository.purchaseStream().listen((List<PurchaseDetails> purchaseDetailsList) { 
+    _purchaseSubscription= paymentRepository.purchaseStream().listen((List<PurchaseDetails> purchaseDetailsList) { 
         add(PurchaseUpdated(purchaseDetailsList: purchaseDetailsList));
     },onDone: (){
       _purchaseSubscription!.cancel();
@@ -121,30 +121,28 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
               await _paymentRepository.completePurchase(purchase);
               
 
-              if(subIds.contains(purchase.productID)){
+              if(purchase.productID == 'premium'){
                 SubscribtionStatus type = SubscribtionStatus.notSubscribed;
-                if(purchase.productID == 'monthly' ){
-                 type = SubscribtionStatus.subscribedMonthly;
-                }else if(purchase.productID == 'yearly'){
-                  type = SubscribtionStatus.subscribedYearly;
-                }else{
+                if(state.selectedProduct?.rawPrice == 99.99 ){
+                 type = SubscribtionStatus.subscribedYearly;
+                }else if(state.selectedProduct?.rawPrice == 49.99 ){
                   type = SubscribtionStatus.subscribed6Months;
+                }else{
+                  type = SubscribtionStatus.subscribedMonthly;
                 }
 
                 emit(state.copyWith(subscribtionStatus: type));
 
                 int add = 0;
-                if(payment.subscribtionStatus == SubscribtionStatus.subscribedMonthly.index){
+                if(type == SubscribtionStatus.subscribedMonthly){
                   add = 30;
-                }else if(payment.subscribtionStatus == SubscribtionStatus.subscribed6Months.index){
+                }else if(type == SubscribtionStatus.subscribed6Months){
                  add = 182;
-                 }else if(payment.subscribtionStatus == SubscribtionStatus.subscribedYearly.index){
+                 }else if(type == SubscribtionStatus.subscribedYearly){
                   add = 366;
                  }
                 var expireDate = DateTime.fromMillisecondsSinceEpoch(purchaseData['purchaseTime']);
-
                 var newExpireDate = expireDate.add(const Duration(minutes: 5));
-
                 _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: purchaseData, 
                 subscribtionStatus: type.index, paymentType: purchase.productID, expireDate: newExpireDate.millisecondsSinceEpoch );
               }
@@ -190,8 +188,14 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     // }
   }
 
-  FutureOr<void> _subscribe(Subscribe event, Emitter<PaymentState> emit) {
-    _paymentRepository.purchaseSubscription(event.product);
+  FutureOr<void> _subscribe(Subscribe event, Emitter<PaymentState> emit)async {
+    try{
+    await _paymentRepository.purchaseSubscription(event.product);
+    emit(state.copyWith(selectedProduct: event.product));
+
+    }catch(e){
+      print(e.toString());
+    }
   }
 
 

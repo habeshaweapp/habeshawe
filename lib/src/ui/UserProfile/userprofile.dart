@@ -60,7 +60,7 @@ class UserProfile extends StatelessWidget {
         child:  Icon(Icons.settings,
             color: isDark? Colors.white: Colors.black,
         ),
-        heroTag: null,
+        heroTag: 'settings',
         backgroundColor: isDark ? Colors.grey[800]: Colors.white,
         onPressed: () async{
 
@@ -211,6 +211,7 @@ class UserProfile extends StatelessWidget {
                               ));
                             
                           },
+                          heroTag: 'edit',
                           backgroundColor: isDark ? Colors.grey[800]: Colors.white,
                           child: Icon(
                             Icons.edit,

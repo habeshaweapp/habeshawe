@@ -6,9 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 part 'sharedpreference_state.dart';
 
-class SharedpreferenceCubit extends Cubit<SharedpreferenceState> {
+class SharedpreferenceCubit extends Cubit<Location> {
   late Position myLocation;
-  SharedpreferenceCubit() : super(SharedpreferenceInitial());
+  SharedpreferenceCubit() : super(const Location());
 
   Future<Position> getMyLocation() async{
     var loc = await  _determineLocation();

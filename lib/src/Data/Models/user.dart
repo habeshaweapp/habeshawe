@@ -23,6 +23,10 @@ class User extends Equatable {
   final String? verified;
   final String? country;
   final String? countryCode;
+  final bool? online;
+  final DateTime? lastseen;
+  final int? height;
+  final String? city;
 
   const User({
     required this.id,
@@ -43,7 +47,11 @@ class User extends Equatable {
      this.geohash,
      this.verified,
      this.country,
-     this.countryCode
+     this.countryCode,
+     this.online,
+     this.lastseen,
+     this.height,
+     this.city,
   });
 
   @override
@@ -66,11 +74,16 @@ class User extends Equatable {
         geohash,
         verified,
         country,   
-        countryCode
+        countryCode,
+        online,
+        lastseen,
+        height,
+        city
       ];
 
   factory User.fromSnapshoot(DocumentSnapshot snap){
     try {
+      var map = snap.data() as Map<String, dynamic>;
   return User(
     id: snap.id,  
     name: snap['name'],
@@ -88,9 +101,14 @@ class User extends Equatable {
     jobTitle: snap['jobTitle'] ,
     lookingFor: snap['lookingFor'],
     geohash: snap['geohash'],
-    verified: (snap.data() as Map<String, dynamic>).containsKey('verified') ? snap['verified'] : null,
+    verified: map.containsKey('verified') ? snap['verified'] : null,
     country: snap['country'],
-    countryCode: snap['countryCode']
+    countryCode: snap['countryCode'],
+    online: map.containsKey('online')? snap['online']:null,
+    lastseen: map.containsKey('lastseen')? snap['lastseen']?.toDate() :null,
+    height: map.containsKey('height')? snap['height']:null,
+    city: map.containsKey('city')? snap['city']:null,
+
   );
 } on Exception catch (e) {
   // TODO
@@ -143,7 +161,11 @@ class User extends Equatable {
       'geohash': geohash,
       'verified': verified,
       'country': country,
-      'countryCode': countryCode
+      'countryCode': countryCode,
+      'online': online,
+      'lastseen': lastseen,
+      'city': city,
+      'height': height
     };
   }
 
@@ -167,7 +189,11 @@ class User extends Equatable {
       'geohash': geohash,
       'verified': verified,
       'country': country,
-      'countryCode': countryCode
+      'countryCode': countryCode,
+      'online': online,
+      'lastseen': lastseen?.toIso8601String(),
+      'city': city,
+      'height': height
     };
   }
 
@@ -190,7 +216,11 @@ class User extends Equatable {
     String? geohash,
     String? verified,
     String? country,
-    String? countryCode
+    String? countryCode,
+    bool? online,
+    DateTime? lastseen,
+    int? height,
+    String? city,
 
   }){
     return User(
@@ -212,7 +242,11 @@ class User extends Equatable {
       geohash: geohash ?? this.geohash,
       verified: verified ?? this.verified,
       country: country ?? this.country,
-      countryCode: countryCode ?? this.countryCode
+      countryCode: countryCode ?? this.countryCode,
+      online: online?? this.online,
+      lastseen: lastseen??this.lastseen,
+      city: city?? this.city,
+      height: height?? height
     );
   }
 
@@ -241,7 +275,11 @@ factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
     geohash: snap['geohash'],
     verified: snap.containsKey('verified') ? snap['verified'] : null,
     country: snap['country'],
-    countryCode: snap['countryCode']
+    countryCode: snap['countryCode'],
+    online:  snap['online'],
+    lastseen: snap['lastseen'],
+    height:  snap['height'],
+    city: snap['city']
   );
 } on Exception catch (e) {
   // TODO
@@ -275,7 +313,11 @@ factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
     geohash: snap['geohash'],
     verified: snap.containsKey('verified') ? snap['verified'] : null,
     country: snap['country'],
-    countryCode: snap['countryCode']
+    countryCode: snap['countryCode'],
+    online:  snap['online'],
+    lastseen: DateTime.parse(snap['lastseen']),
+    height:  snap['height'],
+    city: snap['city']
   );
 } on Exception catch (e) {
   // TODO

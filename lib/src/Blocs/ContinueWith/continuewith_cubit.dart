@@ -23,7 +23,8 @@ class ContinuewithCubit extends Cubit<ContinuewithState> {
         ));
         
       }on Exception catch (e) {
-        print(e.toString());
+        emit(state.copyWith(status: ContinueStatus.error));
+        throw e;
         
       }
 

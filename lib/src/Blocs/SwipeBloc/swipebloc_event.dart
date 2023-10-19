@@ -10,9 +10,9 @@ abstract class SwipeEvent extends Equatable {
 class LoadUsers extends SwipeEvent{
   final String userId;
   final Gender users;
-  final User user;
-  final UserPreference prefes;
-   LoadUsers({required this.userId, required this.users, required this.user, required this.prefes });
+  final User? user;
+   UserPreference? prefes;
+   LoadUsers({required this.userId, required this.users,  this.user,  this.prefes });
 
   @override
   List<Object?> get props => [userId, users];
@@ -49,8 +49,8 @@ class SwipeRightEvent extends SwipeEvent{
 }
 
 class SwipeEnded extends SwipeEvent{
-  final DateTime completedTime;
-  SwipeEnded({required this.completedTime});
+  final DateTime? completedTime;
+  SwipeEnded({ this.completedTime});
 
   @override
   // TODO: implement props
@@ -76,4 +76,13 @@ class LoadUserAd extends SwipeEvent{
 
   @override
   List<Object?> get props => [userId, users,discoverBy,limit];
+}
+
+class AdSwipeEnded extends SwipeEvent{
+  final DateTime? completedTime;
+  AdSwipeEnded({ this.completedTime});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [completedTime];
 }

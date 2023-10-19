@@ -10,7 +10,8 @@ class PaymentState extends Equatable {
     this.productDetails = const [],
     this.purchaseDetails,
     this.boosts,
-    this.superLikes
+    this.superLikes,
+    this.selectedProduct
   });
 
   final SubscribtionStatus subscribtionStatus;
@@ -18,6 +19,7 @@ class PaymentState extends Equatable {
   final List<PurchaseDetails>? purchaseDetails;
   final int? boosts;
   final int? superLikes;
+  final ProductDetails? selectedProduct;
 
 
   PaymentState copyWith({
@@ -25,7 +27,8 @@ class PaymentState extends Equatable {
     List<ProductDetails>? productDetails,
     List<PurchaseDetails>? purchaseDetails,
     int? boosts,
-    int? superLikes
+    int? superLikes,
+    ProductDetails? selectedProduct
 
   }){
     return PaymentState(
@@ -33,12 +36,13 @@ class PaymentState extends Equatable {
       subscribtionStatus: subscribtionStatus ?? this.subscribtionStatus,
       purchaseDetails: purchaseDetails ?? this.purchaseDetails,
       boosts: boosts ?? this.boosts,
-      superLikes: superLikes ?? this.superLikes
+      superLikes: superLikes ?? this.superLikes,
+      selectedProduct: selectedProduct??this.selectedProduct
     );
   }
   
   @override
-  List<Object?> get props => [subscribtionStatus, productDetails, purchaseDetails,boosts,superLikes];
+  List<Object?> get props => [subscribtionStatus, productDetails, purchaseDetails,boosts,superLikes, selectedProduct];
 }
 
 class PaymentInitial extends PaymentState {}

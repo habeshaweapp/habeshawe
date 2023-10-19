@@ -23,7 +23,7 @@ class Settings extends StatelessWidget {
       appBar: AppBar(
        systemOverlayStyle: SystemUiOverlayStyle(
         systemNavigationBarColor: isDark ? Colors.grey[900] : Colors.white,
-        systemNavigationBarIconBrightness: isDark? Brightness.dark: Brightness.light,
+        systemNavigationBarIconBrightness: isDark? Brightness.light: Brightness.dark,
       ),
         title: Text('Settings', style: TextStyle( fontWeight: FontWeight.w400, fontSize: 17),),
         //backgroundColor: Colors.transparent,

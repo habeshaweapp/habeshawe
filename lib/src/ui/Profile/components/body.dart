@@ -212,7 +212,7 @@ class Body extends StatelessWidget {
                             children: [
                               Icon(Icons.home,color: Colors.grey, size:18,),
                               SizedBox(width: 7,),
-                              Text(user.country!,style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
+                              Text(user.country??'',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
                             ],
                           ),
                         ),
@@ -247,7 +247,7 @@ class Body extends StatelessWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  TagHelper.getLookingFor(user.lookingFor!)[0],
+                                  TagHelper.getLookingFor(user.lookingFor??0)[0],
                                   SizedBox(width: 10,),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,

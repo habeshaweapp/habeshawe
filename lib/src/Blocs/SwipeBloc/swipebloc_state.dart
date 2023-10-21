@@ -1,7 +1,7 @@
 part of 'swipebloc_bloc.dart';
 
 enum SwipeStatus{initial, loading, loaded, completed, itsamatch,error }
-enum LoadFor{daily, ad }
+enum LoadFor{daily, ad,adOnline, adNearby, adRandom, adPrincess, adQueen }
 
 class SwipeState extends Equatable {
   const SwipeState({
@@ -69,17 +69,27 @@ class SwipeState extends Equatable {
   }
 
   factory SwipeState.fromJson(Map<String, dynamic> json){
-    List<User> users = json['users'].map((user) => User.fromMap(user)).toList();
-    List<User> boosted = json['boostedUsers'].map((user) => User.fromMap(user)).toList();
+    try{
+      
+    var usersMap = json['users'] as List;
+    var boostedMap = json['boostedUsers'] as List;
+    List<User> users = usersMap.map(( user ) => User.fromMap(user)).toList() ;
+    List<User> boosted = boostedMap.map((user) => User.fromMap(user )).toList();
+    
     return SwipeState(
-      swipeStatus: SwipeStatus.values[ json['swipeStatus']],
+      swipeStatus: SwipeStatus.values[json['swipeStatus'] as int],
       users: users,
-      completedTime: DateTime.parse(json['completedTime']),
-      matchedUser: User.fromMap(json['matchedUser']),
+      completedTime: json['completedTime'] == null?null: DateTime.parse(json['completedTime'] as String),
+      matchedUser: json['matchedUser'] == null?null: User.fromMap(json['matchedUser'] as Map<String, dynamic>),
       boostedUsers: boosted,
-      loadFor: LoadFor.values[json['loadFor']]
+      loadFor: json['loadFor'] == null?null: LoadFor.values[json['loadFor'] as int]
       
     );
+
+    }catch(e){
+      print(e);
+      return SwipeState();
+    }
   }
 
   @override

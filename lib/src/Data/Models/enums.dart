@@ -5,4 +5,4 @@ enum PaymentUi{subscription, boosts, superlikes}
 
 enum ProfileFrom{swipe, like, profile}
 
-enum DiscoverBy{habeshawelogic, preference, nearby, online}
+enum DiscoverBy{habeshawelogic, preference, nearby, online, }

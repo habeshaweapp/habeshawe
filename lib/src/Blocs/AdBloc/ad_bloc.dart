@@ -132,6 +132,7 @@ class AdBloc extends Bloc<AdEvent, AdState> {
 
   FutureOr<void> _onShowRewardedAd(ShowRewardedAd event, Emitter<AdState> emit) {
     if(state.rewardedAd != null){
+      //emit(state.copyWith(rewardedAdType: null));
       state.rewardedAd!.fullScreenContentCallback =FullScreenContentCallback(
         onAdShowedFullScreenContent: (ad) =>
           print('ad onAdshowedflullscreencontent'),
@@ -151,22 +152,29 @@ class AdBloc extends Bloc<AdEvent, AdState> {
         onUserEarnedReward: (AdWithoutView ad, RewardItem reward){
           //emit(state.copyWith(reward: reward));
           print('*********************************************');
-          add(RewardEarned(reward:reward));
+          add(RewardEarned(reward:reward, adType: event.adType));
           
         });
 
-     
-      emit(state.copyWith(rewardedAd: null,isLoadedRewardedAd: false, reward: null));
+      if(event.adType == AdType.rewardedPrincess){
+        emit(state.copyWith(rewardedAd: null,isLoadedRewardedAd: false, reward: null,adWatchedPrincess: state.adWatchedPrincess! +1 ));
+
+      }else if(event.adType == AdType.rewardedQueen){
+
+        emit(state.copyWith(rewardedAd: null,isLoadedRewardedAd: false, reward: null, adWatchedQueen: state.adWatchedQueen! +1 ));
+
+      }
+      
       add(LoadRewardedAd());
     }
   }
 
   FutureOr<void> _onRewardEarned(RewardEarned event, Emitter<AdState> emit) {
-    emit(state.copyWith(reward: event.reward, adWatchedQueen:state.adWatchedQueen! + event.reward.amount  ));
+    emit(state.copyWith(reward: event.reward,  rewardedAdType: event.adType  ));
   }
 
   FutureOr<void> _onResetReward(ResetReward event, Emitter<AdState> emit) {
-    emit(state.copyWith(reward: null));
+    emit(state.copyWith(reward: null, rewardedAdType: null));
   }
 
   FutureOr<void> _onInterstitialAdFailedToLoad(InterstitialAdFailedToLoad event, Emitter<AdState> emit) {

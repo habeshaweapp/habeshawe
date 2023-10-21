@@ -91,7 +91,7 @@ class Body extends StatelessWidget {
                                     //var subscribtion = context.read<PaymentBloc>().state.subscribtionStatus;
                                     if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
                                       if(context.read<AdBloc>().state.isLoadedRewardedAd ==true){
-                                       context.read<AdBloc>().add(ShowRewardedAd());
+                                       context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedOnline));
                                        Navigator.push(context, MaterialPageRoute(
                                                 builder: (ctx) =>
                                                     BlocProvider.value(value: context.read<ProfileBloc>(),

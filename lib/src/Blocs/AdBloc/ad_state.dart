@@ -1,5 +1,6 @@
 part of 'ad_bloc.dart';
 
+enum AdType {rewardedNearby, rewardedOnline, rewardedQueen, rewardedPrincess, rewardedRandom }
 class AdState extends Equatable {
   const AdState({
     this.rewardedAd,
@@ -12,7 +13,9 @@ class AdState extends Equatable {
     this.numRewardedLoadAttempts = 0,
     this.isLoadedInterstitialAd = false,
     this.reward,
-    this.adWatchedQueen=0
+    this.adWatchedQueen=0,
+    this.rewardedAdType,
+    this.adWatchedPrincess =0
 
   });
 
@@ -27,6 +30,8 @@ class AdState extends Equatable {
   final int numNativeLoadAttempts;
   final RewardItem? reward;
   final num? adWatchedQueen;
+  final int? adWatchedPrincess;
+  final AdType? rewardedAdType;
 
 
   AdState copyWith({
@@ -40,7 +45,9 @@ class AdState extends Equatable {
     int? numNativeLoadAttempts,
     int? numRewardedLoadAttempts,
     RewardItem? reward,
-    num? adWatchedQueen
+    num? adWatchedQueen,
+    AdType? rewardedAdType,
+    int? adWatchedPrincess
   }){
     return AdState(
       rewardedAd: rewardedAd ?? this.rewardedAd,
@@ -53,12 +60,14 @@ class AdState extends Equatable {
       numRewardedLoadAttempts: numRewardedLoadAttempts ?? this.numRewardedLoadAttempts,
       isLoadedInterstitialAd: isLoadedInterstitialAd ?? this.isLoadedInterstitialAd,
       reward: reward??this.reward,
-      adWatchedQueen: adWatchedQueen??this.adWatchedQueen
+      adWatchedQueen: adWatchedQueen??this.adWatchedQueen,
+      rewardedAdType: rewardedAdType?? this.rewardedAdType,
+      adWatchedPrincess: adWatchedPrincess?? this.adWatchedPrincess
     );
   }
   
   @override
-  List<Object?> get props => [rewardedAd, nativeAd,isLoadedNativeAd,isLoadedRewardedAd, isLoadedInterstitialAd,interstitialAd, numInterstitialLoadAttempts,numNativeLoadAttempts,numRewardedLoadAttempts, reward,adWatchedQueen];
+  List<Object?> get props => [rewardedAd, nativeAd,isLoadedNativeAd,isLoadedRewardedAd, isLoadedInterstitialAd,interstitialAd, numInterstitialLoadAttempts,numNativeLoadAttempts,numRewardedLoadAttempts, reward,adWatchedQueen, rewardedAdType, adWatchedPrincess ];
 }
 
 class AdInitial extends AdState {}

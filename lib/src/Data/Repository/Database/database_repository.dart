@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_geo_hash/geohash.dart' as geohash;
 import 'package:geocoding_platform_interface/src/models/placemark.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:lomi/src/Blocs/SwipeBloc/swipebloc_bloc.dart';
 
 import 'package:lomi/src/Data/Models/chat_model.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
@@ -685,7 +687,8 @@ class DatabaseRepository extends BaseDatabaseRepository{
   // TODO
   throw Exception(e);
 }
-  }
+
+}
   
   @override
   Future<List<User>> getUsersBasedonNearBy(String userId, Gender users)async {
@@ -1287,7 +1290,7 @@ Future<void> createDemoUsers(List<User> users) async{
       );
       List<User> users = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
                       .where('online', isEqualTo: true)
-                      .limit(30)
+                      .limit(limit!)
                       .get()
                       
                       .then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
@@ -1295,7 +1298,7 @@ Future<void> createDemoUsers(List<User> users) async{
       users.removeWhere((user) => viewedIds.contains(user.id));
       List<User> recentUsers =[];
 
-      if(users.length <10){
+      if(users.length <limit){
         recentUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
                       .orderBy('lastSeen', descending: true)
                       .limit(30)
@@ -1351,6 +1354,67 @@ Future<void> createDemoUsers(List<User> users) async{
                   throw Exception(e);
                 }
               }
+
+    FutureOr<User> getRandomMatch({required String userId, required Gender gender}) async {
+    try {
+      final noOfUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name).count().get().then((value) => value.count, onError: (e)=>print('error counting'));
+      var random = Random().nextInt(noOfUsers); 
+      random = 25;
+    
+      return await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
+              .where('number', isGreaterThanOrEqualTo:random )
+              .limit(1)
+              .get().then((snap) { 
+                var result =  snap.docs;
+                return User.fromSnapshoot(result.first);
+                 });
+      
+    } catch (e) {
+      throw e;
+      
+    }
+
+  }
+
+  Future<User>getQueen({required String userId, required Gender gender}) async{
+    try {
+   
+        final noOfQueens = await _firebaseFirestore.collection(gender == Gender.women? 'queens' : 'kings').count().get().then((value) => value.count, onError: (e)=>print('error counting'));
+        var rand = Random().nextInt(noOfQueens);
+        return await _firebaseFirestore.collection('queens')
+                .where('queenNumber', isGreaterThanOrEqualTo: rand)
+                .get().then((value) => User.fromSnapshoot(value.docs.first));
+
+
+   
+
+
+      
+    } catch (e) {
+      throw e;
+      
+    }
+  }
+
+  Future<User>getPrincess({required String userId, required Gender gender}) async{
+    try {
+      final noOfUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name)
+      .where('verified', isEqualTo: gender == Gender.men? 'gentlemen': 'princess' )
+      .count().get().then((value) => value.count, onError: (e)=>print('error counting'));
+      var random = Random().nextInt(noOfUsers);
+      String field = gender == Gender.men? 'gentlemenNumber': 'princessNumber';
+
+      return await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name)
+                      .where(field, isGreaterThanOrEqualTo: random)
+                      .get()
+                      .then((value) => User.fromSnapshoot(value.docs.first));
+      
+      
+    } catch (e) {
+      throw e;
+      
+    }
+  }
 
 }
 

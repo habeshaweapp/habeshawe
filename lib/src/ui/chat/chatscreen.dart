@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -95,7 +96,10 @@ class ChatScreen extends StatelessWidget {
                       ;
 
                     }else{
-                      return Text('updating...');
+                      return Text('updating...',
+                          style: TextStyle(color: Colors.grey, fontSize: 12
+                          ),
+                      );
                     }
 
 
@@ -136,6 +140,10 @@ class ChatScreen extends StatelessWidget {
           
           icon: Icon(Icons.more_vert, color: isDark? Colors.white : Colors.black ))
        ],
+       systemOverlayStyle: SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.white,
+        systemNavigationBarIconBrightness: Brightness.dark,
+      ),
       ),
       body: Body(userMatch),
 

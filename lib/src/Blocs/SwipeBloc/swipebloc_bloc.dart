@@ -49,6 +49,12 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     on<LoadUserAd>(_onLoadUserAd);
     on<AdSwipeEnded>(_onAdSwipeEnded);
 
+    if(state.completedTime == null && state.users.isEmpty){
+      add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!));
+    }
+    print(state);
+    print(state);
+
     // _authSubscription = _authBloc.stream.listen((state) {
     //   if(state.user != null && state.accountType != Gender.nonExist){
     //   add(LoadUsers(userId: state.user!.uid, users: state.accountType!));
@@ -207,13 +213,45 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   }
 
   FutureOr<void> _onLoadUserAd(LoadUserAd event, Emitter<SwipeState> emit)async {
-    emit(state.copyWith(swipeStatus: SwipeStatus.loading, loadFor: LoadFor.ad));
+    //emit(state.copyWith(swipeStatus: SwipeStatus.loading, loadFor: LoadFor.ad));
+
+    try {
+      
     
-    if(event.discoverBy == DiscoverBy.online){
+    if(event.loadFor == LoadFor.adOnline){
       var user = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users,limit:event.limit);
 
       emit(state.copyWith(users: user, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad) );
 
+    }
+    if(event.loadFor == LoadFor.adNearby){
+      var users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users );
+
+      emit(state.copyWith(users: users, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad ));
+
+    }else
+    if(event.loadFor == LoadFor.adPrincess){
+      User user = await _databaseRepository.getRandomMatch(userId: event.userId, gender: event.users);
+      emit(state.copyWith(users: [user], swipeStatus: SwipeStatus.loaded, loadFor: event.loadFor ));
+    }
+    else
+    if(event.loadFor == LoadFor.adQueen ){
+      User queen = await _databaseRepository.getQueen(userId: event.userId, gender: event.users).timeout(const Duration(seconds: 15));
+      emit(state.copyWith(users: [queen], swipeStatus: SwipeStatus.loaded, loadFor: event.loadFor ));
+    }
+    else if(event.loadFor == LoadFor.adPrincess ){
+      User princ = await _databaseRepository.getPrincess(userId: event.userId, gender: event.users).timeout(const Duration(seconds: 15));
+      emit(state.copyWith(users: [princ], swipeStatus: SwipeStatus.loaded, loadFor: event.loadFor ));
+
+    }
+
+
+    } on TimeoutException catch(e){
+      emit(state.copyWith(swipeStatus: SwipeStatus.completed));
+    }
+    catch (e) {
+      print(e);
+      
     }
 
   }

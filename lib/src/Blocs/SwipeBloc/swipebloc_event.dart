@@ -70,12 +70,12 @@ class BoostedLoaded extends SwipeEvent{
 class LoadUserAd extends SwipeEvent{
   final String userId;
   final Gender users;
-  final DiscoverBy discoverBy;
+  final LoadFor loadFor;
   final int limit;
-   LoadUserAd({required this.userId, required this.users, required this.discoverBy, required this.limit});
+   LoadUserAd({required this.userId, required this.users, required this.loadFor, required this.limit});
 
   @override
-  List<Object?> get props => [userId, users,discoverBy,limit];
+  List<Object?> get props => [userId, users,loadFor,limit];
 }
 
 class AdSwipeEnded extends SwipeEvent{

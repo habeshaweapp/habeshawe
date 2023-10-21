@@ -26,7 +26,22 @@ class SwipeCard extends StatelessWidget {
     return BlocBuilder<SwipeBloc, SwipeState>(
       builder: (context, state) {
         if(state.swipeStatus == SwipeStatus.loading){
+          // var startedAt = DateTime.now();
+          // Future.delayed(Duration(seconds: 20), (){
+          //   var diff = DateTime.now().difference(startedAt).inSeconds;
+          //   if(diff > 18){
+          //     if(state.swipeStatus == SwipeStatus.loading){
+          //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('something wen\'t wrong...')));
+          //     context.read<SwipeBloc>().add(SwipeEnded());
+          //   }
+
+          //   }
+            
+           
+          //  } );
+        
           return Center(child: CircularProgressIndicator(strokeWidth: 2,) );
+          
         }
         if(state.swipeStatus == SwipeStatus.loaded){
           List<SwipeItem> _swipeItems = [];

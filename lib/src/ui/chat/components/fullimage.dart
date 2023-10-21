@@ -18,7 +18,7 @@ class FullScreenImage extends StatelessWidget {
         toolbarHeight: 0,
         backgroundColor: Colors.black,
         systemOverlayStyle: SystemUiOverlayStyle(
-        systemNavigationBarColor: Color.fromARGB(51, 182, 180, 180),
+        systemNavigationBarColor: Colors.black,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       ),

@@ -124,6 +124,7 @@ class Body extends StatelessWidget {
                                           imageUrl: state.messages[index].imageUrl!,
                                           fit: BoxFit.cover,
                                           height: 300,
+                                          placeholder:(context, name)=> Container(color: isDark? Colors.grey[900]: Colors.grey),
                                           width: MediaQuery.of(context).size.width*0.5,
                                           ),
                                       ),
@@ -195,6 +196,7 @@ class Body extends StatelessWidget {
                                         fit: BoxFit.cover,
                                         height: 300,
                                         //width: 300,
+                                        placeholder:(context, name)=> Container(color: isDark? Colors.grey[900]: Colors.grey),
                                         width: MediaQuery.of(context).size.width * 0.5,
                                         
                                         ),

@@ -230,7 +230,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       emit(state.copyWith(users: users, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad ));
 
     }else
-    if(event.loadFor == LoadFor.adPrincess){
+    if(event.loadFor == LoadFor.adRandom){
       User user = await _databaseRepository.getRandomMatch(userId: event.userId, gender: event.users);
       emit(state.copyWith(users: [user], swipeStatus: SwipeStatus.loaded, loadFor: event.loadFor ));
     }

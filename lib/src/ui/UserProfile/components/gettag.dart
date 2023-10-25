@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:line_icons/line_icons.dart';
 
 import '../../../Data/Models/enums.dart';
@@ -94,22 +95,22 @@ class GetTag extends StatelessWidget {
     
                       //Image.asset(image, height: 70,),
                       verifiedIcon,
-                      SizedBox(height: 20,),
+                      SizedBox(height: 15.h,),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 8.0),
+                        padding:  EdgeInsets.only(bottom: 5.0.h),
                         child: Text(title,
                         style: Theme.of(context).textTheme.titleLarge ,
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 45),
+                        padding:  EdgeInsets.symmetric(horizontal: 35.h),
                         child: Text(description
                          ,
-                          style: Theme.of(context).textTheme.bodySmall ,
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10.sp) ,
                           textAlign: TextAlign.center,
                           ),
                       ),
-                        SizedBox(height: 15,),
+                        SizedBox(height: 10.h,),
 
                         
                     ],

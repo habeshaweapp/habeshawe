@@ -76,8 +76,8 @@ dependencies:
   flutter_advanced_switch: ^3.0.1
   full_screen_image: ^2.0.0
   slide_countdown: ^0.6.0
-
-  
+  flutter_local_notifications: ^16.1.0
+  flutter_screenutil: ^5.7.0
 
 
 

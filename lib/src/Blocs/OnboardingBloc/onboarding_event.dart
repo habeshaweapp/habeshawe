@@ -54,3 +54,23 @@ class CompleteOnboarding extends OnboardingEvent{
   // TODO: implement props
   List<Object?> get props => [placeMark, user, isMocked];
 }
+
+class ImagesSelected extends OnboardingEvent{
+
+  final List<XFile?> images;
+
+  ImagesSelected({ required this.images});
+
+  @override
+  List<Object?> get props => [images];
+}
+
+class RemovePhoto extends OnboardingEvent{
+  final String imageUrl;
+
+  const RemovePhoto({required this.imageUrl});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [imageUrl];
+}

@@ -15,20 +15,20 @@ class LookingForItem extends StatelessWidget {
 
    static List<String> lookignForOpt = [
       'Long-term\n partner',
-      'Long-term,\n open to short',
-      'Short-term,\n open to long',
-      'Short-term fun',
-      'New friends',
+      'Christian,\n artner',
+      'Teklil,\n marrage',
+      'nikaa\n keep it halal',
+      'Someone to chat\nNew friends',
       'Still figuring it\n out',
     ];
 
     static List<Icon> icons =[
       Icon(FontAwesomeIcons.heart, color: Colors.red,),
-      Icon(FontAwesomeIcons.faceGrinHearts, color:Colors.amber),
-      Icon(FontAwesomeIcons.champagneGlasses, color: Colors.amber,),
-      Icon(FontAwesomeIcons.comment, color: Colors.blue,),
-      Icon(FontAwesomeIcons.hand, color: Colors.amber),
-      Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.teal)
+      Icon(FontAwesomeIcons.bookBible, color:Colors.grey),
+      Icon(FontAwesomeIcons.crown, color: Colors.amber,),
+      Icon(FontAwesomeIcons.rightFromBracket, color: Colors.grey,),
+      Icon(FontAwesomeIcons.hand, color: Colors.grey),
+      Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.grey)
 
     ];
     
@@ -51,7 +51,7 @@ class LookingForItem extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(10),
                                       ),
                             elevation: 2,
-                            color: isSelected ? isDark? Colors.grey[900]: Colors.grey[400]: null,
+                            color: isSelected ? isDark? Colors.grey[900]: Colors.grey[300]: null,
                             child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [

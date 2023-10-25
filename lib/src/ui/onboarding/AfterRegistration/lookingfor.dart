@@ -22,22 +22,22 @@ class _LookingForState extends State<LookingFor> {
  int selectedIndex = -1;
   @override
   Widget build(BuildContext context) {
-    List<String> lookignForOpt = [
+   List<String> lookignForOpt = [
       'Long-term\n partner',
-      'Long-term,\n open to short',
-      'Short-term,\n open to long',
-      'Short-term fun',
-      'New friends',
-      'Stil figuring it\n out',
+      'Christian,\n partner',
+      'Teklil,\n marriage',
+      'Nikah\n keep it halal',
+      'Someone to chat\nNew friends',
+      'Still figuring it\n out',
     ];
 
-    List<Icon> icons =[
-      Icon(FontAwesomeIcons.heart, color: Colors.red,),
-      Icon(FontAwesomeIcons.faceGrinHearts, color:Colors.amber),
-      Icon(FontAwesomeIcons.champagneGlasses, color: Colors.amber,),
-      Icon(FontAwesomeIcons.comment, color: Colors.blue,),
-      Icon(FontAwesomeIcons.hand, color: Colors.amber),
-      Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.teal)
+     List<Icon> icons =[
+      Icon(FontAwesomeIcons.heartPulse, color: Colors.red,),
+      Icon(FontAwesomeIcons.bookBible, color:Colors.black),
+      Icon(FontAwesomeIcons.crown, color: Colors.amber,),
+      Icon(FontAwesomeIcons.moon, color: Colors.grey,),
+      Icon(FontAwesomeIcons.hand, color: Colors.grey),
+      Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.grey)
 
     ];
     
@@ -130,7 +130,8 @@ class _LookingForState extends State<LookingFor> {
                               if(selectedIndex != -1 ){ 
                                 context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(lookingFor: selectedIndex )));
                                 //GoRouter.of(context).pushNamed(MyAppRouteConstants.schoolRouteName);
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => const SchoolName()));
+                                Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
+                                                                                                      child: const SchoolName() )));
                               }
                             },
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),

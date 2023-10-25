@@ -41,385 +41,394 @@ class SwipeCompletedWidget extends StatelessWidget {
     
 
     return  SizedBox(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        
-                  children: [
-                    // Text('Thats it for today \ncome back Tomorrow!'),
-                    // Text(
-                    //   '${remain.inHours}:${remain.inMinutes}:${remain.inSeconds} remains',
-                    //   style: Theme.of(context).textTheme.bodyLarge,
+      child: BlocBuilder<AdBloc,AdState>(
+        builder: (context, state) {
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            
+                      children: [
+                        // Text('Thats it for today \ncome back Tomorrow!'),
+                        // Text(
+                        //   '${remain.inHours}:${remain.inMinutes}:${remain.inSeconds} remains',
+                        //   style: Theme.of(context).textTheme.bodyLarge,
     
-                    // ),
-                    SizedBox(height:45),
-                    Spacer(),
-    
-                     SlideCountdownSeparated(
-                      duration: remain,
-                      height: 60,
-                      width: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      textStyle: TextStyle(fontSize: 25, color: Colors.white),
-                      padding: EdgeInsets.all(10),
-                     
-                    ),
-                    SizedBox(height: 15,),
-                    Text('Thats it for today \ncome back Tomorrow!',
-                        style: Theme.of(context).textTheme.bodySmall,
-                        textAlign: TextAlign.center,
-                    ),
-    
-                    const SizedBox(height: 25,),
-                    const Divider(),
-                    const SizedBox(height: 25,),
-
-                    Spacer(),
-                    Text('Till then...', style: Theme.of(context).textTheme.bodySmall,),
-
-                    BlocListener<AdBloc, AdState>(
-                      listener: (context, state) {
-                        // if(state.rewardedAdType == AdType.rewardedNearby){
-                        //   context.read<SwipeBloc>().add(LoadUserAd(
-                        //       userId: context.read<AuthBloc>().state.user!.uid, 
-                        //       users: context.read<AuthBloc>().state.accountType!,
-                        //       discoverBy: DiscoverBy.nearby,
-                        //       limit: 30
-                        //       ));
-                          
-                        //   context.read<AdBloc>().add(ResetReward());
-
-                        // }
-                      },
-                        child: Card(
-                          elevation: 4,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5)),
-                          
-                          child: InkWell(
-                            onTap: (){
-                              if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                                context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedNearby));
-
-                              context.read<SwipeBloc>().add(LoadUserAd(
-                              userId: context.read<AuthBloc>().state.user!.uid, 
-                              users: context.read<AuthBloc>().state.accountType!,
-                              loadFor: LoadFor.adNearby,
-                              limit: 30
-                              ));
-
-                              }
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-                              child: Column(
-                            
-                                children: [
-                                  Icon(Icons.location_on_outlined,color: Colors.grey,size: 35, ),
-                                  SizedBox(height: 10,),
-                                  Text('Find Matches around you\n (within 2km)', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey), ),
-                                  SizedBox(height: 10,),
-                                  Text('Watch Ad', style: TextStyle(),)
-                                ],
-                              ),
-                            ),
-                          )
-  
-                        )
-                    ),
-  
-
-                      
-                    
-                    
-
-                    SizedBox(height: 25,),
-
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: Card(
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                            
-                            child: InkWell(
-                              onTap: (){
-                                if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                                  context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedRandom));
-                    
-                                context.read<SwipeBloc>().add(LoadUserAd(
-                                userId: context.read<AuthBloc>().state.user!.uid, 
-                                users: context.read<AuthBloc>().state.accountType!,
-                                loadFor: LoadFor.adRandom,
-                                limit: 1
-                                ));
-                    
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-                                child: Column(
-                              
-                                  children: [
-                                    Row(children: [
-                                      Icon(Icons.verified,color: Colors.grey,size: 25, ),
-                                    SizedBox(width: 10,),
-                                    Text('Watch Ad - Get 1 random Match', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey), ),
-                    
-                                    ],)
-                                   
-                                  ],
-                                ),
-                              ),
-                            )
-                      
-                          ),
-                    ),
-
-                    SizedBox(height: 20,),
-
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: Card(
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                            
-                            child: InkWell(
-                              onTap: (){
-                                if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                                  context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedOnline));
-                    
-                                context.read<SwipeBloc>().add(LoadUserAd(
-                                userId: context.read<AuthBloc>().state.user!.uid, 
-                                users: context.read<AuthBloc>().state.accountType!,
-                                loadFor: LoadFor.adOnline,
-                                limit: 1
-                                ));
-                    
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-                                child: Column(
-                              
-                                  children: [
-                                    Row(children: [
-                                      Icon(Icons.motion_photos_on_outlined,color: Colors.green,size: 25, ),
-                                    SizedBox(width: 10,),
-                                    Text('Watch 2 Ads - Get 1 Online Match', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey), ),
-                    
-                                    ],)
-                                   
-                                  ],
-                                ),
-                              ),
-                            )
-                      
-                          ),
-                    ),
-
-                    const SizedBox(height: 15,),
-
-
-                    // ElevatedButton(
-                    //   onPressed: (){
-                    //     context.read<SwipeBloc>().add(LoadUsers(
-                    //       userId: context.read<AuthBloc>().state.user!.uid, 
-                    //       users: context.read<AuthBloc>().state.accountType!,
-                    //       user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
-                    //       prefes: (context.read<UserpreferenceBloc>().state as UserPreferenceLoaded).userPreference
-                    //       ));
-                    //   }, 
-                    //   child: Text('get Matches')
-                      
-                    //   ),
-
-                   // SizedBox(height: 55,),
-
-                   SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: Card(
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                            
-                            child: InkWell(
-                              onTap: (){
-                                if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                                  context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedPrincess));
-                    
-                                context.read<SwipeBloc>().add(LoadUserAd(
-                                userId: context.read<AuthBloc>().state.user!.uid, 
-                                users: context.read<AuthBloc>().state.accountType!,
-                                loadFor: LoadFor.adPrincess,
-                                limit: 1
-                                ));
-                    
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-                                child: Row(
-                                  //mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                  Icon(LineIcons.crown, color: Colors.pink[300], size: 25, ),
-                                SizedBox(width: 10,),
-                                Text('Watch 10 Ads - Get 1 Princess  (${context.read<AdBloc>().state.adWatchedPrincess}/10) watched!', 
-                                textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey), ),
-                    
-                                ],),
-                              ),
-                            )
-                      
-                          ),
-                    ),
-
-                    SizedBox(height: 15,),
-
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: Card(
-                            elevation: 4,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                            
-                            child: InkWell(
-                              onTap: (){
-                                if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                                  context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedQueen));
-                                if(context.read<AdBloc>().state.adWatchedQueen == 20 ){
-                                context.read<SwipeBloc>().add(LoadUserAd(
-                                userId: context.read<AuthBloc>().state.user!.uid, 
-                                users: context.read<AuthBloc>().state.accountType!,
-                                loadFor: LoadFor.adQueen,
-                                limit: 1
-                                ));
-                                }
-                    
-                                }
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
-                                child: Row(
-                                  //mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(LineIcons.crown,color: Colors.amber,size: 25, ),
-                                    SizedBox(width: 10,),
-                                    Text('Watch 20 Ads - Get 1 Queen  (${context.read<AdBloc>().state.adWatchedQueen }/20) watched!', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey), ),
-                    
-                                ],),
-                              ),
-                            )
-                      
-                          ),
-                    ),
-    
-                    //   ElevatedButton(
-                    //     onPressed: (){
-                    //       if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                    //         context.read<AdBloc>().add(ShowRewardedAd());
-                          
-                    //         context.read<SwipeBloc>().add(LoadUserAd(
-                    //         userId: context.read<AuthBloc>().state.user!.uid, 
-                    //         users: context.read<AuthBloc>().state.accountType!,
-                    //         discoverBy: DiscoverBy.online,
-                    //         limit: 1
-                    //         ));
-    
-                    //       }
-    
-                    //     }, 
-    
-    
-    
-                    //     child: Padding(
-                    //       padding: const EdgeInsets.all(8.0),
-                    //       child: Row(
-                    //         mainAxisSize: MainAxisSize.min,
-                    //         children: [
-                    //         Icon(Icons.video_collection),
-                    //         Text('Watch Ad to get Random Match (${context.read<AdBloc>().state.adWatchedQueen }-watched)')
-                    //       ],),
-                    //     ),
-
-                    //     style: ElevatedButton.styleFrom(
-                    //       backgroundColor: Colors.grey[400],
-                    //       foregroundColor: Colors.black
-
-                    //     ) ,
-                    //     ),
-    
-                    
-                    // ElevatedButton(
-                    //     onPressed: (){
-                    //       if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                    //         context.read<AdBloc>().add(ShowRewardedAd());
-                          
-                    //         context.read<SwipeBloc>().add(LoadUserAd(
-                    //         userId: context.read<AuthBloc>().state.user!.uid, 
-                    //         users: context.read<AuthBloc>().state.accountType!,
-                    //         discoverBy: DiscoverBy.online,
-                    //         limit: 1
-                    //         ));
-    
-                    //       }
-    
-                    //       if(context.read<AdBloc>().state.reward!.amount >= 50){
-    
-                    //         context.read<SwipeBloc>().add(LoadUserAd(
-                    //         userId: context.read<AuthBloc>().state.user!.uid, 
-                    //         users: context.read<AuthBloc>().state.accountType!,
-                    //         discoverBy: DiscoverBy.online,
-                    //         limit: 1
-                    //         ));
-    
-    
-                    //       }
-    
-                    //     }, 
-                    //     child: Padding(
-                    //       padding: const EdgeInsets.all(8.0),
-                    //       child: Row(
-                    //         //mainAxisSize: MainAxisSize.min,
-                    //         children: [
-                    //         Icon(Icons.video_collection),
-                    //         Text('Watch an Ad get 1 online user')
-                    //       ],),
-                    //     ),
-
-                    //     style: ElevatedButton.styleFrom(
-                    //       backgroundColor: Colors.grey[400],
-                    //       foregroundColor: Colors.black
-
-                    //     ) ,
-                    //     ),
-
+                        // ),
+                        SizedBox(height:45),
                         Spacer(),
     
-    
-                    
-                    
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: FloatingActionButton(
-                          onPressed: (){
-                            showPrefesSheet(context: context);
-                          },
-                          backgroundColor: Colors.grey[400],
-                          foregroundColor: Colors.grey[900],
-                          child: Icon(Icons.settings),
+                         SlideCountdownSeparated(
+                          duration: remain,
+                          height: 60,
+                          width: 60,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[400],
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          textStyle: TextStyle(fontSize: 25, color: Colors.white),
+                          padding: EdgeInsets.all(10),
+                         
                         ),
-                      ),
-                    )
-                  ],
-                
-              ),
+                        SizedBox(height: 15,),
+                        Text('Thats it for today \ncome back Tomorrow!',
+                            style: Theme.of(context).textTheme.bodySmall,
+                            textAlign: TextAlign.center,
+                        ),
+    
+                        const SizedBox(height: 25,),
+                        const Divider(),
+                        const SizedBox(height: 25,),
+
+                        Spacer(),
+                        Text('Till then...', style: Theme.of(context).textTheme.bodySmall,),
+
+                        BlocListener<AdBloc, AdState>(
+                          listener: (context, state) {
+                            // if(state.rewardedAdType == AdType.rewardedNearby){
+                            //   context.read<SwipeBloc>().add(LoadUserAd(
+                            //       userId: context.read<AuthBloc>().state.user!.uid, 
+                            //       users: context.read<AuthBloc>().state.accountType!,
+                            //       discoverBy: DiscoverBy.nearby,
+                            //       limit: 30
+                            //       ));
+                              
+                            //   context.read<AdBloc>().add(ResetReward());
+
+                            // }
+                          },
+                            child: Card(
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5)),
+                              
+                              child: InkWell(
+                                onTap: (){
+                                  if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                                    context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedNearby));
+
+                                  context.read<SwipeBloc>().add(LoadUserAd(
+                                  userId: context.read<AuthBloc>().state.user!.uid, 
+                                  users: context.read<AuthBloc>().state.accountType!,
+                                  loadFor: LoadFor.adNearby,
+                                  limit: 30
+                                  ));
+
+                                  }
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                                  child: Column(
+                                
+                                    children: [
+                                      Icon(Icons.location_on_outlined,color: Colors.grey,size: 35, ),
+                                      SizedBox(height: 10,),
+                                      Text('Find Matches around you\n (within 2km)', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey), ),
+                                      SizedBox(height: 10,),
+                                      Text('Watch Ad', style: TextStyle(),)
+                                    ],
+                                  ),
+                                ),
+                              )
+  
+                            )
+                        ),
+  
+
+                          
+                        
+                        
+
+                        SizedBox(height: 25,),
+
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: Card(
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)),
+                                
+                                child: InkWell(
+                                  onTap: (){
+                                    if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                                      context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedRandom));
+                        
+                                    context.read<SwipeBloc>().add(LoadUserAd(
+                                    userId: context.read<AuthBloc>().state.user!.uid, 
+                                    users: context.read<AuthBloc>().state.accountType!,
+                                    loadFor: LoadFor.adRandom,
+                                    limit: 1
+                                    ));
+                        
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                                    child: Column(
+                                  
+                                      children: [
+                                        Row(children: [
+                                          Icon(Icons.verified,color: Colors.grey,size: 25, ),
+                                        SizedBox(width: 10,),
+                                        Text('Watch Ad - Get 1 random Match', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey), ),
+                        
+                                        ],)
+                                       
+                                      ],
+                                    ),
+                                  ),
+                                )
+                          
+                              ),
+                        ),
+
+                        SizedBox(height: 20,),
+
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: Card(
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)),
+                                
+                                child: InkWell(
+                                  onTap: (){
+                                    if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                                      context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedOnline));
+                                    if(context.read<AdBloc>().state.adWatchedOnline! >=1 ){
+
+                                    
+                                    context.read<SwipeBloc>().add(LoadUserAd(
+                                    userId: context.read<AuthBloc>().state.user!.uid, 
+                                    users: context.read<AuthBloc>().state.accountType!,
+                                    loadFor: LoadFor.adOnline,
+                                    limit: 1
+                                    ));
+                                    }
+                        
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                                    child: Column(
+                                  
+                                      children: [
+                                        Row(children: [
+                                          Icon(Icons.motion_photos_on_outlined,color: Colors.green,size: 25, ),
+                                        SizedBox(width: 10,),
+                                        Text('Watch 2 Ads - Get 1 Online Match - (${context.read<AdBloc>().state.adWatchedOnline}/2) watched ', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey), ),
+                        
+                                        ],)
+                                       
+                                      ],
+                                    ),
+                                  ),
+                                )
+                          
+                              ),
+                        ),
+
+                        const SizedBox(height: 15,),
+
+
+                        // ElevatedButton(
+                        //   onPressed: (){
+                        //     context.read<SwipeBloc>().add(LoadUsers(
+                        //       userId: context.read<AuthBloc>().state.user!.uid, 
+                        //       users: context.read<AuthBloc>().state.accountType!,
+                        //       user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
+                        //       prefes: (context.read<UserpreferenceBloc>().state as UserPreferenceLoaded).userPreference
+                        //       ));
+                        //   }, 
+                        //   child: Text('get Matches')
+                          
+                        //   ),
+
+                       // SizedBox(height: 55,),
+
+                       SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: Card(
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)),
+                                
+                                child: InkWell(
+                                  onTap: (){
+                                    if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                                      context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedPrincess));
+                                      if(context.read<AdBloc>().state.adWatchedPrincess!>=9 ){
+
+                                          context.read<SwipeBloc>().add(LoadUserAd(
+                                          userId: context.read<AuthBloc>().state.user!.uid, 
+                                          users: context.read<AuthBloc>().state.accountType!,
+                                          loadFor: LoadFor.adPrincess,
+                                          limit: 1
+                                          ));
+                                      }
+                        
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                                    child: Row(
+                                      //mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                      Icon(LineIcons.crown, color: Colors.pink[300], size: 25, ),
+                                    SizedBox(width: 10,),
+                                    Text('Watch 10 Ads - Get 1 Princess - (${context.read<AdBloc>().state.adWatchedPrincess}/10) watched!', 
+                                    textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey), ),
+                        
+                                    ],),
+                                  ),
+                                )
+                          
+                              ),
+                        ),
+
+                        SizedBox(height: 15,),
+
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: Card(
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)),
+                                
+                                child: InkWell(
+                                  onTap: (){
+                                    if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                                      context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedQueen));
+                                    if(context.read<AdBloc>().state.adWatchedQueen! >= 19 ){
+                                    context.read<SwipeBloc>().add(LoadUserAd(
+                                    userId: context.read<AuthBloc>().state.user!.uid, 
+                                    users: context.read<AuthBloc>().state.accountType!,
+                                    loadFor: LoadFor.adQueen,
+                                    limit: 1
+                                    ));
+                                    }
+                        
+                                    }
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 25),
+                                    child: Row(
+                                      //mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(LineIcons.crown,color: Colors.amber,size: 25, ),
+                                        SizedBox(width: 10,),
+                                        Text('Watch 20 Ads - Get 1 Queen - (${context.read<AdBloc>().state.adWatchedQueen }/20) watched!', textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey), ),
+                        
+                                    ],),
+                                  ),
+                                )
+                          
+                              ),
+                        ),
+    
+                        //   ElevatedButton(
+                        //     onPressed: (){
+                        //       if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                        //         context.read<AdBloc>().add(ShowRewardedAd());
+                              
+                        //         context.read<SwipeBloc>().add(LoadUserAd(
+                        //         userId: context.read<AuthBloc>().state.user!.uid, 
+                        //         users: context.read<AuthBloc>().state.accountType!,
+                        //         discoverBy: DiscoverBy.online,
+                        //         limit: 1
+                        //         ));
+    
+                        //       }
+    
+                        //     }, 
+    
+    
+    
+                        //     child: Padding(
+                        //       padding: const EdgeInsets.all(8.0),
+                        //       child: Row(
+                        //         mainAxisSize: MainAxisSize.min,
+                        //         children: [
+                        //         Icon(Icons.video_collection),
+                        //         Text('Watch Ad to get Random Match (${context.read<AdBloc>().state.adWatchedQueen }-watched)')
+                        //       ],),
+                        //     ),
+
+                        //     style: ElevatedButton.styleFrom(
+                        //       backgroundColor: Colors.grey[400],
+                        //       foregroundColor: Colors.black
+
+                        //     ) ,
+                        //     ),
+    
+                        
+                        // ElevatedButton(
+                        //     onPressed: (){
+                        //       if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                        //         context.read<AdBloc>().add(ShowRewardedAd());
+                              
+                        //         context.read<SwipeBloc>().add(LoadUserAd(
+                        //         userId: context.read<AuthBloc>().state.user!.uid, 
+                        //         users: context.read<AuthBloc>().state.accountType!,
+                        //         discoverBy: DiscoverBy.online,
+                        //         limit: 1
+                        //         ));
+    
+                        //       }
+    
+                        //       if(context.read<AdBloc>().state.reward!.amount >= 50){
+    
+                        //         context.read<SwipeBloc>().add(LoadUserAd(
+                        //         userId: context.read<AuthBloc>().state.user!.uid, 
+                        //         users: context.read<AuthBloc>().state.accountType!,
+                        //         discoverBy: DiscoverBy.online,
+                        //         limit: 1
+                        //         ));
+    
+    
+                        //       }
+    
+                        //     }, 
+                        //     child: Padding(
+                        //       padding: const EdgeInsets.all(8.0),
+                        //       child: Row(
+                        //         //mainAxisSize: MainAxisSize.min,
+                        //         children: [
+                        //         Icon(Icons.video_collection),
+                        //         Text('Watch an Ad get 1 online user')
+                        //       ],),
+                        //     ),
+
+                        //     style: ElevatedButton.styleFrom(
+                        //       backgroundColor: Colors.grey[400],
+                        //       foregroundColor: Colors.black
+
+                        //     ) ,
+                        //     ),
+
+                            Spacer(),
+    
+    
+                        
+                        
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: FloatingActionButton(
+                              onPressed: (){
+                                showPrefesSheet(context: context);
+                              },
+                              backgroundColor: Colors.grey[400],
+                              foregroundColor: Colors.grey[900],
+                              child: Icon(Icons.settings),
+                            ),
+                          ),
+                        )
+                      ],
+                    
+                  );
+        }
+      ),
     );
   }
 

@@ -155,7 +155,8 @@ class WelcomeScreen extends StatelessWidget {
                         //if(Paint.enableDithering)
                         context.read<OnboardingBloc>().add(StartOnBoarding(user: user));
                        // GoRouter.of(context).pushNamed(MyAppRouteConstants.nameRouteName);
-                       Navigator.push(context, MaterialPageRoute(builder: (context) => const Phone()));
+                       Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
+                                                                                                      child: const Phone() )));
                       }, 
                       child: Text('I Agree', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                       style: ElevatedButton.styleFrom(

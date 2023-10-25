@@ -5,6 +5,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_geo_hash/geohash.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
@@ -131,7 +132,7 @@ class UserProfile extends StatelessWidget {
           return Column(
             children: [
               SizedBox(
-                height: 40,
+                height: 30.h,
               ),
               Center(
                 child: SizedBox(
@@ -224,7 +225,7 @@ class UserProfile extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 20,
+                height: 20.h,
               ),
               
               Row(
@@ -250,7 +251,7 @@ class UserProfile extends StatelessWidget {
                 ],
               ),
               SizedBox(
-                height: 50,
+                height: 40.h,
               ),
               //Color.fromARGB(255, 22, 22, 22)
               Expanded(
@@ -258,7 +259,7 @@ class UserProfile extends StatelessWidget {
                   color: isDark ? Color.fromARGB(255, 41, 41, 41): Colors.grey[200],
                   child: Column(
                     children: [
-                      SizedBox(height: 20,),
+                      SizedBox(height: 20.h,),
 
                     
               Padding(
@@ -276,7 +277,7 @@ class UserProfile extends StatelessWidget {
                       color: Colors.blue,
                       ),
                     SizedBox(
-                      width: 10,
+                      width: 7.w,
                     ),
                     ProfileBox(
                       isDark: isDark, 
@@ -287,7 +288,7 @@ class UserProfile extends StatelessWidget {
 
                       ),
 
-                      SizedBox(width: 10,),
+                      SizedBox(width: 7.w,),
 
                       ProfileBox(
                         isDark: isDark,
@@ -437,8 +438,11 @@ class ProfileBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.115,
-      width: MediaQuery.of(context).size.width * 0.3,
+      height:75.h,
+      // MediaQuery.of(context).size.height * 0.115,
+      width: 
+      //108.w,
+      MediaQuery.of(context).size.width * 0.3,
       child: Card(
         color: isDark? Colors.grey[900]: null,
         elevation: 4,
@@ -450,28 +454,29 @@ class ProfileBox extends StatelessWidget {
           //   showPaymentDialog(context:context, paymentUi: PaymentUi.superlikes);
           // },
           child: Padding(
-            padding: const EdgeInsets.all(2.0),
+            padding:  EdgeInsets.all(2.0.h),
             child: Column(
               children: [
                 SizedBox(
-                  height:title != 'Subscriptions'? 5:15,
+                  height:title != 'Subscriptions'? 3.h:10.h,
                 ),
                 Icon(
                   icon,
                   color: color,
+                  size: 20.h,
                 ),
                 SizedBox(
-                  height: 8,
+                  height: 5.h,
                 ),
                 Text( superLikes != null? '$superLikes $title' : title
-                  ,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey,),),
+                  ,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey,fontSize: 10.sp),),
                title != 'Subscriptions'? SizedBox(
-                  height: 5,
+                  height: 5.h,
                 ):SizedBox(),
                 title != 'Subscriptions'?
                 Text(
                   "GET MORE",
-                  style: TextStyle(color: Colors.blue, fontSize: 12),
+                  style: TextStyle(color: Colors.blue, fontSize: 10.sp),
                 ):SizedBox()
               ],
             ),

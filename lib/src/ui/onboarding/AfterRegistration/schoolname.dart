@@ -47,6 +47,7 @@ class SchoolName extends StatelessWidget {
                 style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
                 ),
               ),
+              
               Spacer(flex: 1,),
               
 
@@ -55,7 +56,7 @@ class SchoolName extends StatelessWidget {
                   width: MediaQuery.of(context).size.width*0.7,
                   child: TextField(
                     decoration: InputDecoration(
-                      hintText: 'School name'
+                      hintText: 'University/school name'
                     ),
                     onChanged: (value) {
                       context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(school: value)));
@@ -84,7 +85,8 @@ class SchoolName extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: (){
                      // GoRouter.of(context).pushNamed(MyAppRouteConstants.interestsRouteName);
-                     Navigator.push(context, MaterialPageRoute(builder: (context) => const Interests()));
+                     Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
+                                                                                                      child: const Interests() )));
                     }, 
                     child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                     style: ElevatedButton.styleFrom(

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/ChatBloc/chat_bloc.dart';
 import 'package:lomi/src/Blocs/ImagesBloc/images_bloc.dart';
@@ -88,22 +89,29 @@ class MyApp extends StatelessWidget {
           ],
           child: BlocBuilder<ThemeCubit, ThemeMode>(
             builder: (context, state) {
-              return MaterialApp(
-                      debugShowCheckedModeBanner: false,
-                      theme: lightTheme,
-                      darkTheme: darkTheme,
-                      themeMode: state,
-                      //routeInformationParser: LomiAppRouter.router .routeInformationParser,
-                      //routerDelegate: LomiAppRouter.router.routerDelegate,
-                      //home: AddPhotos(),
-                      //routerConfig: LomiAppRouter.returnRouter(),
-                      initialRoute: '/',
-                      routes: {
-                        '/':(context) => const Wrapper(),
-                        //'/start' : (context) =>  StartScreen()
-              
-                      },
-                    );
+              return ScreenUtilInit(
+                
+                minTextAdapt: true,
+                splitScreenMode: true,
+                builder: (_, child) {
+                  return MaterialApp(
+                          debugShowCheckedModeBanner: false,
+                          theme: lightTheme,
+                          darkTheme: darkTheme,
+                          themeMode: state,
+                          //routeInformationParser: LomiAppRouter.router .routeInformationParser,
+                          //routerDelegate: LomiAppRouter.router.routerDelegate,
+                          //home: AddPhotos(),
+                          //routerConfig: LomiAppRouter.returnRouter(),
+                          initialRoute: '/',
+                          routes: {
+                            '/':(context) => const Wrapper(),
+                            //'/start' : (context) =>  StartScreen()
+                  
+                          },
+                        );
+                }
+              );
             },
           )),
     );

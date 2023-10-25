@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/onboarding/AfterRegistration/namescreen.dart';
 import 'package:lomi/src/ui/onboarding/AfterRegistration/welcome.dart';
@@ -103,7 +104,8 @@ class Phone extends StatelessWidget {
                     //context.read<PhoneAuthBloc>().add(SendOtpToPhone(phoneNumber: phoneNumber));
                     //GoRouter.of(context).pushNamed(MyAppRouteConstants.welcomeRouteName);
                   //  Navigator.push(context, MaterialPageRoute(builder: ()=> Verification();))
-                   Navigator.push(context, MaterialPageRoute(builder: (context) => const NameScreen()));
+                   Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
+                                                                                                      child: const NameScreen() )));
                   }, 
                   child: Text(
                     'CONTINUE',

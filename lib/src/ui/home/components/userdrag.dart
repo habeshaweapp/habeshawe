@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
@@ -230,7 +231,7 @@ class UserCard extends StatelessWidget {
                                         padding: const EdgeInsets.only(left: 8,right: 10, top: 4, bottom: 5),
                                         child: Text(
                                           user.interests[idx],
-                                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white)
+                                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white, fontSize: 10.sp)
                                           // TextStyle(
                                           //   color: Colors.white,
                                           //   //decoration: TextDecoration.none,

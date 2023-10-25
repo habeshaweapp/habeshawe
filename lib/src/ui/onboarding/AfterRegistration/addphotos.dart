@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -93,7 +95,11 @@ class _AddPhotosState extends State<AddPhotos> {
                                   itemBuilder:  (context, index) {
                                     return (imagesCount > index) ?
                                     PhotoSelector(imageUrl: state.user.imageUrls[index],):
-                                     PhotoSelector();
+                                    (state.selectedImages == null || state.selectedImages!.isEmpty)? PhotoSelector():
+                                    (state.selectedImages!.isNotEmpty)?
+                                     PhotoSelector(selectedImage: File(state.selectedImages![index-imagesCount]!.path)):
+                                     PhotoSelector()
+                                     ;
                             
                                     
                                   }
@@ -167,7 +173,8 @@ class _AddPhotosState extends State<AddPhotos> {
                           child: ElevatedButton(
                             onPressed: (){
                               //GoRouter.of(context).pushNamed(MyAppRouteConstants.enablelocationRouteName);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const EnableLocation()));
+                              Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
+                                                                                                      child: const EnableLocation() )));
                             }, 
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                             style: ElevatedButton.styleFrom(

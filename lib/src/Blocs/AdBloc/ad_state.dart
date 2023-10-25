@@ -15,7 +15,8 @@ class AdState extends Equatable {
     this.reward,
     this.adWatchedQueen=0,
     this.rewardedAdType,
-    this.adWatchedPrincess =0
+    this.adWatchedPrincess =0,
+    this.adWatchedOnline=0
 
   });
 
@@ -29,9 +30,10 @@ class AdState extends Equatable {
   final int numRewardedLoadAttempts;
   final int numNativeLoadAttempts;
   final RewardItem? reward;
-  final num? adWatchedQueen;
+  final int? adWatchedQueen;
   final int? adWatchedPrincess;
   final AdType? rewardedAdType;
+  final int? adWatchedOnline;
 
 
   AdState copyWith({
@@ -45,9 +47,10 @@ class AdState extends Equatable {
     int? numNativeLoadAttempts,
     int? numRewardedLoadAttempts,
     RewardItem? reward,
-    num? adWatchedQueen,
+    int? adWatchedQueen,
     AdType? rewardedAdType,
-    int? adWatchedPrincess
+    int? adWatchedPrincess,
+    int? adWatchedOnline,
   }){
     return AdState(
       rewardedAd: rewardedAd ?? this.rewardedAd,
@@ -62,12 +65,13 @@ class AdState extends Equatable {
       reward: reward??this.reward,
       adWatchedQueen: adWatchedQueen??this.adWatchedQueen,
       rewardedAdType: rewardedAdType?? this.rewardedAdType,
-      adWatchedPrincess: adWatchedPrincess?? this.adWatchedPrincess
+      adWatchedPrincess: adWatchedPrincess?? this.adWatchedPrincess,
+      adWatchedOnline: adWatchedOnline?? this.adWatchedOnline,
     );
   }
   
   @override
-  List<Object?> get props => [rewardedAd, nativeAd,isLoadedNativeAd,isLoadedRewardedAd, isLoadedInterstitialAd,interstitialAd, numInterstitialLoadAttempts,numNativeLoadAttempts,numRewardedLoadAttempts, reward,adWatchedQueen, rewardedAdType, adWatchedPrincess ];
+  List<Object?> get props => [rewardedAd, nativeAd,isLoadedNativeAd,isLoadedRewardedAd, isLoadedInterstitialAd,interstitialAd, numInterstitialLoadAttempts,numNativeLoadAttempts,numRewardedLoadAttempts, reward,adWatchedQueen, rewardedAdType, adWatchedPrincess, adWatchedOnline ];
 }
 
 class AdInitial extends AdState {}

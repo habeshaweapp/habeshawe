@@ -77,6 +77,10 @@ class AdBloc extends Bloc<AdEvent, AdState> {
       }, 
       onAdFailedToLoad: (error){
         print(error);
+        if(state.numRewardedLoadAttempts <5){
+          add(LoadRewardedAd());
+          emit(state.copyWith(numRewardedLoadAttempts: state.numRewardedLoadAttempts+1));
+        }
         add(RewardedAdFailedToLoad());
       });
   }
@@ -156,21 +160,32 @@ class AdBloc extends Bloc<AdEvent, AdState> {
           
         });
 
-      if(event.adType == AdType.rewardedPrincess){
-        emit(state.copyWith(rewardedAd: null,isLoadedRewardedAd: false, reward: null,adWatchedPrincess: state.adWatchedPrincess! +1 ));
+      // if(event.adType == AdType.rewardedPrincess){
+      //   emit(state.copyWith(rewardedAd: null,isLoadedRewardedAd: false, reward: null,adWatchedPrincess: state.adWatchedPrincess! +1 ));
 
-      }else if(event.adType == AdType.rewardedQueen){
+      // }else if(event.adType == AdType.rewardedQueen){
 
-        emit(state.copyWith(rewardedAd: null,isLoadedRewardedAd: false, reward: null, adWatchedQueen: state.adWatchedQueen! +1 ));
+      //   emit(state.copyWith(rewardedAd: null,isLoadedRewardedAd: false, reward: null, adWatchedQueen: state.adWatchedQueen! +1 ));
 
-      }
+      // }
       
       add(LoadRewardedAd());
     }
   }
 
   FutureOr<void> _onRewardEarned(RewardEarned event, Emitter<AdState> emit) {
+    if(event.adType == AdType.rewardedOnline ){
+      emit(state.copyWith(reward: event.reward,  rewardedAdType: event.adType, adWatchedOnline: state.adWatchedOnline == 0? state.adWatchedOnline!+1 : 0 ));
+
+    }else if(event.adType == AdType.rewardedPrincess){
+      int num = state.adWatchedPrincess! >= 9? 0 : state.adWatchedPrincess!+1;
+      emit(state.copyWith(reward: event.reward,  rewardedAdType: event.adType, adWatchedPrincess: num  ));
+    }else if(event.adType == AdType.rewardedQueen){
+      emit(state.copyWith(reward: event.reward,  rewardedAdType: event.adType, adWatchedQueen: state.adWatchedQueen!+1 ));
+
+    }else{
     emit(state.copyWith(reward: event.reward,  rewardedAdType: event.adType  ));
+    }
   }
 
   FutureOr<void> _onResetReward(ResetReward event, Emitter<AdState> emit) {

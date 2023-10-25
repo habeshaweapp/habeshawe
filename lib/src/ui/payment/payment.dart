@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 
@@ -95,7 +96,9 @@ class _PaymentState extends State<Payment> {
       color: Colors.transparent,
       child: Container(
         width: width * 0.9,
-        height: height * 0.65,
+        height: 
+        450.h,
+        //height * 0.65,
         // color: Colors.transparent,
         child: Column(
           children: [ Container(
@@ -121,7 +124,7 @@ class _PaymentState extends State<Payment> {
                                   style: Theme.of(context).textTheme.bodyLarge),
                             ),
                             Container(
-                              height: height * 0.22,
+                              height: 155.h,
                               child: PageView(
                                 physics: BouncingScrollPhysics(),
                                 children: [
@@ -149,23 +152,23 @@ class _PaymentState extends State<Payment> {
                           ],
                         )
                       : Container(
-                          height: height * 0.28,
+                          height: 200.h,
                           width: double.infinity,
                           child: Column(
                             //crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                height: 35,
+                                height: 30.h,
                               ),
                               Icon(
                                 widget.paymentUi == PaymentUi.superlikes
                                     ? Icons.star_border_purple500
                                     : Icons.electric_bolt_sharp,
-                                size: 60,
+                                size: 55.h,
                                 color: Colors.white,
                               ),
                               SizedBox(
-                                height: 35,
+                                height: 30.h,
                               ),
                               Text(
                                 widget.paymentUi == PaymentUi.superlikes
@@ -173,10 +176,11 @@ class _PaymentState extends State<Payment> {
                                     : 'Be Seen',
                                 style: TextStyle(
                                   color: Colors.white,
+                                  fontSize: 15.sp
                                 ),
                               ),
                               SizedBox(
-                                height: 10,
+                                height: 7.h,
                               ),
                               Text(
                                 widget.paymentUi == PaymentUi.superlikes
@@ -186,7 +190,7 @@ class _PaymentState extends State<Payment> {
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w300,
-                                    fontSize: 12),
+                                    fontSize: 10.sp),
                               )
                             ],
                           ),
@@ -214,6 +218,8 @@ class _PaymentState extends State<Payment> {
                         //subs[index]['price']!,
                         isSelected: selectedIndex == index,
                         bgColor: bgColor,
+                        rawPrice: productDetails[index].rawPrice,
+                        paymentUi: widget.paymentUi,
                         onTap: () {
                           setState(() {
                             selectedIndex = index;
@@ -222,11 +228,11 @@ class _PaymentState extends State<Payment> {
               ),
             )
             :Container(
-              margin: EdgeInsets.only(top: 90),
+              margin: EdgeInsets.only(top: 55.h),
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(28.0),
-                  child: Text('please check your play/App store, \nNO products available... ',textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall,),
+                  padding:  EdgeInsets.all(23.0.h),
+                  child: Text('please check your play/App store, \nNO products available... ',textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10.sp),),
                 ),
               ),
             ),
@@ -286,24 +292,27 @@ class _PaymentState extends State<Payment> {
         // ),
 
         SizedBox(
-          height: 10,
+          height: 8.h,
         ),
 
         Image.asset(
           image,
-          height: 70,
+          height: 57.h,
         ),
         SizedBox(
-          height: 20,
+          height: 17.h,
         ),
         Text(
           title,
           style: Theme.of(context).textTheme.bodyMedium,
         ),
-        Text(
-          description,
-          style: Theme.of(context).textTheme.bodySmall,
-          textAlign: TextAlign.center,
+        Padding(
+          padding:  EdgeInsets.all(5.0.sp),
+          child: Text(
+            description,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10.h),
+            textAlign: TextAlign.center,
+          ),
         ),
       ],
     );

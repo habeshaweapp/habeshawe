@@ -32,6 +32,8 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     on<UpdateUserImages>(_onUpdateUserImages);
     on<EditUser>(_onEditUser);
     on<CompleteOnboarding>(_onCompleteOnboarding);
+    on<ImagesSelected>(_onImagesSelected);
+    on<RemovePhoto>(_onRemovePhoto);
   }
 
   void _onStartOnboarding(StartOnBoarding event, Emitter<OnboardingState> emit) async{
@@ -52,8 +54,10 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
 
   void _onUserUpdate(UpdateUser event, Emitter<OnboardingState> emit){
     if(state is OnboardingLoaded){
+      var st = (state as OnboardingLoaded);
       //_databaseRepository.updateUser(event.user);
       emit(OnboardingLoaded(user: event.user));
+      //emit(st.copyWith(user: event.user, selectedImages: st.selectedImages!.sublist(1)) );
     }
     
   }
@@ -64,11 +68,16 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
      try {
       User user = (state as OnboardingLoaded).user;
       var url = await _storageRepository.uploadImage(user, event.image);
+      user = (state as OnboardingLoaded).user;
       List<dynamic> imageUrls = [...user.imageUrls, url];
       //List<dynamic> imageUrls = user.imageUrls;
       //imageUrls.add(url);   this code doesnt work and its your greatest finding in flutter it doesnt copy but changes the user
       //user.imageUrls..add(url);
-      add(UpdateUser(user: user.copyWith(imageUrls: imageUrls)));
+       
+      //add(UpdateUser(user: user.copyWith(imageUrls: imageUrls)));
+      var st = (state as OnboardingLoaded);
+
+      emit(st.copyWith(user: user.copyWith(imageUrls: imageUrls), selectedImages: st.selectedImages!.length <= 1?null: st.selectedImages!.sublist(1)) );
     
        
      }on Exception catch (e) {
@@ -100,5 +109,18 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
     } catch (e) {
       
     }
+  }
+
+  FutureOr<void> _onImagesSelected(ImagesSelected event, Emitter<OnboardingState> emit) {
+    final stateLod = (state as OnboardingLoaded);
+    emit(stateLod.copyWith(selectedImages: event.images));
+  }
+
+  FutureOr<void> _onRemovePhoto(RemovePhoto event, Emitter<OnboardingState> emit) {
+    var st = (state as OnboardingLoaded);
+    var urls = [...st.user.imageUrls];
+    urls.remove(event.imageUrl);
+
+    emit(st.copyWith(user: st.user.copyWith(imageUrls: urls )));
   }
 }

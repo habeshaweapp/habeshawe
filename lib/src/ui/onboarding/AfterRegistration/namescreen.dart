@@ -84,7 +84,8 @@ class NameScreen extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: (){
                               //GoRouter.of(context).pushNamed(MyAppRouteConstants.genderRouteName);
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => const GenderScreen()));
+                              Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
+                                                                                                      child: const GenderScreen() )));
                             }, 
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                             style: ElevatedButton.styleFrom(

@@ -36,8 +36,9 @@ class Wrapper extends StatelessWidget{
           //context.read<AuthRepository>().signOut();
           if(state.accountType == Gender.nonExist || !state.isCompleted!){
             return BlocProvider(
+              lazy: false,
               create: (context) => OnboardingBloc(databaseRepository: context.read<DatabaseRepository>(), storageRepository: context.read<StorageRepository>(), authBloc: context.read<AuthBloc>()),   
-              child:  WelcomeScreen(),       
+              child: const  WelcomeScreen(),       
             );
             
           }

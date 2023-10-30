@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
 import 'package:lomi/src/ui/home/components/usercard.dart';
 import 'package:lomi/src/ui/home/components/userdrag.dart';
 import 'package:swipe_cards/draggable_card.dart';
@@ -44,8 +45,12 @@ class SwipeCard extends StatelessWidget {
           
         }
         if(state.swipeStatus == SwipeStatus.loaded){
+
+         // NotificationService().showMessageReceivedNotifications(title: 'Match Loaded', body:'you have match for ${state.loadFor!.name}', payload: 'mnm');
+
           List<SwipeItem> _swipeItems = [];
           MatchEngine? _matchEngine;
+
           if(state.users.isEmpty ){
             Future.delayed(Duration(seconds: 2),(){
 
@@ -123,7 +128,14 @@ class SwipeCard extends StatelessWidget {
                           if(state.loadFor == LoadFor.daily){
                             context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
 
-                          }else{
+                              Future.delayed(const Duration(seconds: 30), (){ 
+                               context.read<SwipeBloc>().add(LoadUsers(userId: context.read<AuthBloc>().state.user!.uid , users: context.read<AuthBloc>().state.accountType! )); 
+
+                               
+                               });
+                            NotificationService().scheduleNotifications(title: 'Daily Match', body: 'your time is up. your daily matches are ready to view', payload: 'daily matches');
+   
+                        }else{
                       
                           context.read<SwipeBloc>().add(SwipeEnded(completedTime: state.completedTime));
                           }

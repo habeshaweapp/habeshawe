@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
-import 'package:location/location.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Models/user_model.dart';
 import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
@@ -49,9 +48,9 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     on<LoadUserAd>(_onLoadUserAd);
     on<AdSwipeEnded>(_onAdSwipeEnded);
 
-    if(state.completedTime == null && state.users.isEmpty){
+    //if(state.completedTime == null && state.users.isEmpty){
       add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!));
-    }
+   // }
     print(state);
     print(state);
 
@@ -84,32 +83,28 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       users = await _databaseRepository.getUsersMainLogic(event.userId, event.users, event.prefes!);
     }
     if(event.prefes!.discoverBy == 1){
-      users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users, event.prefes!, event.user!);
+      users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users, event.prefes!, event.user!).timeout(Duration(seconds: 5), onTimeout: () { 
+        emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('toolong');
+        },);
     }
     if(event.prefes!.discoverBy == 2){
 
-     users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users );
+     users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users,5);
     }
     if(event.prefes!.discoverBy == 3){
       users = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users);
     }
 
-    //_databaseRepository.getNearByUsers(event.userId,_locationData).listen((users) {
-      //var ads = [];
-    //var last = const User(id: 'last', name: 'last', age: 0, gender: 'last', imageUrls: [], interests: []);
-     // users.add(last);
-
-    //emit(SwipeLoaded(users:users.length>3? users.sublist(0,3): users ));
-
-       // emit(SwipeLoaded(users: users ));
-        emit(state.copyWith(swipeStatus: SwipeStatus.loaded, users: users ));
+ 
+    emit(state.copyWith(swipeStatus: SwipeStatus.loaded, users: users ));
 
   
     
   // add(UpdateHome(users: users));
      
-   }on Exception catch (e) {
+   }on TimeoutException catch (e) {
     print(e.toString());
+    emit(state.copyWith(swipeStatus: SwipeStatus.error));
      
    }
    
@@ -200,11 +195,11 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
 
   FutureOr<void> _onSwipeEnded(SwipeEnded event, Emitter<SwipeState> emit) {
    // emit(SwipeCompleted(completedTime: event.completedTime));
-   if(state.completedTime != null){
-    Future.delayed(const Duration(hours: 24), (){ 
+  //  if(state.completedTime != null){
+  //   Future.delayed(const Duration(hours: 24), (){ 
       
-      add(LoadUsers(userId: _authBloc.state.user!.uid , users: _authBloc.state.accountType! )); });
-   }
+  //     add(LoadUsers(userId: _authBloc.state.user!.uid , users: _authBloc.state.accountType! )); });
+  //  }
     emit(state.copyWith(completedTime: event.completedTime, swipeStatus: SwipeStatus.completed));
   }
 
@@ -225,7 +220,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
 
     }
     if(event.loadFor == LoadFor.adNearby){
-      var users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users );
+      var users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users,2 );
 
       emit(state.copyWith(users: users, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad ));
 

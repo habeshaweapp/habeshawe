@@ -1,4 +1,3 @@
-import 'package:location/location.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 
 import '../../Models/enums.dart';
@@ -37,13 +36,13 @@ abstract class BaseDatabaseRepository{
   Future<void> updateUserPreference(UserPreference userPreference, Gender users);
 
   //***************888 main logic getting ussers based on preference ***********8*8***8*//
-  Future<List<User>> getUsersBasedonNearBy(String userId, Gender users);
+  Future<List<User>> getUsersBasedonNearBy(String userId, Gender users, int max);
   //Stream<List<User>> getNearByUsers(String userId, Position locationData);
   Future<List<User>> getUsersBasedonLOmiLogic(String userId,Gender users);
 
 
   //add user on verification list
-  Future<void> addVerifyMeUser(User user, String type, String url);
+  Future<void> addVerifyMeUser(User user, bool onlyVerifyMe, String url);
 
 
   //Habeshawe main logic

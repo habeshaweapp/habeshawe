@@ -21,6 +21,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final StorageRepository _storageRepository;
   final AuthBloc _authBloc;
   StreamSubscription? _authSubscription;
+  StreamSubscription? _loadChatSubscription;
 
   ScrollController scrollController = ScrollController();
   late String userId;
@@ -61,7 +62,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   void _onLoadChats(LoadChats event, Emitter<ChatState> emit) {
     
     try {
-  _databaseRepository.getChats(event.userId, event.users, event.matchedUserId).listen((messages) {
+     _loadChatSubscription =  _databaseRepository.getChats(event.userId, event.users, event.matchedUserId).listen((messages) {
     add(UpdateChats(messages: messages));
    });
 
@@ -172,6 +173,7 @@ void _onLoadMoreChats(LoadMoreChats event, Emitter<ChatState> emit) async{
   Future<void> close() {
     // TODO: implement close
     _authSubscription?.cancel();
+    _loadChatSubscription?.cancel();
     
     return super.close();
   }

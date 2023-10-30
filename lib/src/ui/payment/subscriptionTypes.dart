@@ -49,7 +49,7 @@ class SubscriptionType extends StatelessWidget{
         child: InkWell(
           onTap: onTap,
           child: Container(
-            height: 120.h,
+            height: 130.h,
             //width: 96.w,
             //(MediaQuery.of(context).size.width -50) * 0.304,
             padding: EdgeInsets.only(

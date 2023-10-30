@@ -5,14 +5,32 @@ import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/ui/chat/chatscreen.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:rxdart/rxdart.dart';
 
 class NotificationService{
+  //Singleton pattern
+  static final NotificationService _notificationService = NotificationService._internal();
+
+  factory NotificationService(){
+    return _notificationService;
+  }
+
+  NotificationService._internal();
+
+  
+
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = 
       FlutterLocalNotificationsPlugin();
+
+  static final onClickNotification = BehaviorSubject<String>();
+
+  static void onNotificationTap(NotificationResponse notificationResponse){
+    onClickNotification.add(notificationResponse.payload!);
+  }
   
   Future<void> init() async{
    const AndroidInitializationSettings androidInitializationSettings =
-     AndroidInitializationSettings('ic_launcher');
+     AndroidInitializationSettings('@mipmap/ic_launcher');
 
    final DarwinInitializationSettings darwinInitializationSettings =
      DarwinInitializationSettings(
@@ -29,6 +47,8 @@ class NotificationService{
 
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
+      onDidReceiveNotificationResponse: onNotificationTap,
+      onDidReceiveBackgroundNotificationResponse: onNotificationTap
       
       );
 
@@ -36,66 +56,76 @@ class NotificationService{
 
   void onDidReceiveLocalNotification(
     int id, String? title, String? body, String? payload )async{
-      // showDialog(
-      //   context: BuildContext context, 
-      //   builder: (BuildContext context) => CupertinoAlertDialog(
-      //     title: Text(title?? ''),
-      //     content: Text(body??''),
-      //     actions: [
-      //       CupertinoDialogAction(
-      //         isDefaultAction: true,
-      //         child: Text('Ok'),
-      //         onPressed: ()async{
-      //           Navigator.of(context,rootNavigator: true).pop();
-      //           await Navigator.push(context, MaterialPageRoute(
-      //             builder: (context) => ChatScreen(payload as UserMatch)
-      //             ));
-      //         }
-      //         )
-      //     ],
-      //   ) );
+      return null;
 
   }
   
-   static AndroidNotificationDetails _androidNotificationDetails = 
-    const AndroidNotificationDetails(
-      'id1', 
-      'Message',
-      importance: Importance.max,
-      priority: Priority.high,
-      ticker: 'msgNoti'
-      );
+    
 
-   static final DarwinNotificationDetails darwinNotificationDetails = 
+    final DarwinNotificationDetails darwinNotificationDetails = 
       const DarwinNotificationDetails();
 
-   NotificationDetails notificationDetails =
-          NotificationDetails(
-            android: _androidNotificationDetails,
-            iOS: darwinNotificationDetails
-          ); 
+    
 
-      Future<void> showNotifications()async{
+      Future<void> showMessageReceivedNotifications({
+        required String title, required String body, required String payload
+      }) async {
+        const AndroidNotificationDetails androidNotificationDetails = 
+           AndroidNotificationDetails(
+            'habeshaweMessage', 
+            'Message',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'Message Notification'
+            );
+
+        NotificationDetails notificationDetails =
+          NotificationDetails(
+            android: androidNotificationDetails,
+            iOS: darwinNotificationDetails
+          );
         
 
         await flutterLocalNotificationsPlugin.show(
           0, 
-          "title", 
-          'body', 
+          title, 
+          body, 
           notificationDetails,
-          payload: 'nOTIFcation payload'
+          payload: payload
           );
       }
 
-  Future<void> scheduleNotifications() async{
+  Future<void> scheduleNotifications({
+        required String title, required String body, required String payload
+      }) async {
+       
+          tz.initializeTimeZones();
+try{
+
+
     await flutterLocalNotificationsPlugin.zonedSchedule(
-      0, 
-      'title', 
-      'body', 
-      tz.TZDateTime.now(tz.local).add(const Duration(minutes: 5)) , 
-      notificationDetails, 
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime
+      27, 
+      title,
+      body, 
+      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 30)), 
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+            'dailymatches', 
+            'matches',
+            importance: Importance.max,
+            priority: Priority.high,
+            
+            )
+      ), 
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      payload: payload
       );
+
+} on Exception catch(e){
+  print(e);
+}
+
   }
 
   Future<void> cancelNotifications(int id) async{

@@ -15,18 +15,18 @@ class LookingForItem extends StatelessWidget {
 
    static List<String> lookignForOpt = [
       'Long-term\n partner',
-      'Christian,\n artner',
-      'Teklil,\n marrage',
-      'nikaa\n keep it halal',
+      'Christian,\n partner',
+      'Teklil,\n marriage',
+      'Nikah\n keep it halal',
       'Someone to chat\nNew friends',
       'Still figuring it\n out',
     ];
 
     static List<Icon> icons =[
-      Icon(FontAwesomeIcons.heart, color: Colors.red,),
-      Icon(FontAwesomeIcons.bookBible, color:Colors.grey),
+      Icon(FontAwesomeIcons.heartPulse, color: Colors.red,),
+      Icon(FontAwesomeIcons.bookBible, color:Colors.black),
       Icon(FontAwesomeIcons.crown, color: Colors.amber,),
-      Icon(FontAwesomeIcons.rightFromBracket, color: Colors.grey,),
+      Icon(FontAwesomeIcons.moon, color: Colors.grey,),
       Icon(FontAwesomeIcons.hand, color: Colors.grey),
       Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.grey)
 

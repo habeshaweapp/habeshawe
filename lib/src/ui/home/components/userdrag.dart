@@ -184,21 +184,14 @@ class UserCard extends StatelessWidget {
                               margin: EdgeInsets.only(left: 10),
                               child: Row(
                                 children: [
-                                  // Container(
-                                  //   width: 8,
-                                  //   height: 8,
-                                  //   decoration: const BoxDecoration(
-                                  //     color: Colors.green,
-                                  //     shape: BoxShape.circle
-                                  //   ),
-                                  // ),
-                                  Icon(Icons.location_on_outlined, color: Colors.green, size: 18,),
+                                
+                                  Icon(Icons.location_on_outlined, color: Colors.grey, size: 18,),
                                   const SizedBox(width: 4,),
                                  Container(
                                    child:  Text(
                                     user.location != null ?'${ calculateDistance(user.location!) }km away ' : '',
                                     //"Recently Active", 
-                                   style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),
+                                   style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[400]),
                                    //TextStyle(color: Colors.white, decoration: TextDecoration.none  ),
                                         
                                 
@@ -207,62 +200,68 @@ class UserCard extends StatelessWidget {
                                 ],
                               ),
                             ),
+
+                            SizedBox(height: 10,),
+
+                            Container(
+                              margin: EdgeInsets.only(left: 10),
+                              child: Row(
+                                children: [
+                                
+                                  Icon(LineIcons.city, color: Colors.grey, size: 18,),
+                                  const SizedBox(width: 4,),
+                                 Container(
+                                   child:  Text(
+                                    '${user.city},  ${user.country }',
+                                    //"Recently Active", 
+                                   style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[400]),
+                                   //TextStyle(color: Colors.white, decoration: TextDecoration.none  ),
+                                        
+                                
+                                    ),
+                                 ),
+                                ],
+                              ),
+                            ),
+
                             SizedBox(height: 15,),
             
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children:
-                   
-                                  List.generate(user.interests.length > 3? 3 : user.interests.length, (idx) => Container(
-                                    margin: EdgeInsets.only(left: 10),
-                                     decoration: BoxDecoration(
-                                     // color: Colors.white.withOpacity(0.4),
-                                      borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(
-                                        color: Colors.white,
-                                        width: 0.5
-                                      )
-                                      
-                                     ),
-            
-                                      child:   Padding(
-                                        padding: const EdgeInsets.only(left: 8,right: 10, top: 4, bottom: 5),
-                                        child: Text(
-                                          user.interests[idx],
-                                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white, fontSize: 10.sp)
-                                          // TextStyle(
-                                          //   color: Colors.white,
-                                          //   //decoration: TextDecoration.none,
-                                            
-                                          //   ),
-            
-                                          ),
-                                      ),
-                                    )
-                                    )
-                                ),
-          
+                            Container(
+                              width: size.width*0.9,
+                              child: Wrap(
                                 
-                                  // Container(
-                                  //   height: 17,
-                                  //   decoration: BoxDecoration(
-                                  //     color: Colors.green,
-                                  //     borderRadius: BorderRadius.circular(60)
-
-                                  //   ),
-                                  //   child: IconButton(
-                                  //     onPressed:(){Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(
-                                  //       value: context.read<ProfileBloc>(),
-                                  //       child: Profile(user: user, profileFrom: ProfileFrom.swipe,))));}, 
-                                  //     icon: Icon(LineIcons.arrowDown, color: Colors.green,size:30 ,)
-                                  //     )
-                                  //   ),
-                                
-                              ],
+                                children:
+                                               
+                                List.generate( user.interests.length, (idx) => Container(
+                                  margin: EdgeInsets.only(left: 10, bottom: 10),
+                                   decoration: BoxDecoration(
+                                    color: Colors.black12,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                      color: Colors.grey[700]!,
+                                      width: 0.5
+                                    )
+                                    
+                                   ),
+                                        
+                                    child:   Padding(
+                                      padding: const EdgeInsets.only(left: 12,right: 14, top: 5, bottom: 6),
+                                      child: Text(
+                                        user.interests[idx],
+                                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[400], fontSize: 11.sp)
+                                        // TextStyle(
+                                        //   color: Colors.white,
+                                        //   //decoration: TextDecoration.none,
+                                          
+                                        //   ),
+                                        
+                                        ),
+                                    ),
+                                  )
+                                  )
+                              ),
                             ),
-                            SizedBox(height: 70,),
+                            SizedBox(height:45,),
             
             
                           ],
@@ -285,7 +284,7 @@ class UserCard extends StatelessWidget {
                           decoration: BoxDecoration(
                            // borderRadius: BorderRadius.circular(45.0),
                             shape: BoxShape.circle,
-                            color: Colors.white
+                            color: Colors.grey
                             
                             ),
                             child: Icon(LineIcons.angleDoubleUp,size: 20, color: Colors.black,),
@@ -324,6 +323,7 @@ class UserCard extends StatelessWidget {
   }
 
   int calculateDistance(List userLocation)  {
+    var km = Geolocator.distanceBetween(7.3666915, 38.6714959, userLocation[0], userLocation[1]);
 
     return Geolocator.distanceBetween(7.3666915, 38.6714959, userLocation[0], userLocation[1])~/1000;
    } 
@@ -357,6 +357,7 @@ class _LineIndicatorState extends State<LineIndicator> {
     
     });
   }
+  
 
   @override
   Widget build(BuildContext context) {

@@ -58,7 +58,7 @@ dependencies:
   geoflutterfire:
     path: packages/geoflutterfire/
 
-  location: ^4.4.0
+ 
   appinio_swiper: ^2.0.2
   swipable_stack: ^2.0.0
   in_app_purchase: ^3.1.10
@@ -78,6 +78,7 @@ dependencies:
   slide_countdown: ^0.6.0
   flutter_local_notifications: ^16.1.0
   flutter_screenutil: ^5.7.0
+  rxdart: ^0.27.7
 
 
 

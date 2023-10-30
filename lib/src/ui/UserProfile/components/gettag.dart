@@ -21,7 +21,7 @@ class GetTag extends StatelessWidget {
       child: 
              
           SizedBox(
-            height: 250,
+            height: 250.h,
             //width: 300,
             child: PageView(
               physics: const BouncingScrollPhysics(),
@@ -63,10 +63,15 @@ class GetTag extends StatelessWidget {
       
       ,
     );
-    }else if(user.verified == VerifiedStatus.pending){
+    }else if(user.verified == VerifiedStatus.pending.name){
       return Center(
-        child: Container(
-          child: Text('Your profile is under review, you will be verified in time...'),
+        child: Column(
+          children: [
+            Icon(Icons.pending, color: Colors.grey, ), 
+            Container(
+              child: Text('Your profile is,\nunder review, you will be verified in time...', style: TextStyle(fontSize: 12.sp, color: Colors.grey ), textAlign: TextAlign.center, ),
+            ),
+          ],
         ),
       );
     }else{
@@ -97,20 +102,20 @@ class GetTag extends StatelessWidget {
                       verifiedIcon,
                       SizedBox(height: 15.h,),
                       Padding(
-                        padding:  EdgeInsets.only(bottom: 5.0.h),
+                        padding:  EdgeInsets.only(bottom: 10.0.h),
                         child: Text(title,
                         style: Theme.of(context).textTheme.titleLarge ,
                         ),
                       ),
                       Padding(
-                        padding:  EdgeInsets.symmetric(horizontal: 35.h),
+                        padding:  EdgeInsets.symmetric(horizontal: 35.w),
                         child: Text(description
                          ,
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10.sp) ,
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 11.sp) ,
                           textAlign: TextAlign.center,
                           ),
                       ),
-                        SizedBox(height: 10.h,),
+                        SizedBox(height: 15.h,),
 
                         
                     ],

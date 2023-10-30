@@ -2,9 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
+import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
 import 'package:lomi/src/ui/Likes/likes.dart';
 import 'package:lomi/src/ui/home/ExplorePage.dart';
 import 'package:lomi/src/ui/matches/matches_screen.dart';
@@ -24,6 +28,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   @override
   void initState() {
     // TODO: implement initState
+    listenToNotification();
     super.initState();
     WidgetsBinding.instance.addObserver(this);
   }
@@ -51,6 +56,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         );
 
     }
+  }
+
+  listenToNotification(){
+    NotificationService.onClickNotification.stream.listen((payload) {
+      if(payload == 'chat'){
+        setState(() {
+          pageIndex = 2;
+        });
+      }
+      
+    });
   }
 
   @override
@@ -85,6 +101,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       pageIndex == 3 ? 'assets/images/account_active_icon.svg' :'assets/images/account_icon.svg',
 
     ];
+
+    var icons = [
+      Icon(Icons.home, color: pageIndex == 0?isDark? Colors.white: Colors.black: Colors.grey ,size: 33,),
+      Icon(Icons.home, color: pageIndex == 0?isDark? Colors.white: Colors.black: Colors.grey ,size: 33,),
+      Icon(LineIcons.facebookMessenger , color: pageIndex == 2?isDark? Colors.white: Colors.black: Colors.grey ,size: 33,),
+      Icon(Icons.person, color: pageIndex == 3?isDark? Colors.white: Colors.black: Colors.grey ,size: 33,),
+      
+    ];
     return AppBar(
       backgroundColor: Colors.transparent,
       leading: null,
@@ -97,7 +121,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         systemNavigationBarIconBrightness: !isDark? Brightness.dark: Brightness.light,
       ),
       title: Padding(
-        padding: const EdgeInsets.only(left: 10, right: 10),
+        padding:  EdgeInsets.only(left: 10.w, right: 10.w),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(items.length, (index) {
@@ -107,7 +131,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   pageIndex = index;
                 });
               }, 
-              icon: SvgPicture.asset(items[index])
+              icon: index == 1?SvgPicture.asset(items[index]): icons[index]
               );
 
           })
@@ -121,11 +145,11 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 Widget HomeBody(){
   return IndexedStack(
     index: pageIndex,
-    children:  [
-      ExplorePage(),
-      LikesScreen(),
-      MatchesScreen(),
-      UserProfile() 
+    children: const  [
+       ExplorePage(),
+       LikesScreen(),
+       MatchesScreen(),
+       UserProfile() 
     ],
   );
 }

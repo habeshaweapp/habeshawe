@@ -16,9 +16,28 @@ import 'package:lomi/src/app_route_config.dart';
 
 import '../../Data/Models/userpreference_model.dart';
 
-class StartScreen extends StatelessWidget {
+class StartScreen extends StatefulWidget {
    StartScreen({super.key});
 
+  @override
+  State<StartScreen> createState() => _StartScreenState();
+}
+
+class _StartScreenState extends State<StartScreen> 
+    with TickerProviderStateMixin {
+  late final AnimationController _controller =
+      AnimationController(vsync: this, duration: const Duration(seconds: 1))
+        ..repeat(reverse: true);
+
+  late final Animation<double> _animation =
+      CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _controller.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -49,40 +68,95 @@ class StartScreen extends StatelessWidget {
 
           child: Stack(
         children: [
-          Positioned(
-            left: 15,
-            child: SizedBox(
-              height: size.height,
-              child: VerticalDivider(
-                color: Colors.red,
-                thickness: 0.5,
-                
-              ),
-            ),
-          ),
-       
-          Positioned(
-            left: 30,
-            child: SizedBox(
-              height: size.height,
-              child: VerticalDivider(
-                color: Colors.yellow,
-                thickness: 1,
-                ),
-            ),
-          ),
-          Positioned(
-              left: 40,
-              child:
-          SizedBox(
-            height: size.height,
           
-            child: VerticalDivider(
-              color: Colors.green,
-              thickness: 1,
-              ),
-            ),
+          BlocBuilder<ContinuewithCubit, ContinuewithState>(
+            builder: (context, state) {
+              return state.status == ContinueStatus.submitting?
+                FadeTransition(
+                  opacity: _animation,
+                  child: Stack(
+                  children: [
+                    Positioned(
+                      left: 15,
+                      child: SizedBox(
+                        height: size.height,
+                        child: VerticalDivider(
+                          color: Colors.red,
+                          thickness: isDark? 0.3: 0.5,
+                          
+                        ),
+                      ),
+                    ),
+                     
+                    Positioned(
+                      left: 30,
+                      child: SizedBox(
+                        height: size.height,
+                        child: VerticalDivider(
+                          color: Colors.yellow,
+                          thickness: isDark? 0.5: 1,
+                          ),
+                      ),
+                    ),
+                    Positioned(
+                        left: 40,
+                        child:
+                    SizedBox(
+                      height: size.height,
+                    
+                      child: VerticalDivider(
+                        color: Colors.green,
+                        thickness: isDark? 0.5: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                  )
+              : SizedBox(
+                child: Stack(
+                  children: [
+                    Positioned(
+                      left: 15,
+                      child: SizedBox(
+                        height: size.height,
+                        child: VerticalDivider(
+                          color: Colors.red,
+                          thickness: isDark? 0.3: 0.5,
+                          
+                        ),
+                      ),
+                    ),
+                     
+                    Positioned(
+                      left: 30,
+                      child: SizedBox(
+                        height: size.height,
+                        child: VerticalDivider(
+                          color: Colors.yellow,
+                          thickness: isDark? 0.5: 1,
+                          ),
+                      ),
+                    ),
+                    Positioned(
+                        left: 40,
+                        child:
+                    SizedBox(
+                      height: size.height,
+                    
+                      child: VerticalDivider(
+                        color: Colors.green,
+                        thickness: isDark? 0.5: 1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
           ),
+
+
           Positioned(
             right: 10,
             top: 50,
@@ -117,23 +191,23 @@ class StartScreen extends StatelessWidget {
           //     width: 127,
           //   ),
           // ),
-          Positioned(
-            top: size.height/1.8,
-            left: size.width*0.45,
-            child: Center(
-              child: BlocBuilder<ContinuewithCubit, ContinuewithState>(
-                builder: (context, state) {
-                  if (state.status == ContinueStatus.submitting) {
-                    return CircularProgressIndicator(
-                      strokeWidth: 2,
-                    );
-                  }
-                  if(state.status == ContinueStatus.error) return SizedBox();
-                  return Container();
-                },
-              ),
-            ),
-           ),
+          // Positioned(
+          //   top: size.height/1.8,
+          //   left: size.width*0.45,
+          //   child: Center(
+          //     child: BlocBuilder<ContinuewithCubit, ContinuewithState>(
+          //       builder: (context, state) {
+          //         if (state.status == ContinueStatus.submitting) {
+          //           return CircularProgressIndicator(
+          //             strokeWidth: 2,
+          //           );
+          //         }
+          //         if(state.status == ContinueStatus.error) return SizedBox();
+          //         return Container();
+          //       },
+          //     ),
+          //   ),
+          //  ),
           Column(
             // crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,

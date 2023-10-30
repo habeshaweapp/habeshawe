@@ -4,8 +4,10 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/ChatBloc/chat_bloc.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
+import 'package:lomi/src/ui/Profile/profile.dart';
 
 import '../../../Blocs/AdBloc/ad_bloc.dart';
 import '../../../Blocs/MatchBloc/match_bloc.dart';
@@ -21,17 +23,19 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController controller = TextEditingController();
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
    // final inactiveMatches = UserMatch.matches.where((match) => match.userId == 1 && match.chat!.isEmpty,).toList();
    // final activeMatches = UserMatch.matches.where((match) => match.userId == 1 && match.chat!.isNotEmpty,).toList();
 
 
     return BlocBuilder<MatchBloc, MatchState>(
       builder: (context, state) {
-        if(state is MatchLoading){
+        if(state.matchStatus == MatchStatus.loading){
           return Center(child: CircularProgressIndicator(),); 
         }
         
-        if(state is MatchLoaded){
+        if(state.matchStatus == MatchStatus.loaded){
           final inactiveMatches = state.matchedUsers.where((match) => !match.chatOpened).toList();
           final activeMatches = state.matchedUsers.where((match) => match.chatOpened).toList(); 
           return
@@ -52,10 +56,13 @@ class Body extends StatelessWidget {
                   hintText: 'Search Match',
                   contentPadding: EdgeInsets.zero,
                   icon: Icon(Icons.search,),
+                  counterText: ''
 
                 ),
                 style: TextStyle(fontSize: 12),
                 maxLines: 1,
+                maxLength: 30,
+                controller: controller,
                 
                 
                 onTapOutside: (event){
@@ -67,7 +74,7 @@ class Body extends StatelessWidget {
               ),
             Padding(
               padding: const EdgeInsets.only(left: 20.0, top: 20),
-              child: Text("New Matches", style: Theme.of(context).textTheme.bodyLarge,),
+              child: Text(state.isUserSearching? 'Search Result': "New Matches", style: Theme.of(context).textTheme.bodyLarge,),
             ),
             SizedBox(height: 10,),
             
@@ -76,10 +83,10 @@ class Body extends StatelessWidget {
               padding: const EdgeInsets.only(left:0.0),
               child: SizedBox(
                 height: 150,
-                child: (inactiveMatches.length !=0 || state.searchResult !=0 )? ListView.builder(
+                child: (inactiveMatches.length !=0 || state.searchResult!.isNotEmpty )? ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
-                  itemCount: state.isUserSearching?state.searchResult?.length: inactiveMatches.length,
+                  itemCount: state.isUserSearching?state.searchResultFor==SearchResultFor.matched? state.searchResult?.length:1: inactiveMatches.length,
                   itemBuilder: (context, index){
                     return GestureDetector(
                       onTap: (){
@@ -93,7 +100,10 @@ class Body extends StatelessWidget {
                                                   BlocProvider.value(value: context.read<ChatBloc>(),
                                                       child: BlocProvider.value(
                                                         value: context.read<MatchBloc>() ,
-                                                        child:
+                                                        child: (state.isUserSearching && state.searchResultFor == SearchResultFor.findMe)?
+                                                              BlocProvider.value(
+                                                                value: context.read<ProfileBloc>(),
+                                                                child: Profile(user: state.findMeResult![0], profileFrom: ProfileFrom.like)):
                                                               ChatScreen(state.isUserSearching?state.searchResult![index]: inactiveMatches[index]) 
                                                                                           ))));
 
@@ -111,14 +121,21 @@ class Body extends StatelessWidget {
                                                       child: BlocProvider.value(
                                                         value: context.read<MatchBloc>() ,
                                                         child:
+                                                              (state.isUserSearching && state.searchResultFor == SearchResultFor.findMe)?
+                                                              BlocProvider.value(
+                                                                value: context.read<ProfileBloc>(),
+                                                                child: Profile(user: state.findMeResult![0], profileFrom: ProfileFrom.like)):
                                                               ChatScreen(state.isUserSearching?state.searchResult![index]: inactiveMatches[index]) 
                                                                                           ))));
 
                                   }else{
                                     showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
                                   }
+
+                                  controller.clear();
+                                  context.read<MatchBloc>().add(SearchName(userId: context.read<AuthBloc>().state.user!.uid, gender: context.read<AuthBloc>().state.accountType!, name: '' ));
                         },
-                      child:state.isUserSearching? MatchesImage(url: state.searchResult?[index].imageUrls[0],height: 120, width: 100, )
+                      child:state.isUserSearching? state.searchResultFor == SearchResultFor.matched? MatchesImage(url: state.searchResult?[index].imageUrls[0] ,height: 120, width: 100, ): state.findMeResult!.isNotEmpty? MatchesImage(url: state.findMeResult?[0].imageUrls[0]): SizedBox()
                       :MatchesImage(url: inactiveMatches[index].imageUrls[0], height: 120, width: 100,));
                   }
                   ):
@@ -128,7 +145,7 @@ class Body extends StatelessWidget {
                                     height: 150,
                                     width: 120,
                                     decoration: BoxDecoration(
-                    border: Border.all(color: Colors.green),
+                    border: Border.all(color: isDark ? Colors.teal: Colors.green),
                     borderRadius: BorderRadius.circular(20)
                                     ),
                                     child: Center(child: Text('New matches\nwill appear\n here',textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10,fontWeight: FontWeight.w300),)),

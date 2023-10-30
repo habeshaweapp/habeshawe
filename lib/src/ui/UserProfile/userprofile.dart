@@ -33,7 +33,7 @@ import 'components/bottomprofile.dart';
 import 'components/gettag.dart';
 
 class UserProfile extends StatelessWidget {
-   UserProfile({super.key});
+   const UserProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -132,19 +132,19 @@ class UserProfile extends StatelessWidget {
           return Column(
             children: [
               SizedBox(
-                height: 30.h,
+                height: 40.h,
               ),
               Center(
                 child: SizedBox(
-                  height: 200,
-                  width: 200,
+                  height: 220.h,
+                  width: 220.h,
                   child: Stack(
                     children: [
                       Center(
                         child: Container(
                           decoration: BoxDecoration(
-                            border: Border.all(width: 4, color: isDark? Colors.teal : Colors.green
-                            ),
+                            border: Border.all(width: 1, color: isDark? Colors.teal : Colors.grey,),
+                            
                             shape: BoxShape.circle,
                           ),
                           child: Padding(
@@ -167,7 +167,8 @@ class UserProfile extends StatelessWidget {
                                       state.user.imageUrls[0]
                                       
                                       ),
-                                radius: 80,
+                                radius: 90.h,
+                                
                               ),
                             ),
                           ),
@@ -195,13 +196,14 @@ class UserProfile extends StatelessWidget {
 
                             },
                             style: ElevatedButton.styleFrom(
-                                // backgroundColor: Colors.green,
+                                 foregroundColor: Colors.grey,
+                                backgroundColor: isDark? Colors.grey[900]: Colors.white,
                                 shape: StadiumBorder()),
                             child: Text("10% COMPLETE")),
                       ),
                       Positioned(
                         right: 0,
-                        top: 30,
+                        top: 30.h,
                         child: FloatingActionButton(
                           onPressed: () {
                             Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
@@ -225,7 +227,7 @@ class UserProfile extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 20.h,
+                height: 25.h,
               ),
               
               Row(
@@ -251,7 +253,7 @@ class UserProfile extends StatelessWidget {
                 ],
               ),
               SizedBox(
-                height: 40.h,
+                height: 30.h,
               ),
               //Color.fromARGB(255, 22, 22, 22)
               Expanded(
@@ -259,11 +261,11 @@ class UserProfile extends StatelessWidget {
                   color: isDark ? Color.fromARGB(255, 41, 41, 41): Colors.grey[200],
                   child: Column(
                     children: [
-                      SizedBox(height: 20.h,),
+                      SizedBox(height: 10.h,),
 
                     
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding:  EdgeInsets.all(8.0.w),
                 
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -277,7 +279,7 @@ class UserProfile extends StatelessWidget {
                       color: Colors.blue,
                       ),
                     SizedBox(
-                      width: 7.w,
+                      width: 10.w,
                     ),
                     ProfileBox(
                       isDark: isDark, 
@@ -288,7 +290,7 @@ class UserProfile extends StatelessWidget {
 
                       ),
 
-                      SizedBox(width: 7.w,),
+                      SizedBox(width: 10.w,),
 
                       ProfileBox(
                         isDark: isDark,
@@ -340,7 +342,7 @@ class UserProfile extends StatelessWidget {
       context: context, 
       builder: (ctx){
         return SizedBox(
-          height: 250,
+          height: 250.h,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -438,8 +440,8 @@ class ProfileBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height:75.h,
-      // MediaQuery.of(context).size.height * 0.115,
+      height:95.h,
+       //MediaQuery.of(context).size.height * 0.115,
       width: 
       //108.w,
       MediaQuery.of(context).size.width * 0.3,
@@ -458,25 +460,25 @@ class ProfileBox extends StatelessWidget {
             child: Column(
               children: [
                 SizedBox(
-                  height:title != 'Subscriptions'? 3.h:10.h,
+                  height:title != 'Subscriptions'? 5.h:15.h,
                 ),
                 Icon(
                   icon,
                   color: color,
-                  size: 20.h,
+                  size: 25.h,
                 ),
                 SizedBox(
-                  height: 5.h,
+                  height: 8.h,
                 ),
                 Text( superLikes != null? '$superLikes $title' : title
-                  ,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey,fontSize: 10.sp),),
+                  ,style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey,fontSize: 11.sp),),
                title != 'Subscriptions'? SizedBox(
                   height: 5.h,
                 ):SizedBox(),
                 title != 'Subscriptions'?
                 Text(
                   "GET MORE",
-                  style: TextStyle(color: Colors.blue, fontSize: 10.sp),
+                  style: TextStyle(color: Colors.blue, fontSize: 12.sp),
                 ):SizedBox()
               ],
             ),

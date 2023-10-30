@@ -80,7 +80,7 @@ class Body extends StatelessWidget {
                                         topLeft: Radius.circular(20),
                                         topRight: Radius.circular(20)
                                         ),
-                                      color: Colors.green.shade200,
+                                      color: isDark?Colors.teal.shade900 : Colors.green.shade200,
                                     ),
                                     child:  Column(
                                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -89,7 +89,7 @@ class Body extends StatelessWidget {
                                         Text(
                                           state.messages[index].message,                                    
                                           //userMatch.chat![0].messages[index].message,
-                                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black)
+                                          style: Theme.of(context).textTheme.bodySmall!.copyWith()
                                           //TextStyle(color: Colors.black)
                                           ,),
                                           Row(
@@ -124,7 +124,7 @@ class Body extends StatelessWidget {
                                           imageUrl: state.messages[index].imageUrl!,
                                           fit: BoxFit.cover,
                                           height: 300,
-                                          placeholder:(context, name)=> Container(color: isDark? Colors.grey[900]: Colors.grey),
+                                          placeholder:(context, name)=> Container(color: isDark? Colors.grey[800]: Colors.grey),
                                           width: MediaQuery.of(context).size.width*0.5,
                                           ),
                                       ),
@@ -153,7 +153,7 @@ class Body extends StatelessWidget {
                                         topLeft: Radius.circular(20),
                                         topRight: Radius.circular(20)
                                         ),
-                                          color: Colors.grey.shade200,
+                                          color: isDark? Colors.grey[800] : Colors.grey.shade200,
                                         ),
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -161,7 +161,7 @@ class Body extends StatelessWidget {
                                             Text(
                                               state.messages[index].message,
                                               //userMatch.chat![0].messages[index].message,
-                                              style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.black),),
+                                              style: Theme.of(context).textTheme.bodySmall,),
 
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -196,7 +196,7 @@ class Body extends StatelessWidget {
                                         fit: BoxFit.cover,
                                         height: 300,
                                         //width: 300,
-                                        placeholder:(context, name)=> Container(color: isDark? Colors.grey[900]: Colors.grey),
+                                        placeholder:(context, name)=> Container(color: isDark? Colors.grey[800]: Colors.grey),
                                         width: MediaQuery.of(context).size.width * 0.5,
                                         
                                         ),
@@ -311,7 +311,7 @@ class Body extends StatelessWidget {
                   //height: 40,
                   width: MediaQuery.of(context).size.width/1.3,
                   decoration: BoxDecoration(
-                    color: isDark ? Colors.grey.shade900: Colors.grey.shade200,
+                    color: isDark ? Color.fromARGB(255, 44, 42, 42): Colors.grey.shade200,
                     borderRadius: BorderRadius.all(
                       Radius.circular(20)
                     ),

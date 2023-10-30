@@ -36,7 +36,12 @@ android {
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
+    defaultConfig {
+        multiDexEnabled true
+    }
+
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -88,6 +93,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics'
     //implementation 'com.android.billingclient:billing:3.0.0'
     implementation 'com.google.android.gms:play-services-ads:22.3.0'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
+    implementation 'androidx.window:window:1.0.0'
+    implementation 'androidx.window:window-java:1.0.0'
 
 }
 

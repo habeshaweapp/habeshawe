@@ -8,7 +8,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:go_router/go_router.dart';
-import 'package:location/location.dart' as loc;
+
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import 'package:lomi/src/app_route_config.dart';

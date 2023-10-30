@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
+import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
 
 import 'matches_image_small.dart';
 
@@ -36,8 +37,11 @@ class ChatList extends StatelessWidget {
           if(snapshot.hasData){
           var lastMessage = snapshot.data?.first;
          // time = lastMessage
+         if(lastMessage!.senderId == match.id && lastMessage.seen == null){
+            NotificationService().showMessageReceivedNotifications(title: match.name, body: lastMessage.message, payload: 'chat');
+          }
           return Text(
-            lastMessage?.message ?? '',
+            lastMessage.message,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             //softWrap: true,
@@ -67,6 +71,7 @@ class ChatList extends StatelessWidget {
           if(time != null){
              time2 = DateFormat('hh:mm a').format(time);
           }
+          
 
          // time = lastMessage
           return time != null ?Text(

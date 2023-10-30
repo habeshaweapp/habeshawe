@@ -33,7 +33,7 @@ class StorageRepository extends BaseStorageRepository{
     }
   }
 
-  Future<void> uploadVerifyMeImage(User user, XFile image, String type) async{
+  Future<void> uploadVerifyMeImage(User user, XFile image, bool onlyVerifyMe ) async{
     try{
       DatabaseRepository databaseRepository = DatabaseRepository();
       await storage.ref('${user.id}/verifyMe/${image.name}')
@@ -42,7 +42,7 @@ class StorageRepository extends BaseStorageRepository{
               String url = await storage.ref('${user.id}/verifyMe/${image.name}').getDownloadURL();
 
              databaseRepository.updateUser(user.copyWith(verified: 'pending'));
-             databaseRepository.addVerifyMeUser(user, type, url);
+             databaseRepository.addVerifyMeUser(user, onlyVerifyMe, url);
 
              } );
 

@@ -691,46 +691,25 @@ class DatabaseRepository extends BaseDatabaseRepository{
 }
   
   @override
-  Future<List<User>> getUsersBasedonNearBy(String userId, Gender users)async {
+  Future<List<User>> getUsersBasedonNearBy(String userId, Gender users, int max)async {
    
-    // final permission = await Geolocator.requestPermission();
-    // Position myLocation = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    // geohash.MyGeoHash myGeoHash = geohash.MyGeoHash();
-    // String hash = myGeoHash.geoHashForLocation(geohash.GeoPoint(myLocation.latitude, myLocation.longitude));
-    // _firebaseFirestore.collection(user.gender).snapshots()
-    // .forEach((element) {
-    //   element.docs.forEach((doc) {
-    //    // updateUser(User.fromSnapshootOld(doc));
-    //    _firebaseFirestore.collection(user.gender).doc(doc.id)
-    //    .update({'geohash': hash });
-    //   });
-    // });
-
     try {
-  // final preference = await _firebaseFirestore.collection(users == Gender.men ?Gender.women.name: users.name)
-  // .doc(userId).collection('userpreference').doc('preference')
-  // .get().then((snap) => UserPreference.fromSnapshoot(snap));
-  final prefes = await SharedPreferences.getInstance();
-  //.snapshots().map((snap) => UserPreference.fromSnapshoot(snap));
+
   Position myLocation = await Geolocator.getCurrentPosition(desiredAccuracy:  LocationAccuracy.low);
-  prefes.setDouble('latitude', myLocation.latitude);
-  prefes.setDouble('longitude', myLocation.longitude);
-  //final myLocation = await _firebaseFirestore.collection(user.gender).doc(userId).get().then((value) => value.data()!['location']);
+ 
   geohash.MyGeoHash myGeoHash = geohash.MyGeoHash();
   String hash = myGeoHash.geoHashForLocation(geohash.GeoPoint(myLocation.latitude, myLocation.longitude));
   
-  // _firebaseFirestore.collection(user.gender).get().then(
-  //   (value) => value.docs.(doc) => doc)
-  
   
   geohash.GeoPoint center = geohash.GeoPoint(myLocation.latitude, myLocation.longitude);
-  double radiusInM = 25 * 1000;
+  //var max = prefes.maximumDistance;
+  double radiusInM = max * 1000;
   // preference.maximumDistance! * 1000;
   List<List<String>> bounds = myGeoHash.geohashQueryBounds(center, radiusInM);
   List<Future> futures = [];
   
   for(List<String> b in bounds){
-    var q = _firebaseFirestore.collection(users == Gender.men? Gender.men.name:Gender.women.name)
+    var q = _firebaseFirestore.collection(users == Gender.men? Gender.women.name:Gender.men.name)
               .orderBy('geohash')
               .startAt([b[0]])
               .endAt([b[1]]);
@@ -742,8 +721,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   
   var result = await Future.wait(futures).then((snapshots){
     List<User> matchingUsers = [];
-    
-    
+    List<User> outSideRad = [];
     for(var snap in snapshots){
       if(snap.docs.length != 0){
         
@@ -756,11 +734,20 @@ class DatabaseRepository extends BaseDatabaseRepository{
         if(distanceInM <= radiusInM){
           matchingUsers.add(User.fromSnapshoot(doc));
 
+        }else{
+          outSideRad.add(User.fromSnapshoot(doc));
         }
 
         
       }
       }
+    }
+    // if(matchingUsers.length <10){
+    //   matchingUsers.addAll(outSideRad.sublist(0,10 - matchingUsers.length));
+    //   //return matchingUsers;
+    // }
+    if(matchingUsers.isEmpty){
+      return outSideRad;
     }
     
     return matchingUsers;
@@ -777,14 +764,14 @@ class DatabaseRepository extends BaseDatabaseRepository{
   }
   
   @override
-  Future<void> addVerifyMeUser(User user, String type, String url) async {
+  Future<void> addVerifyMeUser(User user, bool onlyVerifyMe, String url) async {
     // TODO: implement addVerifyMeUser
     try{
       await _firebaseFirestore.collection('verify')
         .doc(user.id)
         .set({
           'timestamp': DateTime.now(),
-          'type': type,
+          'onlyVerifyMe': onlyVerifyMe,
           'url': url,
         });
 
@@ -822,15 +809,42 @@ class DatabaseRepository extends BaseDatabaseRepository{
   @override
   Future<List<User>> getUsersMainLogic(String userId, Gender gender, UserPreference preference) async {
     // TODO: implement getUsersMainLogic
+    var collectionRef = _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name);
     List<int> randomsForQueens = [];
     List<int> randomsForPrincess = [];
+    List<int> viewedQueens = [];
+    List<int> viewedPrincess =[];
     List<String> viewedProfiles = await _firebaseFirestore.collection(gender.name)
     .doc(userId).collection('viewedProfiles')
-    .get().then((snap) => snap.docs.map((e) => e.id,).toList() );
+    .get().then((snap) => snap.docs
+                          .map((doc){
+                            if(doc.id == 'viewed'.split(',')){
+                              viewedQueens = doc[gender == Gender.men? 'queens': 'kings'].split(',');
+                              viewedPrincess = doc[gender == Gender.men?'princess':'gents'].split(',');
+                            }
+                            return doc.id;
+                            },).toList() );
+    
+    // List<String> viewedQueens = await _firebaseFirestore.collection(gender.name).doc(userId).collection('viewedProfiles')
+    //                                   .doc('viewed')
+
+    final int queenCount =await _firebaseFirestore.collection(gender == Gender.men? 'queens' : 'kings').count().get().then((value) => value.count);
+    final int princessCount = await collectionRef.where('adminchoice', isEqualTo: gender == Gender.men? 'princess':'gents' ).count().get().then((value) => value.count);
+    final noOfUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name).count().get().then((value) => value.count, onError: (e)=>print('error counting'));
+
 
     //get queens or kings based on gender
     for(int i=1; i<=10; i++){
-      randomsForQueens.add(Random().nextInt(10));
+      var random = Random().nextInt(queenCount);
+       int howmany =0;
+      while(viewedQueens.contains(random)){
+        random = Random().nextInt(queenCount);
+        if(howmany>100){
+          break;
+        }
+
+      }
+      randomsForQueens.add(Random().nextInt(queenCount));
     }
 
     List<User> queensOrKings = await _firebaseFirestore
@@ -844,21 +858,40 @@ class DatabaseRepository extends BaseDatabaseRepository{
 
 
     for(int i=1; i<=10; i++){
+      var random = Random().nextInt(princessCount);
+      int howmany = 0;
+      while(viewedPrincess.contains(random)){
+        random = Random().nextInt(princessCount);
+        if(howmany > 150) break;
+      }
       randomsForPrincess.add(Random().nextInt(10));
     }
-
-    List<User> princessOrgents = await _firebaseFirestore
-        .collection(gender == Gender.women? 'mens' : 'womens')
-        .where('verified', isEqualTo: gender == Gender.women? 'princess' : 'gents')
+    
+    List<User> princessOrgents = await collectionRef
+        .where('adminchoice', isEqualTo: gender == Gender.women? 'princess' : 'gents')
         .where(gender == Gender.women ? 'princessNumber' : 'gentsNumber', whereIn: randomsForPrincess)
         .get().then(
           (snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
     
     princessOrgents.removeWhere((user) => viewedProfiles.contains(user.id));
 
-    // List<User> princessOrgents = await _firebaseFirestore.collection(user.gender)
 
-    final noOfUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name).count().get().then((value) => value.count, onError: (e)=>print('error counting'));
+    // List<User> princessOrgents = await _firebaseFirestore.collection(user.gender)
+    var randForscore = Random().nextInt(noOfUsers);
+    List<User> scoreUsers = await collectionRef
+                              .where('score', isGreaterThanOrEqualTo: 700)
+                              .where('random', isGreaterThanOrEqualTo: randForscore)
+                              .get().then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
+
+    scoreUsers.removeWhere((user) => queensOrKings.contains(user) );
+    scoreUsers.removeWhere((user) => princessOrgents.contains(user) );
+
+    List<User> result = [...queensOrKings, ...princessOrgents,...scoreUsers];
+    //final noOfUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name).count().get().then((value) => value.count, onError: (e)=>print('error counting'));
+    List<User> filler =[];
+    if(result.length <= 10){
+
+    
     List<int> randoms = [];
     for(int i=0; i< 10; i++){
       randoms.add(Random().nextInt(noOfUsers)); 
@@ -873,6 +906,9 @@ class DatabaseRepository extends BaseDatabaseRepository{
           (doc) => User.fromSnapshoot(doc)).toList()
       );
 
+      result.addAll(filler.sublist(0,10-result.length));
+    }
+
     // List<User> filler = await _firebaseFirestore
     //   .collection(user.gender)
     //   .where('gender', isEqualTo: user.gender)
@@ -884,7 +920,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
     //     querySnap.docs.map((doc) => 
     //     User.fromSnapshoot(doc)).toList()
     //     );
-    List<User> result = [...queensOrKings, ...princessOrgents,...filler];
+    //List<User> result = [...queensOrKings, ...princessOrgents,...filler];
 
      return result;
   }
@@ -921,6 +957,8 @@ Future<void> createDemoUsers(List<User> users) async{
       await _firebaseFirestore.collection(user.gender)
           .doc(user.id)
           .set(user.toMap());
+      
+      int number =await _firebaseFirestore.collection(user.gender).count().get().then((value) => value.count);
 
       await _firebaseFirestore.collection(user.gender)
       .doc(user.id)
@@ -946,7 +984,9 @@ Future<void> createDemoUsers(List<User> users) async{
      await _firebaseFirestore.collection(user.gender)
       .doc(user.id)
       .update({
-        'isCompleted': true
+        'isCompleted': true,
+        'number': number,
+        'random': Random().nextInt(10000000)
       });
 
       return true;
@@ -1067,27 +1107,30 @@ Future<void> createDemoUsers(List<User> users) async{
     }
     //only show me from my city
     if(prefes.onlyShowFromMyCity != null && prefes.onlyShowFromMyCity!){
-      query = query.where('city', isEqualTo: my.countryCode );
+      query = query.where('city', isEqualTo: my.city );
     }
     if(prefes.onlyShowOnlineMatches !=null && prefes.onlyShowOnlineMatches!){
       query = query.where('online', isEqualTo: true );
     }
     
-    //alogrithm to get user which match both looking for and interests same as the user
+    //alogrithm to get user which match both looking for and interests same as the user 
+    //change to only looking for if they want christian they will get christian;
     List<User> users = await query
       .where('lookingFor', isEqualTo: my.lookingFor)
-      .where('interests', arrayContainsAny: my.interests )
-      .where('number', isGreaterThan: random)
+      //.where('interests', arrayContainsAny: my.interests )
+      .where('number', isGreaterThanOrEqualTo: random)
       .limit(30)
       .get().then((value) => 
       value.docs.map((doc) => User.fromSnapshoot(doc)).toList()
       );
     
+    users.removeWhere((user) => viewedProfiles.contains(user.id));
+    
     if(users.length <10){
       random = Random().nextInt(count);
       List<User> users2 = await query
       .where('lookingFor', isEqualTo: my.lookingFor)
-      .where('interests', arrayContainsAny: my.interests )
+      
       .where('number', isLessThan: random)
       .limit(30)
       .get().then((value) => 
@@ -1113,36 +1156,38 @@ Future<void> createDemoUsers(List<User> users) async{
     users.removeWhere((user) => viewedProfiles.contains(user.id));
     
     if(users.length < 10){
-      random = Random().nextInt(count);
+      //random = Random().nextInt(count);
       List<User> users2 = await query
-      .where('lookingFor', isEqualTo: my.lookingFor)
+      .where('interests', arrayContainsAny: my.interests)
       .where('number', isLessThan: random)
-      .limit(10)
+      .limit(30)
       .get().then((value) => 
       value.docs.map((doc) => User.fromSnapshoot(doc)).toList()
       );
       
       users.addAll(users2);
       users.removeWhere((user) => viewedProfiles.contains(user.id));
-      if(users.length <10){
-        List<User> users2 = await query
-      .where('lookingFor', isEqualTo: my.lookingFor)
-      .where('number', isGreaterThanOrEqualTo : random)
-      .limit(10)
-      .get().then((value) => 
-        value.docs.map((doc) => User.fromSnapshoot(doc)).toList()
-      );
-      }
+      // if(users.length <10){
+      // List<User> users2 = await query
+      // .where('lookingFor', isEqualTo: my.lookingFor)
+      // .where('number', isGreaterThanOrEqualTo : random)
+      // .limit(10)
+      // .get().then((value) => 
+      //   value.docs.map((doc) => User.fromSnapshoot(doc)).toList()
+      // );
+      // }
 
-      users.addAll(users2);
-      users.removeWhere((user) => viewedProfiles.contains(user.id));
+      // users.addAll(users2);
+      // users.removeWhere((user) => viewedProfiles.contains(user.id));
     }
   }
-  
+
+ 
   if(users.length <10){
+    random = Random().nextInt(count);
     List<User> users2 = await query
       .where('number', isGreaterThanOrEqualTo: random)
-      .limit(10)
+      .limit(50)
       .get().then((value) => 
       value.docs.map((doc) => User.fromSnapshoot(doc)).toList()
       );
@@ -1153,7 +1198,7 @@ Future<void> createDemoUsers(List<User> users) async{
     if(users.length <10){
       List<User> users2 = await query
       .where('number', isLessThan: random)
-      .limit(10)
+      .limit(50)
       .get().then((value) => 
       value.docs.map((doc) => User.fromSnapshoot(doc)).toList()
       );
@@ -1163,7 +1208,12 @@ Future<void> createDemoUsers(List<User> users) async{
 
     }
   }
+
+  if(users.length <=10 ){
     return users;
+  }
+
+    return users.sublist(0,10);
   }
 
   Future<UserPreference> getPreference(String userId, Gender gender)async{
@@ -1183,29 +1233,29 @@ Future<void> createDemoUsers(List<User> users) async{
   }
 
   void seenMessage({required Message message, required Gender gender})async {
-    // await _firebaseFirestore.collection(gender.name)
-    //   .doc(message.senderId)
-    //   .collection('matches')
-    //   .doc(message.receiverId)
-    //   .collection('chats')
-    //   .doc('chat')
-    //   .collection('messages')
-    //   .doc(message.id)
-    //   .update({
-    //     'seen': message.seen
-    //   });
+    await _firebaseFirestore.collection(gender.name)
+      .doc(message.receiverId)
+      .collection('matches')
+      .doc(message.senderId)
+      .collection('chats')
+      .doc('chat')
+      .collection('messages')
+      .doc(message.id)
+      .update({
+        'seen': message.seen
+      });
 
-    //   await _firebaseFirestore.collection(gender == Gender.women ? Gender.men.name: Gender.women.name)
-    //   .doc(message.receiverId)
-    //   .collection('matches')
-    //   .doc(message.senderId)
-    //   .collection('chats')
-    //   .doc('chat')
-    //   .collection('messages')
-    //   .doc(message.id)
-    //   .update({
-    //     'seen': message.seen
-    //   });
+      await _firebaseFirestore.collection(gender == Gender.women ? Gender.men.name: Gender.women.name)
+      .doc(message.senderId)
+      .collection('matches')
+      .doc(message.receiverId)
+      .collection('chats')
+      .doc('chat')
+      .collection('messages')
+      .doc(message.id)
+      .update({
+        'seen': message.seen
+      });
   }
 
   Future<List<UserMatch>> searchMatchName({required String userId, required Gender gender, required String name})async {
@@ -1409,6 +1459,26 @@ Future<void> createDemoUsers(List<User> users) async{
                       .get()
                       .then((value) => User.fromSnapshoot(value.docs.first));
       
+      
+    } catch (e) {
+      throw e;
+      
+    }
+  }
+
+  Future<User?> findMeOnHabeshaWe({required String id, required Gender gender}) async {
+    try {
+      return await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
+                        .where('id', isEqualTo: id)
+                        .get()
+                        .then((value) {
+                          if(value.docs.isNotEmpty){
+                            return User.fromSnapshoot(value.docs.first);
+                          }
+                          else{
+                            return null;
+                          }
+                        });
       
     } catch (e) {
       throw e;

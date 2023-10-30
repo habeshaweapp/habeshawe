@@ -141,8 +141,8 @@ class ChatScreen extends StatelessWidget {
           icon: Icon(Icons.more_vert, color: isDark? Colors.white : Colors.black ))
        ],
        systemOverlayStyle: SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white,
-        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor:isDark? Colors.grey[900]: Colors.white,
+        systemNavigationBarIconBrightness:isDark?Brightness.light: Brightness.dark,
       ),
       ),
       body: Body(userMatch),

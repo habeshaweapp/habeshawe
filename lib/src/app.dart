@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
-import 'package:lomi/src/Blocs/ChatBloc/chat_bloc.dart';
-import 'package:lomi/src/Blocs/ImagesBloc/images_bloc.dart';
 import 'package:lomi/src/Blocs/InternetBloc/internet_bloc.dart';
 
 import 'package:lomi/src/Blocs/ContinueWith/continuewith_cubit.dart';
@@ -18,30 +16,13 @@ import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/Data/Repository/Payment/payment_repository.dart';
 import 'package:lomi/src/Data/Repository/Storage/storage_repository.dart';
-import 'package:lomi/src/app_route_config.dart';
-import 'package:lomi/src/dataApi/explore_json.dart';
-import 'package:lomi/src/ui/Profile/profile.dart';
-import 'package:lomi/src/ui/editProfile/editProfile.dart';
-import 'package:lomi/src/ui/home/home.dart';
-import 'package:lomi/src/ui/onboarding/phone.dart';
-import 'package:lomi/src/ui/onboarding/start.dart';
-import 'package:lomi/src/ui/onboarding/verificationscreen.dart';
 import 'package:lomi/src/wrapper.dart';
 import 'package:lomi/theme/theme_constants.dart';
 
 import 'Blocs/PaymentBloc/payment_bloc.dart';
 import 'Blocs/PhoneAuthBloc/phone_auth_bloc.dart';
 import 'Blocs/SharedPrefes/sharedpreference_cubit.dart';
-import 'ui/UserProfile/userprofile.dart';
-import 'ui/onboarding/AfterRegistration/addphotos.dart';
-import 'ui/onboarding/AfterRegistration/birthday.dart';
-import 'ui/onboarding/AfterRegistration/enablelocation.dart';
-import 'ui/onboarding/AfterRegistration/genderscreen.dart';
-import 'ui/onboarding/AfterRegistration/lookingfor.dart';
-import 'ui/onboarding/AfterRegistration/namescreen.dart';
-import 'ui/onboarding/AfterRegistration/schoolname.dart';
-import 'ui/onboarding/AfterRegistration/showme.dart';
-import 'ui/onboarding/AfterRegistration/interests.dart';
+
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -90,7 +71,7 @@ class MyApp extends StatelessWidget {
           child: BlocBuilder<ThemeCubit, ThemeMode>(
             builder: (context, state) {
               return ScreenUtilInit(
-                
+                designSize: const Size(411.42, 843.42),
                 minTextAdapt: true,
                 splitScreenMode: true,
                 builder: (_, child) {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:line_icons/line_icons.dart';
@@ -13,8 +15,9 @@ import '../../../Data/Models/model.dart';
 
 class BeforeyouContinue extends StatelessWidget {
   final User user;
+  final bool? onlyVerifyMe;
   final BuildContext profileContext;
-  const BeforeyouContinue({super.key, required this.user, required this.profileContext});
+  const BeforeyouContinue({super.key, required this.user, required this.profileContext, this.onlyVerifyMe = false});
 
   @override
   Widget build(BuildContext context) {
@@ -26,23 +29,25 @@ class BeforeyouContinue extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height:20,),
+          SizedBox(height:20.h,),
           Text('Before you continue', 
           //style: Theme.of(context).textTheme.bodyLarge,
+          style: TextStyle(fontSize: 14.sp)
           ),
-          SizedBox(height:40,),
+          
+          SizedBox(height:40.h,),
           Container(
             padding: EdgeInsets.only(left: 20),
             child:
           Row(
             children: [
               Icon(Icons.verified, color: Colors.blue, size: 17,),
-              Text(' Prep your lighting', style: Theme.of(context).textTheme.bodyLarge,),
+              Text(' Prep your lighting', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 14.sp),),
             ],
           ),),
           Container(
             padding: EdgeInsets.only(left: 20),
-            child: Text(style: Theme.of(context).textTheme.bodySmall,
+            child: Text(style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
               '''- Choose a well-lit environment 
 - Turn up your brightness
 - Avoid harsh glare and
@@ -52,7 +57,7 @@ class BeforeyouContinue extends StatelessWidget {
           ),
 
 
-          SizedBox(height:10,),
+          SizedBox(height:10.h,),
 
 
   Container(
@@ -61,12 +66,12 @@ class BeforeyouContinue extends StatelessWidget {
           Row(
             children: [
               Icon(Icons.verified, color: Colors.blue, size: 17,),
-              Text(' Show your face',style: Theme.of(context).textTheme.bodyLarge,),
+              Text(' Show your face',style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 14.sp),),
             ],
           )),
           Container(
             padding: EdgeInsets.only(left: 20),
-            child: Text(style: Theme.of(context).textTheme.bodySmall,
+            child: Text(style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
               '''- face the camera directly 
 - Remove hats, sunglasses, and
   face covering
@@ -79,14 +84,25 @@ class BeforeyouContinue extends StatelessWidget {
           ElevatedButton(
                             onPressed: () async{
                               ImagePicker _picker = ImagePicker();
-                              final _image = await _picker.pickImage(source: ImageSource.camera);
+                              var _image = await _picker.pickImage(source: ImageSource.camera);
+                              try {
+                                final lastIndex = _image!.path.lastIndexOf(new RegExp(r'.jp'));
+                                final splitted = _image.path.substring(0, (lastIndex));
+                                final outPath = "${splitted}_out${_image.path.substring(lastIndex)}";
+                                 _image = await FlutterImageCompress.compressAndGetFile(_image.path, outPath, quality: 50
+                                );
+                                
+                              } catch (e) {
+                                
+                              }
 
                               if(_image == null){
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Image not selected')));
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Image not taken')));
                               }
 
                               if(_image != null){
-                                profileContext.read<ProfileBloc>().add(VerifyMe(user: user, image: _image, type: 'queen'));
+                                profileContext.read<ProfileBloc>().add(VerifyMe(user: user, image: _image, onlyVerifyMe: onlyVerifyMe));
+                                Navigator.pop(context);
                               }
                               
                               
@@ -98,7 +114,7 @@ class BeforeyouContinue extends StatelessWidget {
                             child: Container(
                               width: width * 0.4,
                               //padding: EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-                              child: Text('Verify Me', textAlign: TextAlign.center),
+                              child: Text('Verify Me', textAlign: TextAlign.center, style: TextStyle(fontSize: 13.sp) ),
                             )
                             )
                             ,
@@ -106,7 +122,8 @@ class BeforeyouContinue extends StatelessWidget {
                         //SizedBox(height: 5,),
                   ElevatedButton(
                             onPressed: () {
-                              context.pop();
+                              Navigator.pop(context);
+                             
                               //context.read<DatabaseRepository>().getUsersBasedonPreference(state.user.id);
                             },
                             style: ElevatedButton.styleFrom(

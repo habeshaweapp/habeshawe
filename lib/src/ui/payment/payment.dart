@@ -97,7 +97,7 @@ class _PaymentState extends State<Payment> {
       child: Container(
         width: width * 0.9,
         height: 
-        450.h,
+        550.h,
         //height * 0.65,
         // color: Colors.transparent,
         child: Column(
@@ -124,7 +124,7 @@ class _PaymentState extends State<Payment> {
                                   style: Theme.of(context).textTheme.bodyLarge),
                             ),
                             Container(
-                              height: 155.h,
+                              height: 170.h,
                               child: PageView(
                                 physics: BouncingScrollPhysics(),
                                 children: [
@@ -152,19 +152,19 @@ class _PaymentState extends State<Payment> {
                           ],
                         )
                       : Container(
-                          height: 200.h,
+                          height: 230.h,
                           width: double.infinity,
                           child: Column(
                             //crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               SizedBox(
-                                height: 30.h,
+                                height: 40.h,
                               ),
                               Icon(
                                 widget.paymentUi == PaymentUi.superlikes
                                     ? Icons.star_border_purple500
                                     : Icons.electric_bolt_sharp,
-                                size: 55.h,
+                                size: 60.h,
                                 color: Colors.white,
                               ),
                               SizedBox(
@@ -176,11 +176,11 @@ class _PaymentState extends State<Payment> {
                                     : 'Be Seen',
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 15.sp
+                                  fontSize: 17.sp
                                 ),
                               ),
                               SizedBox(
-                                height: 7.h,
+                                height: 10.h,
                               ),
                               Text(
                                 widget.paymentUi == PaymentUi.superlikes
@@ -190,7 +190,7 @@ class _PaymentState extends State<Payment> {
                                 style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w300,
-                                    fontSize: 10.sp),
+                                    fontSize: 11.sp),
                               )
                             ],
                           ),
@@ -264,8 +264,17 @@ class _PaymentState extends State<Payment> {
                 ),
               ),
             ):SizedBox(),
+           widget.paymentUi == PaymentUi.subscription? Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 30.w),
+              child: Divider(),
+            ):SizedBox(),
 
-            Spacer()
+            widget.paymentUi == PaymentUi.subscription? TextButton(
+              onPressed: (){}, 
+              child:  Text('Restore subscription!', style: TextStyle(color: Colors.grey, fontSize: 11.sp),)): SizedBox(),
+
+            //Spacer()
+            SizedBox(height:widget.paymentUi != PaymentUi.subscription?20.h:0,)
           ],
         ),
       )

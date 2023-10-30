@@ -49,12 +49,12 @@ class EditUserProfile extends ProfileEvent{
 class VerifyMe extends ProfileEvent{
   final User user;
   final XFile image;
-  final String? type;
-  const VerifyMe({required this.user, required this.image,this.type});
+  final bool? onlyVerifyMe;
+  const VerifyMe({required this.user, required this.image,this.onlyVerifyMe});
 
   @override
   // TODO: implement props
-  List<Object?> get props => [user, image, type];
+  List<Object?> get props => [user, image, onlyVerifyMe];
 }
 
 class DeletePhoto extends ProfileEvent{

@@ -22,7 +22,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   }) : 
   _databaseRepository = databaseRepository,
   _authBloc = authBloc,
-  super(MatchLoading()) {
+  super(const MatchState()) {
     on<LoadMatchs>(_onLoadMatchs);
     //on<LikeLikedMeUser>(_onLikeLikedMeUser);
     on<OpenChat>(_onOpenChat);
@@ -42,6 +42,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
   void _onLoadMatchs(LoadMatchs event, Emitter<MatchState> emit) {
     try{
+      emit(state.copyWith(matchStatus: MatchStatus.loading));
 
     _databaseRepository.getMatches(event.userId, event.users).listen((matches) {
 
@@ -73,7 +74,8 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
   void _onUpdateMatches(UpdateMatches event, Emitter<MatchState> emit){
     try {
-      emit(MatchLoaded(matchedUsers: event.matchedUsers!));
+      //emit(MatchLoaded(matchedUsers: event.matchedUsers!));
+      emit(state.copyWith(matchedUsers: event.matchedUsers, matchStatus: MatchStatus.loaded));
       
     }on Exception catch (e) {
       print(e.toString());
@@ -113,17 +115,24 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
   FutureOr<void> _onSearchName(SearchName event, Emitter<MatchState> emit)async {
     try {
-      if(event.name != ''){
+      if(event.name.length > 25 ){
+        emit(state.copyWith(searchResultFor: SearchResultFor.findMe, isUserSearching: true));
+        User? user = await _databaseRepository.findMeOnHabeshaWe(id: event.name, gender: event.gender);
+        print('hi');
+        emit(state.copyWith(findMeResult: user == null? []: [user] ));
 
-     List<UserMatch> result = await _databaseRepository.searchMatchName(userId: event.userId, gender: event.gender, name: event.name.replaceFirst(event.name[0], event.name[0].toUpperCase()) );
-     if(state is MatchLoaded){
-      var stateLoad= state as MatchLoaded;
-      emit(stateLoad.copyWith(searchResult: result, isUserSearching: true));
-     }
+
+      }else
+      if(event.name != ''){
+        emit(state.copyWith(searchResultFor: SearchResultFor.matched , isUserSearching: true));
+
+     List<UserMatch> result = await _databaseRepository.searchMatchName(userId: event.userId, gender: event.gender, name: event.name.toLowerCase().replaceFirst(event.name[0], event.name[0].toUpperCase()) );
+     emit(state.copyWith(searchResult: result));
+     
 
       }else{
-        var stateLoad= state as MatchLoaded;
-        emit(stateLoad.copyWith(searchResult: null, isUserSearching: false));
+       
+        emit(state.copyWith(searchResult: [], findMeResult: [], isUserSearching: false));
       }
       
     } catch (e) {

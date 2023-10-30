@@ -53,3 +53,23 @@ class TagHelper{
     return [icons[index], lookignForOpt[index]];
   }
 }
+
+
+ List<String> lookignForOpt = [
+      'Long-term\n partner',
+      'Christian,\n partner',
+      'Teklil,\n marriage',
+      'Nikah\n keep it halal',
+      'Someone to chat\nNew friends',
+      'Still figuring it\n out',
+    ];
+
+  List<Icon> lookingForicons =[
+      const Icon(FontAwesomeIcons.heartPulse, color: Colors.red,),
+      const Icon(FontAwesomeIcons.bookBible, color:Colors.black),
+      const Icon(FontAwesomeIcons.crown, color: Colors.amber,),
+      const Icon(FontAwesomeIcons.moon, color: Colors.grey,),
+      const Icon(FontAwesomeIcons.hand, color: Colors.grey),
+      const Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.grey)
+
+    ];

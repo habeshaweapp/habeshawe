@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/ui/editProfile/components/photoselector.dart';
 
@@ -80,7 +81,7 @@ class Body extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(left: 10.0, right: 10),
                     child: SizedBox(
-                      height: 380,
+                      height: 380.w,
                       child: GridView.builder(
                         physics: const NeverScrollableScrollPhysics(),
                           gridDelegate:
@@ -127,7 +128,7 @@ class Body extends StatelessWidget {
                 //   ),
                 // ),
               
-                SizedBox(height: 25,),
+                SizedBox(height: 25.h,),
               
                 Container(
                   //height: 50,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -21,10 +22,12 @@ import '../../../Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import '../../../Blocs/SwipeBloc/swipebloc_bloc.dart';
 import '../../../Data/Models/enums.dart';
 import '../../../Data/Models/likes_model.dart';
+import '../../../Data/Models/model.dart';
 import '../../../Data/Models/tag_helper.dart';
-import '../../../Data/Models/user.dart';
+import '../../../Data/Models/looking_for_datas.dart';
 import '../../home/components/userdrag.dart';
 import '../../onboarding/AfterRegistration/widgets/lookingforitem.dart';
+import '../../report/report.dart';
 
 class Body extends StatelessWidget {
   final User user;
@@ -46,7 +49,7 @@ class Body extends StatelessWidget {
   @override
   Widget build(BuildContext context)  {
     var profileState = context.read<ProfileBloc>().state as ProfileLoaded;
-    //profileState.user.location;
+    //profileState.user.location;    411.42, 843.42
     var size = MediaQuery.of(context).size;
     var intersts = ['startup', 'Progamming', 'coding', 'flutter', 'dart', 'aynalem', 'gete', 'jesus', 'tsinat', 'betbalew layi'];
     //
@@ -148,11 +151,11 @@ class Body extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 10,),
-                        user.verified!=null? SizedBox(
+                        (user.verified!=null && user.verified != VerifiedStatus.pending.name && user.verified != VerifiedStatus.notVerified.name) ? SizedBox(
                           child: Row(
                             children: [
                               //Icon(Icons.verified,color: Colors.blue, size:18,),
-                              TagHelper.getTag(name: user.verified!, size: 20),
+                              TagHelper.getTag(name: user.verified!, size: 20 ),
                               SizedBox(width: 7,),
                               Text(user.verified! ,style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
                             ],
@@ -210,9 +213,9 @@ class Body extends StatelessWidget {
                         SizedBox(
                           child: Row(
                             children: [
-                              Icon(Icons.home,color: Colors.grey, size:18,),
+                              Icon(LineIcons.city,color: Colors.grey, size:18,),
                               SizedBox(width: 7,),
-                              Text(user.country??'',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
+                              Text('${user.city}, ${user.country}',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
                             ],
                           ),
                         ),
@@ -247,14 +250,16 @@ class Body extends StatelessWidget {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  TagHelper.getLookingFor(user.lookingFor??0)[0],
+                                 // TagHelper.getLookingFor(user.lookingFor??0)[0],
+                                  lookingForIcons[user.lookingFor??0],
                                   SizedBox(width: 10,),
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text('Looking for', style: Theme.of(context).textTheme.bodySmall,),
                                       //Text(user.lookingFor?.replaceAll('\n', '') ?? 'Someone to love', style: Theme.of(context).textTheme.bodyLarge,)
-                                      Text( TagHelper.getLookingFor(user.lookingFor ?? 0 )[1].replaceAll('\n', ''))
+                                      Text( lookignForOptions[user.lookingFor??0].replaceAll('\n', '') )
+                                        //TagHelper.getLookingFor(user.lookingFor ?? 0 )[1].replaceAll('\n', ''))
                                     ],
                                   )
                                 ],
@@ -376,6 +381,7 @@ class Body extends StatelessWidget {
                           width: double.infinity,
                           child: GestureDetector(
                             onTap: (){
+                              showReportOptions(context, UserMatch(userId: user.id, name: user.name, gender: user.gender, imageUrls: user.imageUrls, timestamp: 'timestamp', chatOpened: false, superLike: false));
 
                             },
                             child: Column(
@@ -563,6 +569,122 @@ class Body extends StatelessWidget {
     );
 
   }
+
+  void showReportOptions(BuildContext context, UserMatch userMatch){
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: ((ctx) {
+        return SizedBox(
+          height: 340,
+          child: ListView(
+            physics: NeverScrollableScrollPhysics(),
+            children: [
+              Column(
+                children: [
+                  SizedBox(height: 20,),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal:30),
+                    child: Text('Bloc and report this person',
+                        style: TextStyle(fontSize: 18.sp),
+                    ),
+                    ),
+                    Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                    child: Text('Don\'t worry, your feedback is anonymous and\n they won\'t know that you\'ve blocked or reported them.',
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
+                                ),
+                    ),
+                    SizedBox(height: 10,),
+                    const Divider(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Report(matchedUser: userMatch, index: 8,name:'Fake Profile', ctx: context,) ));
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.person_off, color: Colors.green,),
+                          SizedBox(width: 10,),
+                          Text('Fake profile', style: TextStyle(fontSize: 13.sp))
+                        
+                        ]
+                        ),
+                    ),
+                  ),
+
+                  const Divider(),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: (){
+                         Navigator.push(context, MaterialPageRoute(builder: (context)=> Report(matchedUser: userMatch,index: 9,name:'Nudity or something sexually explicit', ctx: context,) ));
+                      },
+                      child: Row(children: [
+                        Icon(Icons.chat_bubble, color: Colors.green),
+                        SizedBox(width: 10),
+                        Text('Nudity or something sexually explicit', style: TextStyle(fontSize: 13.sp))
+                        
+                        ]
+                        ),
+                    ),
+                  ),
+
+                  const Divider(),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Report(matchedUser: userMatch, index: 10,name:'Something that happened off HabeshaWe or in person',ctx: context,) ));
+                      },
+                      child: Row(children: [
+                        Icon(Icons.warning, color:Colors.green, ),
+                        SizedBox(width: 10,),
+                        Text('Something that happened off HabeshaWe\nor in person', style: TextStyle(fontSize: 13.sp) )
+                        
+                        ]
+                        ),
+                    ),
+                  ),
+
+                  const Divider(),
+
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: InkWell(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=> Report(matchedUser: userMatch, index: 11,name:'Their bio',ctx: context,) ));
+                      },
+                      child: Row(children: [
+                        Icon(Icons.warning, color:Colors.green),
+                        SizedBox(width: 10,),
+                        Text('Their bio', style: TextStyle(fontSize: 13.sp))
+                        
+                        ]
+                        ),
+                    ),
+                  ),
+                
+
+                  
+
+
+                ]
+              ),
+            ],
+          ),
+        );
+        
+      }
+    ));
+  }
+
+
+
   }
 
 

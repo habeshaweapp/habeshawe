@@ -12,7 +12,7 @@ abstract class BaseDatabaseRepository{
   Future<void> updateUserPictures(User user, String imageName);
   Future<bool> userLike(User user, User matchUser, bool superLike);
   Future<void> userPassed(User userId, User passedUser);
-  Future<User> getUserbyId(String userId);
+  Future<User> getUserbyId(String userId, String gender);
 
  
 

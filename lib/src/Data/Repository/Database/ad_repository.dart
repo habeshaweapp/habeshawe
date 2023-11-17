@@ -10,7 +10,9 @@ class AdRepository{
   NativeAd? _nativeAd;
   static String get rewardAdUnitId{
     return Platform.isAndroid ?
-      'ca-app-pub-3940256099942544/5224354917' : '';
+      //'ca-app-pub-3940256099942544/5224354917' : '';
+
+      'ca-app-pub-8094466977699992/3561708231' : '';
   }
 
   static String get nativeAdUnitId{

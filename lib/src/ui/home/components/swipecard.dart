@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lomi/src/Blocs/AdBloc/ad_bloc.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
 import 'package:lomi/src/ui/home/components/usercard.dart';
 import 'package:lomi/src/ui/home/components/userdrag.dart';
@@ -24,24 +26,25 @@ class SwipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SwipeBloc, SwipeState>(
-      builder: (context, state) {
-        if(state.swipeStatus == SwipeStatus.loading){
-          // var startedAt = DateTime.now();
-          // Future.delayed(Duration(seconds: 20), (){
-          //   var diff = DateTime.now().difference(startedAt).inSeconds;
-          //   if(diff > 18){
-          //     if(state.swipeStatus == SwipeStatus.loading){
-          //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('something wen\'t wrong...')));
-          //     context.read<SwipeBloc>().add(SwipeEnded());
-          //   }
+    return BlocConsumer<SwipeBloc, SwipeState>(
+      listener: (context,state){
+        if(state.swipeStatus == SwipeStatus.error){
+          if(state.error == 'Exception: dailyMatch'){
+            Future.delayed(const Duration(seconds: 3), (){
+              context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
+            });
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('something went wrong, come back tomorrow!')));
 
-          //   }
-            
-           
-          //  } );
+          }else{
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error??'something went wrong,')));
+          }
+        }
+      },
+
+      builder: (context, state) {
+        if(state.swipeStatus == SwipeStatus.loading || state.swipeStatus == SwipeStatus.initial || state.swipeStatus == SwipeStatus.error){
         
-          return Center(child: CircularProgressIndicator(strokeWidth: 2,) );
+          return const Center(child: CircularProgressIndicator(strokeWidth: 2,) );
           
         }
         if(state.swipeStatus == SwipeStatus.loaded){
@@ -52,6 +55,7 @@ class SwipeCard extends StatelessWidget {
           MatchEngine? _matchEngine;
 
           if(state.users.isEmpty ){
+            //context.read<SwipeBloc>().add(SwipeEnded(completedTime: state.completedTime??DateTime.now()));
             Future.delayed(Duration(seconds: 2),(){
 
              context.read<SwipeBloc>().add(SwipeEnded(completedTime: state.completedTime??DateTime.now()));
@@ -65,34 +69,33 @@ class SwipeCard extends StatelessWidget {
                 content: user,
                 likeAction: (){
                   //final user = (context.read<ProfileBloc>().state as ProfileLoaded).user;
-                  SwipeRightEvent(     
+                  context.read<SwipeBloc>().add(SwipeRightEvent(     
                     user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
-                    matchUser: user
-                    );
-                //   context.read<SwipeBloc>().add(
-                // SwipeLeftEvent(
-                //   userId: context.read<AuthBloc>().state.user!.uid,
-                //   user: state.users[0]));
-
+                    matchUser: user,
+                    superLike: false
+                    )
+                  );
                 },
+
                 nopeAction: (){
-                  SwipeLeftEvent(
+                 context.read<SwipeBloc>().add(SwipeLeftEvent(
                     passedUser: user, 
                     user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
-                    );
-                //   context.read<SwipeBloc>().add(
-                // SwipeLeftEvent(
-                //   userId: context.read<AuthBloc>().state.user!.uid,
-                //   user: state.users[0]));
+                    ));
+             
                 },
+
+                
                 onSlideUpdate: (SlideRegion? region) async {
                   print("Region $region");
              },
                 superlikeAction: (){
-                //   context.read<SwipeBloc>().add(
-                // SwipeLeftEvent(
-                //   userId: context.read<AuthBloc>().state.user!.uid,
-                //   user: state.users[0]));
+                    context.read<SwipeBloc>().add(SwipeRightEvent(     
+                    user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
+                    matchUser: user,
+                    superLike: true
+                    )
+                  );
                 }
               )
             );
@@ -128,7 +131,7 @@ class SwipeCard extends StatelessWidget {
                           if(state.loadFor == LoadFor.daily){
                             context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
 
-                              Future.delayed(const Duration(seconds: 30), (){ 
+                              Future.delayed(const Duration(seconds: 10), (){ 
                                context.read<SwipeBloc>().add(LoadUsers(userId: context.read<AuthBloc>().state.user!.uid , users: context.read<AuthBloc>().state.accountType! )); 
 
                                
@@ -143,7 +146,7 @@ class SwipeCard extends StatelessWidget {
                         itemBuilder: (context, index){
                           print('>>>>.>>>>>>>>>>>>>>>>>>>${index}');
                           //return UserCard().userDrag(MediaQuery.of(context).size, _swipeItems[index].content, context);
-                          return UserCard(user: state.users[index], matchEngine: _matchEngine!,);
+                          return UserCard(user: state.users[index], matchEngine: _matchEngine,);
                         },
                         leftSwipeAllowed: true,
                         rightSwipeAllowed: true,
@@ -210,13 +213,23 @@ class SwipeCard extends StatelessWidget {
                 List.generate(item_icons.length, (index) {
                   return InkWell(
                     onTap: (){
-                      if(index == 1) _matchEngine!.currentItem?.nope();
+                      if(index == 1){
+                       _matchEngine!.currentItem?.nope();
+                     
+                      }
                       if(index == 3){
                          _matchEngine!.currentItem?.like();
                       }
                       if(index == 2) _matchEngine!.currentItem?.superLike();
                       if(index == 0){
+                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
+                          if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                            context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedRandom));
+                            _matchEngine?.rewindMatch();
+                          }
+                        }else{
                         _matchEngine?.rewindMatch();
+                        }
                         }
                       if(index == 4){ 
                         }
@@ -254,92 +267,21 @@ class SwipeCard extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10,),
-
-  //           Container(
-  //             color: Colors.transparent,
-  //   //width: size.width,
-  //   //height: 120,
-  //   //decoration: BoxDecoration(color: Colors.brown),
-    
-  //   child: Padding(
-  // padding: const EdgeInsets.only(bottom: 2),
-  // child: Row(
-  //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //   children:
-  //   List.generate(item_icons.length, (index) {
-  //     return InkWell(
-  //       onTap: (){
-
-  //         if(index == 1){
-  //           _matchEngine!.currentItem?.nope();
-  //         }
-  //         // if(index == 0){
-  //         //   context.read<AuthRepository>().signOut();
-  //         // }
-  //         if(index == 3){
-  //           _matchEngine!.currentItem?.like();
-  //           context.read<SwipeBloc>().add(
-  //               SwipeRightEvent(
-  //                 user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
-  //                matchUser: _swipeItems[index].content
-  //                 ));
-  //         }
-
-  //         if(index == 3){
-  //           _matchEngine!.currentItem?.superLike();
-  //         }
-          
-
-  //         if(index == 0){
-  //           //context.read<AuthRepository>().signOut();
-  //           _matchEngine!.rewindMatch();
-  //         }
-  //         if(index == 4){
-  //           context.read<AuthRepository>().signOut();
-  //           //_matchEngine!.rewindMatch();
-  //         }
-  //       },
-  //       child: Container(
-  //         width: item_icons[index]['size'],
-  //         height: item_icons[index]['size'],
-  //         decoration: BoxDecoration(
-  //           shape: BoxShape.circle,
-  //           color: Colors.black12,
-  //           // boxShadow: [
-  //           //   BoxShadow(
-  //           //     color: Colors.grey.withOpacity(0.3),
-  //           //     spreadRadius: 5,
-  //           //     blurRadius: 10,
-  //           //   )
-  //           // ]
-  //         ),
-      
-  //         child: Center(
-  //           child: SvgPicture.asset(
-  //             item_icons[index]['icon'],
-  //             width: item_icons[index]['icon_size'],
-              
-  //             ),
-  //         ),
-      
-  //       ),
-  //     );
-
-  //   }),
-  // ),
-  //   ),
-
-  // ),
+ 
           ],
         );
 
 
         }
-        if(state.swipeStatus == SwipeStatus.completed || state.swipeStatus == SwipeStatus.initial){
+        if(state.swipeStatus == SwipeStatus.completed){
           // final now =DateTime.now();
           // final remain  = now.difference(state.completedTime!);
           return SwipeCompletedWidget(state: state,);
         }
+        // if(state.swipeStatus == SwipeStatus.error){
+        //   //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('something went wrong come back later...')));
+        //   return SwipeCompletedWidget(state: state);
+        // }
         
         else{
           return Center(child: Text('Get back after a while...'));

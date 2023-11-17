@@ -1,24 +1,33 @@
 part of 'userpreference_bloc.dart';
 
-abstract class UserpreferenceState extends Equatable {
-  const UserpreferenceState();
-  
-  @override
-  List<Object> get props => [];
-}
+enum UserPreferenceStatus{loading,loaded, error}
 
-class UserpreferenceInitial extends UserpreferenceState {}
 
-class UserPreferenceLoading extends UserpreferenceState{}
+class UserPreferenceState extends Equatable{
+  final UserPreference? userPreference;
+  final UserPreferenceStatus userPreferenceStatus;
 
-class UserPreferenceLoaded extends UserpreferenceState{
-  final UserPreference userPreference;
+  const UserPreferenceState({ 
+    this.userPreference, 
+    this.userPreferenceStatus = UserPreferenceStatus.loading
+    });
 
-  UserPreferenceLoaded({required this.userPreference});
+  UserPreferenceState copyWith({
+    UserPreference? userPreference,
+    UserPreferenceStatus? userPreferenceStatus,
+
+  }){
+    return UserPreferenceState(
+      userPreference: userPreference?? this.userPreference,
+      userPreferenceStatus: userPreferenceStatus??this.userPreferenceStatus
+    );
+  }
+
+
 
   @override
   // TODO: implement props
-  List<Object> get props => [userPreference];
+  List<Object?> get props => [userPreference,userPreferenceStatus];
 }
 
 

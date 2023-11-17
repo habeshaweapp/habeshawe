@@ -2,11 +2,18 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Models/model.dart';
+import 'package:lomi/src/Data/Models/tag_helper.dart';
+
+import '../../../Blocs/PaymentBloc/payment_bloc.dart';
+import '../../../Data/Models/likes_model.dart';
 
 class LikeCard extends StatelessWidget {
-  final User user;
-  const LikeCard({super.key, required this.user});
+  final Like like;
+  const LikeCard({super.key, required this.like});
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +23,10 @@ class LikeCard extends StatelessWidget {
       //margin: EdgeInsets.only(top: 8, left: 8),
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: CachedNetworkImageProvider(user.imageUrls[0]),
+          image: CachedNetworkImageProvider(like.user.imageUrls[0]),
           fit: BoxFit.cover,
+          //opacity: 0.7,
+          
           
           ),
         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -34,8 +43,8 @@ class LikeCard extends StatelessWidget {
                           borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10),bottomRight: Radius.circular(10)),
                           gradient: LinearGradient(
                             colors: [
-                              
-                              Color.fromARGB(200, 0, 0, 0),
+                              like.superLike!? Colors.blue:Color.fromARGB(200, 0, 0, 0),
+                              //Color.fromARGB(200, 0, 0, 0),
                               Color.fromARGB(0, 0, 0, 0),
                               
                                 
@@ -54,13 +63,40 @@ class LikeCard extends StatelessWidget {
             alignment: Alignment.bottomCenter,
             child: Row(
               children: [
-                Text('${user.name}, ${user.age}',
+                Text('${like.user.name}, ${like.user.age}',
                     style: TextStyle(color: Colors.white),
                 ),
-        
+                SizedBox(width: 5.w,),
+                (like.user.verified != VerifiedStatus.notVerified.name && like.user.verified != VerifiedStatus.pending.name &&like.user.verified !=null)?
+                 TagHelper.getTag(name: like.user.verified??'not',size: 20):const SizedBox(),
+                
               ]),
           ),
-        )
+        ),
+
+        Align(
+          alignment: Alignment.bottomRight,
+          child: like.superLike!? Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(Icons.star,color: Colors.blue, size: 35,),
+          ): SizedBox(),
+          ),
+
+       context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER? SizedBox(
+          child: Center(
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(width: 1, color: Colors.white),
+                borderRadius: BorderRadius.circular(10),
+                color: Colors.black12
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text('Watch Ad', style: TextStyle(color: Colors.white,fontSize: 12),),
+              ),
+            ),
+          ),
+        ): const SizedBox()
       ],
 
 

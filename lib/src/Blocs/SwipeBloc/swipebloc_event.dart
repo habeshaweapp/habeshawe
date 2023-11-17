@@ -10,7 +10,7 @@ abstract class SwipeEvent extends Equatable {
 class LoadUsers extends SwipeEvent{
   final String userId;
   final Gender users;
-  final User? user;
+   User? user;
    UserPreference? prefes;
    LoadUsers({required this.userId, required this.users,  this.user,  this.prefes });
 
@@ -86,3 +86,4 @@ class AdSwipeEnded extends SwipeEvent{
   // TODO: implement props
   List<Object?> get props => [completedTime];
 }
+

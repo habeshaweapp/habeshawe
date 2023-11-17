@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:line_icons/line_icons.dart';
 
 import '../../../../Blocs/ThemeCubit/theme_cubit.dart';
 
@@ -26,9 +27,9 @@ class LookingForItem extends StatelessWidget {
       Icon(FontAwesomeIcons.heartPulse, color: Colors.red,),
       Icon(FontAwesomeIcons.bookBible, color:Colors.black),
       Icon(FontAwesomeIcons.crown, color: Colors.amber,),
-      Icon(FontAwesomeIcons.moon, color: Colors.grey,),
-      Icon(FontAwesomeIcons.hand, color: Colors.grey),
-      Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.grey)
+      Icon(Icons.diamond, color: Colors.amber,),
+      Icon(FontAwesomeIcons.hand, color: Colors.black),
+      Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.black)
 
     ];
     

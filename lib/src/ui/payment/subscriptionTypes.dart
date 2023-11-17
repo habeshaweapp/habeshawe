@@ -2,6 +2,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 
 import '../../Data/Models/enums.dart';
 class SubscriptionType extends StatelessWidget{ 
@@ -41,6 +42,9 @@ class SubscriptionType extends StatelessWidget{
         subDescrib = 'Months';
       }
       
+    }
+    if(paymentUi == PaymentUi.subscription && context.read<PaymentBloc>().state.subscribtionStatus !=SubscribtionStatus.notSubscribed){
+      return const SizedBox();
     }
     return Expanded(
       child: SizedBox(

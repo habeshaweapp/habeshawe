@@ -107,7 +107,7 @@ try{
       27, 
       title,
       body, 
-      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 30)), 
+      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10)), 
       NotificationDetails(
         android: AndroidNotificationDetails(
             'dailymatches', 

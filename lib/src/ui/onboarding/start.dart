@@ -249,6 +249,7 @@ class _StartScreenState extends State<StartScreen>
                           //color: Colors.white,
                           fontSize: 11,
                           fontWeight: FontWeight.w300,
+                          color: Colors.grey
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -344,9 +345,10 @@ class _StartScreenState extends State<StartScreen>
                       child: Text(
                         'Trouble logging in?',
                         style: TextStyle(
-                          //color: Colors.white
+                          color: Colors.grey,
                           fontSize: 12,
                           fontWeight: FontWeight.w300,
+
                         ),
                       ),
                     ),
@@ -383,7 +385,7 @@ class _StartScreenState extends State<StartScreen>
         onPressed: onPressed,
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(
-              isDark ? Colors.grey[800] : Colors.white),
+              isDark ? Colors.grey[900] : Colors.white),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),

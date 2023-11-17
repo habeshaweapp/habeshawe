@@ -128,5 +128,39 @@ class AuthRepository extends BaseAuthRepository{
       
     }
   }
+
+  Future<void> deleteAccount()async{
+    try {
+      await _firebaseAuth.currentUser!.delete();
+      
+    }on FirebaseAuthException catch (e){
+      if(e.code == "requires-recent-login"){
+        await _reauthenticateAndDelete();
+
+      }
+    }
+     catch (e) {
+      
+    }
+  }
+  
+  Future<void> _reauthenticateAndDelete() async {
+  try {
+    final providerData = _firebaseAuth.currentUser?.providerData.first;
+
+    if (AppleAuthProvider().providerId == providerData!.providerId) {
+      await _firebaseAuth.currentUser!
+          .reauthenticateWithProvider(AppleAuthProvider());
+    } else if (GoogleAuthProvider().providerId == providerData.providerId) {
+      await _firebaseAuth.currentUser!
+          .reauthenticateWithProvider(GoogleAuthProvider());
+    }
+
+    await _firebaseAuth.currentUser?.delete();
+  } catch (e) {
+    // Handle exceptions
+  }
+}
+  
   
 }

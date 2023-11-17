@@ -21,18 +21,18 @@ class Body extends StatelessWidget {
     bool isThereChange = false;
     Color? cardColor = Color.fromARGB(255, 41, 39, 39);
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
-    return BlocBuilder<UserpreferenceBloc, UserpreferenceState>(
+    return BlocBuilder<UserpreferenceBloc, UserPreferenceState>(
       builder: (context, state) {
-        if(state is UserPreferenceLoading){
-          return Center(child: CircularProgressIndicator(),);
+        if(state.userPreferenceStatus == UserPreferenceStatus.loading){
+          return const Center(child: CircularProgressIndicator(),);
         }
 
-        if(state is UserPreferenceLoaded){
+        if(state.userPreferenceStatus == UserPreferenceStatus.loaded){
           return WillPopScope(
             onWillPop: ()async{
 
               if(isThereChange == true){
-                context.read<UserpreferenceBloc>().add(EditUserPreference(preference: state.userPreference, users: context.read<AuthBloc>().state.accountType!));
+                context.read<UserpreferenceBloc>().add(EditUserPreference(preference: state.userPreference!, users: context.read<AuthBloc>().state.accountType!));
               }
               return true;
 
@@ -66,7 +66,7 @@ class Body extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Phone Number'),
-                            Text('${state.userPreference.phoneNumber} >'),
+                            Text('${state.userPreference!.phoneNumber} >'),
                           ],
                         ),
                       ),
@@ -88,7 +88,7 @@ class Body extends StatelessWidget {
             
                     Card(
                       elevation: 2,
-                      color: isDark ? state.userPreference.discoverBy == DiscoverBy.habeshawelogic.index ?  cardColor :Colors.grey[900] : state.userPreference.discoverBy == DiscoverBy.habeshawelogic.index? Colors.grey[400]: Colors.white,
+                      color: isDark ? state.userPreference!.discoverBy == DiscoverBy.habeshawelogic.index ?  cardColor :Colors.grey[900] : state.userPreference!.discoverBy == DiscoverBy.habeshawelogic.index? Colors.grey[400]: Colors.white,
                       child: Container(
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5, bottom: 5,),
@@ -103,10 +103,10 @@ class Body extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Discover By - HabeshaWe Logic'),
-                                Switch(value: state.userPreference.discoverBy == DiscoverBy.habeshawelogic.index , 
+                                Switch(value: state.userPreference!.discoverBy == DiscoverBy.habeshawelogic.index , 
                                 onChanged: (value){
                                   
-                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: DiscoverBy.habeshawelogic.index)));
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(discoverBy: DiscoverBy.habeshawelogic.index)));
                                   isThereChange = true;
                                 }),
                               ],
@@ -118,15 +118,15 @@ class Body extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Text('Going global will allow you to see people nearby and from around the world.',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
-                    ),
+                    // Text('Going global will allow you to see people nearby and from around the world.',
+                    //     style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                    // ),
             
                     SizedBox(height: 20,),
             
                     Card(
                       elevation: 2,
-                      color: isDark ? state.userPreference.discoverBy == DiscoverBy.preference.index?  cardColor :Colors.grey[900]  : state.userPreference.discoverBy == DiscoverBy.preference.index? Colors.grey[400]: Colors.white,
+                      color: isDark ? state.userPreference!.discoverBy == DiscoverBy.preference.index?  cardColor :Colors.grey[900]  : state.userPreference!.discoverBy == DiscoverBy.preference.index? Colors.grey[400]: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                         child: Column(
@@ -136,10 +136,10 @@ class Body extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Discover By - Preference'),
-                                  Switch(value: state.userPreference.discoverBy! == DiscoverBy.preference.index, 
+                                  Switch(value: state.userPreference!.discoverBy! == DiscoverBy.preference.index, 
                                   onChanged: (value){
                                     
-                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: DiscoverBy.preference.index)));
+                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(discoverBy: DiscoverBy.preference.index)));
                                     isThereChange = true;
                                   }),
                                 ],
@@ -157,19 +157,50 @@ class Body extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Age Range', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17)),
-                                Text('${state.userPreference.ageRange![0]} - ${state.userPreference.ageRange![1]}.')
+                                Text('${state.userPreference!.ageRange![0]} - ${state.userPreference?.ageRange![1]}.')
                               ],
                             ),
                           ),
                           
                           AbsorbPointer(
-                            absorbing: state.userPreference.discoverBy != DiscoverBy.preference.index,
+                            absorbing: state.userPreference?.discoverBy != DiscoverBy.preference.index,
                             child: RangeSlider(
-                              max: 70,
+                              max: 55,
                               min:18,
-                              values: RangeValues(state.userPreference.ageRange![0].toDouble(),state.userPreference.ageRange![1].toDouble()), 
+                              values: RangeValues(state.userPreference!.ageRange![0].toDouble(),state.userPreference!.ageRange![1].toDouble()), 
+                              // onChangeStart: (values) {
+                              //   if(values.end - values.start <=10){
+                              //     context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(ageRange: [values.start.toInt(),values.end.toInt()])));
+                              //   }else{
+                              //   context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(ageRange: [values.start.toInt(),values.start.toInt() +10])));
+                              //   }
+                              //   isThereChange = true;
+                              // },
+                              // onChangeEnd: (values){
+                              //   if(values.end - values.start <=10){
+                              //     context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(ageRange: [values.start.toInt(),values.end.toInt()])));
+                              //   }else{
+                              //     context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(ageRange: [values.end.toInt()-10,values.end.toInt()])));
+
+                              //   }
+                              //   isThereChange = true;
+
+                              // },
                               onChanged: (values){
-                                context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(ageRange: [values.start.toInt(),values.end.toInt()])));
+                                var end = values.end - values.start;
+                              
+                                if(end <=10){
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(ageRange: [values.start.toInt(),values.end.toInt()])));
+                                }else{
+                                  if(state.userPreference!.ageRange![1] != values.end){
+                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(ageRange: [values.end.toInt()-10,values.end.toInt()])));
+                                  }else{
+                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(ageRange: [values.start.toInt(),values.end.toInt()-1])));
+
+                                  }
+                                }
+
+                                
                                 isThereChange = true;
                               }
                               ),
@@ -184,17 +215,18 @@ class Body extends StatelessWidget {
                                   
                                   
                             AbsorbPointer(
-                              absorbing: state.userPreference.discoverBy != DiscoverBy.preference.index,
+                              absorbing: state.userPreference!.discoverBy != DiscoverBy.preference.index,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
                                                       
                               child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Only show people in this range', style: Theme.of(context).textTheme.bodySmall, ),
-                                Switch(value: state.userPreference.onlyShowInThisRange!, 
+                                Text('Only show people from my Country\ncountry (${(context.read<ProfileBloc>().state as ProfileLoaded).user.country}).',  
+                                style: Theme.of(context).textTheme.bodySmall, ),
+                                Switch(value: state.userPreference!.onlyShowInThisRange!, 
                                 onChanged: (value){
-                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(onlyShowInThisRange: value)));
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(onlyShowInThisRange: value)));
                                   isThereChange = true;
                                 }),
                               ],
@@ -206,7 +238,7 @@ class Body extends StatelessWidget {
                              //SizedBox(height: 0,), 
                                   
                             AbsorbPointer(
-                              absorbing: state.userPreference.discoverBy != DiscoverBy.preference.index,
+                              absorbing: state.userPreference!.discoverBy != DiscoverBy.preference.index,
                               child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
                                                       
@@ -215,9 +247,9 @@ class Body extends StatelessWidget {
                               children: [
                                 Text('Only show people from my City\ncurrent city (${(context.read<ProfileBloc>().state as ProfileLoaded).user.countryCode}).', 
                                 style: Theme.of(context).textTheme.bodySmall, ),
-                                Switch(value: state.userPreference.onlyShowInThisRange!, 
+                                Switch(value: state.userPreference!.onlyShowInThisRange!, 
                                 onChanged: (value){
-                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(onlyShowInThisRange: value)));
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(onlyShowFromMyCity: value)));
                                   isThereChange = true;
                                 }),
                               ],
@@ -236,12 +268,19 @@ class Body extends StatelessWidget {
                         ),
                       ),
                     ),
+
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text('HabeshaWe uses these preferences to suggest matches. Some match suggestions may not fall within your desired parameters.',
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                      ),
+                    ),
             
                     SizedBox(height: 15,),
             
                     Card(
                       elevation: 2,
-                      color: isDark ? state.userPreference.discoverBy == DiscoverBy.nearby.index ?  cardColor :Colors.grey[900] : state.userPreference.discoverBy == DiscoverBy.nearby.index ? Colors.grey[400]: Colors.white,
+                      color: isDark ? state.userPreference!.discoverBy == DiscoverBy.nearby.index ?  cardColor :Colors.grey[900] : state.userPreference!.discoverBy == DiscoverBy.nearby.index ? Colors.grey[400]: Colors.white,
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
                         child: Column(
@@ -251,10 +290,10 @@ class Body extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Discover By - Nearby Matches'),
-                                  Switch(value: state.userPreference.discoverBy! == DiscoverBy.nearby.index, 
+                                  Switch(value: state.userPreference!.discoverBy! == DiscoverBy.nearby.index, 
                                   onChanged: (value){
                                     
-                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: DiscoverBy.nearby.index)));
+                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(discoverBy: DiscoverBy.nearby.index)));
                                     isThereChange = true;
                                   }),
                                 ],
@@ -268,19 +307,19 @@ class Body extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('Maximum Distance', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17)),
-                                  Text('${state.userPreference.maximumDistance}KM.')
+                                  Text('${state.userPreference!.maximumDistance}KM.')
                                 ],
                               ),
                             ),
                               AbsorbPointer(
-                                absorbing: state.userPreference.discoverBy != DiscoverBy.nearby.index,
+                                absorbing: state.userPreference!.discoverBy != DiscoverBy.nearby.index,
                                 child: Slider(
-                                value: state.userPreference.maximumDistance!.toDouble(), 
-                                max: 2,
+                                value: state.userPreference!.maximumDistance!.toDouble(), 
+                                max: 10,
                                 
                                 divisions: 2,
                                 onChanged: (value){
-                                 context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(maximumDistance: value.toInt())));
+                                 context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(maximumDistance: value.toInt())));
                                  isThereChange = true;
                                 }
                                                           ),
@@ -294,22 +333,22 @@ class Body extends StatelessWidget {
             
             
             
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text('HabeshaWe uses these preferences to suggest matches. Some match suggestions may not fall within your desired parameters.',
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
-                      ),
-                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.all(8.0),
+                    //   child: Text('HabeshaWe uses these preferences to suggest matches. Some match suggestions may not fall within your desired parameters.',
+                    //       style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                    //   ),
+                    // ),
           
-                    SizedBox(height: 20,),
+                    // SizedBox(height: 20,),
           
-                    Text('Show me on HabeshaWe',
-                      style: TextStyle(
-                       // fontWeight: FontWeight.bold,
-                        fontSize: 17,
-                        //color: Colors.grey[800],
-                      ) 
-                    ),
+                    // Text('Show me on HabeshaWe',
+                    //   style: TextStyle(
+                    //    // fontWeight: FontWeight.bold,
+                    //     fontSize: 17,
+                    //     //color: Colors.grey[800],
+                    //   ) 
+                    // ),
 
 
                     
@@ -320,7 +359,7 @@ class Body extends StatelessWidget {
 
                     Card(
                       elevation: 2,
-                      color: isDark ? state.userPreference.discoverBy == DiscoverBy.online.index?  cardColor :Colors.grey[900] : state.userPreference.discoverBy == DiscoverBy.online.index? Colors.grey[400]: Colors.white,
+                      color: isDark ? state.userPreference!.discoverBy == DiscoverBy.online.index?  cardColor :Colors.grey[900] : state.userPreference!.discoverBy == DiscoverBy.online.index? Colors.grey[400]: Colors.white,
                       child: Container(
                         padding: EdgeInsets.all(10),
                         margin: EdgeInsets.only(top: 5, bottom: 5,),
@@ -335,10 +374,10 @@ class Body extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Discover By - Online Matches'),
-                                Switch(value: state.userPreference.discoverBy == DiscoverBy.online.index , 
+                                Switch(value: state.userPreference!.discoverBy == DiscoverBy.online.index , 
                                 onChanged: (value){
                                   
-                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(discoverBy: DiscoverBy.online.index)));
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(discoverBy: DiscoverBy.online.index)));
                                   isThereChange = true;
                                 }),
                               ],
@@ -350,37 +389,37 @@ class Body extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Text('Going global will allow you to see people nearby and from around the world.',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
-                    ),
+                    // Text('Going global will allow you to see people nearby and from around the world.',
+                    //     style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                    // ),
             
-                    SizedBox(height: 20,),
+                     SizedBox(height: 20,),
 
           
-                    Card(
-                      elevation: 2,
-                      color: isDark ? cardColor : Colors.white,
-                      //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 15,vertical: 5),
-                       // margin: EdgeInsets.only(top: 5, bottom: 5,),
-                        decoration: BoxDecoration(
-                          //color: Colors.white,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Show me on HabeshaWe'),
-                            Switch(
-                              value: state.userPreference.showMeOnLomi!
-                            , onChanged: (value){
-                              context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(showMeOnLomi: value)));
-                              isThereChange = true;
-                            }),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Card(
+                    //   elevation: 2,
+                    //   color: isDark ? cardColor : Colors.white,
+                    //   //shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    //   child: Container(
+                    //     padding: EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+                    //    // margin: EdgeInsets.only(top: 5, bottom: 5,),
+                    //     decoration: BoxDecoration(
+                    //       //color: Colors.white,
+                    //     ),
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //       children: [
+                    //         Text('Show me on HabeshaWe'),
+                    //         Switch(
+                    //           value: state.userPreference.showMeOnLomi!
+                    //         , onChanged: (value){
+                    //           context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(showMeOnLomi: value)));
+                    //           isThereChange = true;
+                    //         }),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
           
                     SizedBox(height: 20,),
           
@@ -392,32 +431,32 @@ class Body extends StatelessWidget {
                       ) 
                     ),
           
-                    Card(
-                      elevation: 2,
-                      color: isDark ? cardColor : Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Recently Active Status', style: TextStyle(fontSize: 17, color: Colors.grey)),
-                            //SizedBox(height: 10,),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Show Activity status'),
-                                Switch(
-                                  value: state.userPreference.recentlyActiveStatus!, 
-                                  onChanged: (value){
-                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(recentlyActiveStatus: value)));
-                                    isThereChange = true;
-                                  })
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Card(
+                    //   elevation: 2,
+                    //   color: isDark ? cardColor : Colors.white,
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.all(15.0),
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Text('Recently Active Status', style: TextStyle(fontSize: 17, color: Colors.grey)),
+                    //         //SizedBox(height: 10,),
+                    //         Row(
+                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           children: [
+                    //             Text('Show Activity status'),
+                    //             Switch(
+                    //               value: state.userPreference.recentlyActiveStatus!, 
+                    //               onChanged: (value){
+                    //                 context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(recentlyActiveStatus: value)));
+                    //                 isThereChange = true;
+                    //               })
+                    //           ],
+                    //         )
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
           
                     SizedBox(height: 10,),
           
@@ -439,9 +478,26 @@ class Body extends StatelessWidget {
                               children: [
                                 Text('Show Online status'),
                                 Switch(
-                                  value: state.userPreference.onlineStatus!, 
+                                  value: state.userPreference!.onlineStatus!, 
                                   onChanged: (value){
-                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(onlineStatus: value)));
+                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(onlineStatus: value)));
+                                    if(!value){
+                                    
+                                      context.read<DatabaseRepository>().updateOnlinestatus(
+                                      userId: context.read<AuthBloc>().state.user!.uid, 
+                                      gender: context.read<AuthBloc>().state.accountType!, 
+                                      online: false,
+                                      showstatus: false
+                                      );
+                                    }else{
+                                      context.read<DatabaseRepository>().updateOnlinestatus(
+                                      userId: context.read<AuthBloc>().state.user!.uid, 
+                                      gender: context.read<AuthBloc>().state.accountType!, 
+                                      online: true,
+                                      showstatus: true
+                                      );
+
+                                    }
                                     isThereChange = true;
                                   }),
                               ],
@@ -474,7 +530,7 @@ class Body extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Show Distances in', style: TextStyle(fontSize: 17, color: Colors.grey)),
-                                Text(state.userPreference.showDistancesIn!)
+                                Text(state.userPreference!.showDistancesIn!)
                               ],
                             ),
                           ),
@@ -489,9 +545,9 @@ class Body extends StatelessWidget {
                                     SizedBox(width: 100,child: Text('KM.', textAlign: TextAlign.center,)),
                                     SizedBox(width: 100,child: Text('MI.', textAlign: TextAlign.center,)),
                                   ], 
-                                  isSelected: state.userPreference.showDistancesIn == 'km' ? [true,false]: [false,true],
+                                  isSelected: state.userPreference!.showDistancesIn == 'km' ? [true,false]: [false,true],
                                   onPressed: (index) {
-                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference.copyWith(showDistancesIn: index == 0 ? 'km': 'mi')));
+                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(showDistancesIn: index == 0 ? 'km': 'mile')));
                                     isThereChange = true;
                                   },
                                   //borderRadius: BorderRadius.all(Radius.circular(30),),
@@ -525,16 +581,18 @@ class Body extends StatelessWidget {
           
                       onTap: () {
                         //context.read<AuthRepository>().signOut();
-                        context.read<DatabaseRepository>().updateOnlinestatus(
-                            userId: context.read<AuthBloc>().state.user!.uid, 
-                            gender: context.read<AuthBloc>().state.accountType!, 
-                            online: false
-                             );
+                        // context.read<DatabaseRepository>().updateOnlinestatus(
+                        //     userId: context.read<AuthBloc>().state.user!.uid, 
+                        //     gender: context.read<AuthBloc>().state.accountType!, 
+                        //     online: false
+                        //      );
+
+                             
                         context.read<AuthBloc>().add(LogOut());
                         
                         // context.read<ProfileBloc>().close();
                         // context.read<UserpreferenceBloc>().close();
-                        Future.delayed(Duration(milliseconds: 300), (){
+                        Future.delayed(Duration(seconds: 1), (){
                              Navigator.pop(context); 
                         });
                         
@@ -557,6 +615,70 @@ class Body extends StatelessWidget {
                     SizedBox(height: 25,),
           
                     InkWell(
+                      onTap: (){
+                        showDialog(
+                          context: context, 
+                          builder: (ctx){
+                            return AlertDialog(
+                              title: Text('Delete Account'),
+                              content: SizedBox(
+                                height: 300,
+                                width: MediaQuery.of(context).size.width*0.95,
+                                child: Container(
+                                  width: double.infinity,
+                                  child: Column(
+                                    //mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text('Please select areason for deleting\n your account'),
+                                      const SizedBox(height: 15,),
+                                      TextButton(
+                                        onPressed: (){
+                                          Navigator.pop(context);
+                                          confirmDelete(context, 'FOUND/IN A RELATIONSHIP');
+                                        },
+                                         
+                                        child: Row(children: [Icon(Icons.heart_broken), Text('FOUND/IN A RELATIONSHIP')],)
+                                        ),
+                                
+                                      TextButton(
+                                        onPressed: (){
+                                          Navigator.pop(context);
+                                          confirmDelete(context, 'BILLING ISSUE');
+                                        },
+                                         
+                                        child: Row(children: [Icon(Icons.money_off_csred), Text('BILLING ISSUE')],)
+                                        ),
+                                
+                                        TextButton(
+                                        onPressed: (){
+                                          Navigator.pop(context);
+                                          confirmDelete(context, 'DISSATISFIED WITH SERVICE');},
+                                         
+                                        child: Row(children: [Icon(Icons.heart_broken), Text('DISSATISFIED WITH SERVICE')],)
+                                        ),
+                                        TextButton(
+                                          
+                                        onPressed: (){
+                                          Navigator.pop(context);
+                                          confirmDelete(context, 'OTHER');},
+                                         
+                                        child: Row(children: [Icon(Icons.heart_broken), Text('OTHER', textAlign: TextAlign.right,)],)
+                                        ),
+                                        TextButton(
+                                        onPressed: (){Navigator.pop(context);},
+                                         
+                                        child: Row(children: [Icon(Icons.heart_broken), Text('CANCEL')],)
+                                        ),
+                                
+                                    ],
+                                  ),
+                                ),
+                              ) ,
+                            );
+                          }
+                          );
+                      },
                       child: Card(
                         color: isDark ? cardColor : Colors.white,
                         child: Center(
@@ -567,7 +689,7 @@ class Body extends StatelessWidget {
                         ),
                       ),
           
-                      onTap: (){},
+                      
                     ),
           
           
@@ -590,6 +712,79 @@ class Body extends StatelessWidget {
 
         }
       },
+    );
+  }
+
+  void confirmDelete(BuildContext context, String reason){
+    showDialog(context: context, 
+    builder: (ctx)=> AlertDialog(
+      title: Text('Are you sure?', ),
+      content: Container(
+        width: MediaQuery.of(context).size.width*0.95,
+        child: Text('Deleting your profile to create a new\naccount may affect who you see on\nthe platform, and we want you to have\nthe best experience possible.',style: TextStyle(fontSize: 13),)),
+
+      actions: [
+        TextButton(
+          onPressed: (){
+            Navigator.pop(context);
+
+                bekaDeltew(context, reason);
+          },
+          child: Text('DELETE ACCOUNT'),
+        ),
+        TextButton(
+          onPressed: (){
+            Navigator.pop(context);
+
+          },
+          child: Text('CANCEL'),
+        ),
+      ],
+      actionsOverflowDirection: VerticalDirection.down ,
+    ),
+    
+    );
+  }
+
+  void bekaDeltew(BuildContext context, String reason){
+    TextEditingController ctr = TextEditingController();
+    showDialog(context: context, 
+    builder: (ctx)=> AlertDialog(
+      title: Text('Delete account?'),
+      content: SizedBox(
+        height: 115,
+        width: MediaQuery.of(context).size.width*0.95,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('This action cannot be undone'),
+            SizedBox(height: 15,),
+            Text('Type \"delete\" to confirm'),
+            TextField(
+              controller: ctr,
+            )
+          ],
+        ),
+      ),
+
+      actions: [
+        TextButton(
+          onPressed: (){
+            Navigator.pop(context);
+          },
+          child: Text('CANCEL'),
+          ),
+
+        TextButton(
+          onPressed: (){
+            if(ctr.text == 'delete'){
+              context.read<AuthBloc>().add(DeleteAccount());
+            }
+          },
+          child: Text('CONFIRM'),
+          ),
+      ],
+    )
     );
   }
 }

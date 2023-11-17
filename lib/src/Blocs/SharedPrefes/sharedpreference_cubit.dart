@@ -44,6 +44,6 @@ class SharedpreferenceCubit extends Cubit<Location> {
       );
     }
 
-    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    return await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
   }
 }

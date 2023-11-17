@@ -5,6 +5,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:lomi/src/Blocs/blocobserver.dart';
 import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
+import 'package:lomi/src/Data/Repository/Remote/remote_config.dart';
 import 'package:lomi/src/app.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -14,9 +15,10 @@ void main() async {
   await Firebase.initializeApp();
   Bloc.observer = MyBlocObserver();
   HydratedBloc.storage = await HydratedStorage.build(
-    storageDirectory: await getApplicationCacheDirectory());
+    storageDirectory: await getApplicationCacheDirectory());  
   MobileAds.instance.initialize();
   await NotificationService().init();
+  await RemoteConfigService().init();
   runApp(const MyApp());
   
 } 

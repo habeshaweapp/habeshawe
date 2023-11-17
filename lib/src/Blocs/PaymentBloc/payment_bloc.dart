@@ -142,7 +142,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
                   add = 366;
                  }
                 var expireDate = DateTime.fromMillisecondsSinceEpoch(purchaseData['purchaseTime']);
-                var newExpireDate = expireDate.add(const Duration(minutes: 5));
+                var newExpireDate = expireDate.add( Duration(days: add));
                 _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: purchaseData, 
                 subscribtionStatus: type.index, paymentType: purchase.productID, expireDate: newExpireDate.millisecondsSinceEpoch );
               }
@@ -157,7 +157,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
                   boost = 10;
                 }
 
-                emit(state.copyWith(boosts: state.boosts! + boost ));
+                emit(state.copyWith(boosts: state.boosts + boost ));
                 _databaseRepository.updateConsumable(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: state.boosts!);
               }
 
@@ -172,7 +172,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
                   likes = 30;
                 }
 
-                emit(state.copyWith(superLikes: state.superLikes??0 + likes ));
+                emit(state.copyWith(superLikes: state.superLikes + likes ));
                 _databaseRepository.updateConsumable(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: state.superLikes!);
               }
 
@@ -208,21 +208,26 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
 
   FutureOr<void> _onPaymentStarted(PaymentStarted event, Emitter<PaymentState> emit)async {
     final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid, users: _authBloc.state.accountType!);
-    if(payment.countryCode != 'ET' && payment.country != 'Ethiopia'){
     final products = await _paymentRepository.getProducts();
+    if(payment.countryCode != 'ET' || products.isNotEmpty){
+    //final products = await _paymentRepository.getProducts();
     //emit(SubscribtionState(productDetails: products));
     var expireDate = DateTime.fromMillisecondsSinceEpoch(payment.expireDate, isUtc: true);
-    int diff = DateTime.now().difference(expireDate).inMinutes;
-    if(diff >=2){
+    int diff = DateTime.now().difference(expireDate).inDays;
+    if(diff >=3){
       
       _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: {}, subscribtionStatus: SubscribtionStatus.notSubscribed.index, paymentType: SubscribtionStatus.notSubscribed.name, expireDate: payment.expireDate);
 
       await _paymentRepository.restorePurchase();
-    }
+      emit(state.copyWith(productDetails: products, subscribtionStatus: SubscribtionStatus.notSubscribed, boosts: payment.boosts, superLikes: payment.superLikes ));
+    }else{
+
     emit(state.copyWith(productDetails: products, subscribtionStatus: SubscribtionStatus.values[payment.subscribtionStatus], boosts: payment.boosts, superLikes: payment.superLikes ));
+
+     }
   }
   else{
-    emit(state.copyWith(subscribtionStatus: SubscribtionStatus.ET_USER));
+    emit(state.copyWith(subscribtionStatus: SubscribtionStatus.ET_USER, productDetails: products, boosts: payment.boosts, superLikes: payment.superLikes ));
 
   }
 }
@@ -268,11 +273,24 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   }
 
   FutureOr<void> _onConsumeBoost(ConsumeBoost event, Emitter<PaymentState> emit) {
-    _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: state.boosts! -1);
+    try {
+      
+    _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: state.boosts -1);
+    emit(state.copyWith(boosts: state.boosts -1 ));
+    } catch (e) {
+      
+    }
   }
 
   FutureOr<void> _onConsumeSuperLike(ConsumeSuperLike event, Emitter<PaymentState> emit) {
-        _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'superlikes', value:state.boosts! -1);
+    try {
+      
+        _databaseRepository.updateConsumable(userId:_authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'superlikes', value:state.boosts -1);
+        emit(state.copyWith(superLikes: state.superLikes-1));
+
+    } catch (e) {
+      
+    }
 
   }
 

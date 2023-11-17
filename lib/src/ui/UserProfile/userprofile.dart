@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_geo_hash/geohash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
@@ -57,275 +58,282 @@ class UserProfile extends StatelessWidget {
   
     return Scaffold(
       //floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
-      floatingActionButton: FloatingActionButton(
-        child:  Icon(Icons.settings,
-            color: isDark? Colors.white: Colors.black,
-        ),
-        heroTag: 'settings',
-        backgroundColor: isDark ? Colors.grey[800]: Colors.white,
-        onPressed: () async{
-
-
-          // var position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
-          //                 String hash = MyGeoHash().geoHashForLocation(GeoPoint(position.latitude, position.longitude));
-          //                 var placeMark = await placemarkFromCoordinates(position.latitude, position.longitude);
-          //                 int rep = 0;
-          //                 while(placeMark.isEmpty){
-          //                   if(rep == 5)  break;
-          //                   placeMark = await placemarkFromCoordinates(position.latitude, position.longitude);
-          //                   rep ++;
-
-          //                 }
-          //                 if(context.mounted && placeMark.isNotEmpty ){
-          //                   for(int i=0; i< UserModel.users.length; i++){
-          //                     DatabaseRepository().completeOnboarding(placeMark: placeMark[0], user: UserModel.users[i].copyWith(location: [position.latitude,position.longitude]), isMocked: position.isMocked);
-          //                   }
-          //                   // context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: placeMark[0], user: state.user.copyWith(geohash: hash,location: [position.latitude, position.longitude], country: placeMark[0].country, countryCode: placeMark[0].isoCountryCode ), isMocked: position.isMocked));
-          //                   // Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-          //                                               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('done users are setup')));
-
-          //                 }
-
-          //                 if(placeMark.isEmpty){
-          //                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('somethings not up...check your phone and Try Again')));
-          //                 }
-
-
-          Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
-                              BlocProvider.value(
-                                value: context.read<UserpreferenceBloc>(),
-                                child: BlocProvider.value(
-                                value: context.read<ProfileBloc>(),
-                                child:  Settings()
-                              )
-                              )
-                              ));
-          
-       // Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
-      }),
-      body: BlocBuilder<ProfileBloc, ProfileState>(
-        
+      floatingActionButton: BlocBuilder<ThemeCubit, ThemeMode>(
+      
         builder: (context, state) {
-          
-          if(state is ProfileLoading){
-            return const Center(
-              child:  CircularProgressIndicator(),
-            );
-          }
-          
-          if(state is ProfileLoaded){
-            Icon verifiedIcon =  Icon(Icons.verified_outlined);
-            if(state.user.verified == VerifiedStatus.notVerified.name){
-              verifiedIcon = const Icon(Icons.verified_outlined);
-            }else if(state.user.verified == VerifiedStatus.verified.name){
-              verifiedIcon = const Icon(Icons.verified, color: Colors.blue,);
-            }else if(state.user.verified == VerifiedStatus.queen.name){
-              verifiedIcon = const Icon(LineIcons.crown, color: Colors.amber,);
-            }else if(state.user.verified == VerifiedStatus.princess.name){
-              verifiedIcon = const Icon(LineIcons.crown, color: Colors.blue,);
-            }else if(state.user.verified == VerifiedStatus.king.name){
-              verifiedIcon = const Icon(LineIcons.crown, color: Colors.amber,);
-            }else if(state.user.verified == VerifiedStatus.gentelmen.name){
-              verifiedIcon = const Icon(LineIcons.suitcase, color: Colors.blue,);
-            }
-            
-          return Column(
-            children: [
-              SizedBox(
-                height: 40.h,
-              ),
-              Center(
-                child: SizedBox(
-                  height: 220.h,
-                  width: 220.h,
-                  child: Stack(
-                    children: [
-                      Center(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 1, color: isDark? Colors.teal : Colors.grey,),
-                            
-                            shape: BoxShape.circle,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: GestureDetector(
-                              onLongPress: (){
-                                Clipboard.setData(ClipboardData(text: 'Find me on Habeshawe id: ${state.user.id}'));
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('id generated! good luck...',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),)));
-                              },
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
+          isDark =state == ThemeMode.dark;
+          return FloatingActionButton(
+            child:  Icon(Icons.settings,
+                color: isDark? Colors.grey[400]: Colors.black,
+            ),
+            heroTag: 'settings',
+            backgroundColor: isDark ? Colors.grey[800]: Colors.white,
+            onPressed: () async{
+      
+              Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
                                   BlocProvider.value(
-                                    value: context.read<ProfileBloc>() ,
-                                    child: Profile(user: state.user, profileFrom: ProfileFrom.profile,)) 
-                                ));
-                              },
-                              child: CircleAvatar(
-                                backgroundImage:
-                                    CachedNetworkImageProvider( 
-                                      state.user.imageUrls[0]
-                                      
-                                      ),
-                                radius: 90.h,
+                                    value: context.read<UserpreferenceBloc>(),
+                                    child: BlocProvider.value(
+                                    value: context.read<ProfileBloc>(),
+                                    child:  Settings()
+                                  )
+                                  )
+                                  ));
+              
+           // Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+          });
+        }
+      ),
+      body: BlocBuilder<ThemeCubit,ThemeMode>(
+        builder: (context, state) {
+          isDark = state == ThemeMode.dark;
+          
+          return BlocBuilder<ProfileBloc, ProfileState>(
+            
+            builder: (context, state) {
+              
+              if(state is ProfileLoading){
+                return const Center(
+                  child:  CircularProgressIndicator(),
+                );
+              }
+              
+              if(state is ProfileLoaded){
+                Icon verifiedIcon =  Icon(Icons.verified_outlined,color: Colors.grey,);
+                if(state.user.verified == VerifiedStatus.notVerified.name){
+                  verifiedIcon = const Icon(Icons.verified_outlined, color: Colors.grey,);
+                }else if(state.user.verified == VerifiedStatus.verified.name){
+                  verifiedIcon = const Icon(Icons.verified, color: Colors.blue,);
+                }else if(state.user.verified == VerifiedStatus.queen.name){
+                  verifiedIcon = const Icon(LineIcons.crown, color: Colors.amber,);
+                }else if(state.user.verified == VerifiedStatus.princess.name){
+                  verifiedIcon = const Icon(LineIcons.crown, color: Colors.pink,);
+                }else if(state.user.verified == VerifiedStatus.king.name){
+                  verifiedIcon = const Icon(FontAwesomeIcons.crown, color: Colors.amber,);
+                }else if(state.user.verified == VerifiedStatus.gentelmen.name){
+                  verifiedIcon = const Icon(FontAwesomeIcons.blackTie, color: Colors.black,);
+                }
+                
+              return Column(
+                children: [
+                  SizedBox(
+                    height: 40.h,
+                  ),
+                  Center(
+                    child: SizedBox(
+                      height: 220.h,
+                      width: 220.h,
+                      child: Stack(
+                        children: [
+                          Center(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(width: 4, color: isDark? Colors.teal : Colors.green,),
                                 
+                                shape: BoxShape.circle,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: GestureDetector(
+                                  onLongPress: (){
+                                    Clipboard.setData(ClipboardData(text: 'Find me on Habeshawe id: ${state.user.id}'));
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text('id generated! good luck...',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),)));
+                                  },
+                                  onTap: (){
+                                    Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
+                                      BlocProvider.value(
+                                        value: context.read<ProfileBloc>() ,
+                                        child: BlocProvider.value(
+                                          value: context.read<UserpreferenceBloc>(),
+                                          child:BlocProvider.value(value: context.read<SharedpreferenceCubit>(),
+                                        child:
+                                          Profile(user: state.user, profileFrom: ProfileFrom.profile,)))) 
+                                    ));
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundImage:
+                                        CachedNetworkImageProvider( 
+                                          state.user.imageUrls[0],
+                                          
+                                          
+                                          ),
+                                    radius: 90.h,
+                                    backgroundColor: !isDark?Colors.grey[200]: Colors.grey,
+                                    
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: ElevatedButton(
-                            onPressed: ()async {
-                              Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
-                              BlocProvider.value(
-                                value: context.read<ProfileBloc>(),
-                                child: const EditProfile()
-                              )
-                              ));
-                              //context.read<DatabaseRepository>().getUsersBasedonPreference(state.user.id);
-                              // var pin = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
-                              // print(pin);
-                              // final SharedPreferences prefes = await SharedPreferences.getInstance();
-                              // prefes.setDouble('latitude', pin.latitude);
-                              // prefes.setDouble('longitude', pin.longitude);
-                              // var hash = MyGeoHash().geoHashForLocation(GeoPoint(pin.latitude, pin.longitude));
-                              // print(hash); 
-                             // context.read<SharedpreferenceCubit>().getMyLocation();
+                          Align(
+                            alignment: Alignment.bottomCenter,
+                            child: ElevatedButton(
+                                onPressed: ()async {
+                                  Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
+                                  BlocProvider.value(
+                                    value: context.read<ProfileBloc>(),
+                                    child: const EditProfile()
+                                  )
+                                  ));
 
-                            },
-                            style: ElevatedButton.styleFrom(
-                                 foregroundColor: Colors.grey,
-                                backgroundColor: isDark? Colors.grey[900]: Colors.white,
-                                shape: StadiumBorder()),
-                            child: Text("10% COMPLETE")),
-                      ),
-                      Positioned(
-                        right: 0,
-                        top: 30.h,
-                        child: FloatingActionButton(
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
-                              BlocProvider.value(
-                                value: context.read<ProfileBloc>(),
-                                child: const EditProfile()
-                              )
-                              ));
-                            
-                          },
-                          heroTag: 'edit',
-                          backgroundColor: isDark ? Colors.grey[800]: Colors.white,
-                          child: Icon(
-                            Icons.edit,
-                            color: isDark? Colors.white: Colors.black,
+                                  
+                                  //context.read<DatabaseRepository>().getUsersBasedonPreference(state.user.id);
+                                  // var pin = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.low);
+                                  // print(pin);
+                                  // final SharedPreferences prefes = await SharedPreferences.getInstance();
+                                  // prefes.setDouble('latitude', pin.latitude);
+                                  // prefes.setDouble('longitude', pin.longitude);
+                                  // var hash = MyGeoHash().geoHashForLocation(GeoPoint(pin.latitude, pin.longitude));
+                                  // print(hash); 
+                                 // context.read<SharedpreferenceCubit>().getMyLocation();
+
+                                },
+                                style: ElevatedButton.styleFrom(
+                                     foregroundColor: Colors.grey,
+                                    backgroundColor: isDark? Colors.grey[900]: Colors.white,
+                                    shape: StadiumBorder()),
+                                child: Text("10% COMPLETE")),
                           ),
-                        ),
-                      )
+                          Positioned(
+                            right: 0,
+                            top: 30.h,
+                            child: FloatingActionButton(
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
+                                  BlocProvider.value(
+                                    value: context.read<ProfileBloc>(),
+                                    child: const EditProfile()
+                                  )
+                                  ));
+                                
+                              },
+                              heroTag: 'edit',
+                              backgroundColor: isDark ? Colors.grey[800]: Colors.white,
+                              child: Icon(
+                                Icons.edit,
+                                color: isDark? Colors.white: Colors.black,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 25.h,
+                  ),
+                  
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${state.user.name}, ${state.user.age}',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge!
+                            .copyWith(fontSize: 18),
+                      ),
+                      // SizedBox(
+                      //   width: 1,
+                      // ),
+                      IconButton(
+                        icon: verifiedIcon,
+                        onPressed: (){
+                          state.user.verified == VerifiedStatus.notVerified.name?
+                          showVerifyDialog(state.user): null;
+                        },
+                        )
                     ],
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 25.h,
-              ),
-              
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '${state.user.name}, ${state.user.age}',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyLarge!
-                        .copyWith(fontSize: 18),
+                  SizedBox(
+                    height: 30.h,
                   ),
-                  // SizedBox(
-                  //   width: 1,
-                  // ),
-                  IconButton(
-                    icon: verifiedIcon,
-                    onPressed: (){
-                      state.user.verified == VerifiedStatus.notVerified.name?
-                      showVerifyDialog(state.user): null;
-                    },
-                    )
-                ],
-              ),
-              SizedBox(
-                height: 30.h,
-              ),
-              //Color.fromARGB(255, 22, 22, 22)
-              Expanded(
-                child: Container(
-                  color: isDark ? Color.fromARGB(255, 41, 41, 41): Colors.grey[200],
-                  child: Column(
-                    children: [
-                      SizedBox(height: 10.h,),
+                  //Color.fromARGB(255, 22, 22, 22)
+                  Expanded(
+                    child: Container(
+                      color: isDark ? Color.fromARGB(255, 41, 41, 41): Colors.grey[200],
+                      child: Column(
+                        children: [
+                          SizedBox(height: 10.h,),
 
+                        
+                  Padding(
+                    padding:  EdgeInsets.all(8.0.w),
                     
-              Padding(
-                padding:  EdgeInsets.all(8.0.w),
-                
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ProfileBox(
-                      isDark: isDark, 
-                      onTap: () => showPaymentDialog(context:context, paymentUi: PaymentUi.superlikes) ,
-                      title: 'Super Likes',
-                      superLikes: 0,
-                      icon: Icons.star,
-                      color: Colors.blue,
-                      ),
-                    SizedBox(
-                      width: 10.w,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        BlocBuilder<PaymentBloc,PaymentState>(
+                          builder: (context,state) {
+                            return ProfileBox(
+                              isDark: isDark, 
+                              onTap: (){
+                                if(context.read<PaymentBloc>().state.productDetails.isNotEmpty){
+                                  showPaymentDialog(context:context, paymentUi: PaymentUi.superlikes);
+                                }
+                              },
+                              title: 'Super Likes',
+                              superLikes: state.superLikes,
+                              icon: Icons.star,
+                              color: Colors.blue,
+                              );
+                          }
+                        ),
+                        SizedBox(
+                          width: 10.w,
+                        ),
+                        ProfileBox(
+                          isDark: isDark, 
+                          title: 'My Boosts', 
+                          icon: Icons.electric_bolt, 
+                          onTap: ()=> showBoostsSheet(context, 2),
+                          color: Colors.purple,
+
+                          ),
+
+                          SizedBox(width: 10.w,),
+
+                          ProfileBox(
+                            isDark: isDark,
+                            title: 'Subscriptions',
+                            icon: Icons.diamond,
+                            color: Colors.amber,
+                            onTap: (){
+                              if(context.read<PaymentBloc>().state.productDetails.isNotEmpty){
+                               showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
+                              }
+
+                            }
+                          ),
+
+                       
+                    
+                        
+                        
+                      ],
                     ),
-                    ProfileBox(
-                      isDark: isDark, 
-                      title: 'My Boosts', 
-                      icon: Icons.electric_bolt, 
-                      onTap: ()=> showBoostsSheet(context, 2),
-                      color: Colors.purple,
-
-                      ),
-
-                      SizedBox(width: 10.w,),
-
-                      ProfileBox(
-                        isDark: isDark,
-                        title: 'Subscriptions',
-                        icon: Icons.monetization_on,
-                        color: Colors.green,
-                        onTap: ()=> showPaymentDialog(context: context, paymentUi: PaymentUi.subscription),
-                      ),
-
-                   
-                
-                    
-                    
-                  ],
-                ),
-              ),
-              Spacer(),
-              GetTag(user: state.user,),
-
-              
-              Spacer(),
-              // FloatingActionButton(
-              //   onPressed: (){
-              //     Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
-              //   },
-              //   child: Icon(Icons.settings),
-              //   ),
-              ],
                   ),
-                  )
-                  )
-            ],
+                  Spacer(),
+                  GetTag(user: state.user,),
+
+                  
+                  Spacer(),
+                  // FloatingActionButton(
+                  //   onPressed: (){
+                  //     Navigator.push(context, MaterialPageRoute(builder: (context) => Settings()));
+                  //   },
+                  //   child: Icon(Icons.settings),
+                  //   ),
+                  ],
+                      ),
+                      )
+                      )
+                ],
+              );
+            }else{ return Text('somethisngs went wrong');}
+            },
           );
-        }else{ return Text('somethisngs went wrong');}
-        },
+        }
       ),
     );
   
@@ -384,7 +392,7 @@ class UserProfile extends StatelessWidget {
                       ,
                       children: [
                         Text('Boosts'),
-                        Text('0 left', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w300), textAlign: TextAlign.start,)
+                        Text('${context.read<PaymentBloc>().state.boosts} left', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w300), textAlign: TextAlign.start,)
                       ],
                     )
                   ],
@@ -394,7 +402,10 @@ class UserProfile extends StatelessWidget {
 
               ElevatedButton(
                 onPressed: (){
+                  if(context.read<PaymentBloc>().state.productDetails.isNotEmpty){
+                    Navigator.pop(context);
                   showPaymentDialog(context:context, paymentUi: PaymentUi.boosts);
+                  }
                 },
                child: Padding(
                  padding: const EdgeInsets.all(8.0),

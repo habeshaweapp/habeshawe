@@ -16,6 +16,7 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
   final DatabaseRepository _databaseRepository;
   final AuthBloc _authBloc;
   StreamSubscription? _authSubscription;
+  StreamSubscription? _likesSubscription;
   LikeBloc({
     required DatabaseRepository databaseRepository,
     required AuthBloc authBloc
@@ -46,7 +47,7 @@ void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
 
   FutureOr<void> _onLoadLikes(LoadLikes event, Emitter<LikeState> emit) {
     try {
-      _databaseRepository.getLikedMeUsers(event.userId, event.users).listen((users) { 
+       _likesSubscription = _databaseRepository.getLikedMeUsers(event.userId, event.users).listen((users) { 
         add(UpdateLikes(users: users));
       });
       
@@ -73,6 +74,7 @@ void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
   Future<void> close() {
     // TODO: implement close
     _authSubscription?.cancel();
+    _likesSubscription?.cancel();
     return super.close();
   }
 }

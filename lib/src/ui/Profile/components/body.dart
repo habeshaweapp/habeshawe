@@ -14,6 +14,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/dataApi/icons.dart';
+import 'package:lomi/src/ui/payment/showPaymentDialog.dart';
 import 'package:swipable_stack/swipable_stack.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
@@ -25,6 +26,7 @@ import '../../../Data/Models/likes_model.dart';
 import '../../../Data/Models/model.dart';
 import '../../../Data/Models/tag_helper.dart';
 import '../../../Data/Models/looking_for_datas.dart';
+import '../../editProfile/editProfile.dart';
 import '../../home/components/userdrag.dart';
 import '../../onboarding/AfterRegistration/widgets/lookingforitem.dart';
 import '../../report/report.dart';
@@ -40,9 +42,9 @@ class Body extends StatelessWidget {
    Future<Position> getCurrentPosition()async{
     return await Geolocator.getCurrentPosition();
    }
-   int calculateDistance(Position currentPosition, List<double> userPosition) {
+   double calculateDistance(Position currentPosition, List<double> userPosition) {
     //Position currentPosition =  getCurrentPosition();
-    return Geolocator.distanceBetween(currentPosition.latitude, currentPosition.longitude, userPosition[0], userPosition[1])~/1000;
+    return Geolocator.distanceBetween(currentPosition.latitude, currentPosition.longitude, userPosition[0], userPosition[1])/1000;
    }
    
 
@@ -58,7 +60,24 @@ class Body extends StatelessWidget {
 
     PageController pageController = PageController();
     bool isDart = context.read<ThemeCubit>().state == ThemeMode.dark;
-    int distance = calculateDistance(context.read<SharedpreferenceCubit>().state.myLocation!, user.location!);
+    double distanceD = calculateDistance(context.read<SharedpreferenceCubit>().state.myLocation!, user.location!);
+
+    int distance = 0;
+    String km = context.read<UserpreferenceBloc>().state.userPreference!.showDistancesIn!;
+    if(km == 'mile'){
+      distanceD = distanceD*0.62137;
+      if(distanceD < 1){
+        distance = 0;
+      }else{
+      distance = distanceD.round();
+      }
+    }else{
+      if(distanceD < 1){
+        distance = 0;
+      }else{
+      distance = distanceD.round();
+      }
+    }
     // if(imgindex != null){
     //                             pageController.animateToPage(imgindex!.toInt(), duration: Duration(milliseconds: 300), curve: Curves.linear);
     //                           }
@@ -232,7 +251,7 @@ class Body extends StatelessWidget {
                               SizedBox(width: 7,),
                               Text(
                                 
-                                distance == 0? 'less than a km away' :'${distance}km away',
+                                distance == 0? 'less than a $km away' :'${distance} $km away',
                                 style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),
                                 ),
                             ],
@@ -377,7 +396,7 @@ class Body extends StatelessWidget {
                         // ),
                         SizedBox(height: 20,),
                         Divider(),
-                        SizedBox(
+                       profileFrom != ProfileFrom.profile? SizedBox(
                           width: double.infinity,
                           child: GestureDetector(
                             onTap: (){
@@ -399,7 +418,7 @@ class Body extends StatelessWidget {
                               ],
                             ),
                           ),
-                        ),
+                        ):const SizedBox(),
                         const Divider(),
 
                         SizedBox(height: 50,),
@@ -414,7 +433,7 @@ class Body extends StatelessWidget {
 
             
 
-            Positioned(
+           profileFrom != ProfileFrom.profile? Positioned(
             bottom: 20,
             //left: MediaQuery.of(context).size.width*0.4,
             right: MediaQuery.of(context).size.width*0.3,
@@ -431,6 +450,18 @@ class Body extends StatelessWidget {
                              matchEngine?.currentItem?.nope();
                         });
                         
+                      }
+
+                      if(profileFrom == ProfileFrom.like ){
+                        //
+                        context.read<LikeBloc>().add(
+                          DeleteLikedMeUser(
+                            userId: context.read<AuthBloc>().state.user!.uid, 
+                            users: context.read<AuthBloc>().state.accountType!, 
+                            likedMeUserId: likedMeUser!.user.id
+                            )
+                        );
+                        Navigator.pop(context);
                       }
                     },
                     child: Container(
@@ -470,6 +501,20 @@ class Body extends StatelessWidget {
                              matchEngine?.currentItem?.superLike();
                         });
                         }
+
+                        if(profileFrom == ProfileFrom.like ){
+                          if(context.read<PaymentBloc>().state.superLikes >0){
+
+                            context.read<LikeBloc>().add(LikeLikedMeUser(
+                              user: (context.read<ProfileBloc>().state as ProfileLoaded).user, 
+                              likedMeUser: likedMeUser!,
+                              isSuperLike: true
+                              ));
+                              Navigator.pop(context);
+                          }else{
+                            showPaymentDialog(context: context, paymentUi: PaymentUi.superlikes);
+                          }
+                      }
                       },
                       child: Container(
                                 width: 40,
@@ -518,9 +563,18 @@ class Body extends StatelessWidget {
 
                 }
 
-                if(profileFrom == ProfileFrom.like){
-                  context.read<LikeBloc>().add(LikeLikedMeUser(user: user, likedMeUser: likedMeUser!));
-                }
+                // if(profileFrom == ProfileFrom.like){
+                //   context.read<LikeBloc>().add(LikeLikedMeUser(user: user, likedMeUser: likedMeUser!));
+                // }
+                if(profileFrom == ProfileFrom.like ){
+                        context.read<LikeBloc>().add(LikeLikedMeUser(
+                          user: (context.read<ProfileBloc>().state as ProfileLoaded).user, 
+                          likedMeUser: likedMeUser!,
+                          isSuperLike: false
+                          ));
+
+                        Navigator.pop(context);
+                      }
 
               },
               child: Container(
@@ -551,7 +605,26 @@ class Body extends StatelessWidget {
                 ],
               ),
             
-            ),
+            ):Positioned(
+              bottom: 20,
+              right: 30,
+              child: FloatingActionButton(
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
+                                  BlocProvider.value(
+                                    value: context.read<ProfileBloc>(),
+                                    child: const EditProfile()
+                                  )
+                                  ));
+                                
+                              },
+                              heroTag: 'edit',
+                              backgroundColor: isDark ? Colors.grey[800]: Colors.white,
+                              child: Icon(
+                                Icons.edit,
+                                color: isDark? Colors.white: Colors.black,
+                              ),
+                            ),),
 
            // Icon(Icons.arrow_back),
             // IconButton(

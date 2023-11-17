@@ -16,7 +16,9 @@ class AdState extends Equatable {
     this.adWatchedQueen=0,
     this.rewardedAdType,
     this.adWatchedPrincess =0,
-    this.adWatchedOnline=0
+    this.adWatchedOnline=0,
+    this.totalAdWatchedReOn=0,
+    this.completedTimeAd
 
   });
 
@@ -34,6 +36,8 @@ class AdState extends Equatable {
   final int? adWatchedPrincess;
   final AdType? rewardedAdType;
   final int? adWatchedOnline;
+  final int totalAdWatchedReOn;
+  final DateTime? completedTimeAd;
 
 
   AdState copyWith({
@@ -51,6 +55,8 @@ class AdState extends Equatable {
     AdType? rewardedAdType,
     int? adWatchedPrincess,
     int? adWatchedOnline,
+    int? totalAdWatchedReOn,
+    DateTime? completedTimeAd
   }){
     return AdState(
       rewardedAd: rewardedAd ?? this.rewardedAd,
@@ -67,11 +73,34 @@ class AdState extends Equatable {
       rewardedAdType: rewardedAdType?? this.rewardedAdType,
       adWatchedPrincess: adWatchedPrincess?? this.adWatchedPrincess,
       adWatchedOnline: adWatchedOnline?? this.adWatchedOnline,
+      totalAdWatchedReOn: totalAdWatchedReOn?? this.totalAdWatchedReOn,
+      completedTimeAd: completedTimeAd??this.completedTimeAd
     );
   }
   
   @override
-  List<Object?> get props => [rewardedAd, nativeAd,isLoadedNativeAd,isLoadedRewardedAd, isLoadedInterstitialAd,interstitialAd, numInterstitialLoadAttempts,numNativeLoadAttempts,numRewardedLoadAttempts, reward,adWatchedQueen, rewardedAdType, adWatchedPrincess, adWatchedOnline ];
+  List<Object?> get props => [rewardedAd, nativeAd,isLoadedNativeAd,isLoadedRewardedAd, isLoadedInterstitialAd,interstitialAd, numInterstitialLoadAttempts,numNativeLoadAttempts,numRewardedLoadAttempts, reward,adWatchedQueen, rewardedAdType, adWatchedPrincess, adWatchedOnline,totalAdWatchedReOn,completedTimeAd ];
+
+  Map<String,dynamic> toJson(){
+    return{
+      'adWatchedQueen': adWatchedQueen,
+      'adWatchedPrincess':adWatchedPrincess,
+      'adWatchedOnline': adWatchedOnline,
+      'totalAdWatchedReOn':totalAdWatchedReOn,
+      'completedTimeAd':completedTimeAd?.toIso8601String()
+    };
+
+  }
+
+  factory AdState.fromJson(Map<String,dynamic> json){
+    return AdState(
+      adWatchedQueen: json['adWatchedQueen'] as int,
+      adWatchedPrincess: json['adWatchedPrincess'] as int,
+      adWatchedOnline: json['adWatchedOnline'] as int,
+      totalAdWatchedReOn: json['totalAdWatchedReOn'] as int,
+      completedTimeAd: json['completedTimeAd'] == null?null: DateTime.parse(json['totalAdWatchedReOn'] as String)
+    );
+  }
 }
 
 class AdInitial extends AdState {}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:line_icons/line_icons.dart';
 
 import '../../../Data/Models/enums.dart';
@@ -67,7 +68,7 @@ class GetTag extends StatelessWidget {
       return Center(
         child: Column(
           children: [
-            Icon(Icons.pending, color: Colors.grey, ), 
+            Icon(Icons.pending, color: Colors.grey,size: 30, ), 
             Container(
               child: Text('Your profile is,\nunder review, you will be verified in time...', style: TextStyle(fontSize: 12.sp, color: Colors.grey ), textAlign: TextAlign.center, ),
             ),
@@ -79,19 +80,20 @@ class GetTag extends StatelessWidget {
       String title = '';
       String description = 'Your account has been verified. you are one of a gem, enjoy and have fun.';
             if(user.verified == VerifiedStatus.verified.name){
-              verifiedIcon = const Icon(Icons.verified, color: Colors.blue,);
+              verifiedIcon =  Icon(Icons.verified, color: Colors.blue, size: 50.sp,);
               title = 'Welcome';
+              description = 'Your account has been verified. enjoy and have fun.';
             }else if(user.verified == VerifiedStatus.queen.name){
-              verifiedIcon = const Icon(LineIcons.crown,size: 60, color: Colors.amber,);
+              verifiedIcon =  Icon(LineIcons.crown,size: 70.sp, color: Colors.amber,);
               title = 'Welcome Queen';
             }else if(user.verified == VerifiedStatus.princess.name){
-              verifiedIcon = const Icon(LineIcons.crown, color: Colors.blue,);
+              verifiedIcon =  Icon(LineIcons.crown,size: 60.sp, color: Colors.pink,);
               title = 'Welcome Princess';
             }else if(user.verified == VerifiedStatus.king.name){
-              verifiedIcon = const Icon(LineIcons.crown, color: Colors.amber,);
+              verifiedIcon =  Icon(FontAwesomeIcons.crown, color: Colors.amber,size:60.sp);
               title = 'Welcome King';
             }else if(user.verified == VerifiedStatus.gentelmen.name){
-              verifiedIcon = const Icon(LineIcons.suitcase, color: Colors.blue,);
+              verifiedIcon =  Icon(FontAwesomeIcons.blackTie,size: 60.sp, color: Colors.black,);
               title = 'Welcome Gent';
             }
 

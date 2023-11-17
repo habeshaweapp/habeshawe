@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:lomi/src/Blocs/AdBloc/ad_bloc.dart';
 import 'package:lomi/src/Blocs/LikeBloc/like_bloc.dart';
@@ -101,7 +102,7 @@ class Body extends StatelessWidget {
 
 
                                       }else{
-                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...')));
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...', style: TextStyle(fontSize: 11.sp), ), backgroundColor: Colors.black12, ));
                                       }
 
                                     }else
@@ -110,7 +111,7 @@ class Body extends StatelessWidget {
                                                 builder: (ctx) =>
                                                     BlocProvider.value(value: context.read<ProfileBloc>(),
                                                         child: BlocProvider.value(value: context.read<LikeBloc>(),
-                                                        child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index] )))));
+                                                        child: BlocProvider.value(value:context.read<PaymentBloc>(),child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index] ))))));
 
                                     }else{
                                       showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
@@ -149,7 +150,7 @@ class Body extends StatelessWidget {
                                   //       // }
                                   //     },
                                       child: LikeCard(
-                                          user: state.likedMeUsers[index].user));
+                                          like: state.likedMeUsers[index]));
 
                                   //LikesImage(url: state.likedMeUsers[index].user.imageUrls[0], height: 20,)
                                   

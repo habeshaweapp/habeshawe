@@ -44,6 +44,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<SeenMessage>(_onSeenMessage);
     on<UnMatch>(_onUnMatch);
     on<ReportMatch>(_onReportMatch);
+    on<DeleteMessage>(_onDeleteMessage);
+    on<EditMessage>(_onEditMessage);
 
     _authSubscription = _authBloc.stream.listen((state) {
       if(state.user != null){
@@ -184,6 +186,23 @@ void _onLoadMoreChats(LoadMoreChats event, Emitter<ChatState> emit) async{
     await _databaseRepository.reportMatch(userId: event.userId, gender: event.gender,index: event.index, reportedUser: event.matchUser, reportName: event.reportName, description: event.description );
     }catch(e){
       print(e);
+    }
+  }
+
+  FutureOr<void> _onDeleteMessage(DeleteMessage event, Emitter<ChatState> emit) {
+    try {
+      _databaseRepository.deleteMessage(message: event.message, deletealso: event.deleteAlso, gender: event.gender);
+    } catch (e) {
+      
+    }
+  }
+
+  FutureOr<void> _onEditMessage(EditMessage event, Emitter<ChatState> emit) {
+    try {
+      _databaseRepository.editMessage(message: event.message, gender:event.gender, newMessage: event.newMessage );
+      
+    } catch (e) {
+      
     }
   }
 }

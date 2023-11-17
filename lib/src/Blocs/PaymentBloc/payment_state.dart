@@ -1,24 +1,24 @@
 part of 'payment_bloc.dart';
 
-enum SubscribtionStatus{initial, notSubscribed, subscribedMonthly, subscribedYearly, subscribed6Months, ET_USER}
+enum SubscribtionStatus{notSubscribed, subscribedMonthly, subscribedYearly, subscribed6Months, ET_USER}
 enum Boosts{boosts1, boosts5, boosts10}
 enum SuperLikes{superlikes3, superlikes15,superlikes30}
 
 class PaymentState extends Equatable {
   const PaymentState({
-    this.subscribtionStatus = SubscribtionStatus.initial,
+    this.subscribtionStatus = SubscribtionStatus.notSubscribed,
     this.productDetails = const [],
     this.purchaseDetails,
-    this.boosts,
-    this.superLikes,
+    this.boosts =0,
+    this.superLikes=0,
     this.selectedProduct
   });
 
   final SubscribtionStatus subscribtionStatus;
   final List<ProductDetails> productDetails;
   final List<PurchaseDetails>? purchaseDetails;
-  final int? boosts;
-  final int? superLikes;
+  final int boosts;
+  final int superLikes;
   final ProductDetails? selectedProduct;
 
 

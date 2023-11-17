@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:geolocator/geolocator.dart';
 
+import 'enums.dart';
+
 class User extends Equatable {
   final String id;
   final String name;
@@ -45,7 +47,7 @@ class User extends Equatable {
      this.education,
      this.livingIn,
      this.geohash,
-     this.verified,
+     this.verified= 'notVerified',
      this.country,
      this.countryCode,
      this.online,

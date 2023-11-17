@@ -23,14 +23,28 @@ class FullScreenImage extends StatelessWidget {
       ),
       ),
       body: SafeArea(
-        child: Center(
-          child: 
-            
-             CachedNetworkImage(
-                  imageUrl: imageUrl,
-                  fit: BoxFit.cover,
-                ) ,
-          
+        child: Stack(
+          children: [
+            Center(
+              child: 
+                
+                 CachedNetworkImage(
+                      imageUrl: imageUrl,
+                      fit: BoxFit.cover,
+                    ) ,
+              
+            ),
+            Align(
+              alignment: Alignment.topLeft,
+              child: GestureDetector(
+                onTap: ()=> Navigator.pop(context),
+                child: Padding(
+                  padding: const EdgeInsets.only(left:20.0, top:15),
+                  child: Icon(Icons.arrow_back, color: Colors.white,),
+                ),
+              ),
+            )
+          ],
         )
         
         

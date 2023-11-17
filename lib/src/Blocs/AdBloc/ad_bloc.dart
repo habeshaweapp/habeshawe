@@ -3,12 +3,13 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:lomi/src/Data/Repository/Database/ad_repository.dart';
 
 part 'ad_event.dart';
 part 'ad_state.dart';
 
-class AdBloc extends Bloc<AdEvent, AdState> {
+class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
   final AdRepository _adRepository;
   AdBloc({
     required AdRepository adRepository,
@@ -28,6 +29,8 @@ class AdBloc extends Bloc<AdEvent, AdState> {
     on<ResetReward>(_onResetReward);
     on<InterstitialAdFailedToLoad>(_onInterstitialAdFailedToLoad);
     on<RewardedAdFailedToLoad>(_onRewardedAdFailedToLoad);
+    on<ResetTotalReON>(_onResetTotalReOn);
+    on<TimeOutAd>(_onTimeOutAd);
     
 
     //add(LoadNativeAd());
@@ -168,14 +171,19 @@ class AdBloc extends Bloc<AdEvent, AdState> {
       //   emit(state.copyWith(rewardedAd: null,isLoadedRewardedAd: false, reward: null, adWatchedQueen: state.adWatchedQueen! +1 ));
 
       // }
-      
+      emit(state.copyWith(rewardedAd: null));
       add(LoadRewardedAd());
     }
   }
 
   FutureOr<void> _onRewardEarned(RewardEarned event, Emitter<AdState> emit) {
+    if(event.adType == AdType.rewardedRandom){
+      emit(state.copyWith(totalAdWatchedReOn: state.totalAdWatchedReOn+10));
+      
+    }
     if(event.adType == AdType.rewardedOnline ){
-      emit(state.copyWith(reward: event.reward,  rewardedAdType: event.adType, adWatchedOnline: state.adWatchedOnline == 0? state.adWatchedOnline!+1 : 0 ));
+      emit(state.copyWith(reward: event.reward,  rewardedAdType: event.adType, adWatchedOnline: state.adWatchedOnline == 0? state.adWatchedOnline!+1 : 0, totalAdWatchedReOn: state.totalAdWatchedReOn+1 ));
+      
 
     }else if(event.adType == AdType.rewardedPrincess){
       int num = state.adWatchedPrincess! >= 9? 0 : state.adWatchedPrincess!+1;
@@ -204,5 +212,25 @@ class AdBloc extends Bloc<AdEvent, AdState> {
           add(LoadRewardedAd());
           emit(state.copyWith(numRewardedLoadAttempts: state.numRewardedLoadAttempts+1));
         }
+  }
+
+  FutureOr<void> _onResetTotalReOn(ResetTotalReON event, Emitter<AdState> emit) {
+    emit(state.copyWith(totalAdWatchedReOn: 0));
+  }
+
+  FutureOr<void> _onTimeOutAd(TimeOutAd event, Emitter<AdState> emit) {
+    emit(state.copyWith(completedTimeAd: event.completedTimeAd,totalAdWatchedReOn: state.adWatchedOnline!+1 ));
+  }
+  
+  @override
+  AdState? fromJson(Map<String, dynamic> json) {
+    // TODO: implement fromJson
+    return AdState.fromJson(json);
+  }
+  
+  @override
+  Map<String, dynamic>? toJson(AdState state) {
+    // TODO: implement toJson
+    return state.toJson();
   }
 }

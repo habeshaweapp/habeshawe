@@ -16,6 +16,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   final DatabaseRepository _databaseRepository;
   final AuthBloc _authBloc;
   StreamSubscription? _authSubscription;
+  StreamSubscription? _matchesSubscription;
   MatchBloc({
     required DatabaseRepository databaseRepository,
     required AuthBloc authBloc,
@@ -44,13 +45,8 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     try{
       emit(state.copyWith(matchStatus: MatchStatus.loading));
 
-    _databaseRepository.getMatches(event.userId, event.users).listen((matches) {
+    _matchesSubscription = _databaseRepository.getMatches(event.userId, event.users).listen((matches) {
 
-      // _databaseRepository.getLikedMeUsers(event.userId).listen((likes) {
-        
-      //   add(UpdateMatches(matchedUsers: matches, likedMeUsers: likes));
-        
-      // });
       add(UpdateMatches(matchedUsers: matches));
 
     });
@@ -58,17 +54,6 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     }on Exception catch(e){
       print(e);
     }
-    // final likes = _databaseRepository.getLikedMeUsers(event.userId);
-
-    // add(UpdateMatches(matchedUsers: matches., likedMeUsers: likes))
-
-    //  _databaseRepository.getMatches(event.userId).listen((users) {
-    //   add(UpdateMatches(users: users));
-    //  });
-
-    //  _databaseRepository.getLikedMeUsers(event.userId).listen((users) { 
-    //   add(UpdateLikes(users: users));
-    //  });
 
   }
 
@@ -81,16 +66,6 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
       print(e.toString());
     }
   }
-
-  // void _onUpdateLikes(UpdateLikes event, Emitter<MatchState> emit){
-  //   try {
-  //     emit(LikeLoaded(likedMeUsers: event.users!));
-      
-  //   } catch (e) {
-  //     print(e.toString());
-  //   }
-  // }
-
 
 
   void _onOpenChat(OpenChat event, Emitter<MatchState> emit) async{
@@ -110,6 +85,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   Future<void> close() {
     // TODO: implement close
     _authSubscription?.cancel();
+    _matchesSubscription?.cancel();
     return super.close();
   }
 

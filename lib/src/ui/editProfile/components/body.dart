@@ -264,7 +264,7 @@ class Body extends StatelessWidget {
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'In cm', 
-                      icon: Icon(LineIcons.rulerVertical, size:18, color:Colors.black ),
+                      icon: Icon(LineIcons.rulerVertical, size:18, color:isDark? Colors.grey: Colors.black ),
                       counterText: ''        
                     ),
                     keyboardType: TextInputType.number,

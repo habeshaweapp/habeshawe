@@ -27,6 +27,7 @@ class ChatScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
        // backgroundColor: Colors.white.withOpacity(0.8),
+       backgroundColor: isDark? Color.fromARGB(255, 22, 22, 22):null,
         elevation: 0,
         //toolbarHeight: 100,
         iconTheme: IconThemeData(
@@ -55,7 +56,7 @@ class ChatScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(userMatch.name,style: Theme.of(context).textTheme.bodyMedium,),
-                  userMatch.id != 'ds come and fix later'?
+                  
                   StreamBuilder(
                     stream: context.read<DatabaseRepository>().onlineStatusChanged(userId: userMatch.userId, gender: userMatch.gender),
                     builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String,dynamic>>> snapshot) {
@@ -64,7 +65,7 @@ class ChatScreen extends StatelessWidget {
                       }
                       if(snapshot.hasData){
 
-                      return snapshot.data?['online']? Row(
+                      return snapshot.data?['showstatus'] ? snapshot.data!['online']? Row(
                         children: [
                           
                           Container(
@@ -75,7 +76,7 @@ class ChatScreen extends StatelessWidget {
                               color: Colors.green,
                               border: Border.all(
                                 width: 2,
-                                color: isDark? Colors.grey.shade800: Colors.white,
+                                color: isDark? Color.fromARGB(255, 22, 22, 22): Colors.white,
                               )
             
                             ),
@@ -92,8 +93,8 @@ class ChatScreen extends StatelessWidget {
                       Text(
                         'last Seen ${DateFormat('hh:mm a').format(snapshot.data?['lastseen'].toDate())}',
                         style: Theme.of(context).textTheme.bodySmall,
-                        )
-                      ;
+                        ): const Text('last seen recently', style: TextStyle(fontSize: 12, color: Colors.grey));
+                      
 
                     }else{
                       return Text('updating...',
@@ -106,7 +107,7 @@ class ChatScreen extends StatelessWidget {
 
 
                     }
-                  ): Text('last seen recently', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                  )
             
             
                 ],),
@@ -141,7 +142,7 @@ class ChatScreen extends StatelessWidget {
           icon: Icon(Icons.more_vert, color: isDark? Colors.white : Colors.black ))
        ],
        systemOverlayStyle: SystemUiOverlayStyle(
-        systemNavigationBarColor:isDark? Colors.grey[900]: Colors.white,
+        systemNavigationBarColor:isDark? Color.fromARGB(255, 22, 22, 22) : Colors.white,
         systemNavigationBarIconBrightness:isDark?Brightness.light: Brightness.dark,
       ),
       ),

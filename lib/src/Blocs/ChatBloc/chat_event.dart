@@ -111,3 +111,27 @@ class ReportMatch extends ChatEvent{
   List<Object> get props => [userId, gender, matchUser, index, reportName, description];
 
 }
+
+class DeleteMessage extends ChatEvent{
+  final Message message;
+  final bool deleteAlso;
+  final Gender gender;
+
+  const DeleteMessage({required this.message , this.deleteAlso=true, required this.gender});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [message, deleteAlso, gender];
+}
+
+class EditMessage extends ChatEvent{
+  final Message message;
+  final Gender gender;
+  final String newMessage;
+
+  const EditMessage({required this.message, required this.gender, required this.newMessage});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [message, gender];
+}

@@ -22,3 +22,5 @@ class AuthUserChanged extends AuthEvent{
 class LogInWithGoogle extends AuthEvent{}
 
 class LogOut extends AuthEvent{}
+
+class DeleteAccount extends AuthEvent{}

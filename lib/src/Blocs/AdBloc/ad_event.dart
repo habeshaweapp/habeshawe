@@ -74,3 +74,13 @@ class ResetReward extends AdEvent{}
 
 class InterstitialAdFailedToLoad extends AdEvent{}
 class RewardedAdFailedToLoad extends AdEvent{}
+class ResetTotalReON extends AdEvent{}
+
+class TimeOutAd extends AdEvent{
+  final DateTime completedTimeAd;
+  const TimeOutAd({required this.completedTimeAd});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [completedTimeAd];
+}

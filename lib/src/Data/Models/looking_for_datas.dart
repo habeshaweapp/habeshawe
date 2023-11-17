@@ -14,8 +14,8 @@ List<String> lookignForOptions = [
       const Icon(FontAwesomeIcons.heartPulse, color: Colors.red,),
       const Icon(FontAwesomeIcons.bookBible, color:Colors.black),
       const Icon(FontAwesomeIcons.crown, color: Colors.amber,),
-      const Icon(FontAwesomeIcons.ring, color: Colors.grey,),
-      const Icon(FontAwesomeIcons.hand, color: Colors.grey),
-      const Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.grey)
+      const Icon(Icons.diamond, color: Colors.amber,),
+      const Icon(FontAwesomeIcons.hand, color: Colors.black),
+      const Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.black)
 
     ];

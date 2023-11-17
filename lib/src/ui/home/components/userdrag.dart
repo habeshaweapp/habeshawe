@@ -4,9 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
+import 'package:lomi/src/Data/Models/userpreference_model.dart';
 
 import '../../../Blocs/ProfileBloc/profile_bloc.dart';
+import '../../../Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import '../../../Blocs/ThemeCubit/theme_cubit.dart';
 import '../../../Data/Models/user.dart';
 import '../../Profile/profile.dart';
@@ -24,6 +27,24 @@ class UserCard extends StatelessWidget {
     final pageController = PageController();
     var size= MediaQuery.of(context).size;
     int idx = 0;
+    double distanceD = calculateDistance(context.read<SharedpreferenceCubit>().state.myLocation!, user.location!);
+    int distance = 0;
+    String km = context.read<UserpreferenceBloc>().state.userPreference!.showDistancesIn!;
+    if(km == 'mi'){
+      distanceD = distanceD*0.62137;
+      if(distanceD < 1){
+        distance = 0;
+      }else{
+      distance = distanceD.round();
+      }
+      
+    }else{
+      if(distanceD < 1){
+        distance = 0;
+      }else{
+      distance = distanceD.round();
+      }
+    }
     return  Center(
       child: GestureDetector(
         onTapUp: (d){
@@ -66,24 +87,27 @@ class UserCard extends StatelessWidget {
                         
                           physics: const  NeverScrollableScrollPhysics(),
                           itemBuilder: (context,index) {
-                                 return Container(         
-                                      decoration:  BoxDecoration(
-                                      image: DecorationImage(
-                                      image: CachedNetworkImageProvider(
-                                        user.imageUrls[index],
-                                      )
-                                      ,
-                                      fit: BoxFit.cover
-                                      ),
-                                     borderRadius: BorderRadius.circular(15) ), 
-
-                                      // child: CachedNetworkImage(
-                                      //   imageUrl: user.imageUrls[index],
-                                      //   fit: BoxFit.cover,
-                                      //   fadeInDuration: Duration.zero,
-                                      //   fadeOutDuration: Duration.zero,
-                                      //   ),
-                               );
+                                 return Hero(
+                                  tag: 'swipeImage',
+                                   child: Container(         
+                                        decoration:  BoxDecoration(
+                                        image: DecorationImage(
+                                        image: CachedNetworkImageProvider(
+                                          user.imageUrls[index],
+                                        )
+                                        ,
+                                        fit: BoxFit.cover
+                                        ),
+                                       borderRadius: BorderRadius.circular(15) ), 
+                                 
+                                        // child: CachedNetworkImage(
+                                        //   imageUrl: user.imageUrls[index],
+                                        //   fit: BoxFit.cover,
+                                        //   fadeInDuration: Duration.zero,
+                                        //   fadeOutDuration: Duration.zero,
+                                        //   ),
+                                                                ),
+                                 );
                           }
                            ),
                      ),
@@ -189,7 +213,8 @@ class UserCard extends StatelessWidget {
                                   const SizedBox(width: 4,),
                                  Container(
                                    child:  Text(
-                                    user.location != null ?'${ calculateDistance(user.location!) }km away ' : '',
+                                   // user.location != null ?'${distance} $km away ' : '',
+                                    distance == 0? 'less than a $km away' :'$distance $km away',
                                     //"Recently Active", 
                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[400]),
                                    //TextStyle(color: Colors.white, decoration: TextDecoration.none  ),
@@ -274,7 +299,10 @@ class UserCard extends StatelessWidget {
                         onTap: (){
                           Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(
                                         value: context.read<ProfileBloc>(),
-                                        child: Profile(user: user, profileFrom: ProfileFrom.swipe, matchEngine: matchEngine))));
+                                        child: BlocProvider.value(value: context.read<UserpreferenceBloc>(),
+                                        child: BlocProvider.value(value: context.read<SharedpreferenceCubit>(),
+                                        child: 
+                                        Profile(user: user, profileFrom: ProfileFrom.swipe, matchEngine: matchEngine))))));
                           
                         },
                         child: Container(
@@ -322,10 +350,11 @@ class UserCard extends StatelessWidget {
     );
   }
 
-  int calculateDistance(List userLocation)  {
-    var km = Geolocator.distanceBetween(7.3666915, 38.6714959, userLocation[0], userLocation[1]);
-
-    return Geolocator.distanceBetween(7.3666915, 38.6714959, userLocation[0], userLocation[1])~/1000;
+  double calculateDistance(Position myLocation, List userLocation)  {
+    var km = Geolocator.distanceBetween(myLocation.latitude, myLocation.longitude, userLocation[0], userLocation[1])/1000;
+    return km;
+    
+    //return Geolocator.distanceBetween(7.3666915, 38.6714959, userLocation[0], userLocation[1])~/1000;
    } 
 }
 

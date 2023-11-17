@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 
@@ -115,10 +116,10 @@ class _PaymentState extends State<Payment> {
                         top: Radius.circular(15),
                       )),
                   child: widget.paymentUi == PaymentUi.subscription
-                      ? Column(
+                      ? state.subscribtionStatus == SubscribtionStatus.notSubscribed? Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(10.0),
                               child: Text('Get HabeshaWe Premium',
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context).textTheme.bodyLarge),
@@ -133,23 +134,39 @@ class _PaymentState extends State<Payment> {
                                       image: 'assets/icons/likeIconPayment.png',
                                       title: 'View Profile',
                                       description:
-                                          'see profile of users who liked you and decide to like or ignore'),
+                                          'see profile of matches who liked you\n and decide to like or pass them.'),
                                   pageViewItem(
                                       context: context,
-                                      image: 'assets/icons/googleTransp.png',
+                                      image: 'assets/images/chat_active_icon.svg',
                                       title: 'Chat With Match',
+                                      type: 'svg',
                                       description:
-                                          'get to know with your match today liked you and decide to like or ignore'),
+                                          'Get to know your match today.\nsee all your matches and if you like start conversation'),
                                   pageViewItem(
                                       context: context,
-                                      image: 'assets/icons/likeIconPayment.png',
-                                      title: 'Become Kings',
-                                      description:
-                                          'Increase you match by becoming king you will get as match as many matchs, your profile will be showed to normal users ')
+                                      image: 'assets/images/adfree.png',
+                                      title: 'Ad Free',
+                                      
+                                      description:'No Ads\nfind your partner without any delay.'
+                                          //'Increase you match by becoming king you will get as match as many matchs, your profile will be showed to normal users '
+                                          )
                                 ],
                               ),
                             ),
                           ],
+                        ):Container(
+                          height: 200.h,
+                          width: double.infinity,
+                          //if a user is subscribed show it here
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Subscribed', style: TextStyle(color: Colors.white),),
+
+                              Text(state.subscribtionStatus.name, style: TextStyle(color: Colors.white, fontSize: 25 ),),
+                              Text('Enjoy and have fun!', style: TextStyle(color: Colors.white, fontSize: 11),),
+                            ],
+                          )
                         )
                       : Container(
                           height: 230.h,
@@ -248,6 +265,9 @@ class _PaymentState extends State<Payment> {
               width: width * 0.5,
               child: ElevatedButton(
                 onPressed: () {
+                  if(widget.paymentUi == PaymentUi.subscription && context.read<PaymentBloc>().state.subscribtionStatus !=SubscribtionStatus.notSubscribed){
+                      Navigator.pop(context);
+                  }else
                   if(widget.paymentUi == PaymentUi.subscription)  context.read<PaymentBloc>().add(Subscribe(product: productDetails[selectedIndex]));
 
                   if(widget.paymentUi == PaymentUi.boosts) context.read<PaymentBloc>().add(BuyBoosts(product: productDetails[selectedIndex]));
@@ -256,7 +276,7 @@ class _PaymentState extends State<Payment> {
 
 
                 },
-                child:  Text('CONTINUE'),
+                child:  Text((widget.paymentUi == PaymentUi.subscription && context.read<PaymentBloc>().state.subscribtionStatus !=SubscribtionStatus.notSubscribed)?'Back':'CONTINUE'),
                 style: ElevatedButton.styleFrom(
                   shape:const StadiumBorder(),
                   backgroundColor: bgColor,
@@ -269,9 +289,11 @@ class _PaymentState extends State<Payment> {
               child: Divider(),
             ):SizedBox(),
 
-            widget.paymentUi == PaymentUi.subscription? TextButton(
+            widget.paymentUi == PaymentUi.subscription? 
+            context.read<PaymentBloc>().state.subscribtionStatus ==SubscribtionStatus.notSubscribed?
+            TextButton(
               onPressed: (){}, 
-              child:  Text('Restore subscription!', style: TextStyle(color: Colors.grey, fontSize: 11.sp),)): SizedBox(),
+              child:  Text('Restore subscription!', style: TextStyle(color: Colors.grey, fontSize: 11.sp),)): SizedBox():SizedBox(),
 
             //Spacer()
             SizedBox(height:widget.paymentUi != PaymentUi.subscription?20.h:0,)
@@ -288,7 +310,10 @@ class _PaymentState extends State<Payment> {
       {required BuildContext context,
       required String image,
       required String title,
-      required String description}) {
+      
+      required String description,
+      String? type,
+      }) {
     return Column(
       //mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
@@ -304,6 +329,10 @@ class _PaymentState extends State<Payment> {
           height: 8.h,
         ),
 
+        type == 'svg'?
+        SvgPicture.asset(image, height: 50.h,)
+
+        :
         Image.asset(
           image,
           height: 57.h,

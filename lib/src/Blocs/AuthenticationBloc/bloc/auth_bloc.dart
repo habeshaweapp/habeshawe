@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -35,6 +36,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthUserChanged>(_authUserChanged);
     on<LogInWithGoogle>(_onLogInWithGoogle);
     on<LogOut>(_onLogOut);
+    on<DeleteAccount>(_onDeleteAccount);
   }
 
 
@@ -70,6 +72,11 @@ void _authUserChanged(AuthUserChanged event, Emitter<AuthState> emit) async{
 }
 
 FutureOr<void> _onLogOut(LogOut event, Emitter<AuthState> emit) async {
+  await _databaseRepository.updateOnlinestatus(
+                            userId: state.user!.uid, 
+                            gender: state.accountType!, 
+                            online: false
+                             );
   emit(const AuthState.unknown());
   await _authRepository.signOut();
   await HydratedBloc.storage.clear();
@@ -101,6 +108,16 @@ Future<void> _onLogInWithGoogle(LogInWithGoogle event, Emitter<AuthState> emit) 
   // }
   
 
+
+  FutureOr<void> _onDeleteAccount(DeleteAccount event, Emitter<AuthState> emit) {
+    try {
+      _databaseRepository.deleteAccount(userId: state.user!.uid, gender: state.accountType);
+      _authRepository.deleteAccount();
+      
+    } catch (e) {
+      
+    }
+  }
 }
 
 

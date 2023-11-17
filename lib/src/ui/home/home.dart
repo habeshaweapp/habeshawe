@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
 import 'package:lomi/src/ui/Likes/likes.dart';
@@ -14,6 +15,7 @@ import 'package:lomi/src/ui/home/ExplorePage.dart';
 import 'package:lomi/src/ui/matches/matches_screen.dart';
 import 'package:lomi/src/ui/onboarding/onboardAllScreens.dart';
 
+import '../../Blocs/UserPreference/userpreference_bloc.dart';
 import '../UserProfile/userprofile.dart';
 
 class Home extends StatefulWidget {
@@ -38,6 +40,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     // TODO: implement didChangeAppLifecycleState
     super.didChangeAppLifecycleState(state);
 
+    if(context.read<UserpreferenceBloc>().state.userPreference!.onlineStatus!){
+
     if(state == AppLifecycleState.resumed){
       //online
       context.read<DatabaseRepository>().updateOnlinestatus(
@@ -54,6 +58,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         gender: context.read<AuthBloc>().state.accountType!, 
         online: false
         );
+
+    }
 
     }
   }
@@ -103,10 +109,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     ];
 
     var icons = [
-      Icon(Icons.home, color: pageIndex == 0?isDark? Colors.white: Colors.black: Colors.grey ,size: 33,),
-      Icon(Icons.home, color: pageIndex == 0?isDark? Colors.white: Colors.black: Colors.grey ,size: 33,),
-      Icon(LineIcons.facebookMessenger , color: pageIndex == 2?isDark? Colors.white: Colors.black: Colors.grey ,size: 33,),
-      Icon(Icons.person, color: pageIndex == 3?isDark? Colors.white: Colors.black: Colors.grey ,size: 33,),
+      Icon(Icons.home, color: pageIndex == 0?isDark? Colors.white: Colors.black: Colors.grey ,size: 27,),
+      Icon(Icons.home, color: pageIndex == 0?isDark? Colors.white: Colors.black: Colors.grey ,size: 27,),
+      Icon(LineIcons.facebookMessenger , color: pageIndex == 2?isDark? Colors.white: Colors.black: Colors.grey ,size: 27,),
+      Icon(Icons.person, color: pageIndex == 3?isDark? Colors.white: Colors.black: Colors.grey ,size: 27,),
       
     ];
     return AppBar(
@@ -117,7 +123,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       systemOverlayStyle: 
      // isDark? SystemUiOverlayStyle.dark : SystemUiOverlayStyle.light,
       SystemUiOverlayStyle(
-        systemNavigationBarColor: isDark ? Colors.grey[900]: Colors.white, //Color.fromARGB(51, 182, 180, 180)
+        systemNavigationBarColor: isDark? Color.fromARGB(255, 22, 22, 22): Colors.white, //Color.fromARGB(51, 182, 180, 180)
         systemNavigationBarIconBrightness: !isDark? Brightness.dark: Brightness.light,
       ),
       title: Padding(
@@ -131,7 +137,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                   pageIndex = index;
                 });
               }, 
-              icon: index == 1?SvgPicture.asset(items[index]): icons[index]
+              icon: index == 1?SvgPicture.asset(items[index],height: 27, width: 27, ): icons[index]
               );
 
           })

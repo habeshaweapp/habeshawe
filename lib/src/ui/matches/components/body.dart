@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/ChatBloc/chat_bloc.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
@@ -25,6 +26,7 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     TextEditingController controller = TextEditingController();
     bool isDark = Theme.of(context).brightness == Brightness.dark;
+    FocusNode focusNode = FocusNode();
    // final inactiveMatches = UserMatch.matches.where((match) => match.userId == 1 && match.chat!.isEmpty,).toList();
    // final activeMatches = UserMatch.matches.where((match) => match.userId == 1 && match.chat!.isNotEmpty,).toList();
 
@@ -53,7 +55,7 @@ class Body extends StatelessWidget {
 
                 },
                 decoration: InputDecoration(
-                  hintText: 'Search Match',
+                  hintText:focusNode.hasFocus?'Search Match':'Search Match - Watch Ad First!',
                   contentPadding: EdgeInsets.zero,
                   icon: Icon(Icons.search,),
                   counterText: ''
@@ -63,11 +65,39 @@ class Body extends StatelessWidget {
                 maxLines: 1,
                 maxLength: 30,
                 controller: controller,
+                focusNode: focusNode,
+                //autofocus: true,
+                //readOnly: focusNode.hasFocus?false: true,
+                //showCursor: true,
                 
                 
                 onTapOutside: (event){
                   FocusManager.instance.primaryFocus!.unfocus();
+                 // controller.clear();
                 },
+                onTap: (){
+                  if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed ){
+                 
+                 if(focusNode.hasFocus){
+
+
+                 }else{
+                  //FocusManager.instance.primaryFocus!.unfocus();
+                  if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                                        context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedRandom));
+                                        Future.delayed(const Duration(seconds: 4), (){
+                                      
+                                          FocusScope.of(context).requestFocus(focusNode);
+                                                    
+                                        });
+                                        
+                                                    
+                                      }
+
+                 }
+                  }
+                },
+                
                 
               ),
 
@@ -135,8 +165,8 @@ class Body extends StatelessWidget {
                                   controller.clear();
                                   context.read<MatchBloc>().add(SearchName(userId: context.read<AuthBloc>().state.user!.uid, gender: context.read<AuthBloc>().state.accountType!, name: '' ));
                         },
-                      child:state.isUserSearching? state.searchResultFor == SearchResultFor.matched? MatchesImage(url: state.searchResult?[index].imageUrls[0] ,height: 120, width: 100, ): state.findMeResult!.isNotEmpty? MatchesImage(url: state.findMeResult?[0].imageUrls[0]): SizedBox()
-                      :MatchesImage(url: inactiveMatches[index].imageUrls[0], height: 120, width: 100,));
+                      child:state.isUserSearching? state.searchResultFor == SearchResultFor.matched? MatchesImage(match: state.searchResult![index],height: 120, width: 100, ): state.findMeResult!.isNotEmpty? MatchesImage(url: state.findMeResult?[0].imageUrls[0]): SizedBox()
+                      :MatchesImage(match: inactiveMatches[index], height: 120, width: 100,));
                   }
                   ):
                   Padding(

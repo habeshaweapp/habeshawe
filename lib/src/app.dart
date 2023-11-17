@@ -22,6 +22,7 @@ import 'package:lomi/theme/theme_constants.dart';
 import 'Blocs/PaymentBloc/payment_bloc.dart';
 import 'Blocs/PhoneAuthBloc/phone_auth_bloc.dart';
 import 'Blocs/SharedPrefes/sharedpreference_cubit.dart';
+import 'Blocs/UpdateWallBloc/update_wall_bloc.dart';
 
 
 class MyApp extends StatelessWidget {
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
       child: MultiBlocProvider(
           providers: [
             BlocProvider(lazy: false, create: (context) => InternetBloc()),
+            BlocProvider(lazy: false, create: (context)=> UpdateWallBloc()),
             BlocProvider(lazy:false, create: (context) => AuthBloc(authRepository: context.read<AuthRepository>(), databaseRepository: context.read<DatabaseRepository>() )),
             // BlocProvider(
             //     lazy: false,
@@ -64,7 +66,8 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: ((context) => PhoneAuthBloc(authRepository: context.read<AuthRepository>()))),
 
             BlocProvider(lazy:false, create: (context) => ThemeCubit()),
-            BlocProvider(lazy: false, create: (contet) => SharedpreferenceCubit()..getMyLocation()),
+           // BlocProvider(lazy: false, create: (contet) => SharedpreferenceCubit()..getMyLocation()),
+           
            // BlocProvider(create: (context) => PaymentBloc(paymentRepository: PaymentRepository(), authBloc: context.read<AuthBloc>(), databaseRepository: context.read<DatabaseRepository>() ) ),
             
           ],

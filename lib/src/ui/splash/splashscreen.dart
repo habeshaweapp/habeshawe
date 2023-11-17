@@ -1,20 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:line_icons/line_icons.dart';
-import 'package:lomi/src/app_route_config.dart';
-import 'package:lomi/src/ui/Profile/profile.dart';
-import 'package:lomi/src/ui/home/home.dart';
-import 'package:lomi/src/ui/onboarding/onboardAllScreens.dart';
-import 'package:lomi/src/ui/settings/settings.dart';
 
 import '../../Blocs/ThemeCubit/theme_cubit.dart';
-import '../../Blocs/blocs.dart';
-import '../UserProfile/userprofile.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -44,7 +34,15 @@ class _SplashScreenState extends State<SplashScreen>
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     var size = MediaQuery.of(context).size;
 
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: isDark ?  Colors.grey[900] : Colors.white,
+        systemNavigationBarIconBrightness: !isDark? Brightness.dark: Brightness.light,
+      ),
+    );
+
     return Scaffold(
+      
       body: SafeArea(
         child: Container(
             //height: MediaQuery.of(context).size.height,
@@ -59,21 +57,21 @@ class _SplashScreenState extends State<SplashScreen>
                       height: size.height,
                       child: VerticalDivider(
                         color: Colors.red,
-                        thickness: isDark ? 0.3 : 0.5,
+                        thickness: isDark ? 0.2 : 0.5,
                       ),
-                    ),
+                    ),SizedBox(width: 5,),
                     SizedBox(
                       height: size.height,
                       child: VerticalDivider(
                         color: Colors.yellow,
-                        thickness: isDark ? 0.5 : 1,
+                        thickness: isDark ? 0.3 : 1,
                       ),
                     ),
                     SizedBox(
                       height: size.height,
                       child: VerticalDivider(
                         color: Colors.green,
-                        thickness: isDark ? 0.5 : 1,
+                        thickness: isDark ? 0.4 : 1,
                       ),
                     ),
       

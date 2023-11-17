@@ -16,6 +16,7 @@ import '../../Data/Models/model.dart';
 import '../../Data/Models/userpreference_model.dart';
 import '../AdBloc/ad_bloc.dart';
 import '../AuthenticationBloc/bloc/auth_bloc.dart';
+import '../PaymentBloc/payment_bloc.dart';
 
 part 'swipebloc_event.dart';
 part 'swipebloc_state.dart';
@@ -24,17 +25,20 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   final DatabaseRepository _databaseRepository;
   final AuthBloc _authBloc;
   final AdBloc _adBloc;
+  final PaymentBloc _paymentBloc;
   StreamSubscription? _authSubscription;
   StreamSubscription? _adSubscription;
   StreamSubscription? _boostedSubscription;
   SwipeBloc({
     required DatabaseRepository databaseRepository,
     required AuthBloc authBloc,
-    required AdBloc adBloc
+    required AdBloc adBloc,
+    required PaymentBloc paymentBloc,
   }) :
   _databaseRepository = databaseRepository,
   _authBloc = authBloc,
   _adBloc = adBloc,
+  _paymentBloc = paymentBloc,
    super(const SwipeState()) 
   {
     on<LoadUsers>(_loadusers);
@@ -47,6 +51,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     on<BoostedLoaded>(_onBoostedLoaded);
     on<LoadUserAd>(_onLoadUserAd);
     on<AdSwipeEnded>(_onAdSwipeEnded);
+  
 
     //if(state.completedTime == null && state.users.isEmpty){
       add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!));
@@ -76,27 +81,77 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     try {
     emit(state.copyWith(swipeStatus: SwipeStatus.loading, loadFor: LoadFor.daily));
      List<User> users =[];
-     if(event.prefes ==null) event.prefes = await _databaseRepository.getPreference(event.userId, event.users);
+     event.prefes??=  await _databaseRepository.getPreference(event.userId, event.users);
+     event.user??= await _databaseRepository.getUserbyId(event.userId, event.users.name);
      //event.p
 
+    //  users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users, event.prefes!, event.user!);
+    //     emit(state.copyWith(swipeStatus: SwipeStatus.completed));
+     
+
     if(event.prefes!.discoverBy == 0){
-      users = await _databaseRepository.getUsersMainLogic(event.userId, event.users, event.prefes!);
+      try {
+        users = await _databaseRepository.getUsersMainLogic(event.userId, event.users, event.prefes!)
+        .timeout(const Duration(minutes: 30), onTimeout: () { 
+        if(state.loadAttempt >=3){
+          emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('something went wrong come back another time!');
+        }
+        
+        add(LoadUsers(userId: event.userId, users: event.users, prefes: event.prefes!,user: event.user));
+        emit(state.copyWith(loadAttempt: state.loadAttempt+1));
+        throw Exception('took too long retrying...');
+        
+        },);
+        
+      } catch (e) {
+         print(e);
+         emit(state.copyWith(swipeStatus: SwipeStatus.error, error: e.toString() ));
+      }
+      
     }
     if(event.prefes!.discoverBy == 1){
-      users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users, event.prefes!, event.user!).timeout(Duration(seconds: 5), onTimeout: () { 
-        emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('toolong');
+      users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users, event.prefes!, event.user!)
+      .timeout(const Duration(seconds: 30), onTimeout: () { 
+        if(state.loadAttempt >=3){
+          emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('toolong');
+        }
+        
+        add(LoadUsers(userId: event.userId, users: event.users, prefes: event.prefes!,user: event.user));
+        emit(state.copyWith(loadAttempt: state.loadAttempt+1));
+        throw Exception('took too long retrying...');
+        
         },);
     }
     if(event.prefes!.discoverBy == 2){
 
-     users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users,5);
+     users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users,5)
+     .timeout(const Duration(seconds: 30), onTimeout: () { 
+        if(state.loadAttempt >=3){
+          emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('toolong');
+        }
+        
+        add(LoadUsers(userId: event.userId, users: event.users, prefes: event.prefes!,user: event.user));
+        emit(state.copyWith(loadAttempt: state.loadAttempt+1));
+        throw Exception('took too long retrying...');
+        
+        },);
     }
     if(event.prefes!.discoverBy == 3){
-      users = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users);
+      users = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users)
+      .timeout(const Duration(seconds: 30), onTimeout: () { 
+        if(state.loadAttempt >=3){
+          emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('toolong');
+        }
+        
+        add(LoadUsers(userId: event.userId, users: event.users, prefes: event.prefes!,user: event.user));
+        emit(state.copyWith(loadAttempt: state.loadAttempt+1));
+        throw Exception('took too long retrying...');
+        
+        },);
     }
 
  
-    emit(state.copyWith(swipeStatus: SwipeStatus.loaded, users: users ));
+    emit(state.copyWith(swipeStatus: SwipeStatus.loaded, users: users, loadFor: LoadFor.daily ));
 
   
     
@@ -104,8 +159,10 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
      
    }on TimeoutException catch (e) {
     print(e.toString());
-    emit(state.copyWith(swipeStatus: SwipeStatus.error));
+    emit(state.copyWith(swipeStatus: SwipeStatus.error, error: e.toString()));
      
+   }catch(e){
+    emit(state.copyWith(swipeStatus: SwipeStatus.error, error: e.toString()));
    }
    
     
@@ -123,14 +180,10 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   void _swipedLeft(SwipeLeftEvent event, Emitter<SwipeState> emit) async{
 
     try {
-  if(state.swipeStatus == SwipeStatus.loaded){
-    //final state = this.state as SwipeLoaded;
-    List<User> users = List.from(state.users)..remove(event.passedUser);
-
-     // emit(SwipeLoaded(users: users));
-      await _databaseRepository.userPassed(event.user, event.passedUser);
   
-  }
+      await _databaseRepository.userPassed(event.user, event.passedUser);
+      //await _databaseRepository.addToQueensKings(event.passedUser);
+
 } on Exception catch (e) {
   // TODO
   print(e.toString());
@@ -149,7 +202,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       if(state.swipeStatus == SwipeStatus.loaded){
     
       //final state = this.state as SwipeLoaded;
-      List<User> users = List.from(state.users)..remove(event.user);
+     // List<User> users = List.from(state.users)..remove(event.user);
   
      // emit(SwipeLoaded(users: users));
     
@@ -208,7 +261,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   }
 
   FutureOr<void> _onLoadUserAd(LoadUserAd event, Emitter<SwipeState> emit)async {
-    //emit(state.copyWith(swipeStatus: SwipeStatus.loading, loadFor: LoadFor.ad));
+    emit(state.copyWith( loadFor: event.loadFor));
 
     try {
       
@@ -220,23 +273,38 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
 
     }
     if(event.loadFor == LoadFor.adNearby){
+      //emit(state.copyWith(loadFor: event.loadFor));
       var users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users,2 );
 
       emit(state.copyWith(users: users, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad ));
 
     }else
     if(event.loadFor == LoadFor.adRandom){
-      User user = await _databaseRepository.getRandomMatch(userId: event.userId, gender: event.users);
-      emit(state.copyWith(users: [user], swipeStatus: SwipeStatus.loaded, loadFor: event.loadFor ));
+     // emit(state.copyWith(loadFor: event.loadFor));
+      User? user = await _databaseRepository.getRandomMatch(userId: event.userId, gender: event.users);
+      if(user !=null){
+      emit(state.copyWith(users: [user], swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad ));
+      }else{
+        emit(state.copyWith(swipeStatus: SwipeStatus.error ));
+      }
     }
     else
     if(event.loadFor == LoadFor.adQueen ){
+     // emit(state.copyWith(loadFor: event.loadFor));
       User queen = await _databaseRepository.getQueen(userId: event.userId, gender: event.users).timeout(const Duration(seconds: 15));
-      emit(state.copyWith(users: [queen], swipeStatus: SwipeStatus.loaded, loadFor: event.loadFor ));
+      emit(state.copyWith(users: [queen], swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad ));
+      if(_paymentBloc.state.subscribtionStatus != SubscribtionStatus.ET_USER){
+        _paymentBloc.add(ConsumeBoost());
+      }
+
     }
     else if(event.loadFor == LoadFor.adPrincess ){
+      //emit(state.copyWith(loadFor: event.loadFor));
       User princ = await _databaseRepository.getPrincess(userId: event.userId, gender: event.users).timeout(const Duration(seconds: 15));
-      emit(state.copyWith(users: [princ], swipeStatus: SwipeStatus.loaded, loadFor: event.loadFor ));
+      emit(state.copyWith(users: [princ], swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad ));
+      if(_paymentBloc.state.subscribtionStatus != SubscribtionStatus.ET_USER){
+        _paymentBloc.add(ConsumeSuperLike());
+      }
 
     }
 
@@ -254,4 +322,6 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   FutureOr<void> _onAdSwipeEnded(AdSwipeEnded event, Emitter<SwipeState> emit) {
     emit(state.copyWith(swipeStatus: SwipeStatus.completed));
   }
+
+  
 }

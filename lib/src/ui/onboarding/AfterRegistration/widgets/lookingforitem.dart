@@ -27,7 +27,7 @@ class LookingForItem extends StatelessWidget {
       Icon(FontAwesomeIcons.heartPulse, color: Colors.red,),
       Icon(FontAwesomeIcons.bookBible, color:Colors.black),
       Icon(FontAwesomeIcons.crown, color: Colors.amber,),
-      Icon(Icons.diamond, color: Colors.amber,),
+      Icon(FontAwesomeIcons.diamond, color: Colors.amber,),
       Icon(FontAwesomeIcons.hand, color: Colors.black),
       Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.black)
 

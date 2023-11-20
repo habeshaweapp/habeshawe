@@ -34,17 +34,20 @@ class SchoolName extends StatelessWidget {
                 value: 0.7
 
               ),
-             const Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(LineIcons.times,size: 35,),
-              ),
+             Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: ()=>Navigator.pop(context),
+                          
+                          child: Icon(Icons.arrow_back,size: 35,)),
+                      ),
 
               Container(
                 width: 200,
                 margin: EdgeInsets.all(35),
                 child: Text('My \nschool is',
                // textAlign: TextAlign.start,
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
+                style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ),
               
@@ -85,8 +88,10 @@ class SchoolName extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: (){
                      // GoRouter.of(context).pushNamed(MyAppRouteConstants.interestsRouteName);
-                     Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
+                     if(state.user.school !=null && state.user.school!.length >1){
+                        Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
                                                                                                       child: const Interests() )));
+                    }
                     }, 
                     child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                     style: ElevatedButton.styleFrom(

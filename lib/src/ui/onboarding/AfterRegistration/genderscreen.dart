@@ -9,6 +9,7 @@ import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/onboarding/AfterRegistration/birthday.dart';
 
 import '../../../Blocs/OnboardingBloc/onboarding_bloc.dart';
+import '../../../Blocs/ThemeCubit/theme_cubit.dart';
 
 // class GenderScreen extends StatefulWidget {
 //   const GenderScreen({super.key});
@@ -23,6 +24,7 @@ class GenderScreen extends StatelessWidget {
  // int? _value = 1;
   @override
   Widget build(BuildContext context) {
+    bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Scaffold(
       body: SafeArea(
         child: BlocBuilder<OnboardingBloc, OnboardingState>(
@@ -43,16 +45,18 @@ class GenderScreen extends StatelessWidget {
                         value: 0.3,
         
                       ),
-                     const Padding(
+                      Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(LineIcons.times,size: 35,),
+                        child: GestureDetector(
+                          onTap: ()=>Navigator.pop(context),
+                          child: Icon(Icons.arrow_back ,size: 35,)),
                       ),
         
                       Container(
                         width: 200,
                         margin: EdgeInsets.all(35),
                         child: Text('What\'s your gender?',
-                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
+                        style: Theme.of(context).textTheme.headlineMedium,
                         ),
                       ),
                       Spacer(flex: 1,),
@@ -82,7 +86,7 @@ class GenderScreen extends StatelessWidget {
                                   //   _value = value ? index : null;
                                   // });
                                 },
-                                selectedColor: Colors.green.withOpacity(0.6),
+                                selectedColor: isDark? Colors.teal.withOpacity(0.6): Colors.green.withOpacity(0.6),
                                 
                               ),
                             );

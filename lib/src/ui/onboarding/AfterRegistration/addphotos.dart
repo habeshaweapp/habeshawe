@@ -48,9 +48,12 @@ class _AddPhotosState extends State<AddPhotos> {
                         value: 0.9
         
                       ),
-                     const Padding(
+                     Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(LineIcons.times,size: 35,),
+                        child: GestureDetector(
+                          onTap: ()=>Navigator.pop(context),
+                          
+                          child: Icon(Icons.arrow_back,size: 35,)),
                       ),
         
                       Center(
@@ -59,7 +62,7 @@ class _AddPhotosState extends State<AddPhotos> {
                           margin: EdgeInsets.symmetric(horizontal:35),
                           child: Text('Add Photos',
                          // textAlign: TextAlign.start,
-                          style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
+                          style: Theme.of(context).textTheme.headlineMedium
                           ),
                         ),
                       ),
@@ -94,12 +97,12 @@ class _AddPhotosState extends State<AddPhotos> {
                                   itemCount: 6,
                                   itemBuilder:  (context, index) {
                                     return (imagesCount > index) ?
-                                    PhotoSelector(imageUrl: state.user.imageUrls[index],):
-                                    (state.selectedImages == null || state.selectedImages!.isEmpty)? PhotoSelector():
-                                    (state.selectedImages!.isNotEmpty)?
-                                     PhotoSelector(selectedImage: File(state.selectedImages![index-imagesCount]!.path)):
-                                     PhotoSelector()
-                                     ;
+                                    PhotoSelector(imageUrl: state.user.imageUrls[index],):PhotoSelector();
+                                    // (state.selectedImages == null || state.selectedImages!.isEmpty)? PhotoSelector():
+                                    // (state.selectedImages!.isNotEmpty)?
+                                    //  PhotoSelector(selectedImage: File(state.selectedImages![index-imagesCount]!.path)):
+                                     
+                                     
                             
                                     
                                   }
@@ -172,13 +175,15 @@ class _AddPhotosState extends State<AddPhotos> {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: (){
-                              //GoRouter.of(context).pushNamed(MyAppRouteConstants.enablelocationRouteName);
+                              if(state.user.imageUrls.length >=2){
                               Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
                                                                                                       child: const EnableLocation() )));
+                              }
                             }, 
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                             style: ElevatedButton.styleFrom(
                               shape: StadiumBorder(),
+                              backgroundColor: state.user.imageUrls.length <2?Colors.grey:null
                             ),
                             
                             ),

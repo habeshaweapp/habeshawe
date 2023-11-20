@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
@@ -586,25 +588,35 @@ class Body extends StatelessWidget {
                         //     gender: context.read<AuthBloc>().state.accountType!, 
                         //     online: false
                         //      );
+                        showDialog(
+                          context: context, 
+                          builder: (ctx)=> AlertDialog(
+                            title: Text('Log Out?'),
+                            actions: [
+                              TextButton(
+                                onPressed: (){
+                                  Navigator.pop(context);
+                                }, 
+                                child: Text('Cancel')
+                                ),
+                              
+                              TextButton(
+                                onPressed: (){
+                                  context.read<AuthBloc>().add(LogOut());
+                                  Future.delayed(Duration(milliseconds: 300), (){
+                                    Navigator.pop(context); 
+                                });
+                                  //Navigator.pop(context);
+                                  Navigator.pop(context);
+                                }, 
+                                child: Text('Log out', style: TextStyle(color: Colors.grey),)
+                                )
+                            ],
 
-                             
-                        context.read<AuthBloc>().add(LogOut());
-                        
-                        // context.read<ProfileBloc>().close();
-                        // context.read<UserpreferenceBloc>().close();
-                        Future.delayed(Duration(seconds: 1), (){
-                             Navigator.pop(context); 
-                        });
-                        
-                        // .then(
-                        //   (value) => GoRouter.of(context).pushReplacementNamed(MyAppRouteConstants.splashRouteName)
-                        //   );
-          
-                        //GoRouter.of(context).pushNamed(MyAppRouteConstants.splashRouteName);
-                        //context.pop();
-                        
-                        
-          
+                          )
+                          );
+
+                            
                       },
                     ),
           
@@ -627,10 +639,10 @@ class Body extends StatelessWidget {
                                 child: Container(
                                   width: double.infinity,
                                   child: Column(
-                                    //mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Please select areason for deleting\n your account'),
+                                      Text('Please select areason for deleting\nyour account', style: TextStyle(fontSize: 13, color:Colors.grey), ),
                                       const SizedBox(height: 15,),
                                       TextButton(
                                         onPressed: (){
@@ -638,7 +650,10 @@ class Body extends StatelessWidget {
                                           confirmDelete(context, 'FOUND/IN A RELATIONSHIP');
                                         },
                                          
-                                        child: Row(children: [Icon(Icons.heart_broken), Text('FOUND/IN A RELATIONSHIP')],)
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [Icon(FontAwesomeIcons.heartPulse ,color:Colors.black),SizedBox(width: 5,), Text('FOUND/IN A RELATIONSHIP', textAlign: TextAlign.start, style:TextStyle( color: Colors.black) )],)
                                         ),
                                 
                                       TextButton(
@@ -647,7 +662,10 @@ class Body extends StatelessWidget {
                                           confirmDelete(context, 'BILLING ISSUE');
                                         },
                                          
-                                        child: Row(children: [Icon(Icons.money_off_csred), Text('BILLING ISSUE')],)
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [Icon(Icons.money_off_csred, color: Colors.black ), Text('BILLING ISSUE',style:TextStyle( color: Colors.black))],)
                                         ),
                                 
                                         TextButton(
@@ -655,7 +673,10 @@ class Body extends StatelessWidget {
                                           Navigator.pop(context);
                                           confirmDelete(context, 'DISSATISFIED WITH SERVICE');},
                                          
-                                        child: Row(children: [Icon(Icons.heart_broken), Text('DISSATISFIED WITH SERVICE')],)
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [Icon(LineIcons.neutralFace, color:Colors.black), Text('DISSATISFIED WITH SERVICE',style:TextStyle( color: Colors.black))],)
                                         ),
                                         TextButton(
                                           
@@ -663,12 +684,18 @@ class Body extends StatelessWidget {
                                           Navigator.pop(context);
                                           confirmDelete(context, 'OTHER');},
                                          
-                                        child: Row(children: [Icon(Icons.heart_broken), Text('OTHER', textAlign: TextAlign.right,)],)
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [Text('OTHER', textAlign: TextAlign.right,style:TextStyle( color: Colors.black))],)
                                         ),
                                         TextButton(
                                         onPressed: (){Navigator.pop(context);},
                                          
-                                        child: Row(children: [Icon(Icons.heart_broken), Text('CANCEL')],)
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [ Text('CANCEL',style:TextStyle( color: Colors.black))],)
                                         ),
                                 
                                     ],
@@ -721,7 +748,7 @@ class Body extends StatelessWidget {
       title: Text('Are you sure?', ),
       content: Container(
         width: MediaQuery.of(context).size.width*0.95,
-        child: Text('Deleting your profile to create a new\naccount may affect who you see on\nthe platform, and we want you to have\nthe best experience possible.',style: TextStyle(fontSize: 13),)),
+        child: Text('Deleting your profile to create a new\naccount may affect who you see on\nthe platform, and we want you to have\nthe best experience possible.',style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.grey[800]),)),
 
       actions: [
         TextButton(
@@ -730,14 +757,14 @@ class Body extends StatelessWidget {
 
                 bekaDeltew(context, reason);
           },
-          child: Text('DELETE ACCOUNT'),
+          child: Text('DELETE ACCOUNT', style: TextStyle(color: Colors.grey),),
         ),
         TextButton(
           onPressed: (){
             Navigator.pop(context);
 
           },
-          child: Text('CANCEL'),
+          child: Text('CANCEL', ),
         ),
       ],
       actionsOverflowDirection: VerticalDirection.down ,
@@ -752,14 +779,14 @@ class Body extends StatelessWidget {
     builder: (ctx)=> AlertDialog(
       title: Text('Delete account?'),
       content: SizedBox(
-        height: 115,
+        height: 100,
         width: MediaQuery.of(context).size.width*0.95,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('This action cannot be undone'),
+            Text('This action cannot be undone', style: TextStyle(color: Colors.black, fontSize: 13),),
             SizedBox(height: 15,),
-            Text('Type \"delete\" to confirm'),
+            Text('Type \"delete\" to confirm', style: TextStyle(color: Colors.grey[800], fontSize: 12),),
             TextField(
               controller: ctr,
             )
@@ -779,9 +806,12 @@ class Body extends StatelessWidget {
           onPressed: (){
             if(ctr.text == 'delete'){
               context.read<AuthBloc>().add(DeleteAccount());
+              Navigator.pop(context);
+              Navigator.pop(context);
+              
             }
           },
-          child: Text('CONFIRM'),
+          child: Text('CONFIRM', style: TextStyle(color: Colors.grey),),
           ),
       ],
     )

@@ -39,7 +39,7 @@ class VerifyProfile extends StatelessWidget {
           Text('Get Verified', style: TextStyle(fontSize: 20),),
           SizedBox(height:40,),
           Text('Prove you\'re the person in your\nprofile by taking a photo. if you \nmatch, boom, you\'re verified!',
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.black.withOpacity(0.6)),
+                style: Theme.of(context).textTheme.bodyLarge!,
                 //style: TextStyle(fontSize: 15 ),
                 textAlign: TextAlign.center,
                 ),

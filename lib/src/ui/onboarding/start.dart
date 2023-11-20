@@ -94,7 +94,7 @@ class _StartScreenState extends State<StartScreen>
                         height: size.height,
                         child: VerticalDivider(
                           color: Colors.yellow,
-                          thickness: isDark? 0.5: 1,
+                          thickness: isDark? 0.3: 1,
                           ),
                       ),
                     ),
@@ -122,7 +122,7 @@ class _StartScreenState extends State<StartScreen>
                         height: size.height,
                         child: VerticalDivider(
                           color: Colors.red,
-                          thickness: isDark? 0.3: 0.5,
+                          thickness: isDark? 0.2: 0.5,
                           
                         ),
                       ),
@@ -134,7 +134,7 @@ class _StartScreenState extends State<StartScreen>
                         height: size.height,
                         child: VerticalDivider(
                           color: Colors.yellow,
-                          thickness: isDark? 0.5: 1,
+                          thickness: isDark? 0.3: 1,
                           ),
                       ),
                     ),
@@ -324,15 +324,13 @@ class _StartScreenState extends State<StartScreen>
                     signInButton(
                         context: context,
                         text: "CONTINUE WITH X",
-                        icon: 'assets/icons/twitterlogo.png',
+                        icon: isDark?'assets/images/xlogodark.png': 'assets/icons/twitterlogo.png',
                         color: Colors.blue,
                         isDark: isDark,
                         onPressed: () async {
                           await context
                               .read<ContinuewithCubit>()
                               .continueWithTwitter();
-              
-              
                         }),
                 
                  

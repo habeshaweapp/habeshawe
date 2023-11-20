@@ -77,7 +77,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
       //add(UpdateUser(user: user.copyWith(imageUrls: imageUrls)));
       var st = (state as OnboardingLoaded);
 
-      emit(st.copyWith(user: user.copyWith(imageUrls: imageUrls), selectedImages: st.selectedImages!.length <= 1?null: st.selectedImages!.sublist(1)) );
+      emit(st.copyWith(user: user.copyWith(imageUrls: imageUrls), ) );
     
        
      }on Exception catch (e) {

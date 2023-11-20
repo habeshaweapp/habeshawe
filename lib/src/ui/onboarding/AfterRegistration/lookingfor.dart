@@ -65,9 +65,12 @@ class _LookingForState extends State<LookingFor> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       
-                     const Padding(
+                      Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(LineIcons.times,size: 35,),
+                        child: GestureDetector(
+                          onTap: ()=>Navigator.pop(context),
+                          
+                          child: Icon(Icons.arrow_back,size: 35,)),
                       ),
                       
                       Container(
@@ -75,7 +78,7 @@ class _LookingForState extends State<LookingFor> {
                         margin: EdgeInsets.only(left:35, top: 35),
                         child: Text('Right now\nI\'m looking \nfor',
                        // textAlign: TextAlign.start,
-                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
+                        style: Theme.of(context).textTheme.headlineMedium,
                         ),
                       ),
                       Padding(

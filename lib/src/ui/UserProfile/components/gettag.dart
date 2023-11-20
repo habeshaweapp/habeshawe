@@ -9,56 +9,64 @@ import 'bottomprofile.dart';
 
 class GetTag extends StatelessWidget {
   final User user;
-  const GetTag({
+  final void Function() ontap;
+   GetTag({
     super.key,
-    required this.user
+    required this.user,
+    required this.ontap
   });
-
+final pageController = PageController();
   @override
   Widget build(BuildContext context) {
+    
     if(user.verified == VerifiedStatus.notVerified.name){
 
     return Center(
       child: 
              
-          SizedBox(
-            height: 250.h,
-            //width: 300,
-            child: PageView(
-              physics: const BouncingScrollPhysics(),
-              children: [
-                PageViewItem(icon: LineIcons.crown,
-                color: Colors.amber,
-                title: 'Get Your Crown', 
-                description: 'Get verified and we will reveal your profile and if you stand out you will get Queen tag', 
-                buttonText: user.gender == Gender.women.name? 'Apply  To Queen': 'Apply To King',
-                ontap: () {
-                  //showVerifyDialog(state.user);
+          Column(
+            children: [
+              SizedBox(
+                height: 220.h,
+                //width: 300,
+                child: PageView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  controller: pageController ,
+                  children: [
+                    PageViewItem(icon: LineIcons.crown,
+                    color: Colors.amber,
+                    title: 'Get Your Crown', 
+                    description: 'Get verified and we will reveal your profile and if you stand out you will get Queen tag', 
+                    buttonText: user.gender == Gender.women.name? 'Apply  To Queen': 'Apply To King',
+                    ontap: ontap 
+                    ),
+              
+                    PageViewItem(icon: FontAwesomeIcons.userTie, 
+                    color: Colors.grey,
+                    title: user.gender == Gender.men.name? 'Get Your GentleMan Tag': 'Get Your Princess Tag' , 
+                    description: 'Get verified and we will reveal your profile and if you stand out you will give you  gentlemans tag', 
+                    buttonText: user.gender == Gender.men.name? 'Apply  To GentleMen': 'Apply  To Princess',
+                    ontap: ontap
+                    ),
+              
+                    PageViewItem(icon: Icons.verified, 
+                    color: Colors.blue,
+                    title: 'Get Your Verified Tag', 
+                    description: 'Get verified and we will reveal your profile and if you stand out you will get Queen tag', 
+                    buttonText: 'Get Verified Tag',
+                    ontap: ontap
+                    ),
 
-                } 
+                    
+                  ],
                 ),
-          
-                PageViewItem(icon: LineIcons.suitcase, 
-                color: Colors.black,
-                title: user.gender == Gender.men.name? 'Get Your GentleMan Tag': 'Get Your Princess Tag' , 
-                description: 'Get verified and we will reveal your profile and if you stand out you will give you  gentlemans tag', 
-                buttonText: user.gender == Gender.men.name? 'Apply  To GentleMen': 'Apply  To Princess',
-                ontap: (){
-                  //showVerifyDialog(user);
-                  },
-                ),
-          
-                PageViewItem(icon: Icons.verified, 
-                color: Colors.blue,
-                title: 'Get Your Verified Tag', 
-                description: 'Get verified and we will reveal your profile and if you stand out you will get Queen tag', 
-                buttonText: 'Get Verified Tag',
-                ontap: (){
-                  //showVerifyDialog(user);
-                },
-                ),
-              ],
-            ),
+              ),
+
+              SizedBox(
+                width: 60,
+                child: DotIndicator(dots: 3, pageController: pageController),
+              )
+            ],
           )
           
       
@@ -93,7 +101,7 @@ class GetTag extends StatelessWidget {
               verifiedIcon =  Icon(FontAwesomeIcons.crown, color: Colors.amber,size:60.sp);
               title = 'Welcome King';
             }else if(user.verified == VerifiedStatus.gentelmen.name){
-              verifiedIcon =  Icon(FontAwesomeIcons.blackTie,size: 60.sp, color: Colors.black,);
+              verifiedIcon =  Icon(FontAwesomeIcons.userTie,size: 60.sp, color: Colors.grey,);
               title = 'Welcome Gent';
             }
 
@@ -190,6 +198,55 @@ class ProfileBox extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class DotIndicator extends StatefulWidget {
+  const DotIndicator({
+    super.key,
+    required this.dots,
+    required this.pageController
+  });
+
+  final int dots;
+  final PageController pageController;
+
+  @override
+  State<DotIndicator> createState() => _DotIndicatorState();
+}
+
+class _DotIndicatorState extends State<DotIndicator> {
+  int selectedIndex = 0;
+  
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    widget.pageController.addListener(() {
+      setState(() {
+        selectedIndex = widget.pageController.page!.toInt();
+      });
+    
+    });
+  }
+  
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.only(right:5.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: List.generate(widget.dots, 
+            (index) => Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(left:10.0),
+                child: Divider(thickness: 1, color: selectedIndex == index? Colors.black : Colors.grey,),
+              )
+              ))
       ),
     );
   }

@@ -91,7 +91,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   void _onVerifyMe(VerifyMe event, Emitter<ProfileState> emit) async{
     try{
-      await _storageRepository.uploadVerifyMeImage(event.user, event.image, event.onlyVerifyMe!);
+      String url= await _storageRepository.uploadVerifyMeImage(event.user, event.image, event.onlyVerifyMe!);
+       await _databaseRepository.updateUser(event.user.copyWith(verified: 'pending'));
+       await _databaseRepository.addVerifyMeUser(event.user, event.onlyVerifyMe!, url);
     }on Exception catch (e) {
       print(e.toString());
 

@@ -5,8 +5,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lomi/src/Blocs/AdBloc/ad_bloc.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
-import 'package:lomi/src/ui/home/components/usercard.dart';
+
 import 'package:lomi/src/ui/home/components/userdrag.dart';
+import 'package:lomi/src/ui/payment/showPaymentDialog.dart';
 import 'package:swipe_cards/draggable_card.dart';
 import 'package:swipe_cards/swipe_cards.dart';
 
@@ -232,6 +233,13 @@ class SwipeCard extends StatelessWidget {
                         }
                         }
                       if(index == 4){ 
+                        if(context.read<PaymentBloc>().state.subscribtionStatus != SubscribtionStatus.ET_USER ){
+                          if(context.read<PaymentBloc>().state.boosts ==0){
+                            showPaymentDialog(context: context, paymentUi: PaymentUi.boosts);
+                          }else{
+                            context.read<SwipeBloc>().add(BoostMe(user: (context.read<ProfileBloc>().state as ProfileLoaded).user, ));
+                          }
+                        }
                         }
                     },
                     child: Container(

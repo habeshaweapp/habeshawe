@@ -820,6 +820,8 @@ class DatabaseRepository extends BaseDatabaseRepository{
       await _firebaseFirestore.collection('verify')
         .doc(user.id)
         .set({
+          'userId':user.id,
+          'gender': user.gender,
           'timestamp': DateTime.now(),
           'onlyVerifyMe': onlyVerifyMe,
           'url': url,
@@ -1082,17 +1084,27 @@ Future<void> createDemoUsers(List<User> users) async{
       .doc(user.id)
       .collection('userpreference')
       .doc('preference')
-      .set(UserPreference(userId: user.id).toMap());
+      .set(UserPreference(userId: user.id, phoneNumber: user.phoneNumber).toMap());
 
       await _firebaseFirestore.collection(user.gender)
         .doc(user.id)
         .collection('viewedProfiles')
         .doc('viewed')
         .set({
-          'matches':'',
-          user.gender ==Gender.women.name?'kings':'queens':'',
-          user.gender ==Gender.women.name?'gents':'princess':'',
+          'matches':'ulend',
+          user.gender ==Gender.women.name?'kings':'queens':'0',
+          user.gender ==Gender.women.name?'gents':'princess':'0',
         });
+      //online status
+      await _firebaseFirestore.collection(user.gender)
+        .doc(user.id)
+        .collection('online')
+        .doc('status')
+        .set({
+          'online': true,
+          'lastseen': FieldValue.serverTimestamp(),
+        }
+        );
 
       //mark  iscompleted to true in the user doc
      await _firebaseFirestore.collection(user.gender)
@@ -1782,9 +1794,38 @@ Future<void> createDemoUsers(List<User> users) async{
   void deleteAccount({required String userId, Gender? gender})async {
     try {
       await _firebaseFirestore.collection(gender!.name).doc(userId).delete();
+     // await _firebase
 
       
     } catch (e) {
+      
+    }
+  }
+
+  Future<void> boostMe(User user) async {
+    try {
+      await _firebaseFirestore.collection('boosted')
+        .doc(user.gender)
+        .collection('boosted')
+        .doc(user.id)
+        .set(
+          {
+            
+            'timestamp': FieldValue.serverTimestamp(),
+            'user': user.toMap()
+          }
+        );
+
+      Future.delayed(Duration(hours: 1), ()async{
+        await _firebaseFirestore.collection('boosted')
+          .doc(user.gender)
+          .collection('boosted')
+          .doc(user.id)
+          .delete();
+      });
+      
+    } catch (e) {
+      throw(Exception(e));
       
     }
   }

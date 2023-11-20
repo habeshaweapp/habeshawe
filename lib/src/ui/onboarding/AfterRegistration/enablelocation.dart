@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_geo_hash/geohash.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:line_icons/line_icons.dart';
@@ -91,7 +92,7 @@ class EnableLocation extends StatelessWidget {
                  
                   child: Text('Enable Location',
                  // textAlign: TextAlign.start,
-                  style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
+                  style: Theme.of(context).textTheme.headlineMedium
                   ),
                 ),
                // Spacer(flex: 1,),
@@ -101,8 +102,8 @@ class EnableLocation extends StatelessWidget {
                     width: MediaQuery.of(context).size.width*0.7,
                     margin: EdgeInsets.only(top: 10),
                     child: Text(
-                      'You\'ll need to enable your location in order to use Tinder',
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w300),
+                      'You\'ll need to enable your location in order to use HabeshaWe',
+                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w300, fontSize: 12.sp, color: Colors.grey),
                       textAlign: TextAlign.center,
                       )
                   ),
@@ -130,7 +131,7 @@ class EnableLocation extends StatelessWidget {
 
                           }
                           if(context.mounted && placeMark.isNotEmpty ){
-                            context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: placeMark[0], user: state.user.copyWith(geohash: hash,location: [position.latitude, position.longitude], country: placeMark[0].country, countryCode: placeMark[0].isoCountryCode ), isMocked: position.isMocked));
+                            context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: placeMark[0], user: state.user.copyWith(geohash: hash,location: [position.latitude, position.longitude], country: placeMark[0].country, countryCode: placeMark[0].isoCountryCode, city: placeMark[0].locality ), isMocked: position.isMocked));
                             Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
                           }
 

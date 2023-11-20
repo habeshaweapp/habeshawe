@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Models/tag_helper.dart';
@@ -17,6 +18,7 @@ class LikeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Container(
       height: 150,
       width: 120,
@@ -30,6 +32,7 @@ class LikeCard extends StatelessWidget {
           
           ),
         borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: !isDark?Colors.grey[400]: Colors.grey,
 
 
       ),

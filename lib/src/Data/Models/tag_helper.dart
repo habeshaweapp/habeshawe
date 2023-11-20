@@ -14,15 +14,18 @@ class TagHelper{
               verifiedIcon =  Icon(LineIcons.crown, color: Colors.amber, size: size??null,);
     
             }else if(name == VerifiedStatus.princess.name){
-              verifiedIcon = Icon(LineIcons.crown, color: Colors.blue, size:size );
+              verifiedIcon = Icon(LineIcons.crown, color: Colors.pink, size:size );
             }else if(name == VerifiedStatus.king.name){
-              verifiedIcon = Icon(LineIcons.crown, color: Colors.amber,size:size);
+              verifiedIcon = Icon(FontAwesomeIcons.crown, color: Colors.amber,size:size);
             }else if(name == VerifiedStatus.gentelmen.name){
-              verifiedIcon = Icon(LineIcons.suitcase, color: Colors.blue, size:size);
-              
-            }else{
+              verifiedIcon = Icon(FontAwesomeIcons.userTie, color: Colors.blue, size:size);
+            }else if(name == VerifiedStatus.notVerified.name){
+                  verifiedIcon =  Icon(Icons.verified_outlined, color: Colors.grey,size: size,);
+                }
+            else{
               verifiedIcon =  Icon(Icons.verified_outlined,size:size);
             }
+
       
       return verifiedIcon;
 

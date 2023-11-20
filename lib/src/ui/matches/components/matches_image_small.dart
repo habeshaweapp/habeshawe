@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 
 import '../../../Blocs/PaymentBloc/payment_bloc.dart';
 import '../../../Data/Models/enums.dart';
@@ -28,6 +29,7 @@ class MatchesImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Container(
               height: height,
               width: width,
@@ -41,6 +43,7 @@ class MatchesImage extends StatelessWidget {
                   borderRadius: shape == BoxShape.rectangle? BorderRadius.all(Radius.circular(10)):null,
                   //border: Border.all(width: 1, color: Colors.green.withOpacity(0.3)),
                   shape: shape,
+                  color: !isDark?Colors.grey[400]: Colors.grey,
 
               ),
 

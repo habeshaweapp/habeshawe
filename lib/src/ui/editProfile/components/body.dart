@@ -51,11 +51,11 @@ class Body extends StatelessWidget {
               if(isThereChange == true){
                 context.read<ProfileBloc>().add(EditUserProfile(
                   user: state.user.copyWith(
-                    aboutMe: aboutMeController.text,
-                    livingIn: addCityController.text,
-                    jobTitle: jobTitle.text,
-                    company: companyController.text,
-                    school: schoolController.text,
+                    aboutMe: aboutMeController.text==''?null:aboutMeController.text,
+                    livingIn: addCityController.text==''?null:addCityController.text,
+                    jobTitle: jobTitle.text == ''?null:jobTitle.text,
+                    company: companyController.text==''?null:companyController.text ,
+                    school: schoolController.text==''?null:schoolController.text,
                     height: heightController.text == ''?null: int.parse(heightController.text)
                     )));
               }
@@ -293,7 +293,14 @@ class Body extends StatelessWidget {
                     color: isLight ? Colors.grey[200]: darkContainer,
                   ),
           
-                  child: Text('Basics'),
+                  child: 
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Basics'),
+                      Text('+5%', style: TextStyle(color: isDark? Colors.teal: Colors.green),)
+                    ],
+                  ),
           
                 ),
           

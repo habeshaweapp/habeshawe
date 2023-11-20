@@ -33,22 +33,20 @@ class StorageRepository extends BaseStorageRepository{
     }
   }
 
-  Future<void> uploadVerifyMeImage(User user, XFile image, bool onlyVerifyMe ) async{
+  Future<String> uploadVerifyMeImage(User user, XFile image, bool onlyVerifyMe ) async{
     try{
-      DatabaseRepository databaseRepository = DatabaseRepository();
-      await storage.ref('${user.id}/verifyMe/${image.name}')
+     // DatabaseRepository databaseRepository = DatabaseRepository();
+      return await storage.ref('${user.id}/verifyMe/${image.name}')
             .putFile(File(image.path))
             .then((p0) async {
               String url = await storage.ref('${user.id}/verifyMe/${image.name}').getDownloadURL();
-
-             databaseRepository.updateUser(user.copyWith(verified: 'pending'));
-             databaseRepository.addVerifyMeUser(user, onlyVerifyMe, url);
-
+              return url;
              } );
 
 
     }on Exception catch(e){
       print(e.toString());
+      throw Exception(e);
     }
   }
   

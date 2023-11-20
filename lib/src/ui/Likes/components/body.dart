@@ -9,6 +9,7 @@ import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/ui/Likes/components/like_card.dart';
+import 'package:lomi/src/ui/itsAmatch/itsAmatch.dart';
 
 import '../../../Blocs/MatchBloc/match_bloc.dart';
 import '../../../Blocs/PaymentBloc/payment_bloc.dart';
@@ -114,7 +115,10 @@ class Body extends StatelessWidget {
                                                         child: BlocProvider.value(value:context.read<PaymentBloc>(),child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index] ))))));
 
                                     }else{
-                                      showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
+                                      //showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
+                                      Navigator.push(context, MaterialPageRoute(builder: (ctx)=> 
+                                          BlocProvider.value(value: context.read<MatchBloc>(),
+                                          child: ItsAMatch(user: state.likedMeUsers[index]))));
                                     }
                                     
 

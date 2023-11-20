@@ -37,16 +37,18 @@ class _BirthdayState extends State<Birthday> {
                 value: 0.4,
 
               ),
-             const Padding(
+              Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Icon(LineIcons.times,size: 35,),
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Icon(Icons.arrow_back,size: 35,)),
               ),
 
               Container(
                 width: 200,
                 margin: EdgeInsets.symmetric(vertical: 35, horizontal: 50),
                 child: Text('My \nbirthday is?',
-                style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
+                style: Theme.of(context).textTheme.headlineMedium,
                 ),
               ),
               Spacer(flex: 2,),
@@ -177,6 +179,9 @@ class _BirthdayState extends State<Birthday> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: (){
+                        if(int.parse(month)>12){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('invalid month!', style: TextStyle(fontSize: 12)) ,backgroundColor: Colors.black38, ));
+                        }else{
                         final Today = DateTime.now();
                         if(day !=''&& month!=''&& year!=''){
                           final birthdate = DateTime(int.parse(year), int.parse(month), int.parse(day) );
@@ -203,7 +208,7 @@ class _BirthdayState extends State<Birthday> {
                                   onPressed: (){
                                     Navigator.pop(context);
 
-                                  }, child: Text('NO')
+                                  }, child: Text('NO', style: TextStyle(color: Colors.grey),)
                                   ),
 
                               ],
@@ -215,6 +220,7 @@ class _BirthdayState extends State<Birthday> {
 
                           }
 
+                        }
                         }
                         //final birthdate = 
 

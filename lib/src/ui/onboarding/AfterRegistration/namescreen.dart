@@ -36,14 +36,14 @@ class NameScreen extends StatelessWidget {
                       ),
                      const Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(LineIcons.times,size: 35,),
+                        child: Icon(LineIcons.arrowLeft , size: 35,),
                       ),
         
                       Container(
                         width: 150,
                         margin: EdgeInsets.all(35),
                         child: Text('My first name is',
-                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Colors.black),
+                        style: Theme.of(context).textTheme.headlineMedium,
                         ),
                       ),
                       Spacer(flex: 1,),
@@ -84,8 +84,13 @@ class NameScreen extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: (){
                               //GoRouter.of(context).pushNamed(MyAppRouteConstants.genderRouteName);
+                              if(state.user.name.length >2 && state.user.name.length < 15 ){
                               Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
                                                                                                       child: const GenderScreen() )));
+                                }else{
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('please input a valid name!', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12)) ,backgroundColor: Colors.black38, ));
+
+                                }
                             }, 
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                             style: ElevatedButton.styleFrom(

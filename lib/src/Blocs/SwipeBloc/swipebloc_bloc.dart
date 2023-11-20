@@ -51,6 +51,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     on<BoostedLoaded>(_onBoostedLoaded);
     on<LoadUserAd>(_onLoadUserAd);
     on<AdSwipeEnded>(_onAdSwipeEnded);
+    on<BoostMe>(_onBoostMe);
   
 
     //if(state.completedTime == null && state.users.isEmpty){
@@ -207,6 +208,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
      // emit(SwipeLoaded(users: users));
     
    final result = await _databaseRepository.userLike(event.user, event.matchUser,event.superLike);
+   
   
   }
 } on Exception catch (e) {
@@ -324,4 +326,14 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   }
 
   
+
+  FutureOr<void> _onBoostMe(BoostMe event, Emitter<SwipeState> emit)async {
+    try {
+     await _databaseRepository.boostMe(event.user);
+     _paymentBloc.add(ConsumeBoost());
+      
+    } catch (e) {
+      
+    }
+  }
 }

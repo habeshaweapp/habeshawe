@@ -178,7 +178,7 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
 
   FutureOr<void> _onRewardEarned(RewardEarned event, Emitter<AdState> emit) {
     if(event.adType == AdType.rewardedRandom){
-      emit(state.copyWith(totalAdWatchedReOn: state.totalAdWatchedReOn+10));
+      emit(state.copyWith(totalAdWatchedReOn: state.totalAdWatchedReOn+1));
       
     }
     if(event.adType == AdType.rewardedOnline ){
@@ -219,7 +219,7 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
   }
 
   FutureOr<void> _onTimeOutAd(TimeOutAd event, Emitter<AdState> emit) {
-    emit(state.copyWith(completedTimeAd: event.completedTimeAd,totalAdWatchedReOn: state.adWatchedOnline!+1 ));
+    emit(state.copyWith(completedTimeAd: event.completedTimeAd, ));
   }
   
   @override

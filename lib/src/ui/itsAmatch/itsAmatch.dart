@@ -1,18 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lomi/src/Data/Models/message_model.dart';
 
 import '../../Blocs/blocs.dart';
+import '../../Data/Models/likes_model.dart';
 import '../../Data/Models/user.dart';
 
 
 class ItsAMatch extends StatelessWidget {
-   User user;
-   ItsAMatch({ required this.user});
+   final Like user;
+   const ItsAMatch({ required this.user});
 
   @override
   Widget build(BuildContext context) {
+
+    SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(
+        systemNavigationBarColor: const Color.fromARGB(51, 182, 180, 180),
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+    );
     String msg = '';
     return Scaffold(
       body: Stack(
@@ -24,7 +35,7 @@ class ItsAMatch extends StatelessWidget {
               decoration: BoxDecoration(
                 
                 image: DecorationImage(image: NetworkImage(
-                  user.imageUrls[0],
+                  user.user.imageUrls[0],
                   
               ), fit: BoxFit.cover
               ),
@@ -56,19 +67,26 @@ class ItsAMatch extends StatelessWidget {
                     Spacer(flex: 2,),
                     SizedBox(
                       child: Text(
-                        "IT\'S\nA MATCH",
+                        "IT\'S",
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold, color: Colors.green),
+                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold, color: Colors.green),
+                        ),
+                    ),
+                    SizedBox(
+                      child: Text(
+                        "A MATCH",
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold,fontSize: 50, color: Colors.green),
                         ),
                     ),
                     Spacer(),
       
-                    IconButton(onPressed: (){}, icon: Icon(Icons.heart_broken, color: Colors.green,)),
+                    IconButton(onPressed: (){}, icon: user.superLike!?Icon(Icons.star, color: Colors.blue,size: 35,): Icon( FontAwesomeIcons.heartPulse, color: Colors.red,)),
       
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text('${user.name} likes you too',
-                        style: TextStyle(color: Colors.green),
+                      child: Text('${user.user.name} likes you too',
+                        style: TextStyle(color: Colors.white),
                         textAlign: TextAlign.right,
                       ),
                     ),
@@ -77,15 +95,15 @@ class ItsAMatch extends StatelessWidget {
       
                     SizedBox(
                       width: MediaQuery.of(context).size.width*0.79,
-                      height: 50,
+                      height: 40,
                       child: TextField(
                         onChanged: (value) { msg = value;},
                         decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.message),
+                          //prefixIcon: Icon(Icons.message),
                           filled: true,
                           fillColor: Colors.white,
                           hintText: 'temari nesh serategna',
-                          hintStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.w200),
+                          hintStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.w200, fontSize: 11),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                             borderSide: const BorderSide(
@@ -105,7 +123,7 @@ class ItsAMatch extends StatelessWidget {
                                 
                               ),
                               onPressed: (){
-                                BlocProvider.of<MatchBloc>(context).add(OpenChat(users: context.read<AuthBloc>().state.accountType!, message: Message(id: 'non', receiverId: user.id, senderId: context.read<AuthBloc>().state.user!.uid, message: msg,)));
+                                BlocProvider.of<MatchBloc>(context).add(OpenChat(users: context.read<AuthBloc>().state.accountType!, message: Message(id: 'non', receiverId: user.user.id, senderId: context.read<AuthBloc>().state.user!.uid, message: msg,)));
                               }, 
                               child: Text('Send')
                               ),
@@ -114,7 +132,7 @@ class ItsAMatch extends StatelessWidget {
                       ),
                     ),
                     //Spacer(),
-                    SizedBox(height: 70,),
+                    SizedBox(height: 55.h,),
       
                     ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -126,9 +144,10 @@ class ItsAMatch extends StatelessWidget {
                             onPressed: (){
                                Navigator.pop(context);
                             }, 
-                            child: Text('KEEP SWIPING')
+                            child: Text('PLAY IT COOL')
                             ),
-                    Spacer(),
+                   // Spacer(),
+                   SizedBox(height: 15,)
       
       
       

@@ -9,6 +9,7 @@ import 'package:lomi/src/Data/Models/enums.dart';
 
 import '../../Blocs/PaymentBloc/payment_bloc.dart';
 import '../../Blocs/ThemeCubit/theme_cubit.dart';
+import '../UserProfile/components/gettag.dart';
 import 'subscriptionTypes.dart';
 
 class Payment extends StatefulWidget {
@@ -23,6 +24,7 @@ class Payment extends StatefulWidget {
 
 class _PaymentState extends State<Payment> {
   int selectedIndex = 1;
+  final  pageController = PageController();
 
   @override
   Widget build(BuildContext context) {
@@ -125,16 +127,17 @@ class _PaymentState extends State<Payment> {
                                   style: Theme.of(context).textTheme.bodyLarge),
                             ),
                             Container(
-                              height: 170.h,
+                              height: 150.h,
                               child: PageView(
                                 physics: BouncingScrollPhysics(),
+                                controller: pageController,
                                 children: [
                                   pageViewItem(
                                       context: context,
                                       image: 'assets/icons/likeIconPayment.png',
                                       title: 'View Profile',
                                       description:
-                                          'see profile of matches who liked you\n and decide to like or pass them.'),
+                                          'see profile of matches\n who liked you and decide to like or pass them.'),
                                   pageViewItem(
                                       context: context,
                                       image: 'assets/images/chat_active_icon.svg',
@@ -153,14 +156,19 @@ class _PaymentState extends State<Payment> {
                                 ],
                               ),
                             ),
+                            SizedBox(
+                              width: 60,
+                              child: DotIndicator(dots: 3, pageController: pageController),
+                            )
                           ],
                         ):Container(
-                          height: 200.h,
+                          height: 220.h,
                           width: double.infinity,
                           //if a user is subscribed show it here
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              Icon(Icons.diamond, size:70, color: isDark? Colors.teal:Colors.green ),
                               Text('Subscribed', style: TextStyle(color: Colors.white),),
 
                               Text(state.subscribtionStatus.name, style: TextStyle(color: Colors.white, fontSize: 25 ),),

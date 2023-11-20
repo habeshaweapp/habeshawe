@@ -25,7 +25,7 @@ class Wrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<UpdateWallBloc, UpdateWallState>(
       builder: (context, state) {
-        if(state is ShutDownThisApp){
+        if (state is ShutDownThisApp) {
           return const UpdateWall();
         }
         return BlocBuilder<AuthBloc, AuthState>(builder: (context, state) {
@@ -66,7 +66,9 @@ class Wrapper extends StatelessWidget {
               BlocProvider(
                   lazy: false,
                   create: (context) => AdBloc(adRepository: AdRepository())),
-              BlocProvider(lazy: false, create: (contet) => SharedpreferenceCubit()..getMyLocation()),
+              BlocProvider(
+                  lazy: false,
+                  create: (contet) => SharedpreferenceCubit()..getMyLocation()),
               BlocProvider(
                   lazy: false,
                   create: (context) => SwipeBloc(

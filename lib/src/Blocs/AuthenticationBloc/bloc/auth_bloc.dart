@@ -72,13 +72,14 @@ void _authUserChanged(AuthUserChanged event, Emitter<AuthState> emit) async{
 }
 
 FutureOr<void> _onLogOut(LogOut event, Emitter<AuthState> emit) async {
+  emit(const AuthState.unauthenticated());
   await _databaseRepository.updateOnlinestatus(
                             userId: state.user!.uid, 
                             gender: state.accountType!, 
                             online: false
                              );
-  emit(const AuthState.unknown());
   await _authRepository.signOut();
+  // emit(const AuthState.unauthenticated());
   await HydratedBloc.storage.clear();
 
 }
@@ -111,7 +112,8 @@ Future<void> _onLogInWithGoogle(LogInWithGoogle event, Emitter<AuthState> emit) 
 
   FutureOr<void> _onDeleteAccount(DeleteAccount event, Emitter<AuthState> emit) {
     try {
-      _databaseRepository.deleteAccount(userId: state.user!.uid, gender: state.accountType);
+       emit(const AuthState.unauthenticated());
+      //_databaseRepository.deleteAccount(userId: state.user!.uid, gender: state.accountType);
       _authRepository.deleteAccount();
       
     } catch (e) {

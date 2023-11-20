@@ -196,13 +196,13 @@ class Body extends StatelessWidget {
 
                         SizedBox(height: user.height!=null?5:0,),
 
-               user.jobTitle !=null || user.company!=null? SizedBox(
+               (user.jobTitle !=null && user.jobTitle !='' ) || (user.company!=null && user.company!='')? SizedBox(
                           child: Row(
                             children: [
                               Icon(Icons.work, size: 18,color:Colors.grey),
                               SizedBox(width: 7,),
-                              user.jobTitle !=null && user.company!=null? Text('${user.jobTitle} at ${user.company}',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),):
-                              Text(user.jobTitle !=null?'${user.jobTitle}':'${user.company}',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),)
+                              (user.jobTitle !=null && user.jobTitle !='' ) && (user.company!=null && user.company!='')? Text('${user.jobTitle} at ${user.company}',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),):
+                              Text(user.jobTitle !=''?'${user.jobTitle}':'${user.company}',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),)
                               ,
 
                             ],

@@ -29,6 +29,7 @@ class User extends Equatable {
   final DateTime? lastseen;
   final int? height;
   final String? city;
+  final String? phoneNumber;
 
   const User({
     required this.id,
@@ -54,6 +55,7 @@ class User extends Equatable {
      this.lastseen,
      this.height,
      this.city,
+     this.phoneNumber,
   });
 
   @override
@@ -80,7 +82,8 @@ class User extends Equatable {
         online,
         lastseen,
         height,
-        city
+        city,
+        phoneNumber
       ];
 
   factory User.fromSnapshoot(DocumentSnapshot snap){
@@ -110,6 +113,7 @@ class User extends Equatable {
     lastseen: map.containsKey('lastseen')? snap['lastseen']?.toDate() :null,
     height: map.containsKey('height')? snap['height']:null,
     city: map.containsKey('city')? snap['city']:null,
+    phoneNumber: map.containsKey('phoneNumber')? snap['phoneNumber']:null,
 
   );
 } on Exception catch (e) {
@@ -137,6 +141,7 @@ class User extends Equatable {
       livingIn: snap['livingIn'] ,
       jobTitle: snap['jobTitle'] ,
       lookingFor: snap['lookingFor'],
+      phoneNumber: snap['phoneNumber']
 
     );
 
@@ -167,7 +172,8 @@ class User extends Equatable {
       'online': online,
       'lastseen': lastseen,
       'city': city,
-      'height': height
+      'height': height,
+      'phoneNumber': phoneNumber
     };
   }
 
@@ -195,7 +201,8 @@ class User extends Equatable {
       'online': online,
       'lastseen': lastseen?.toIso8601String(),
       'city': city,
-      'height': height
+      'height': height,
+      'phoneNumber': phoneNumber
     };
   }
 
@@ -223,6 +230,7 @@ class User extends Equatable {
     DateTime? lastseen,
     int? height,
     String? city,
+    String? phoneNumber,
 
   }){
     return User(
@@ -248,7 +256,8 @@ class User extends Equatable {
       online: online?? this.online,
       lastseen: lastseen??this.lastseen,
       city: city?? this.city,
-      height: height?? height
+      height: height?? this.height,
+      phoneNumber: phoneNumber??this.phoneNumber
     );
   }
 
@@ -281,7 +290,8 @@ factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
     online:  snap['online'],
     lastseen: snap['lastseen'],
     height:  snap['height'],
-    city: snap['city']
+    city: snap['city'],
+    phoneNumber: snap['phoneNumber']
   );
 } on Exception catch (e) {
   // TODO
@@ -319,7 +329,8 @@ factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
     online:  snap['online'],
     lastseen: DateTime.parse(snap['lastseen']),
     height:  snap['height'],
-    city: snap['city']
+    city: snap['city'],
+    phoneNumber: snap['phoneNumber']
   );
 } on Exception catch (e) {
   // TODO

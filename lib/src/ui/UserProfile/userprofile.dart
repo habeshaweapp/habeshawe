@@ -111,8 +111,22 @@ class UserProfile extends StatelessWidget {
                 }else if(state.user.verified == VerifiedStatus.king.name){
                   verifiedIcon = const Icon(FontAwesomeIcons.crown, color: Colors.amber,);
                 }else if(state.user.verified == VerifiedStatus.gentelmen.name){
-                  verifiedIcon = const Icon(FontAwesomeIcons.blackTie, color: Colors.black,);
+                  verifiedIcon = const Icon(FontAwesomeIcons.userTie,size: 23, color: Colors.black,);
                 }
+
+                int percent = 0;
+                if(state.user.imageUrls.length > 3){
+                  percent = 40;
+                }else{
+                  percent = 20;
+                }
+                if(state.user.aboutMe != null && state.user.aboutMe != '') percent += 30;
+                if(state.user.height !=null )percent += 5;
+                if(state.user.education !=null&& state.user.education != '' )percent += 5;
+                if(state.user.jobTitle !=null&& state.user.jobTitle != '' )percent += 5;
+                if(state.user.company !=null&& state.user.company != '' )percent += 5;
+                if(state.user.school !=null&& state.user.school != '' )percent += 5;
+                if(state.user.livingIn !=null && state.user.livingIn != '')percent += 5;
                 
               return Column(
                 children: [
@@ -158,7 +172,7 @@ class UserProfile extends StatelessWidget {
                                           
                                           ),
                                     radius: 90.h,
-                                    backgroundColor: !isDark?Colors.grey[200]: Colors.grey,
+                                    backgroundColor: !isDark?Colors.grey[200]: Colors.grey[800],
                                     
                                   ),
                                 ),
@@ -189,10 +203,10 @@ class UserProfile extends StatelessWidget {
 
                                 },
                                 style: ElevatedButton.styleFrom(
-                                     foregroundColor: Colors.grey,
-                                    backgroundColor: isDark? Colors.grey[900]: Colors.white,
+                                     foregroundColor:percent==100?null: Colors.grey,
+                                    backgroundColor: percent==100?null: isDark? Colors.grey[900]: Colors.white,
                                     shape: StadiumBorder()),
-                                child: Text("10% COMPLETE")),
+                                child: Text("$percent% COMPLETE")),
                           ),
                           Positioned(
                             right: 0,
@@ -314,8 +328,7 @@ class UserProfile extends StatelessWidget {
                     ),
                   ),
                   Spacer(),
-                  GetTag(user: state.user,),
-
+                  GetTag(user: state.user,ontap: (){showVerifyDialog(state.user);},),
                   
                   Spacer(),
                   // FloatingActionButton(

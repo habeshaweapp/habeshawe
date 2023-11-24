@@ -68,11 +68,11 @@ class NotificationService{
     
 
       Future<void> showMessageReceivedNotifications({
-        required String title, required String body, required String payload
+        required String title, required String body, required String payload,required String channelId
       }) async {
-        const AndroidNotificationDetails androidNotificationDetails = 
+         AndroidNotificationDetails androidNotificationDetails = 
            AndroidNotificationDetails(
-            'habeshaweMessage', 
+             channelId, 
             'Message',
             importance: Importance.max,
             priority: Priority.high,
@@ -107,7 +107,7 @@ try{
       27, 
       title,
       body, 
-      tz.TZDateTime.now(tz.local).add(const Duration(seconds: 10)), 
+      tz.TZDateTime.now(tz.local).add(const Duration(hours: 24)), 
       NotificationDetails(
         android: AndroidNotificationDetails(
             'dailymatches', 

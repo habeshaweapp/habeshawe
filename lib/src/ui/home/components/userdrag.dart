@@ -11,6 +11,7 @@ import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import '../../../Blocs/ProfileBloc/profile_bloc.dart';
 import '../../../Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import '../../../Blocs/ThemeCubit/theme_cubit.dart';
+import '../../../Data/Models/tag_helper.dart';
 import '../../../Data/Models/user.dart';
 import '../../Profile/profile.dart';
 import 'package:swipe_cards/swipe_cards.dart';
@@ -87,27 +88,24 @@ class UserCard extends StatelessWidget {
                         
                           physics: const  NeverScrollableScrollPhysics(),
                           itemBuilder: (context,index) {
-                                 return Hero(
-                                  tag: 'swipeImage',
-                                   child: Container(         
-                                        decoration:  BoxDecoration(
-                                        image: DecorationImage(
-                                        image: CachedNetworkImageProvider(
-                                          user.imageUrls[index],
-                                        )
-                                        ,
-                                        fit: BoxFit.cover
-                                        ),
-                                       borderRadius: BorderRadius.circular(15) ), 
+                                 return Container(         
+                                      decoration:  BoxDecoration(
+                                      image: DecorationImage(
+                                      image: CachedNetworkImageProvider(
+                                        user.imageUrls[index],
+                                      )
+                                      ,
+                                      fit: BoxFit.cover
+                                      ),
+                                     borderRadius: BorderRadius.circular(15) ), 
                                  
-                                        // child: CachedNetworkImage(
-                                        //   imageUrl: user.imageUrls[index],
-                                        //   fit: BoxFit.cover,
-                                        //   fadeInDuration: Duration.zero,
-                                        //   fadeOutDuration: Duration.zero,
-                                        //   ),
-                                                                ),
-                                 );
+                                      // child: CachedNetworkImage(
+                                      //   imageUrl: user.imageUrls[index],
+                                      //   fit: BoxFit.cover,
+                                      //   fadeInDuration: Duration.zero,
+                                      //   fadeOutDuration: Duration.zero,
+                                      //   ),
+                                                              );
                           }
                            ),
                      ),
@@ -193,16 +191,28 @@ class UserCard extends StatelessWidget {
                             Container(
                               margin: EdgeInsets.only(left: 10),
                               
-                              child: Text('${user.name}  ${user.age}', 
-                              
-                              style: TextStyle(
-                                color: Colors.white, 
-                                fontSize: 24,
-                                decoration: TextDecoration.none,
-                                fontWeight: FontWeight.w300
-                                )
-                                )
-                                ),
+                              child: Row(
+                                children: [
+                                  Text('${user.name}  ${user.age}', 
+                                  
+                                  style: TextStyle(
+                                    color: Colors.white, 
+                                    fontSize: 24,
+                                    decoration: TextDecoration.none,
+                                    fontWeight: FontWeight.w300
+                                    )
+                                    ),
+                                    SizedBox(width: 10,),
+
+                                  (user.verified!=null && user.verified != VerifiedStatus.pending.name && user.verified != VerifiedStatus.notVerified.name) ? SizedBox(
+                              child: 
+                                    TagHelper.getTag(name: user.verified!, size: 20 ),
+
+                                ):SizedBox(),
+                              ]
+                            )
+                            ),
+  
                             SizedBox(height: 10,),
                             Container(
                               margin: EdgeInsets.only(left: 10),
@@ -252,7 +262,7 @@ class UserCard extends StatelessWidget {
                             SizedBox(height: 15,),
             
                             Container(
-                              width: size.width*0.9,
+                              width: size.width*0.8,
                               child: Wrap(
                                 
                                 children:
@@ -350,8 +360,8 @@ class UserCard extends StatelessWidget {
     );
   }
 
-  double calculateDistance(Position myLocation, List userLocation)  {
-    var km = Geolocator.distanceBetween(myLocation.latitude, myLocation.longitude, userLocation[0], userLocation[1])/1000;
+  double calculateDistance(List<double> myLocation, List userLocation)  {
+    var km = Geolocator.distanceBetween(myLocation[0], myLocation[1], userLocation[0], userLocation[1])/1000;
     return km;
     
     //return Geolocator.distanceBetween(7.3666915, 38.6714959, userLocation[0], userLocation[1])~/1000;

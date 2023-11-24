@@ -45,6 +45,8 @@ class RemoteConfigService{
 
   bool shutDownBefore() => _remoteConfig.getBool('shutDownBefore');
 
+  int getCount(String key) => _remoteConfig.getInt(key);
+
   // static void checkShutUpdate(){
   //   shutDownStream.sink.addStream(getAppVersionToStop() )
   // }

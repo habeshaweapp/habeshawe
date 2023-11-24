@@ -53,4 +53,14 @@ class SearchName extends MatchEvent{
   List<Object> get props => [userId, gender, name];
 }
 
+class LoadMoreMatches extends MatchEvent{
+  final String userId;
+  final Gender gender;
+  final Timestamp startAfter;
 
+  const LoadMoreMatches({required this.userId, required this.gender, required this.startAfter});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [userId, gender,startAfter];
+}

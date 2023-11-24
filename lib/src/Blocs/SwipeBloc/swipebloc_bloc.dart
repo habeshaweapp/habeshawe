@@ -11,9 +11,11 @@ import 'package:lomi/src/Data/Repository/Database/ad_repository.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/dataApi/explore_json.dart';
 
+import '../../Data/Models/boostedModel.dart';
 import '../../Data/Models/likes_model.dart';
 import '../../Data/Models/model.dart';
 import '../../Data/Models/userpreference_model.dart';
+import '../../Data/Repository/Notification/notification_service.dart';
 import '../AdBloc/ad_bloc.dart';
 import '../AuthenticationBloc/bloc/auth_bloc.dart';
 import '../PaymentBloc/payment_bloc.dart';
@@ -52,13 +54,20 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     on<LoadUserAd>(_onLoadUserAd);
     on<AdSwipeEnded>(_onAdSwipeEnded);
     on<BoostMe>(_onBoostMe);
+    on<CheckLastTime>(_onCheckLastTime);
+    on<EmitBoosted>(_onEmitBoosted);
   
 
     //if(state.completedTime == null && state.users.isEmpty){
+      if(_authBloc.state.firstTime!){
+      add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!));
+      }else{
+        add(CheckLastTime());
+      }
       add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!));
    // }
-    print(state);
-    print(state);
+    // print(state);
+    // print(state);
 
     // _authSubscription = _authBloc.stream.listen((state) {
     //   if(state.user != null && state.accountType != Gender.nonExist){
@@ -69,6 +78,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     //add(LoadUsers(userId: _authBloc. state.user!.uid, users: _authBloc. state.accountType! ));
 
     _boostedSubscription = _databaseRepository.boostedUsers(_authBloc.state.accountType!).listen((boosted) {
+
       add(BoostedLoaded(users: boosted));
      },onDone: () {
        
@@ -91,7 +101,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
      
 
     if(event.prefes!.discoverBy == 0){
-      try {
+      //try {
         users = await _databaseRepository.getUsersMainLogic(event.userId, event.users, event.prefes!)
         .timeout(const Duration(minutes: 30), onTimeout: () { 
         if(state.loadAttempt >=3){
@@ -104,10 +114,10 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
         
         },);
         
-      } catch (e) {
-         print(e);
-         emit(state.copyWith(swipeStatus: SwipeStatus.error, error: e.toString() ));
-      }
+      // } catch (e) {
+      //    print(e);
+      //    emit(state.copyWith(swipeStatus: SwipeStatus.error, error: e.toString() ));
+      // }
       
     }
     if(event.prefes!.discoverBy == 1){
@@ -153,6 +163,8 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
 
  
     emit(state.copyWith(swipeStatus: SwipeStatus.loaded, users: users, loadFor: LoadFor.daily ));
+
+    _databaseRepository.updateLastTime(userId: event.userId, gender: event.users);
 
   
     
@@ -259,7 +271,23 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   }
 
   FutureOr<void> _onBoostedLoaded(BoostedLoaded event, Emitter<SwipeState> emit) {
-    emit(state.copyWith(boostedUsers: event.users));
+    var boosted = event.users;
+      for(var boost in boosted){
+        var boostedTime = boost.timestamp.toDate();
+        int diff = DateTime.now().difference(boostedTime).inMinutes;
+        if(diff >30){
+          boosted.remove(boost);
+          _databaseRepository.removeBoost(boost: boost);
+        }
+      }
+    var users = boosted.map((boost) => boost.user).toList();
+
+    if(state.users.isEmpty){
+      emit(state.copyWith(users: users, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.boosted, boostedUsers: null));
+      NotificationService().showMessageReceivedNotifications(title: 'Matches', body: 'You have match to see!', payload: 'boosted', channelId: 'boosted');
+    }else{
+    emit(state.copyWith(boostedUsers: users));
+    }
   }
 
   FutureOr<void> _onLoadUserAd(LoadUserAd event, Emitter<SwipeState> emit)async {
@@ -335,5 +363,21 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     } catch (e) {
       
     }
+  }
+
+  FutureOr<void> _onCheckLastTime(CheckLastTime event, Emitter<SwipeState> emit) async{
+    var prefs= await _databaseRepository.getPreference(_authBloc.state.user!.uid, _authBloc.state.accountType!);
+    DateTime last = prefs.lastTime!.toDate();
+    int diff =  DateTime.now().difference(last).inMinutes;
+    if(diff >= 1440){
+      add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, prefes: prefs ));
+    }
+  }
+
+  FutureOr<void> _onEmitBoosted(EmitBoosted event, Emitter<SwipeState> emit) {
+
+      emit(state.copyWith(users: state.boostedUsers, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.boosted, boostedUsers: null));
+      NotificationService().showMessageReceivedNotifications(title: 'Matches', body: 'You have match to see!', payload: 'boosted', channelId: 'boosted');
+   
   }
 }

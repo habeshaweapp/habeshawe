@@ -176,7 +176,9 @@ class _StartScreenState extends State<StartScreen>
           thumb: ValueListenableBuilder<bool>(
             valueListenable: _controller, 
             builder: (_,value,__){
-              return Icon(value?Icons.lightbulb : LineIcons.moon );
+              return Transform.rotate(
+                angle: -10,
+                child: Icon(value?Icons.brightness_4 : Icons.brightness_2,size: 17, ));
             }),
         ),
       ),
@@ -383,7 +385,7 @@ class _StartScreenState extends State<StartScreen>
         onPressed: onPressed,
         style: ButtonStyle(
           backgroundColor: MaterialStateProperty.all(
-              isDark ? Colors.grey[900] : Colors.white),
+              isDark ? Colors.teal[900] : Colors.white),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30.0),

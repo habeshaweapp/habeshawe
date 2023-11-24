@@ -37,6 +37,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogInWithGoogle>(_onLogInWithGoogle);
     on<LogOut>(_onLogOut);
     on<DeleteAccount>(_onDeleteAccount);
+    //on<SignUpCompeleted>(_onSignUpCompeleted);
   }
 
 
@@ -59,7 +60,7 @@ void _authUserChanged(AuthUserChanged event, Emitter<AuthState> emit) async{
      isCompleted = await _databaseRepository.isCompleted(isUserAlreadyRegistered,event.user!.uid);
     }
     
-    emit(AuthState.authenticated(user: event.user!,accountType: isUserAlreadyRegistered , isCompleted: isCompleted));
+    emit(AuthState.authenticated(user: event.user!,accountType: isUserAlreadyRegistered , isCompleted: isCompleted, firstTime: event.firstTime));
     
   }else{
     emit(AuthState.unauthenticated());
@@ -72,12 +73,13 @@ void _authUserChanged(AuthUserChanged event, Emitter<AuthState> emit) async{
 }
 
 FutureOr<void> _onLogOut(LogOut event, Emitter<AuthState> emit) async {
-  emit(const AuthState.unauthenticated());
-  await _databaseRepository.updateOnlinestatus(
+  
+  _databaseRepository.updateOnlinestatus(
                             userId: state.user!.uid, 
                             gender: state.accountType!, 
                             online: false
                              );
+  emit(const AuthState.unauthenticated());
   await _authRepository.signOut();
   // emit(const AuthState.unauthenticated());
   await HydratedBloc.storage.clear();
@@ -85,29 +87,8 @@ FutureOr<void> _onLogOut(LogOut event, Emitter<AuthState> emit) async {
 }
 
 Future<void> _onLogInWithGoogle(LogInWithGoogle event, Emitter<AuthState> emit) async{
-  // try {
-  //       final result = await _authRepository.logInWithGoogle();
-  //       bool isUserAlreadyRegistered = await DatabaseRepository().isUserAlreadyRegistered(result!.uid);
-  //       emit(AuthState.authenticated(user: result!, accountType: !isUserAlreadyRegistered));
-        
-  //     }on Exception catch (e) {
-  //       print(e.toString());
-  //     }
+ 
 }
-
-  // @override
-  // AuthState? fromJson(Map<String, dynamic> json) {
-  //   // TODO: implement fromJson
-  //   return AuthState.fromMap(json);
-  // }
-
-  // @override
-  // Map<String, dynamic>? toJson(AuthState state) {
-  //   // TODO: implement toJson
-  //   return  state.toMap();
-  //   //state.toJson();
-  // }
-  
 
 
   FutureOr<void> _onDeleteAccount(DeleteAccount event, Emitter<AuthState> emit) {
@@ -120,6 +101,8 @@ Future<void> _onLogInWithGoogle(LogInWithGoogle event, Emitter<AuthState> emit) 
       
     }
   }
+
+ 
 }
 
 

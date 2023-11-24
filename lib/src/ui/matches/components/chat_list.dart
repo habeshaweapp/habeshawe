@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
@@ -15,6 +16,7 @@ class ChatList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = context.read<ThemeCubit>().state==ThemeMode.dark;
     return ListTile(
       leading: 
       //MatchesImage(url: imageUrl),
@@ -37,15 +39,15 @@ class ChatList extends StatelessWidget {
           if(snapshot.hasData){
           var lastMessage = snapshot.data?.first;
          // time = lastMessage
-         if(lastMessage!.senderId == match.id && lastMessage.seen == null){
-            NotificationService().showMessageReceivedNotifications(title: match.name, body: lastMessage.message, payload: 'chat');
+         if(lastMessage!.senderId == match.id && (lastMessage.seen == null)){
+            NotificationService().showMessageReceivedNotifications(title: match.name, body: lastMessage.message, payload: 'chat', channelId: lastMessage.senderId);
           }
           return Text(
             lastMessage.message,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             //softWrap: true,
-            style: Theme.of(context).textTheme.bodySmall,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(color:(lastMessage.senderId == match.id && (lastMessage.seen == null))?isDark?Colors.white:Colors.black:null, fontWeight: (lastMessage.senderId == match.id && (lastMessage.seen == null))?FontWeight.bold:null ),
             
           );
           }

@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
@@ -17,6 +19,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   final AuthBloc _authBloc;
   StreamSubscription? _authSubscription;
   StreamSubscription? _matchesSubscription;
+  ScrollController matchController = ScrollController();
   MatchBloc({
     required DatabaseRepository databaseRepository,
     required AuthBloc authBloc,
@@ -31,14 +34,14 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
     on<UpdateMatches>(_onUpdateMatches);
     on<SearchName>(_onSearchName);
+    on<LoadMoreMatches>(_onLoadMoreMatches);
     
-   // on<UpdateLikes>(_onUpdateLikes);
-
-    // _authSubscription = _authBloc.stream.listen((state) { 
-    //   if(state.user != null && state.accountType != Gender.nonExist){
-    //     add(LoadMatchs(userId: state.user!.uid, users: state.accountType!));       
-    //   }
-    // });
+    matchController.addListener(() {
+      if(matchController.position.pixels == matchController.position.maxScrollExtent){
+        var last= state.matchedUsers.last.timestamp;
+        add(LoadMoreMatches(userId: _authBloc.state.user!.uid, gender: _authBloc.state.accountType!, startAfter: last!));
+      }
+    });
   }
 
   void _onLoadMatchs(LoadMatchs event, Emitter<MatchState> emit) {
@@ -119,4 +122,15 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   
 
   
+
+  FutureOr<void> _onLoadMoreMatches(LoadMoreMatches event, Emitter<MatchState> emit) async{
+    try {
+      var newMatches = await _databaseRepository.loadMoreMatches(userId: event.userId, gender:event.gender,startAfter:event.startAfter);
+      var matches = state.matchedUsers;
+      emit(state.copyWith(matchedUsers: [...matches, newMatches]));
+      
+    } catch (e) {
+      
+    }
+  }
 }

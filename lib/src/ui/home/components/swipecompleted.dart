@@ -276,7 +276,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         splashColor: state.totalAdWatchedReOn>=3?Colors.white:null,
                                         highlightColor: state.totalAdWatchedReOn>=3?Colors.white:null,
                                         onTap: (){
-                            
+                                          if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed ){
                                           if(context.read<AdBloc>().state.isLoadedRewardedAd){
                                             context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedOnline));
                                           if(context.read<AdBloc>().state.adWatchedOnline! >=1 ){
@@ -289,6 +289,17 @@ class SwipeCompletedWidget extends StatelessWidget {
                                             )
                                             );
                             
+                                          }
+
+                                          }else{
+                                            context.read<SwipeBloc>().add(LoadUserAd(
+                                            userId: context.read<AuthBloc>().state.user!.uid, 
+                                            users: context.read<AuthBloc>().state.accountType!,
+                                            loadFor: LoadFor.adOnline,
+                                            limit: 1
+                                            )
+                                            );
+
                                           }
                               
                                           }

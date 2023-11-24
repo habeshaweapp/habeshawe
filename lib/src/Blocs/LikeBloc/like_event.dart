@@ -48,3 +48,15 @@ class UpdateLikes extends LikeEvent{
   List<Object> get props => [users];
 }
 
+class LoadMoreLikes extends LikeEvent{
+  final String userId;
+  final Gender gender;
+  final Timestamp startAfter;
+
+  const LoadMoreLikes({required this.userId, required this.gender, required this.startAfter});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [userId, gender,startAfter];
+}
+

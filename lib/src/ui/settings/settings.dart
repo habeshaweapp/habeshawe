@@ -54,7 +54,9 @@ class Settings extends StatelessWidget {
               thumb: ValueListenableBuilder<bool>(
                 valueListenable: _controller, 
                 builder: (_,value,__){
-                  return Icon(value? Icons.lightbulb: Icons.lightbulb_outline);
+                  return Transform.rotate(
+                angle: -10,
+                child: Icon(value?Icons.brightness_2 : Icons.brightness_4,size: 17,color:value? Colors.black:Colors.white, ));
                 }),
             ),
           ),

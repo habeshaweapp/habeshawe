@@ -15,9 +15,10 @@ class Profile extends StatelessWidget {
   final ProfileFrom profileFrom;
   final Like? likedMeUser;
   final MatchEngine? matchEngine;
+  final BuildContext? ctrx;
   
 
-   Profile({Key? key, required this.user,required this.profileFrom, this.likedMeUser, this.matchEngine }) : super(key: key);
+   Profile({Key? key, required this.user,required this.profileFrom, this.likedMeUser, this.matchEngine, this.ctrx }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class Profile extends StatelessWidget {
       // ),
       // extendBodyBehindAppBar: false,
 
-      body: Body(user: user, profileFrom: profileFrom, likedMeUser: likedMeUser, matchEngine: matchEngine),
+      body: Body(user: user, profileFrom: profileFrom, likedMeUser: likedMeUser, matchEngine: matchEngine, ctrx: ctrx),
     );
     
   }

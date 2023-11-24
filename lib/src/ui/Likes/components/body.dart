@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:lomi/src/Blocs/AdBloc/ad_bloc.dart';
 import 'package:lomi/src/Blocs/LikeBloc/like_bloc.dart';
+import 'package:lomi/src/Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Models/model.dart';
@@ -77,6 +78,7 @@ class Body extends StatelessWidget {
                         context: context,
                         removeTop: true,
                         child: GridView.builder(
+                            controller: context.read<LikeBloc>().likeController,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2,
@@ -112,13 +114,16 @@ class Body extends StatelessWidget {
                                                 builder: (ctx) =>
                                                     BlocProvider.value(value: context.read<ProfileBloc>(),
                                                         child: BlocProvider.value(value: context.read<LikeBloc>(),
-                                                        child: BlocProvider.value(value:context.read<PaymentBloc>(),child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index] ))))));
+                                                        child: BlocProvider.value(value:context.read<PaymentBloc>(),
+                                                        child: BlocProvider.value(value:context.read<SharedpreferenceCubit>(),
+                                                        child: BlocProvider.value(value:context.read<UserpreferenceBloc>(),
+                                                        child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index],ctrx: context, ))))))));
 
                                     }else{
-                                      //showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
-                                      Navigator.push(context, MaterialPageRoute(builder: (ctx)=> 
-                                          BlocProvider.value(value: context.read<MatchBloc>(),
-                                          child: ItsAMatch(user: state.likedMeUsers[index]))));
+                                      showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
+                                      // Navigator.push(context, MaterialPageRoute(builder: (ctx)=> 
+                                      //     BlocProvider.value(value: context.read<MatchBloc>(),
+                                      //     child: ItsAMatch(user: state.likedMeUsers[index]))));
                                     }
                                     
 

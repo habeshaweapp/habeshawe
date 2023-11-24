@@ -116,6 +116,7 @@ class Body extends StatelessWidget {
                 child: (inactiveMatches.length !=0 || state.searchResult!.isNotEmpty )? ListView.builder(
                   shrinkWrap: true,
                   scrollDirection: Axis.horizontal,
+                  controller: context.read<MatchBloc>().matchController,
                   itemCount: state.isUserSearching?state.searchResultFor==SearchResultFor.matched? state.searchResult?.length:1: inactiveMatches.length,
                   itemBuilder: (context, index){
                     return GestureDetector(

@@ -151,7 +151,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 Widget HomeBody(){
   return IndexedStack(
     index: pageIndex,
-    children: const  [
+    children:   [
        ExplorePage(),
        LikesScreen(),
        MatchesScreen(),

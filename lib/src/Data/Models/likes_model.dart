@@ -4,7 +4,7 @@ import 'package:lomi/src/Data/Models/user.dart';
 
 class Like extends Equatable{
   final String userId;
-  final String timestamp;
+  final Timestamp timestamp;
   final User user;
   final bool? superLike;
   // final String name;
@@ -24,7 +24,7 @@ class Like extends Equatable{
   factory Like.fromSnapshoot(DocumentSnapshot snap){
     return Like(
       userId: snap['userId'],
-      timestamp: snap['timestamp'].toString(),
+      timestamp: snap['timestamp'],
       superLike: (snap.data() as Map<String, dynamic>).containsKey('superLike') ? snap['superLike'] : false,
       user: User.fromSnapshootMapType(snap)
       );

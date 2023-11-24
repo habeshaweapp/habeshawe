@@ -10,6 +10,6 @@ part of 'sharedpreference_cubit.dart';
 // class SharedpreferenceInitial extends SharedpreferenceState {}
 
 class Location {
-  final Position? myLocation;
+  final List<double>? myLocation;
   const Location({ this.myLocation});
 }

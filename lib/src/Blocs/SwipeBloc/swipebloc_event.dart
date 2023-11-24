@@ -58,7 +58,7 @@ class SwipeEnded extends SwipeEvent{
 }
 
 class BoostedLoaded extends SwipeEvent{
-  final List<User> users;
+  final List<Boosted> users;
   
    BoostedLoaded({required this.users});
 
@@ -97,3 +97,7 @@ class BoostMe extends SwipeEvent{
   // TODO: implement props
   List<Object?> get props => [user];
 }
+
+class CheckLastTime extends SwipeEvent{}
+
+class EmitBoosted extends SwipeEvent{}

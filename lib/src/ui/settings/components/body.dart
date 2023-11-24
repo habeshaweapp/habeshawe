@@ -226,9 +226,9 @@ class Body extends StatelessWidget {
                               children: [
                                 Text('Only show people from my Country\ncountry (${(context.read<ProfileBloc>().state as ProfileLoaded).user.country}).',  
                                 style: Theme.of(context).textTheme.bodySmall, ),
-                                Switch(value: state.userPreference!.onlyShowInThisRange!, 
+                                Switch(value: state.userPreference!.onlyShowFromMyCountry!, 
                                 onChanged: (value){
-                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(onlyShowInThisRange: value)));
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(onlyShowFromMyCountry: value)));
                                   isThereChange = true;
                                 }),
                               ],
@@ -249,9 +249,29 @@ class Body extends StatelessWidget {
                               children: [
                                 Text('Only show people from my City\ncurrent city (${(context.read<ProfileBloc>().state as ProfileLoaded).user.countryCode}).', 
                                 style: Theme.of(context).textTheme.bodySmall, ),
-                                Switch(value: state.userPreference!.onlyShowInThisRange!, 
+                                Switch(value: state.userPreference!.onlyShowFromMyCity??false, 
                                 onChanged: (value){
-                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(onlyShowFromMyCity: value)));
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(onlyShowFromMyCity: value, onlyShowFromMyCountry: value)));
+                                  isThereChange = true;
+                                }),
+                              ],
+                             ),
+                             ),
+                            ),
+
+                            AbsorbPointer(
+                              absorbing: state.userPreference!.discoverBy != DiscoverBy.preference.index,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                                                      
+                              child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Only show Recently-Active/Online matches', 
+                                style: Theme.of(context).textTheme.bodySmall, ),
+                                Switch(value: state.userPreference!.onlyShowOnlineMatches??false, 
+                                onChanged: (value){
+                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(onlyShowOnlineMatches: value)));
                                   isThereChange = true;
                                 }),
                               ],
@@ -356,41 +376,41 @@ class Body extends StatelessWidget {
                     
                     
             
-                    SizedBox(height: 20,),
+                    // SizedBox(height: 20,),
 
 
-                    Card(
-                      elevation: 2,
-                      color: isDark ? state.userPreference!.discoverBy == DiscoverBy.online.index?  cardColor :Colors.grey[900] : state.userPreference!.discoverBy == DiscoverBy.online.index? Colors.grey[400]: Colors.white,
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        margin: EdgeInsets.only(top: 5, bottom: 5,),
-                        decoration: BoxDecoration(
-                          //color: Colors.white,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
+                    // Card(
+                    //   elevation: 2,
+                    //   color: isDark ? state.userPreference!.discoverBy == DiscoverBy.online.index?  cardColor :Colors.grey[900] : state.userPreference!.discoverBy == DiscoverBy.online.index? Colors.grey[400]: Colors.white,
+                    //   child: Container(
+                    //     padding: EdgeInsets.all(10),
+                    //     margin: EdgeInsets.only(top: 5, bottom: 5,),
+                    //     decoration: BoxDecoration(
+                    //       //color: Colors.white,
+                    //     ),
+                    //     child: Column(
+                    //       mainAxisAlignment: MainAxisAlignment.start,
+                    //       children: [
                             
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Discover By - Online Matches'),
-                                Switch(value: state.userPreference!.discoverBy == DiscoverBy.online.index , 
-                                onChanged: (value){
+                    //         Row(
+                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           children: [
+                    //             Text('Discover By - Online Matches'),
+                    //             Switch(value: state.userPreference!.discoverBy == DiscoverBy.online.index , 
+                    //             onChanged: (value){
                                   
-                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(discoverBy: DiscoverBy.online.index)));
-                                  isThereChange = true;
-                                }),
-                              ],
-                            ),
-                            Text('Online Matches gives you matches who is currently online the world.',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
-                    ),
-                          ],
-                        ),
-                      ),
-                    ),
+                    //               context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(discoverBy: DiscoverBy.online.index)));
+                    //               isThereChange = true;
+                    //             }),
+                    //           ],
+                    //         ),
+                    //         Text('Online Matches gives you matches who is currently online the world.',
+                    //     style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                    // ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     // Text('Going global will allow you to see people nearby and from around the world.',
                     //     style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
                     // ),

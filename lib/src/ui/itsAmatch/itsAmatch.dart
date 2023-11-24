@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,7 +35,7 @@ class ItsAMatch extends StatelessWidget {
               height: MediaQuery.of(context).size.height,
               decoration: BoxDecoration(
                 
-                image: DecorationImage(image: NetworkImage(
+                image: DecorationImage(image: CachedNetworkImageProvider(
                   user.user.imageUrls[0],
                   
               ), fit: BoxFit.cover

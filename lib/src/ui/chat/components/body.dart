@@ -88,7 +88,7 @@ class _BodyState extends State<Body> {
                               }
                               var separatorDate = '';
                               if(index == 0 && state.messages.length == 1){
-                                separatorDate = groupMessages(state.messages[index].timestamp!.toDate());
+                                separatorDate = groupMessages(state.messages[index].timestamp?.toDate());
 
                               }else if(index ==state.messages.length -1){
                                 separatorDate = groupMessages(state.messages[state.messages.length-1].timestamp!.toDate());
@@ -132,6 +132,7 @@ class _BodyState extends State<Body> {
                                         onTap: (){
                                           messagePressed(context, state.messages[index]);
                                         },
+                                        onLongPress:()=> messagePressed(context, state.messages[index]),
                                         child: Container(
                                           constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.83),
                                           padding: EdgeInsets.all(10),
@@ -178,8 +179,10 @@ class _BodyState extends State<Body> {
                                         child:GestureDetector(
                                           onTap: (){
                                             Navigator.push(context, MaterialPageRoute(builder: (context)=> FullScreenImage(imageUrl: state.messages[index].imageUrl!)) );
-
+                                            
                                           },
+                                          onTapDown: getPosition,
+                                          onLongPress : () => ImagePressed(context, state.messages[index]),
                                           child: ClipRRect(
                                             borderRadius: BorderRadius.circular(15),
                                             child: Stack(
@@ -239,37 +242,44 @@ class _BodyState extends State<Body> {
                                       state.messages[index].imageUrl == null?
                                           Align(
                                           alignment: Alignment.topLeft,
-                                          child: Container(
-                                            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.83),
-                                            padding:const EdgeInsets.all(10),
-                                            decoration: BoxDecoration(
-                                              borderRadius:const BorderRadius.only(
-                                            bottomRight: Radius.circular(20),
-                                            topLeft: Radius.circular(20),
-                                            topRight: Radius.circular(20)
+                                          child: GestureDetector(
+                                            onTapDown: getPosition,
+                                            onTap: (){
+                                              messagePressedMatch(context, state.messages[index]);
+                                            },
+                                            onLongPress:()=> messagePressedMatch(context, state.messages[index]),
+                                            child: Container(
+                                              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.83),
+                                              padding:const EdgeInsets.all(10),
+                                              decoration: BoxDecoration(
+                                                borderRadius:const BorderRadius.only(
+                                              bottomRight: Radius.circular(20),
+                                              topLeft: Radius.circular(20),
+                                              topRight: Radius.circular(20)
+                                              ),
+                                                color: isDark? Colors.grey[800] : Colors.grey.shade200,
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    state.messages[index].message,
+                                                    //userMatch.chat![0].messages[index].message,
+                                                    style: Theme.of(context).textTheme.bodySmall,),
+                                          
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.end,
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                         //Icon(Icons.check, size: 13,),
+                                                   
+                                                        Text( DateFormat('hh:mm a').format(state.messages[index].timestamp!.toDate() ),
+                                                        style: TextStyle(fontSize: 8 )),
+                                                      ],
+                                                    )
+                                                ],
+                                              )
                                             ),
-                                              color: isDark? Colors.grey[800] : Colors.grey.shade200,
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: [
-                                                Text(
-                                                  state.messages[index].message,
-                                                  //userMatch.chat![0].messages[index].message,
-                                                  style: Theme.of(context).textTheme.bodySmall,),
-
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.end,
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                       //Icon(Icons.check, size: 13,),
-                                                 
-                                                      Text( DateFormat('hh:mm a').format(state.messages[index].timestamp!.toDate() ),
-                                                      style: TextStyle(fontSize: 8 )),
-                                                    ],
-                                                  )
-                                              ],
-                                            )
                                           )
                                       //   ],
                                       // )
@@ -579,11 +589,16 @@ class _BodyState extends State<Body> {
 
   }
 
-  String groupMessages(DateTime date){
+  String groupMessages(DateTime? date){
     var todaydDate = DateTime.now();
     var today = DateTime(todaydDate.year, todaydDate.month, todaydDate.day );
     var yesterday = DateTime(todaydDate.year, todaydDate.month, todaydDate.day-1 );
-    final aDate = DateTime(date.year, date.month, date.day );
+    var aDate = null;
+    if(date == null){
+      aDate = DateTime.now();
+    }else{
+     aDate = DateTime(date.year, date.month, date.day );
+    }
 
     if(aDate == today){
       return 'today';
@@ -599,7 +614,100 @@ class _BodyState extends State<Body> {
     }
   }
 
-  void messagePressed(BuildContext context, Message message) {
+  void messagePressedMatch(BuildContext context, Message message, ) {
+    showMenu(
+      context: context, 
+      position: relrectsize,
+      items: [
+        PopupMenuItem(
+          onTap: (){
+            Clipboard.setData(ClipboardData(text: message.message));
+          
+
+          },
+          child: Row(children: [Icon(Icons.copy),SizedBox(width: 10,), Text('Copy') ],)
+          ),
+      ]
+    );
+  }
+
+  void ImagePressed(BuildContext context, Message message, ) {
+    showMenu(
+      context: context, 
+      position: relrectsize,
+      items: [
+        PopupMenuItem(
+          //padding: EdgeInsets.all(0),
+          height: 25,
+         
+          onTap: (){
+           // Navigator.pop(context);
+            
+            //context.read<ChatBloc>().add(DeleteMessage(message: message, gender: context.read<AuthBloc>().state.accountType!));
+          },
+          child: GestureDetector(
+            onTap: (){
+              //Navigator.pop(context);
+              showDialog(
+              context: context, 
+              builder: (ctx)=> AlertDialog(
+                title: Text('Delete message'),
+                content: SizedBox(
+                  width: MediaQuery.of(context).size.width*0.8,
+
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(child: Text('Are you sure you want to delete this\nmessage?',textAlign: TextAlign.start, style: TextStyle(fontSize: 12.sp),)),
+                      Row(
+                        children: [
+                          Checkbox(value: deleteAlso, 
+                          onChanged: (value){
+                            setState(() {
+                              deleteAlso = value!;
+                            });
+                
+                          }
+                          ),
+                          Text('Also delete for ${widget.userMatch.name}',style: TextStyle(fontSize: 11.sp))
+                          ],)
+                
+                    ],
+                  ),
+                ),
+
+                actions: [
+                  TextButton(
+                    onPressed: (){
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    }, 
+                    child: Text('cancel', style: TextStyle(color: Colors.teal),)
+                    ),
+                  TextButton(
+                    onPressed: (){
+                      context.read<ChatBloc>().add(DeleteMessage(message: message, gender: context.read<AuthBloc>().state.accountType!, deleteAlso: deleteAlso));
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+
+                    }, 
+                    child: Text('Delete', style: TextStyle(color: Colors.red),)
+                    ),
+                  
+                ],
+
+              ) );
+
+            },
+            child: Row(children: [Icon(Icons.delete,size:18.sp ),SizedBox(width: 10,), Text('Delete', style: TextStyle(fontSize: 12.sp),) ],))
+          ),
+      ]
+    );
+  }
+
+  void messagePressed(BuildContext context, Message message ) {
     showMenu(
       context: context, 
       position: relrectsize,
@@ -646,7 +754,8 @@ class _BodyState extends State<Body> {
 
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    //mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(child: Text('Are you sure you want to delete this\nmessage?',textAlign: TextAlign.start, style: TextStyle(fontSize: 12.sp),)),
                       Row(

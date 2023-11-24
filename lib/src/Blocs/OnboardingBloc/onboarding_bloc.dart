@@ -102,7 +102,7 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
      
 
       if(completed){
-        _authBloc.add(AuthUserChanged(user: _authBloc.state.user));
+        _authBloc.add(AuthUserChanged(user: _authBloc.state.user, firstTime: true));
       }
       }
       

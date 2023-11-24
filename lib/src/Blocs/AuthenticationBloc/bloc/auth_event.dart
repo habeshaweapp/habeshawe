@@ -9,9 +9,11 @@ abstract class AuthEvent extends Equatable {
 
 class AuthUserChanged extends AuthEvent{
   final auth.User? user;
+  final bool? firstTime;
 
   const AuthUserChanged({
     required this.user,
+    this.firstTime =false
   });
 
   @override
@@ -24,3 +26,5 @@ class LogInWithGoogle extends AuthEvent{}
 class LogOut extends AuthEvent{}
 
 class DeleteAccount extends AuthEvent{}
+
+class SignUpCompeleted extends AuthEvent{}

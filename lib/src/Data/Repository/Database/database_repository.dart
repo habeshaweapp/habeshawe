@@ -17,6 +17,7 @@ import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import 'package:lomi/src/Data/Repository/Storage/storage_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Models/boostedModel.dart';
 import '../../Models/likes_model.dart';
 import '../../Models/model.dart';
 import '../../Models/payment_model.dart';
@@ -180,7 +181,8 @@ class DatabaseRepository extends BaseDatabaseRepository{
     );
 
  
-    String viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get().then((value) => value['matches']);
+    var viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get();
+    String liked = viewed['liked'];
 
     await _firebaseFirestore
         .collection(user.gender)
@@ -188,7 +190,18 @@ class DatabaseRepository extends BaseDatabaseRepository{
         .collection('viewedProfiles')
         .doc('viewed')
         .update({
-          'matches': '$viewed,${matchUser.id} true'
+          'liked': '$liked,${matchUser.id}'
+        }
+        );
+
+    String likedNumbers = viewed['likedNumbers'];
+    await _firebaseFirestore
+        .collection(user.gender)
+        .doc(user.id)
+        .collection('viewedProfiles')
+        .doc('viewed')
+        .update({
+          'liked': '$liked,${matchUser.number}'
         }
         );
         // .doc(matchUser.id)
@@ -268,34 +281,29 @@ class DatabaseRepository extends BaseDatabaseRepository{
     try {
     
    // await _firebaseFirestore.collection(user.gender).doc(userId).collection('passed').doc(passedUser.id).set(passedUser.toMap());
-    String matches = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get().then((value) => value['matches']);
-    String newMatches = '$matches,${passedUser.id} false';
+    var viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get();
+    String passed = viewed['passed'];
+    String newPassed = '$passed,${passedUser.id}';
     await _firebaseFirestore
         .collection(user.gender)
         .doc(user.id)
         .collection('viewedProfiles')
         .doc('viewed')
         .update({
-          'matches': newMatches
+          'passed': newPassed
         });
 
-        // .doc(passedUser.id)
-        // .set({'liked' : false});
+    String passedNumbers = viewed['passedNumbers'];
+    String newPassedNums = '$passedNumbers,${passedUser.number}';
+    await _firebaseFirestore
+        .collection(user.gender)
+        .doc(user.id)
+        .collection('viewedProfiles')
+        .doc('viewed')
+        .update({
+          'passedNumbers': newPassedNums
+        });
 
-    // final result = await _firebaseFirestore.collection(user.gender)
-    //     .doc(user.id)
-    //     .collection('likes')
-    //     .doc(passedUser.id)
-    //     .get();
-
-    // if(result.exists){
-    //   await _firebaseFirestore.collection(user.gender)
-    //         .doc(user.id)
-    //         .collection('likes')
-    //         .doc(passedUser.id)
-    //         .delete();
-
-    // }
 
     }on FirebaseException catch(e){
       print(e.message);
@@ -313,6 +321,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   .doc(userId)
   .collection('matches')
   .orderBy('timestamp', descending: true)
+  .limit(10)
   .snapshots()
   .map((snap) => snap.docs
   .map((match) => UserMatch.fromSnapshoot(match)).toList());
@@ -335,6 +344,8 @@ class DatabaseRepository extends BaseDatabaseRepository{
   return _firebaseFirestore.collection(users.name)
    .doc(userId)
    .collection('likes')
+   .orderBy('timestamp', descending: true)
+   .limit(10)
    .snapshots()
    .map((snap) => 
     snap.docs
@@ -419,7 +430,19 @@ class DatabaseRepository extends BaseDatabaseRepository{
       
       
     });
-    String viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get().then((value) => value['matches']);
+    //String viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get().then((value) => value['liked']);
+
+    // await _firebaseFirestore
+    //     .collection(user.gender)
+    //     .doc(user.id)
+    //     .collection('viewedProfiles')
+    //     .doc('viewed')
+    //     .update({
+    //       'liked': '$viewed,${likedMeUser.user.id}'
+    //     });
+
+    var viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get();
+    String liked = viewed['liked'];
 
     await _firebaseFirestore
         .collection(user.gender)
@@ -427,8 +450,23 @@ class DatabaseRepository extends BaseDatabaseRepository{
         .collection('viewedProfiles')
         .doc('viewed')
         .update({
-          'matches': '$viewed,${likedMeUser.user.id} true'
-        });
+          'liked': '$liked,${likedMeUser.user.id}'
+        }
+        );
+
+    String likedNumbers = viewed['likedNumbers'];
+    await _firebaseFirestore
+        .collection(user.gender)
+        .doc(user.id)
+        .collection('viewedProfiles')
+        .doc('viewed')
+        .update({
+          'likedNumbers': '$likedNumbers,${likedMeUser.user.number}'
+        }
+        );
+
+
+
 
     await _firebaseFirestore.collection(user.gender)
     .doc(user.id)
@@ -749,21 +787,9 @@ class DatabaseRepository extends BaseDatabaseRepository{
     .get().then((value) => value.data());
 
     //var viewedMatches = viewedProfiles?['matches'];
-    var viewedMatches = viewedProfiles?['matches'].split(',');
-    viewedMatches??=[];
-    List<String> likedMatches =[];
-    List<String> passedMatches =[];
-    for(var match in viewedMatches){
-      if(match.contains(' true')){
-        likedMatches.add(match.replaceAll(' true', ''));
-
-      }else{
-        passedMatches.add(match.replaceAll(' false', ''));
-
-      }
-
-    }
-    viewedMatches = [...likedMatches,...passedMatches];
+    List<String> likedMatches = viewedProfiles?['liked'].split(',');
+    List<String> passedMatches = viewedProfiles?['passed'].split(',');
+    //List<String> viewedMatches = [...likedMatches,...passedMatches];
   
   
   
@@ -795,10 +821,10 @@ class DatabaseRepository extends BaseDatabaseRepository{
     //   //return matchingUsers;
     // }
     if(matchingUsers.isEmpty){
-      //outSideRad.removeWhere((user) => likedMatches.contains(user.id));
+      outSideRad.removeWhere((user) => likedMatches.contains(user.id));
       return outSideRad;
     }
-    //matchingUsers.removeWhere((user) => likedMatches.contains(user.id));
+    matchingUsers.removeWhere((user) => likedMatches.contains(user.id));
     
     return matchingUsers;
   });
@@ -861,7 +887,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
   @override
   Future<List<User>> getUsersMainLogic(String userId, Gender gender, UserPreference preference) async {
     // TODO: implement getUsersMainLogic
-    try {
+    //try {
       List<User> princessOrgents =[];
       
     var collectionRef = _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name);
@@ -874,51 +900,33 @@ class DatabaseRepository extends BaseDatabaseRepository{
     .get().then((value) => value.data());
 
     viewedQueens = viewedProfiles?[gender == Gender.men? 'queens': 'kings'].split(',').map(int.parse).toList();
-    viewedPrincess = viewedProfiles?[gender == Gender.men?'princess':'gents'].split(',');
-    if(viewedProfiles?[gender == Gender.men?'princess':'gents'] != ''){
-      viewedPrincess = viewedProfiles?[gender == Gender.men?'princess':'gents'].split(',').map(int.parse).toList();
-    }
-    List<String> viewedMatches = viewedProfiles?['matches'].split(',');
-    List<String> likedMatches =[];
-    List<String> passedMatches =[];
-    for(var match in viewedMatches){
-      if(match.contains(' true')){
-        likedMatches.add(match.replaceAll(' true', ''));
-
-      }else{
-        passedMatches.add(match.replaceAll(' false', ''));
-
-      }
-
-    }
-    viewedMatches = [...likedMatches,...passedMatches];
+    viewedPrincess = viewedProfiles?[gender == Gender.men?'princess':'gents'].split(',').map(int.parse).toList();
+    
+    List<String> likedMatches = viewedProfiles?['liked'].split(',');
+    List<String> passedMatches = viewedProfiles?['passed'].split(',');
+    List<String> viewedMatches = [...likedMatches,...passedMatches];
    
 
-    final int queenCount =await _firebaseFirestore.collection(gender == Gender.men? 'queens' : 'kings').count().get().then((value) => value.count);
-    final int princessCount = await collectionRef.where('adminchoice', isEqualTo: gender == Gender.men? 'princess':'gents' ).count().get().then((value) => value.count);
+    final int queenCount = await collectionRef.where('adminChoice', isEqualTo: gender == Gender.men?  'queen' : 'king').count().get().then((value) => value.count);
+    final int princessCount = await collectionRef.where('adminChoice', isEqualTo: gender == Gender.men? 'princess':'gent' ).count().get().then((value) => value.count);
     final noOfUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name).count().get().then((value) => value.count, onError: (e)=>print('error counting'));
-
-
+    
     //get queens or kings based on gender
-    for(int i=1; i<=10; i++){
-      var random = Random().nextInt(queenCount);
+    for(int i=1; i<=2; i++){
+      var random = Random().nextInt(queenCount)+1;
        int howmany =0;
-      while(viewedQueens.contains(random)){
+      while(viewedQueens.contains(random)|| randomsForQueens.contains(random)){
         random = Random().nextInt(queenCount)+1;
-        if(howmany>100){
+        if(howmany>queenCount){
           howmany = 0;
           break;
         }
-
+        howmany++;
       }
       randomsForQueens.add(random);
     }
+    randomsForQueens.removeWhere((element) => viewedQueens.contains(element));
 
-    // List<User> queensOrKings = await _firebaseFirestore
-    //     .collection(gender == Gender.men? 'queens' : 'kings')
-    //     .where(gender == Gender.men? 'queenNumber' : 'kingNumber', whereIn: randomsForQueens)
-    //     .get().then(
-    //       (snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
 
     List<User> queensOrKings = await collectionRef
           .where('adminChoice', isEqualTo: gender == Gender.men?'queen':'king' )
@@ -928,25 +936,30 @@ class DatabaseRepository extends BaseDatabaseRepository{
     
     queensOrKings.removeWhere((user) => likedMatches.contains(user.id));
     // List<User> queensOrkings = await _firebaseFirestore
+ 
 
 if(princessCount !=0){
+   
 
-    for(int i=1; i<=10; i++){
+
+    for(int i=1; i<=3; i++){
       var random = Random().nextInt(princessCount);
       int howmany = 0;
-      while(viewedPrincess.contains(random)){
+      while(viewedPrincess.contains(random)|| randomsForPrincess.contains(random)){
         random = Random().nextInt(princessCount)+1;
-        if(howmany > 150){
+        if(howmany > princessCount){
           howmany = 0;
           break;
         }
+        howmany++;
       }
       randomsForPrincess.add(random);
     }
+    randomsForPrincess.removeWhere((element) => viewedPrincess.contains(element));
     
     princessOrgents = await collectionRef
-        .where('adminchoice', isEqualTo: gender == Gender.women? 'princess' : 'gents')
-        .where(gender == Gender.women ? 'princessNumber' : 'gentsNumber', whereIn: randomsForPrincess)
+        .where('adminChoice', isEqualTo: gender == Gender.women? 'princess' : 'gent')
+        .where(gender == Gender.women ? 'princessNumber' : 'gentNumber', whereIn: randomsForPrincess)
         .get().then(
           (snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
     
@@ -959,23 +972,28 @@ if(princessCount !=0){
     var randForscore = Random().nextInt(noOfUsers);
     List<User> scoreUsers = await collectionRef
                               .where('rate', whereIn: [7,8,6])
-                              .where('random', isGreaterThanOrEqualTo: randForscore)
+                              .where('adminchoice', isEqualTo: 'nan')
+                              .where('number', isGreaterThanOrEqualTo: randForscore)
                               .limit(10)
                               .get().then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
 
     scoreUsers.removeWhere((user) => queensOrKings.contains(user) );
     scoreUsers.removeWhere((user) => princessOrgents.contains(user) );
+
+    scoreUsers.removeWhere((user) => viewedMatches.contains(user.id),);
 
     List<User> result = [...queensOrKings, ...princessOrgents,...scoreUsers];
     if(result.length <10){
        scoreUsers = await collectionRef
                               .where('rate', whereIn: [7,8,6])
-                              .where('random', isLessThan: randForscore)
+                              .where('adminchoice', isEqualTo: 'nan')
+                              .where('number', isLessThan: randForscore)
                               .limit(10)
                               .get().then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
 
     scoreUsers.removeWhere((user) => queensOrKings.contains(user) );
     scoreUsers.removeWhere((user) => princessOrgents.contains(user) );
+    scoreUsers.removeWhere((user) => viewedMatches.contains(user.id),);
 
     }
     result.addAll(scoreUsers);
@@ -985,7 +1003,7 @@ if(princessCount !=0){
 
     
     List<int> randoms = [];
-    for(int i=0; i< 10; i++){
+    for(int i=0; i< 10 - result.length+3; i++){
       randoms.add(Random().nextInt(noOfUsers)); 
     }
 
@@ -1005,18 +1023,37 @@ if(princessCount !=0){
       result.addAll(filler);
     }
 
-    // List<User> filler = await _firebaseFirestore
-    //   .collection(user.gender)
-    //   .where('gender', isEqualTo: user.gender)
-    //   .where('score', isGreaterThanOrEqualTo: 1)
-    //   .limit(5)
-    //   .get()
-    //   .then(
-    //     (querySnap) => 
-    //     querySnap.docs.map((doc) => 
-    //     User.fromSnapshoot(doc)).toList()
-    //     );
-    //List<User> result = [...queensOrKings, ...princessOrgents,...filler];
+    if(queensOrKings.isNotEmpty){
+      String oldQueens = viewedProfiles?[gender == Gender.men? 'queens': 'kings'];
+      String newQueens = '$oldQueens,${randomsForQueens.join(',')}';
+    await _firebaseFirestore
+        .collection(gender.name)
+        .doc(userId)
+        .collection('viewedProfiles')
+        .doc('viewed')
+        .update({
+          gender == Gender.men? 'queens': 'kings' : newQueens
+        }
+        );
+
+    }
+    if(princessOrgents.isNotEmpty){
+      String oldPrinces = viewedProfiles?[gender == Gender.men? 'princess':'gents'];
+      String newPrinces = '$oldPrinces,${randomsForPrincess.join(',')}';
+      
+    await _firebaseFirestore
+        .collection(gender.name)
+        .doc(userId)
+        .collection('viewedProfiles')
+        .doc('viewed')
+        .update({
+          gender == Gender.men? 'princess':'gents' : newPrinces
+        }
+        );
+
+    }
+
+
 
     if(result.length>10){
       return result.sublist(0,10);
@@ -1024,11 +1061,11 @@ if(princessCount !=0){
 
      return result;
 
-     } catch (e) {
-      print(e);
-      throw(Exception('dailyMatch'));
+    //  } catch (e) {
+    //   print(e);
+    //   throw(Exception('dailyMatch'));
       
-    }
+    // }
   }
   
 
@@ -1091,9 +1128,12 @@ Future<void> createDemoUsers(List<User> users) async{
         .collection('viewedProfiles')
         .doc('viewed')
         .set({
-          'matches':'ulend',
+          'liked':'ulend',
+          'passed':'ulend',
           user.gender ==Gender.women.name?'kings':'queens':'0',
           user.gender ==Gender.women.name?'gents':'princess':'0',
+          'likedNumbers':'0',
+          'passedNumbers':'0'
         });
       //online status
       await _firebaseFirestore.collection(user.gender)
@@ -1103,6 +1143,7 @@ Future<void> createDemoUsers(List<User> users) async{
         .set({
           'online': true,
           'lastseen': FieldValue.serverTimestamp(),
+          'showstatus': true
         }
         );
 
@@ -1115,7 +1156,9 @@ Future<void> createDemoUsers(List<User> users) async{
         'random': Random().nextInt(10000000),
         'rate':0,
         'score':0,
-        'adminChoice':'nan'
+        'adminChoice':'nan',
+        'searcName': searchName(user.name),
+        'livingIn': '${user.city}, ${user.country}'
       });
 
       return true;
@@ -1169,7 +1212,7 @@ Future<void> createDemoUsers(List<User> users) async{
       .collection('messages')
       .orderBy('timestamp', descending: true)
       .startAfter([startAfter])
-      .limit(5)
+      .limit(10)
       .get().then(
         (snap) => snap.docs.map((doc) => 
         Message.fromSnapshoot(doc)).toList(),
@@ -1220,29 +1263,13 @@ Future<void> createDemoUsers(List<User> users) async{
       
     CollectionReference collectionReference =  _firebaseFirestore.collection(gender == Gender.women? Gender.men.name:Gender.women.name);
 
-    // List<String> viewedProfiles = await _firebaseFirestore.collection(gender.name)
-    // .doc(userId).collection('viewedProfiles')
-    // .get().then((snap) => snap.docs.map((e) => e.id,).toList() );
     var viewedProfiles = await _firebaseFirestore.collection(gender.name)
     .doc(userId).collection('viewedProfiles').doc('viewed')
     .get().then((value) => value.data());
 
-    //var viewedMatches = viewedProfiles?['matches'];
-    List<String> viewedMatches = viewedProfiles?['matches'].split(',');
-    List<String> likedMatches =[];
-    List<String> passedMatches =[];
-    for(var match in viewedMatches){
-      if(match.contains(' true')){
-        likedMatches.add(match.replaceAll(' true', ''));
-
-      }else{
-        passedMatches.add(match.replaceAll(' false', ''));
-
-      }
-
-    }
-    viewedMatches = [...likedMatches,...passedMatches];
-
+    List<String> likedMatches = viewedProfiles?['liked'].split(',');
+    List<String> passedMatches = viewedProfiles?['passed'].split(',');
+    List<String> viewedMatches = [...likedMatches,...passedMatches];
 
     int count = await collectionReference.count().get().then((value) => value.count);
     int random = Random().nextInt(count);
@@ -1263,31 +1290,27 @@ Future<void> createDemoUsers(List<User> users) async{
 
     Query query = collectionReference
       .where('age', whereIn: ageWhereIn );
-    
-    // if(prefes.onlyShowInThisRange == false){
-    //   query = collectionReference
-    //         .where('age', isLessThanOrEqualTo: prefes.ageRange![1]+2);
-    // }
-
-    // List<User> users = await collectionReference.get().then((value) => 
-    //   value.docs.map((doc) => User.fromSnapshoot(doc)).toList()
-    //   );
+         
      // users.removeWhere((user) => viewedProfiles.contains(user.id));
     //only show me from my city
     if(prefes.onlyShowFromMyCity != null && prefes.onlyShowFromMyCity!){
       query = query.where('city', isEqualTo: my.city );
     }
-    // if(prefes.onlyShowOnlineMatches !=null && prefes.onlyShowOnlineMatches!){
-    //   query = query.where('online', isEqualTo: true );
-    // }
+    //only show me from my country
+    if(prefes.onlyShowInThisRange??false){
+      query = query.where('countryCode',isEqualTo: my.countryCode);
+
+    }
+    if(prefes.onlyShowOnlineMatches??false){
+      query = query.where('online', isEqualTo: true );
+    }
     
     //alogrithm to get user which match both looking for and interests same as the user 
     //change to only looking for if they want christian they will get christian;
     List<User> users = await query
       .where('lookingFor', isEqualTo: my.lookingFor)
-      //.where('interests', arrayContainsAny: my.interests )
       .where('number', isLessThanOrEqualTo: random)
-      .limit(50)
+      .limit(15)
       .get().then((value) => 
       value.docs.map((doc) => User.fromSnapshoot(doc)).toList()
       );
@@ -1295,52 +1318,56 @@ Future<void> createDemoUsers(List<User> users) async{
     users.removeWhere((user) => viewedMatches.contains(user.id));
     
     if(users.length <10){
-      random = Random().nextInt(count);
+     // random = Random().nextInt(count);
       List<User> users2 = await query
       .where('lookingFor', isEqualTo: my.lookingFor)
-      
       .where('number', isGreaterThan: random)
-      .limit(30)
+      .limit(10)
       .get().then((value) => 
       value.docs.map((doc) => User.fromSnapshoot(doc)).toList()
       );
       
       users.addAll(users2);
     }
-    users.removeWhere((user) => viewedMatches.contains(user.id));
+    users.removeWhere((user) => likedMatches.contains(user.id));
 
+    if(users.length>10){
+      return users.sublist(0,10);
+    }else{
+      return users;
+    }
  
 
 
-  List<User> ageFiltered = [];
-  List<User>ageFilteredFiller=[];
+  // List<User> ageFiltered = [];
+  // List<User>ageFilteredFiller=[];
 
-  for(var user in users) {
-    if(user.age >= prefes.ageRange![0] && user.age <= prefes.ageRange![1]){
-      ageFiltered.add(user);
-    }
-    if((user.age >= prefes.ageRange![0]-5 && user.age < prefes.ageRange![0]) || (user.age <= prefes.ageRange![1]+5 && user.age >prefes.ageRange![0]) ){
-      ageFilteredFiller.add(user);
+  // for(var user in users) {
+  //   if(user.age >= prefes.ageRange![0] && user.age <= prefes.ageRange![1]){
+  //     ageFiltered.add(user);
+  //   }
+  //   if((user.age >= prefes.ageRange![0]-5 && user.age < prefes.ageRange![0]) || (user.age <= prefes.ageRange![1]+5 && user.age >prefes.ageRange![0]) ){
+  //     ageFilteredFiller.add(user);
 
-      }
-    }
+  //     }
+  //   }
  
   //{user.age < my.age[0] && user.age >= my.age[1] } 
 
-  if(ageFiltered.length < 10 ){
-    ageFilteredFiller.sort((a, b) => a.age.compareTo(b.age),);
+  // if(ageFiltered.length < 10 ){
+  //   ageFilteredFiller.sort((a, b) => a.age.compareTo(b.age),);
 
-    if(ageFilteredFiller.isNotEmpty){
-      ageFiltered.addAll(ageFilteredFiller);
-    }
+  //   if(ageFilteredFiller.isNotEmpty){
+  //     ageFiltered.addAll(ageFilteredFiller);
+  //   }
     
-    if(ageFiltered.length < 10){
-      return ageFiltered;
-    }
-    return ageFiltered.sublist(0,10);
-  }
+  //   if(ageFiltered.length < 10){
+  //     return ageFiltered;
+  //   }
+  //   return ageFiltered.sublist(0,10);
+  // }
 
-    return ageFiltered.sublist(0,10); 
+  //   return ageFiltered.sublist(0,10); 
    // return users;
   }
 
@@ -1416,13 +1443,13 @@ Future<void> createDemoUsers(List<User> users) async{
 
   }
 
-  Stream<List<User>> boostedUsers(Gender gender){
+  Stream<List<Boosted>> boostedUsers(Gender gender){
     return  _firebaseFirestore.collection('boosted')
             .doc(gender == Gender.men? Gender.women.name: Gender.men.name)
             .collection('boosted')
             .snapshots()
             .map((snap) => snap.docs
-            .map((doc) => User.fromSnapshoot(doc)).toList());
+            .map((doc) => Boosted.fromSnapshoot(doc['user'])).toList());
 
   }
 
@@ -1452,6 +1479,7 @@ Future<void> createDemoUsers(List<User> users) async{
         
       
     } catch (e) {
+      print(e);
       
     }
   }
@@ -1594,14 +1622,16 @@ Future<void> createDemoUsers(List<User> users) async{
 
     FutureOr<User?> getRandomMatch({required String userId, required Gender gender}) async {
     try {
-      //final noOfUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name).count().get().then((value) => value.count, onError: (e)=>print('error counting'));
+      final noOfUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name).count().get().then((value) => value.count, onError: (e)=>print('error counting'));
       //var random = Random().nextInt(noOfUsers);
-      var random = Random().nextInt(10000000); 
+      final viewed  = await _firebaseFirestore.collection(gender.name).doc(userId).collection('viewedProfiles').doc('viewed').get();
+      List<String> viewedMatches = viewed['liked'].split(',');
+      var random = Random().nextInt(noOfUsers); 
       //random = 25;
     
       User? user =  await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
               .where('adminChoice', isEqualTo: null)
-              .where('number', isGreaterThanOrEqualTo:random )
+              .where('number', isEqualTo:random )
               .limit(1)
               .get().then((snap) { 
                 var result =  snap.docs;
@@ -1613,22 +1643,14 @@ Future<void> createDemoUsers(List<User> users) async{
                  });
 
     
-        user ??=  await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
-              .where('adminChoice', isEqualTo: null)
-              .where('number', isLessThan:random )
-              .limit(1)
-              .get().then((snap) { 
-                var result =  snap.docs;
-                if(result.isNotEmpty){
-                  return User.fromSnapshoot(result.first);
-                }else{
-                  return null;
-                }
-                 });
+        user ??=  await getRandomMatch(userId: userId, gender: gender);
+        if(viewedMatches.contains(user?.id)){
+          user = await getRandomMatch(userId: userId, gender: gender);
 
-      
-          
-          return user;
+        }
+
+        
+        return user;
       
     } catch (e) {
       throw e;
@@ -1639,16 +1661,41 @@ Future<void> createDemoUsers(List<User> users) async{
 
   Future<User>getQueen({required String userId, required Gender gender}) async{
     try {
+        final viewed  = await _firebaseFirestore.collection(gender.name).doc(userId).collection('viewedProfiles').doc('viewed').get();
+        var viewedQueens= viewed[gender == Gender.men? 'queens' : 'kings'].split(',').map(int.parse).toList();
    
-        final noOfQueens = await _firebaseFirestore.collection(gender == Gender.women? 'queens' : 'kings').count().get().then((value) => value.count, onError: (e)=>print('error counting'));
+        final noOfQueens = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.women.name)
+          .where('adminChoice', isEqualTo: gender == Gender.men? 'queen' : 'king')
+          .count().get().then((value) => value.count, onError: (e)=>print('error counting'));
         var rand = Random().nextInt(noOfQueens);
-        return await _firebaseFirestore.collection('queens')
-                .where('queenNumber', isGreaterThanOrEqualTo: rand)
+        int count = 0;
+        while(viewedQueens.contains(rand)){
+          rand = Random().nextInt(rand);
+          count ++;
+          if(count >=noOfQueens){
+            break;
+          }
+        }
+        var queen = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.women.name)
+                .where('adminChoice', isEqualTo: gender == Gender.men? 'queen':'king')
+                .where(gender == Gender.men? 'queenNumber': 'kingNumber', isEqualTo: rand)
                 .get().then((value) => User.fromSnapshoot(value.docs.first));
+      
 
+      String oldQueens = viewed[gender == Gender.men? 'queens': 'kings'];
+      String newQueens = '$oldQueens,$rand';
+      await _firebaseFirestore.collection(gender.name).doc(userId).collection('viewedProfiles').doc('viewed')
+        .update({
+          gender == Gender.men? 'queens': 'kings' : newQueens
+        }
+        );
 
-   
+      List<String> liked = viewed['matches'].split(',');
+      if(liked.contains(queen.id)){
+        queen =await getQueen(userId: userId, gender: gender);
+      }
 
+      return queen;
 
       
     } catch (e) {
@@ -1659,18 +1706,52 @@ Future<void> createDemoUsers(List<User> users) async{
 
   Future<User>getPrincess({required String userId, required Gender gender}) async{
     try {
-      final noOfUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name)
+      final viewed  = await _firebaseFirestore.collection(gender.name).doc(userId).collection('viewedProfiles').doc('viewed').get();
+      var viewedPrincess= viewed[gender == Gender.men? 'princess' : 'gents'].split(',').map(int.parse).toList();
+   
+      final noOfPrince = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name)
       .where('adminChoice', isEqualTo: gender == Gender.men? 'princess': 'gent' )
       .count().get().then((value) => value.count, onError: (e)=>print('error counting'));
-      var random = Random().nextInt(noOfUsers);
-      String field = gender == Gender.men?'gentNumber': 'princessNumber';
+      var random = Random().nextInt(noOfPrince);
+      //String field = gender == Gender.men?'gentNumber': 'princessNumber';
+      int count = 0;
+        while(viewedPrincess.contains(random)){
+          random = Random().nextInt(random);
+          count ++;
+          if(count >=noOfPrince){
+            break;
+          }
+        }
 
-      return await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name)
+      User? princess= await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name)
+                      .where('adminChoice', isEqualTo: gender == Gender.men? 'princess':'gent')
                       .where(gender == Gender.men?'princessNumber' : 'gentNumber', isEqualTo: random)
                       .get()
-                      .then((value) => User.fromSnapshoot(value.docs.first));
-      
-      
+                      .then((value){
+                        if(value.docs.isEmpty){
+                          return null;
+                        }
+                        return User.fromSnapshoot(value.docs.first);
+                    });
+      //if(princess == null){
+        princess ??= await getPrincess(userId: userId, gender: gender);
+      if(princess != null){
+      String oldPrince = viewed[gender == Gender.men? 'queens': 'kings'];
+      String newPrince = '$oldPrince,$random';
+      await _firebaseFirestore.collection(gender.name).doc(userId).collection('viewedProfiles').doc('viewed')
+        .update({
+          gender == Gender.men? 'princess': 'gents' : newPrince
+        }
+        );
+      }
+
+      List<String> liked = viewed['matches'].split(',');
+      if(liked.contains(princess?.id)){
+        princess =await getQueen(userId: userId, gender: gender);
+      }
+
+      return princess;
+
     } catch (e) {
       throw e;
       
@@ -1828,6 +1909,62 @@ Future<void> createDemoUsers(List<User> users) async{
       throw(Exception(e));
       
     }
+  }
+
+  Future<List<Like>> loadMoreLikes({required String userId, required Gender gender, required Timestamp startAfter}) async{
+    try {
+      List<Like> likes = await _firebaseFirestore.collection(gender.name)
+                            .doc(userId)
+                            .collection('likes')
+                            .orderBy('timestamp',descending: true)
+                            .startAfter([startAfter])
+                            .limit(10)
+                            .get().then((snap) => 
+                              snap.docs.map((doc) => Like.fromSnapshoot(doc)).toList()
+                            );
+        
+      return likes;
+      
+    } catch (e) {
+      throw Exception(e);
+      
+    }
+  }
+
+  loadMoreMatches({required String userId, required Gender gender, required Timestamp startAfter}) async{
+    try {
+      List<UserMatch> matches = await _firebaseFirestore.collection(gender.name)
+                            .doc(userId)
+                            .collection('matches')
+                            .orderBy('timestamp',descending: true)
+                            .startAfter([startAfter])
+                            .limit(10)
+                            .get().then((snap) => 
+                              snap.docs.map((doc) => UserMatch.fromSnapshoot(doc)).toList()
+                            );
+        
+      return matches;
+      
+    } catch (e) {
+      throw Exception(e);
+      
+    }
+  }
+
+  void updateLastTime({required String userId, required Gender gender}) async{
+  
+      await _firebaseFirestore.collection(gender.name).doc(userId).collection('userpreference').doc('preference')
+              
+              .update({
+                'lastTime': FieldValue.serverTimestamp()
+              });
+      
+    
+  }
+
+  void removeBoost({required Boosted boost}) async {
+    await _firebaseFirestore.collection('boosted').doc(boost.gender).collection('boosted').doc(boost.user.id).delete();
+
   }
 
 }

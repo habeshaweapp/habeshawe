@@ -30,13 +30,15 @@ class SwipeCard extends StatelessWidget {
     return BlocConsumer<SwipeBloc, SwipeState>(
       listener: (context,state){
         if(state.swipeStatus == SwipeStatus.error){
-          if(state.error == 'Exception: dailyMatch'){
-            Future.delayed(const Duration(seconds: 3), (){
+          Future.delayed(const Duration(hours: 24), (){
               context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
             });
+          if(state.error == 'Exception: dailyMatch'){
+            
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('something went wrong, come back tomorrow!')));
 
           }else{
+
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error??'something went wrong,')));
           }
         }
@@ -57,10 +59,16 @@ class SwipeCard extends StatelessWidget {
 
           if(state.users.isEmpty ){
             //context.read<SwipeBloc>().add(SwipeEnded(completedTime: state.completedTime??DateTime.now()));
+            //ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text('Please come back tomorrow, We have limited number of users!')));
             Future.delayed(Duration(seconds: 2),(){
 
              context.read<SwipeBloc>().add(SwipeEnded(completedTime: state.completedTime??DateTime.now()));
              });
+
+             Future.delayed(const Duration(hours: 24), (){ 
+                               context.read<SwipeBloc>().add(LoadUsers(userId: context.read<AuthBloc>().state.user!.uid , users: context.read<AuthBloc>().state.accountType! ));  
+                               });
+             NotificationService().scheduleNotifications(title: 'Daily Match', body: 'your time is up. your daily matches are ready to view', payload: 'daily matches');
           }
           //state.users.forEach((user)
           for(var user in state.users)
@@ -130,9 +138,12 @@ class SwipeCard extends StatelessWidget {
                         matchEngine: _matchEngine, 
                         onStackFinished: (){
                           if(state.loadFor == LoadFor.daily){
+                            if(state.boostedUsers.isNotEmpty){
+                              context.read<SwipeBloc>().add(EmitBoosted());
+                            }
                             context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
 
-                              Future.delayed(const Duration(seconds: 10), (){ 
+                              Future.delayed(const Duration(hours: 24), (){ 
                                context.read<SwipeBloc>().add(LoadUsers(userId: context.read<AuthBloc>().state.user!.uid , users: context.read<AuthBloc>().state.accountType! )); 
 
                                

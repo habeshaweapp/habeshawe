@@ -26,10 +26,11 @@ class User extends Equatable {
   final String? country;
   final String? countryCode;
   final bool? online;
-  final DateTime? lastseen;
+  final Timestamp? lastseen;
   final int? height;
   final String? city;
   final String? phoneNumber;
+  final int? number;
 
   const User({
     required this.id,
@@ -56,6 +57,7 @@ class User extends Equatable {
      this.height,
      this.city,
      this.phoneNumber,
+     this.number
   });
 
   @override
@@ -83,7 +85,8 @@ class User extends Equatable {
         lastseen,
         height,
         city,
-        phoneNumber
+        phoneNumber,
+        number
       ];
 
   factory User.fromSnapshoot(DocumentSnapshot snap){
@@ -110,10 +113,11 @@ class User extends Equatable {
     country: snap['country'],
     countryCode: snap['countryCode'],
     online: map.containsKey('online')? snap['online']:null,
-    lastseen: map.containsKey('lastseen')? snap['lastseen']?.toDate() :null,
+    lastseen: map.containsKey('lastseen')? snap['lastseen'] :null,
     height: map.containsKey('height')? snap['height']:null,
     city: map.containsKey('city')? snap['city']:null,
     phoneNumber: map.containsKey('phoneNumber')? snap['phoneNumber']:null,
+    number: map.containsKey('number')? snap['number']:null
 
   );
 } on Exception catch (e) {
@@ -173,7 +177,7 @@ class User extends Equatable {
       'lastseen': lastseen,
       'city': city,
       'height': height,
-      'phoneNumber': phoneNumber
+      'phoneNumber': phoneNumber,
     };
   }
 
@@ -199,10 +203,11 @@ class User extends Equatable {
       'country': country,
       'countryCode': countryCode,
       'online': online,
-      'lastseen': lastseen?.toIso8601String(),
+      'lastseen': lastseen?.toDate().toIso8601String(),
       'city': city,
       'height': height,
-      'phoneNumber': phoneNumber
+      'phoneNumber': phoneNumber,
+      'number': number
     };
   }
 
@@ -227,10 +232,11 @@ class User extends Equatable {
     String? country,
     String? countryCode,
     bool? online,
-    DateTime? lastseen,
+    Timestamp? lastseen,
     int? height,
     String? city,
     String? phoneNumber,
+    int? number
 
   }){
     return User(
@@ -257,7 +263,8 @@ class User extends Equatable {
       lastseen: lastseen??this.lastseen,
       city: city?? this.city,
       height: height?? this.height,
-      phoneNumber: phoneNumber??this.phoneNumber
+      phoneNumber: phoneNumber??this.phoneNumber,
+      number: number??this.number
     );
   }
 
@@ -291,7 +298,8 @@ factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
     lastseen: snap['lastseen'],
     height:  snap['height'],
     city: snap['city'],
-    phoneNumber: snap['phoneNumber']
+    phoneNumber: snap['phoneNumber'],
+    number: snap.containsKey('number') ? snap['number'] : null,
   );
 } on Exception catch (e) {
   // TODO
@@ -327,10 +335,11 @@ factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
     country: snap['country'],
     countryCode: snap['countryCode'],
     online:  snap['online'],
-    lastseen: DateTime.parse(snap['lastseen']),
+    //lastseen: DateTime.parse(snap['lastseen']),
     height:  snap['height'],
     city: snap['city'],
-    phoneNumber: snap['phoneNumber']
+    phoneNumber: snap['phoneNumber'],
+    number: snap['number']
   );
 } on Exception catch (e) {
   // TODO

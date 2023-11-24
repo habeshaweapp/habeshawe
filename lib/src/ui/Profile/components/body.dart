@@ -28,6 +28,7 @@ import '../../../Data/Models/tag_helper.dart';
 import '../../../Data/Models/looking_for_datas.dart';
 import '../../editProfile/editProfile.dart';
 import '../../home/components/userdrag.dart';
+import '../../itsAmatch/itsAmatch.dart';
 import '../../onboarding/AfterRegistration/widgets/lookingforitem.dart';
 import '../../report/report.dart';
 
@@ -36,15 +37,16 @@ class Body extends StatelessWidget {
   final ProfileFrom profileFrom;
   final Like? likedMeUser;
   final MatchEngine? matchEngine;
+  final BuildContext? ctrx;
 
-   Body({Key? key, required this.user, required this.profileFrom,this.likedMeUser, this.matchEngine}) : super(key: key);
+   Body({Key? key, required this.user, required this.profileFrom,this.likedMeUser, this.matchEngine, this.ctrx}) : super(key: key);
 
    Future<Position> getCurrentPosition()async{
     return await Geolocator.getCurrentPosition();
    }
-   double calculateDistance(Position currentPosition, List<double> userPosition) {
+   double calculateDistance(List<double> currentPosition, List<double> userPosition) {
     //Position currentPosition =  getCurrentPosition();
-    return Geolocator.distanceBetween(currentPosition.latitude, currentPosition.longitude, userPosition[0], userPosition[1])/1000;
+    return Geolocator.distanceBetween(currentPosition[0], currentPosition[1], userPosition[0], userPosition[1])/1000;
    }
    
 
@@ -400,7 +402,7 @@ class Body extends StatelessWidget {
                           width: double.infinity,
                           child: GestureDetector(
                             onTap: (){
-                              showReportOptions(context, UserMatch(userId: user.id, name: user.name, gender: user.gender, imageUrls: user.imageUrls, timestamp: 'timestamp', chatOpened: false, superLike: false));
+                              showReportOptions(context, UserMatch(userId: user.id, name: user.name, gender: user.gender, imageUrls: user.imageUrls,  chatOpened: false, superLike: false));
 
                             },
                             child: Column(
@@ -574,6 +576,9 @@ class Body extends StatelessWidget {
                           ));
 
                         Navigator.pop(context);
+                        Navigator.push(context, MaterialPageRoute(builder: (ctx)=> 
+                                          BlocProvider.value(value: ctrx!.read<MatchBloc>(),
+                                          child: ItsAMatch(user: likedMeUser! ))));
                       }
 
               },

@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
@@ -17,6 +19,7 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
   final AuthBloc _authBloc;
   StreamSubscription? _authSubscription;
   StreamSubscription? _likesSubscription;
+  ScrollController likeController = ScrollController();
   LikeBloc({
     required DatabaseRepository databaseRepository,
     required AuthBloc authBloc
@@ -27,12 +30,20 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
     on<UpdateLikes>(_onUpdateLikes);
     on<LikeLikedMeUser>(_onLikeLikedMeUser);
     on<DeleteLikedMeUser>(_onDeleteLikedMeUser);
+    on<LoadMoreLikes>(_onLoadMoreLikes);
 
     // _authSubscription = _authBloc.stream.listen((state) {
     //   if(state.user != null && state.accountType != Gender.nonExist){
     //     add(LoadLikes(userId: state.user!.uid, users: state.accountType!));
     //   }
     // });
+    likeController.addListener(() {
+      if(likeController.position.pixels == likeController.position.maxScrollExtent ){
+        var likes = (state as LikeLoaded).likedMeUsers.last;
+        add(LoadMoreLikes(userId: _authBloc.state.user!.uid, gender: _authBloc.state.accountType!, startAfter: likes.timestamp));
+
+      }
+    });
   }
 
 void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
@@ -76,5 +87,16 @@ void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
     _authSubscription?.cancel();
     _likesSubscription?.cancel();
     return super.close();
+  }
+
+  FutureOr<void> _onLoadMoreLikes(LoadMoreLikes event, Emitter<LikeState> emit)async {
+    try {
+      var newLikes = await _databaseRepository.loadMoreLikes(userId: event.userId, gender:event.gender,startAfter:event.startAfter);
+      var like = (state as LikeLoaded).likedMeUsers;
+      add(UpdateLikes(users: [...like,...newLikes]));
+      
+    } catch (e) {
+      
+    }
   }
 }

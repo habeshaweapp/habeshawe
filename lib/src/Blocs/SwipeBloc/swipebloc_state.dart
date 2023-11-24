@@ -1,7 +1,7 @@
 part of 'swipebloc_bloc.dart';
 
 enum SwipeStatus{initial, loading, loaded, completed, itsamatch,error }
-enum LoadFor{daily, ad,adOnline, adNearby, adRandom, adPrincess, adQueen }
+enum LoadFor{daily, ad,adOnline, adNearby, adRandom, adPrincess, adQueen,boosted }
 
 class SwipeState extends Equatable {
   const SwipeState({

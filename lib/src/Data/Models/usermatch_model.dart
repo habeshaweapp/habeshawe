@@ -9,11 +9,11 @@ class UserMatch extends Equatable{
   final List<dynamic> imageUrls;
    String? verified;
   final bool chatOpened;
-  final String timestamp;
+  final Timestamp? timestamp;
   final bool? superLike;
   final String gender;
 
-   UserMatch({ this.id, required this.userId, required this.name,required this.gender, required this.imageUrls,  this.verified, required this.timestamp, required this.chatOpened, required this.superLike});
+   UserMatch({ this.id, required this.userId, required this.name,required this.gender, required this.imageUrls,  this.verified,  this.timestamp, required this.chatOpened, required this.superLike});
   
   @override
   // TODO: implement props
@@ -26,7 +26,7 @@ class UserMatch extends Equatable{
       name: snap['name'],
       imageUrls: snap['imageUrls'],
       verified: (snap.data() as Map<String, dynamic>).containsKey('verified') ? snap['verified'] : null,
-      timestamp: snap['timestamp'].toString(),
+      timestamp: snap['timestamp'],
       chatOpened: snap['chatOpened'],
       superLike:(snap.data() as Map<String, dynamic>).containsKey('superLike') ? snap['superLike'] : null,
       gender: (snap.data() as Map<String, dynamic>).containsKey('gender') ? snap['gender'] : 'women',

@@ -8,19 +8,22 @@ class AuthState extends Equatable {
   final auth.User? user;
   final Gender? accountType;
   final bool? isCompleted;
+  final bool? firstTime;
 
   AuthState({
     required this.status,
     required this.user,
     required this.accountType,
-    required this.isCompleted
+    required this.isCompleted,
+    this.firstTime = false
   });
 
   const AuthState._({
     this.status = AuthStatus.unknown,
     this.user,
     this.accountType,
-    this.isCompleted
+    this.isCompleted,
+    this.firstTime
   });
 
   const AuthState.unknown() : this._();
@@ -28,12 +31,14 @@ class AuthState extends Equatable {
   const AuthState.authenticated({
     required auth.User user,
     required Gender accountType,
-    required bool isCompleted
+    required bool isCompleted,
+    bool? firstTime,
   }): this._(
     status: AuthStatus.authenticated,
     user:  user,
     accountType: accountType,
-    isCompleted: isCompleted
+    isCompleted: isCompleted,
+    firstTime: firstTime??false
   );
 
   const AuthState.unauthenticated() : this._(status: AuthStatus.unauthenticated);

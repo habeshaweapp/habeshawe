@@ -459,6 +459,7 @@ class Body extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal:15),
                   child: TextField(
                     //minLines: 1,
+                    enabled: false,
                     maxLines: 1,
                     decoration: InputDecoration(
                       border: InputBorder.none,

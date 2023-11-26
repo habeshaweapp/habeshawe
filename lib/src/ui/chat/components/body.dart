@@ -361,9 +361,8 @@ class _BodyState extends State<Body> {
                   children: [
                     //SizedBox(height: 25,),
                     Spacer(flex: 1,),
-                    Text('You matched with ${widget.userMatch.name}'),
-                    Text('21 minutes ago', style: Theme.of(context).textTheme.bodySmall,),
-                    SizedBox(height: 25,),
+                    
+                    
                     CircleAvatar(
                       radius: 100,
                       backgroundImage: 
@@ -375,6 +374,11 @@ class _BodyState extends State<Body> {
                             ),
                     ), 
                     SizedBox(height: 15),
+                    Text('You matched with ${widget.userMatch.name}'),
+                    Text('${DateTime.now().difference(widget.userMatch.timestamp!.toDate()).inMinutes <60?
+                          DateTime.now().difference(widget.userMatch.timestamp!.toDate()).inMinutes:DateTime.now().difference(widget.userMatch.timestamp!.toDate()).inHours
+                    } ${DateTime.now().difference(widget.userMatch.timestamp!.toDate()).inMinutes>60?'hours':'minutes'} ago', style: Theme.of(context).textTheme.bodySmall,),
+                    SizedBox(height: 15,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

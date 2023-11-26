@@ -25,7 +25,7 @@ class UserPreference extends Equatable{
     required this.userId,
      this.phoneNumber,
      this.global = true,
-     this.ageRange = const [18,60],
+     this.ageRange = const [18,28],
      this.showMe,
      this.showMeOnLomi = true ,
      this.recentlyActiveStatus = true,

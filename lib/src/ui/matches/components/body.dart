@@ -55,7 +55,7 @@ class Body extends StatelessWidget {
 
                 },
                 decoration: InputDecoration(
-                  hintText:focusNode.hasFocus?'Search Match':'Search Match - Watch Ad First!',
+                  hintText:focusNode.hasFocus?'Search Match': (context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed)? 'Search Match - Watch Ad First!':'Search Match',
                   contentPadding: EdgeInsets.zero,
                   icon: Icon(Icons.search,),
                   counterText: ''

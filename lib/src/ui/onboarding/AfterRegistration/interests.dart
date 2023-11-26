@@ -6,10 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/app_route_config.dart';
-import 'package:lomi/src/dataApi/interestslist.dart';
 import 'package:lomi/src/ui/onboarding/AfterRegistration/addphotos.dart';
 
 import '../../../Blocs/ThemeCubit/theme_cubit.dart';
+import '../../../Data/Repository/Remote/remote_config.dart';
 
 class Interests extends StatefulWidget {
   const Interests({super.key});
@@ -19,12 +19,15 @@ class Interests extends StatefulWidget {
 }
 
 class _InterestsState extends State<Interests> {
+  final RemoteConfigService remoteConfigService = RemoteConfigService();
+  
  // bool _isSelected = false;
   List<String> _selectedList = [];
   //OnboardingState st;
 
   @override
   Widget build(BuildContext context) {
+    var remoteInterests = remoteConfigService.getInterests().split(',');
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Scaffold(
       body: SafeArea(
@@ -72,16 +75,16 @@ class _InterestsState extends State<Interests> {
                     physics: BouncingScrollPhysics(),
                     child: Wrap(
                       spacing: 5,
-                      children: List.generate(inter.length, (index) => 
+                      children: List.generate(remoteInterests.length, (index) => 
                           ChoiceChip(
-                          label: Text(inter[index],style: TextStyle(color: _selectedList.contains(inter[index])? isDark? Colors.black:Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w300),), 
-                          selected: _selectedList.contains(inter[index]),
+                          label: Text(remoteInterests[index],style: TextStyle(color: _selectedList.contains(remoteInterests[index])? isDark? Colors.black:Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w300),), 
+                          selected: _selectedList.contains(remoteInterests[index]),
                           selectedColor: isDark?Colors.teal: Colors.green,
                           //backgroundColor: Colors.teal,
                           onSelected: (value) {
-                            if(_selectedList.length <5 || _selectedList.contains(inter[index]) ){
+                            if(_selectedList.length <5 || _selectedList.contains(remoteInterests[index]) ){
                             setState(() {
-                              _selectedList.contains(inter[index]) ? _selectedList.remove(inter[index]) : _selectedList.add(inter[index]);
+                              _selectedList.contains(remoteInterests[index]) ? _selectedList.remove(remoteInterests[index]) : _selectedList.add(remoteInterests[index]);
                             });
 
                             }

@@ -430,16 +430,13 @@ class DatabaseRepository extends BaseDatabaseRepository{
       
       
     });
-    //String viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get().then((value) => value['liked']);
 
-    // await _firebaseFirestore
-    //     .collection(user.gender)
-    //     .doc(user.id)
-    //     .collection('viewedProfiles')
-    //     .doc('viewed')
-    //     .update({
-    //       'liked': '$viewed,${likedMeUser.user.id}'
-    //     });
+    await _firebaseFirestore.collection(user.gender)
+    .doc(user.id)
+    .collection('likes')
+    .doc(likedMeUser.user.id)
+    .delete();
+    
 
     var viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get();
     String liked = viewed['liked'];
@@ -468,11 +465,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
 
 
 
-    await _firebaseFirestore.collection(user.gender)
-    .doc(user.id)
-    .collection('likes')
-    .doc(likedMeUser.user.id)
-    .delete();
+    
       
     }on FirebaseException catch (e){
     throw Exception(e.message);
@@ -1630,7 +1623,7 @@ Future<void> createDemoUsers(List<User> users) async{
       //random = 25;
     
       User? user =  await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
-              .where('adminChoice', isEqualTo: null)
+              .where('adminChoice', isEqualTo: 'nan')
               .where('number', isEqualTo:random )
               .limit(1)
               .get().then((snap) { 
@@ -1643,9 +1636,11 @@ Future<void> createDemoUsers(List<User> users) async{
                  });
 
     
-        user ??=  await getRandomMatch(userId: userId, gender: gender);
+        //user ??=  await getRandomMatch(userId: userId, gender: gender);
         if(viewedMatches.contains(user?.id)){
-          user = await getRandomMatch(userId: userId, gender: gender);
+          // user=null;
+          // user = await getRandomMatch(userId: userId, gender: gender);
+          return null;
 
         }
 

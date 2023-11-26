@@ -64,7 +64,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       }else{
         add(CheckLastTime());
       }
-      add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!));
+    //  add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!));
    // }
     // print(state);
     // print(state);
@@ -267,7 +267,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       
   //     add(LoadUsers(userId: _authBloc.state.user!.uid , users: _authBloc.state.accountType! )); });
   //  }
-    emit(state.copyWith(completedTime: event.completedTime, swipeStatus: SwipeStatus.completed));
+    emit(state.copyWith(completedTime: event.completedTime, swipeStatus: SwipeStatus.completed, users: []));
   }
 
   FutureOr<void> _onBoostedLoaded(BoostedLoaded event, Emitter<SwipeState> emit) {
@@ -282,11 +282,9 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       }
     var users = boosted.map((boost) => boost.user).toList();
 
-    if(state.users.isEmpty){
+    if(state.users.isNotEmpty){
       emit(state.copyWith(users: users, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.boosted, boostedUsers: null));
       NotificationService().showMessageReceivedNotifications(title: 'Matches', body: 'You have match to see!', payload: 'boosted', channelId: 'boosted');
-    }else{
-    emit(state.copyWith(boostedUsers: users));
     }
   }
 

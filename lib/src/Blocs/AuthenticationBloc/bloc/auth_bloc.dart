@@ -74,7 +74,7 @@ void _authUserChanged(AuthUserChanged event, Emitter<AuthState> emit) async{
 
 FutureOr<void> _onLogOut(LogOut event, Emitter<AuthState> emit) async {
   
-  _databaseRepository.updateOnlinestatus(
+  await _databaseRepository.updateOnlinestatus(
                             userId: state.user!.uid, 
                             gender: state.accountType!, 
                             online: false

@@ -165,7 +165,20 @@ class SwipeCompletedWidget extends StatelessWidget {
                                                'Watch Ad' : ''
                                                , style: TextStyle(),);
                                             }
-                                          )
+                                          ),
+                                         
+                                        BlocBuilder<SwipeBloc,SwipeState>(
+                                          builder: (context,state){
+                                            if(state.loadFor == LoadFor.adNearby){
+                                              return SizedBox(
+                                                height: 10,
+                                                width: 10,
+                                                child: CircularProgressIndicator(strokeWidth: 2,));
+                                            }else{
+                                              return SizedBox();
+                                            }
+
+                                          })
                                         ],
                                       ),
                                     ),
@@ -247,7 +260,20 @@ class SwipeCompletedWidget extends StatelessWidget {
                                                   padding: EdgeInsets.symmetric(horizontal: 7,vertical: 2),
                                                 
                                                   ),
-                                                ):SizedBox()
+                                                ):SizedBox(),
+                                                Spacer(),
+                                        BlocBuilder<SwipeBloc,SwipeState>(
+                                          builder: (context,state){
+                                            if(state.loadFor == LoadFor.adRandom){
+                                              return SizedBox(
+                                                height: 10,
+                                                width: 10,
+                                                child: CircularProgressIndicator(strokeWidth: 2,));
+                                            }else{
+                                              return SizedBox();
+                                            }
+
+                                          })
                               
                                               ],
                                               )
@@ -291,6 +317,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                             
                                           }
 
+                                          }
                                           }else{
                                             context.read<SwipeBloc>().add(LoadUserAd(
                                             userId: context.read<AuthBloc>().state.user!.uid, 
@@ -302,7 +329,7 @@ class SwipeCompletedWidget extends StatelessWidget {
 
                                           }
                               
-                                          }
+                                          
                                         },
                                         child: Padding(
                                           padding:  EdgeInsets.symmetric(vertical: 10.h, horizontal: 25.w),
@@ -332,9 +359,24 @@ class SwipeCompletedWidget extends StatelessWidget {
                                                       
                                                         ),
                                                       )
-                                                : const SizedBox()
+                                                : const SizedBox(),
+
+                                                Spacer(),
+                                        BlocBuilder<SwipeBloc,SwipeState>(
+                                          builder: (context,state){
+                                            if(state.loadFor == LoadFor.adOnline){
+                                              return SizedBox(
+                                                height: 10,
+                                                width: 10,
+                                                child: CircularProgressIndicator(strokeWidth: 2,));
+                                            }else{
+                                              return SizedBox();
+                                            }
+
+                                          })
                               
-                                              ],)
+                                              ],
+                                              )
                                              
                                             ],
                                           ),
@@ -409,7 +451,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         child: Row(
                                           //mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            context.read<AuthBloc>().state.accountType ==Gender.men? Icon(LineIcons.crown, color: Colors.pink[300], size: 25.sp, ):Icon(FontAwesomeIcons.blackTie, color: Colors.black, size: 24.sp, ),
+                                            context.read<AuthBloc>().state.accountType ==Gender.men? Icon(LineIcons.crown, color: Colors.pink[300], size: 25.sp, ):Icon(FontAwesomeIcons.userTie, color: Colors.black, size: 24.sp, ),
                                         SizedBox(width: 10,),
                                         Text(
                                           context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER ?
@@ -644,7 +686,7 @@ class SwipeCompletedWidget extends StatelessWidget {
       context: context, 
       builder: (ctx){
         return SizedBox(
-          //height: MediaQuery.of(context).size.height*0.4,
+          height: MediaQuery.of(context).size.height*0.43,
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: Column(
@@ -680,7 +722,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                   }),
                                 ],
                               ),
-                              Text('HabeshaWe algorithm gives you the best profiles who is rated beautiful Habesha profile around the world.',
+                              Text('HabeshaWe algorithm gives you the best profiles who is rated beautiful Habesha matches around the world.',
                                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
                              ),
                             ],
@@ -754,39 +796,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                         ),
                       ),
 
-                      Card(
-                      elevation: 2,
-                      color: isDark ? state.userPreference!.discoverBy == DiscoverBy.online.index?  Colors.grey :Colors.grey[900] : state.userPreference!.discoverBy ==DiscoverBy.online.index? Colors.grey[400]: Colors.white,
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        margin: EdgeInsets.only(top: 5, bottom: 5,),
-                        decoration: BoxDecoration(
-                          //color: Colors.white,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text('Discover By - Online Matches'),
-                                Switch(value: state.userPreference!.discoverBy == DiscoverBy.online.index , 
-                                onChanged: (value){
-                                  
-                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(discoverBy: DiscoverBy.online.index)));
-                                  //isThereChange = true;
-                                  Navigator.pop(context);
-                                }),
-                              ],
-                            ),
-                            Text('Online Matches gives you matches who is currently online the world.',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
-                    ),
-                          ],
-                        ),
-                      ),
-                    ),
+                     
                   
                   
                   

@@ -68,7 +68,7 @@ class Body extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Phone Number'),
-                            Text('${state.userPreference!.phoneNumber} >'),
+                            Text('${state.userPreference!.phoneNumber}'),
                           ],
                         ),
                       ),
@@ -167,8 +167,9 @@ class Body extends StatelessWidget {
                           AbsorbPointer(
                             absorbing: state.userPreference?.discoverBy != DiscoverBy.preference.index,
                             child: RangeSlider(
-                              max: 55,
+                              max: 60,
                               min:18,
+                              divisions: 60-18,
                               values: RangeValues(state.userPreference!.ageRange![0].toDouble(),state.userPreference!.ageRange![1].toDouble()), 
                               // onChangeStart: (values) {
                               //   if(values.end - values.start <=10){
@@ -188,16 +189,38 @@ class Body extends StatelessWidget {
                               //   isThereChange = true;
 
                               // },
+                              
+
+                              onChangeEnd: (value) {
+                                // var diff = value.end- value.start;
+                                // if(diff <=10 ){
+                                //   context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(ageRange: [value.start.toInt(),value.end.toInt()])));
+
+                                // }
+                                // if(diff >10 && value.end - state.userPreference!.ageRange![1]==0){
+                                //   context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(ageRange: [value.start.toInt(),value.start.toInt()+10])));
+
+
+                                // }
+                                // else if(diff >10 &&value.start - state.userPreference!.ageRange![0]==0){
+                                //   context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(ageRange: [value.end.toInt()-10,value.end.toInt() ])));
+
+                                // }
+                                
+                              },
+                              
+
+
                               onChanged: (values){
                                 var end = values.end - values.start;
                               
                                 if(end <=10){
                                   context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(ageRange: [values.start.toInt(),values.end.toInt()])));
                                 }else{
-                                  if(state.userPreference!.ageRange![1] != values.end){
+                                  if(state.userPreference!.ageRange![1] != values.end.toInt()){
                                     context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(ageRange: [values.end.toInt()-10,values.end.toInt()])));
                                   }else{
-                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(ageRange: [values.start.toInt(),values.end.toInt()-1])));
+                                    context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(ageRange: [values.start.toInt(),values.start.toInt()+10])));
 
                                   }
                                 }
@@ -623,11 +646,16 @@ class Body extends StatelessWidget {
                               TextButton(
                                 onPressed: (){
                                   context.read<AuthBloc>().add(LogOut());
-                                  Future.delayed(Duration(milliseconds: 300), (){
+                                  Future.delayed(Duration(milliseconds: 400), (){
                                     Navigator.pop(context); 
+                                    
                                 });
                                   //Navigator.pop(context);
-                                  Navigator.pop(context);
+                                  Future.delayed(Duration(milliseconds: 900), (){
+                                    Navigator.pop(context); 
+                                    
+                                });
+                                  
                                 }, 
                                 child: Text('Log out', style: TextStyle(color: Colors.grey),)
                                 )
@@ -768,7 +796,7 @@ class Body extends StatelessWidget {
       title: Text('Are you sure?', ),
       content: Container(
         width: MediaQuery.of(context).size.width*0.95,
-        child: Text('Deleting your profile to create a new\naccount may affect who you see on\nthe platform, and we want you to have\nthe best experience possible.',style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.grey[800]),)),
+        child: Text('Deleting your profile to create a new\naccount may affect who you see on\nthe platform, and we want you to have\nthe best experience possible.',style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.grey),)),
 
       actions: [
         TextButton(
@@ -804,9 +832,9 @@ class Body extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('This action cannot be undone', style: TextStyle(color: Colors.black, fontSize: 13),),
+            Text('This action cannot be undone', style: TextStyle(color: Colors.grey, fontSize: 13),),
             SizedBox(height: 15,),
-            Text('Type \"delete\" to confirm', style: TextStyle(color: Colors.grey[800], fontSize: 12),),
+            Text('Type \"delete\" to confirm', style: TextStyle(color: Colors.grey, fontSize: 12),),
             TextField(
               controller: ctr,
             )

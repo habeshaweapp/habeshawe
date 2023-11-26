@@ -24,8 +24,8 @@ class _LookingForState extends State<LookingFor> {
   Widget build(BuildContext context) {
    List<String> lookignForOpt = [
       'Long-term\n partner',
-      'Christian,\n partner',
-      'Teklil,\n marriage',
+      'Christian\n partner',
+      'Teklil\n marriage',
       'Nikah\n keep it halal',
       'Someone to chat\nNew friends',
       'Still figuring it\n out',
@@ -35,9 +35,9 @@ class _LookingForState extends State<LookingFor> {
       Icon(FontAwesomeIcons.heartPulse, color: Colors.red,),
       Icon(FontAwesomeIcons.bookBible, color:Colors.black),
       Icon(FontAwesomeIcons.crown, color: Colors.amber,),
-      Icon(FontAwesomeIcons.moon, color: Colors.grey,),
-      Icon(FontAwesomeIcons.hand, color: Colors.grey),
-      Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.grey)
+      Icon(Icons.diamond_outlined, color: Colors.black,),
+      Icon(FontAwesomeIcons.hand, color: Colors.black),
+      Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.black)
 
     ];
     
@@ -140,6 +140,7 @@ class _LookingForState extends State<LookingFor> {
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                             style: ElevatedButton.styleFrom(
                               shape: StadiumBorder(),
+                              backgroundColor: selectedIndex == -1?Colors.grey:null,
                             ),
                             
                             ),

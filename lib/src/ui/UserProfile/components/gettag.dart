@@ -41,10 +41,10 @@ final pageController = PageController();
                     ontap: ontap 
                     ),
               
-                    PageViewItem(icon: FontAwesomeIcons.userTie, 
-                    color: Colors.grey,
+                    PageViewItem(icon:user.gender==Gender.men.name? FontAwesomeIcons.userTie: LineIcons.crown, 
+                    color: user.gender==Gender.men.name? Colors.grey: Colors.pink,
                     title: user.gender == Gender.men.name? 'Get Your GentleMan Tag': 'Get Your Princess Tag' , 
-                    description: 'Get verified and we will reveal your profile and if you stand out you will give you  gentlemans tag', 
+                    description: 'Get verified and we will reveal your profile and if you stand out, you will get the tag.', 
                     buttonText: user.gender == Gender.men.name? 'Apply  To GentleMen': 'Apply  To Princess',
                     ontap: ontap
                     ),
@@ -52,7 +52,7 @@ final pageController = PageController();
                     PageViewItem(icon: Icons.verified, 
                     color: Colors.blue,
                     title: 'Get Your Verified Tag', 
-                    description: 'Get verified and we will reveal your profile and if you stand out you will get Queen tag', 
+                    description: 'we will reveal your profile and if you match, you will get verified tag.', 
                     buttonText: 'Get Verified Tag',
                     ontap: ontap
                     ),

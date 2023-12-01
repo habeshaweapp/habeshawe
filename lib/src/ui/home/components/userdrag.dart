@@ -247,7 +247,7 @@ class UserCard extends StatelessWidget {
                                   const SizedBox(width: 4,),
                                  Container(
                                    child:  Text(
-                                    '${user.city},  ${user.country }',
+                                    user.city != ''? '${user.city},  ${user.country }' : user.country??'',
                                     //"Recently Active", 
                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[400]),
                                    //TextStyle(color: Colors.white, decoration: TextDecoration.none  ),

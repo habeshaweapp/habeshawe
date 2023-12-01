@@ -29,6 +29,7 @@ class Body extends StatelessWidget {
     //final activeMatches = UserMatch.matches.where((match) => match.userId == 1 && match.chat!.isNotEmpty,).toList();
 
     return SingleChildScrollView(
+      controller: context.read<LikeBloc>().likeController,
       child: BlocBuilder<LikeBloc, LikeState>(
         builder: (context, state) {
           if (state is LikeLoading) {
@@ -78,7 +79,7 @@ class Body extends StatelessWidget {
                         context: context,
                         removeTop: true,
                         child: GridView.builder(
-                            controller: context.read<LikeBloc>().likeController,
+                            //controller: context.read<LikeBloc>().likeController,
                             gridDelegate:
                                 const SliverGridDelegateWithFixedCrossAxisCount(
                                     crossAxisCount: 2,
@@ -100,12 +101,15 @@ class Body extends StatelessWidget {
                                                 builder: (ctx) =>
                                                     BlocProvider.value(value: context.read<ProfileBloc>(),
                                                         child: BlocProvider.value(value: context.read<LikeBloc>(),
-                                                        child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index],)))));
+                                                        child: BlocProvider.value(value:context.read<PaymentBloc>(),
+                                                        child: BlocProvider.value(value:context.read<SharedpreferenceCubit>(),
+                                                        child: BlocProvider.value(value:context.read<UserpreferenceBloc>(),
+                                                        child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index],ctrx: context, ))))))));
 
 
 
                                       }else{
-                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...', style: TextStyle(fontSize: 11.sp), ), backgroundColor: Colors.black12, ));
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad loading...', style: TextStyle(fontSize: 11.sp), ), backgroundColor: Colors.black12, ));
                                       }
 
                                     }else
@@ -121,9 +125,7 @@ class Body extends StatelessWidget {
 
                                     }else{
                                       showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
-                                      // Navigator.push(context, MaterialPageRoute(builder: (ctx)=> 
-                                      //     BlocProvider.value(value: context.read<MatchBloc>(),
-                                      //     child: ItsAMatch(user: state.likedMeUsers[index]))));
+                                     
                                     }
                                     
 
@@ -132,32 +134,8 @@ class Body extends StatelessWidget {
 
                                     //Navigator.push(context, MaterialPageRoute(builder: (context) => Payment() ));
                                    },
-                                  // child: BlocListener<AdBloc, AdState>(
-                                  //     listenWhen: (previous, current) =>
-                                  //         previous.isLoadedInterstitialAd ==
-                                  //             true &&
-                                  //         current.isLoadedInterstitialAd ==
-                                  //             false,
-                                  //     // => previous.reward == null && current.reward !=null,
-                                  //     listener: (context, adState) {
-                                  //       //if(adState.in != null){
-                                  //       Navigator.push(
-                                  //           context,
-                                  //           MaterialPageRoute(
-                                  //               builder: (ctx) =>
-                                  //                   BlocProvider.value(
-                                  //                       value: context.read<
-                                  //                           ProfileBloc>(),
-                                  //                       child: Profile(
-                                  //                           user: state
-                                  //                               .likedMeUsers[
-                                  //                                   index]
-                                  //                               .user))));
-
-                                  //       //context.read<AdBloc>().add(ResetReward());
-
-                                  //       // }
-                                  //     },
+                               
+                     
                                       child: LikeCard(
                                           like: state.likedMeUsers[index]));
 

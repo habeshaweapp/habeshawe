@@ -151,7 +151,7 @@ class _BodyState extends State<Body> {
                                               Text(
                                                 state.messages[index].message,                                    
                                                 //userMatch.chat![0].messages[index].message,
-                                                style: Theme.of(context).textTheme.bodySmall!.copyWith()
+                                                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: !isDark? Colors.black:null)
                                                 //TextStyle(color: Colors.black)
                                                 ,),
                                                 Row(
@@ -265,7 +265,7 @@ class _BodyState extends State<Body> {
                                                   Text(
                                                     state.messages[index].message,
                                                     //userMatch.chat![0].messages[index].message,
-                                                    style: Theme.of(context).textTheme.bodySmall,),
+                                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color:!isDark? Colors.black: null),),
                                           
                                                     Row(
                                                       mainAxisAlignment: MainAxisAlignment.end,
@@ -520,7 +520,7 @@ class _BodyState extends State<Body> {
                               msgController.clear();
                             });
                           },
-                          child: Icon(Icons.cancel, color: Colors.red,),
+                          child: Icon(Icons.cancel, color: Colors.grey[400],),
                         ),
                         ),
                         // suffix: Icon(
@@ -543,7 +543,7 @@ class _BodyState extends State<Body> {
                     color: Colors.green,
                   ),
                   child: IconButton(
-                    icon: editMode?Icon(Icons.edit): Icon(FontAwesomeIcons.paperPlane,
+                    icon: editMode?Icon(Icons.edit, color: Colors.white,): Icon(FontAwesomeIcons.paperPlane,
                     color: Colors.white,
                     size: 20,
                     ),

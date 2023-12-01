@@ -13,6 +13,7 @@ import 'package:lomi/src/ui/Profile/profile.dart';
 import '../../../Blocs/AdBloc/ad_bloc.dart';
 import '../../../Blocs/MatchBloc/match_bloc.dart';
 import '../../../Blocs/PaymentBloc/payment_bloc.dart';
+import '../../../Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import '../../../Data/Models/enums.dart';
 import '../../chat/chatscreen.dart';
 import '../../payment/showPaymentDialog.dart';
@@ -38,8 +39,12 @@ class Body extends StatelessWidget {
         }
         
         if(state.matchStatus == MatchStatus.loaded){
-          final inactiveMatches = state.matchedUsers.where((match) => !match.chatOpened).toList();
-          final activeMatches = state.matchedUsers.where((match) => match.chatOpened).toList(); 
+          //final inactiveMatches = state.matchedUsers.where((match) => !match.chatOpened).toList();
+          //final activeMatches = state.matchedUsers.where((match) => match.chatOpened).toList(); 
+          final inactiveMatches = state.matchedUsers;
+          final activeMatches = state.activeMatches;
+
+
           return
          Padding(
         padding: EdgeInsets.all(0),
@@ -92,7 +97,10 @@ class Body extends StatelessWidget {
                                         });
                                         
                                                     
-                                      }
+                      }else{
+                        FocusManager.instance.primaryFocus!.unfocus();
+
+                      }
 
                  }
                   }
@@ -134,7 +142,13 @@ class Body extends StatelessWidget {
                                                         child: (state.isUserSearching && state.searchResultFor == SearchResultFor.findMe)?
                                                               BlocProvider.value(
                                                                 value: context.read<ProfileBloc>(),
-                                                                child: Profile(user: state.findMeResult![0], profileFrom: ProfileFrom.like)):
+                                                                child: BlocProvider.value(
+                                                                value: context.read<SharedpreferenceCubit>(),
+                                                                child: BlocProvider.value(
+                                                                value: context.read<UserpreferenceBloc>(),
+                                                                child: BlocProvider.value(
+                                                                value: context.read<SwipeBloc>(),
+                                                                  child: Profile(user: state.findMeResult![0], profileFrom: ProfileFrom.search))))):
                                                               ChatScreen(state.isUserSearching?state.searchResult![index]: inactiveMatches[index]) 
                                                                                           ))));
 
@@ -155,7 +169,13 @@ class Body extends StatelessWidget {
                                                               (state.isUserSearching && state.searchResultFor == SearchResultFor.findMe)?
                                                               BlocProvider.value(
                                                                 value: context.read<ProfileBloc>(),
-                                                                child: Profile(user: state.findMeResult![0], profileFrom: ProfileFrom.like)):
+                                                                child: BlocProvider.value(
+                                                                value: context.read<SharedpreferenceCubit>(),
+                                                                child: BlocProvider.value(
+                                                                value: context.read<UserpreferenceBloc>(),
+                                                                child: BlocProvider.value(
+                                                                value: context.read<SwipeBloc>(),
+                                                                child: Profile(user: state.findMeResult![0], profileFrom: ProfileFrom.search))))):
                                                               ChatScreen(state.isUserSearching?state.searchResult![index]: inactiveMatches[index]) 
                                                                                           ))));
 
@@ -184,10 +204,10 @@ class Body extends StatelessWidget {
                   ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(top:8.0, left: 28),
-              child: Text("Likes", style: Theme.of(context).textTheme.bodyLarge,),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.only(top:8.0, left: 28),
+            //   child: Text("Likes", style: Theme.of(context).textTheme.bodyLarge,),
+            // ),
             
             SizedBox(height: 25,),
     
@@ -204,6 +224,11 @@ class Body extends StatelessWidget {
                 itemBuilder: (context,index){
                   return InkWell(
                     onTap: (){
+                      if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
+                        
+                      showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
+                    }else{
+                      
                       context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType! , matchedUserId: activeMatches[index].userId));
                       //Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(activeMatches[index]) ));
             
@@ -211,6 +236,7 @@ class Body extends StatelessWidget {
                                                 builder: (ctx) =>
                                                     BlocProvider.value(value: context.read<ChatBloc>(),
                                                         child: ChatScreen(activeMatches[index]) )));
+                    }
                     },
                     child: ChatList(match: activeMatches[index])
                     

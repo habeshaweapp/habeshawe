@@ -51,7 +51,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         );
 
     }
-    if(state == AppLifecycleState.paused){
+    if(state == AppLifecycleState.paused || state == AppLifecycleState.inactive){
       //offline
       context.read<DatabaseRepository>().updateOnlinestatus(
         userId: context.read<AuthBloc>().state.user!.uid, 
@@ -151,10 +151,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 Widget HomeBody(){
   return IndexedStack(
     index: pageIndex,
-    children:   [
+    children: const  [
        ExplorePage(),
        LikesScreen(),
-       MatchesScreen(),
+        MatchesScreen(),
        UserProfile() 
     ],
   );

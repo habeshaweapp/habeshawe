@@ -51,11 +51,6 @@ class Wrapper extends StatelessWidget {
               );
             }
 
-            context.read<DatabaseRepository>().updateOnlinestatus(
-                userId: state.user!.uid,
-                gender: state.accountType!,
-                online: true);
-
             return MultiBlocProvider(providers: [
               BlocProvider(
                   lazy: false,
@@ -80,7 +75,9 @@ class Wrapper extends StatelessWidget {
                   lazy: false,
                   create: (context) => LikeBloc(
                       databaseRepository: context.read<DatabaseRepository>(),
-                      authBloc: context.read<AuthBloc>())
+                      authBloc: context.read<AuthBloc>(),
+                      paymentBloc: context.read<PaymentBloc>()
+                      )
                     ..add(LoadLikes(
                         userId: state.user!.uid, users: state.accountType!))),
               BlocProvider(

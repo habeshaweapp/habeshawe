@@ -13,10 +13,11 @@ import '../../../Data/Models/user.dart';
 
 
 class PhotoSelector extends StatefulWidget {
-  const PhotoSelector({super.key, this.imageUrl, this.user});
+  const PhotoSelector({super.key, this.imageUrl, this.user, required this.length});
 
   final String? imageUrl;
   final User? user;
+  final int length;
 
   @override
   State<PhotoSelector> createState() => _PhotoSelectorState();
@@ -132,7 +133,9 @@ class _PhotoSelectorState extends State<PhotoSelector> {
                   left: -15,
                   child: IconButton(
                     onPressed: (){
+                      if(widget.length > 2){
                       context.read<ProfileBloc>().add(DeletePhoto(imageUrl: widget.imageUrl!, userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType!, ));
+                      }
                       // setState(() {
                       //   isPhotoSelected=false;
                       //   imageFile= null;

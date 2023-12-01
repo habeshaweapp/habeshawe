@@ -108,6 +108,16 @@ class EnableLocation extends StatelessWidget {
                       )
                   ),
                 ),
+
+                // BlocListener<AuthBloc,AuthState>(
+                //   listener: (context,state){
+                //     if(state.isCompleted == true){
+                //       Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+
+                //     }
+
+                //   },
+                // ),
         
         
         
@@ -130,9 +140,21 @@ class EnableLocation extends StatelessWidget {
                             rep ++;
 
                           }
+                          var choosenPlaceMark = placeMark[0];
+                          if(placeMark.isNotEmpty && (placeMark[0].locality==null || placeMark[0].locality =='')){
+                            for(var place in placeMark){
+                              if(place.locality != '' && place.locality != null){
+                                choosenPlaceMark = place;
+                                break;
+                              }
+                            }
+                           
+
+                          }
                           if(context.mounted && placeMark.isNotEmpty ){
-                            context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: placeMark[0], user: state.user.copyWith(geohash: hash,location: [position.latitude, position.longitude], country: placeMark[0].country, countryCode: placeMark[0].isoCountryCode, city: placeMark[0].locality ), isMocked: position.isMocked));
-                            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                            context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: choosenPlaceMark, user: state.user.copyWith(geohash: hash,location: [position.latitude, position.longitude], country: choosenPlaceMark.country, countryCode: choosenPlaceMark.isoCountryCode, city: choosenPlaceMark.locality ), isMocked: position.isMocked));
+                            //Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const SplashScreen()));
                           }
 
                           if(placeMark.isEmpty){

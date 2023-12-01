@@ -178,6 +178,7 @@ class User extends Equatable {
       'city': city,
       'height': height,
       'phoneNumber': phoneNumber,
+      'number': number
     };
   }
 

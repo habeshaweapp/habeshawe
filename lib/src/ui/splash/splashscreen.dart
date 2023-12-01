@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import '../../Blocs/ThemeCubit/theme_cubit.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -50,6 +51,8 @@ class _SplashScreenState extends State<SplashScreen>
               opacity: _animation,
               child: Row(
                   // mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     
                     SizedBox(width: 60,),
@@ -59,7 +62,8 @@ class _SplashScreenState extends State<SplashScreen>
                         color: Colors.red,
                         thickness: isDark ? 0.2 : 0.5,
                       ),
-                    ),SizedBox(width: 5,),
+                    ),
+                    //SizedBox(width: 5,),
                     SizedBox(
                       height: size.height,
                       child: VerticalDivider(
@@ -74,6 +78,17 @@ class _SplashScreenState extends State<SplashScreen>
                         thickness: isDark ? 0.4 : 1,
                       ),
                     ),
+
+                    BlocListener<AuthBloc,AuthState>(
+                  listener: (context,state){
+                    if(state.firstTime == true && state.isCompleted == true){
+                      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+
+                    }
+
+                  },
+                  child: Container(),
+                ),
       
                     
                   ]),

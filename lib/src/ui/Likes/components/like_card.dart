@@ -32,7 +32,7 @@ class LikeCard extends StatelessWidget {
           
           ),
         borderRadius: BorderRadius.all(Radius.circular(10)),
-        color: !isDark?Colors.grey[400]: Colors.grey,
+        color: !isDark?Colors.grey[300]: Colors.grey[800],
 
 
       ),

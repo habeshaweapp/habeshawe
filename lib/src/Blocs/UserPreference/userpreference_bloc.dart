@@ -16,6 +16,7 @@ class UserpreferenceBloc extends Bloc<UserpreferenceEvent, UserPreferenceState> 
   final DatabaseRepository _databaseRepository;
   final AuthBloc _authBloc;
   StreamSubscription? _authSubscription;
+  StreamSubscription? _prefesSubscription;
   UserpreferenceBloc({
     required DatabaseRepository databaseRepository,
     required AuthBloc authBloc
@@ -40,7 +41,7 @@ class UserpreferenceBloc extends Bloc<UserpreferenceEvent, UserPreferenceState> 
 
   void _onLoadUserPreference(LoadUserPreference event, Emitter<UserPreferenceState> emit) {
      try {
-  _databaseRepository.getUserPreference(event.userId, event.users).listen((userPreference) {
+  _prefesSubscription= _databaseRepository.getUserPreference(event.userId, event.users).listen((userPreference) {
        add(UpdateUserPreference(preference: userPreference));
    });
 } on Exception catch (e) {
@@ -67,6 +68,7 @@ class UserpreferenceBloc extends Bloc<UserpreferenceEvent, UserPreferenceState> 
   @override
   Future<void> close() async {
     _authSubscription?.cancel();
+    _prefesSubscription?.cancel();
     super.close();
   }
 }

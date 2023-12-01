@@ -17,7 +17,7 @@ import 'components/body.dart';
 import 'components/bottomsendmessage.dart';
 
 class ChatScreen extends StatelessWidget {
-  const ChatScreen(this.userMatch);
+  const ChatScreen(this.userMatch, {super.key});
   final UserMatch userMatch;
 
 

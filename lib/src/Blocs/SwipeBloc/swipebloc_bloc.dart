@@ -64,18 +64,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       }else{
         add(CheckLastTime());
       }
-    //  add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!));
-   // }
-    // print(state);
-    // print(state);
-
-    // _authSubscription = _authBloc.stream.listen((state) {
-    //   if(state.user != null && state.accountType != Gender.nonExist){
-    //   add(LoadUsers(userId: state.user!.uid, users: state.accountType!));
-    //   }
-    //  });
-
-    //add(LoadUsers(userId: _authBloc. state.user!.uid, users: _authBloc. state.accountType! ));
+      
 
     _boostedSubscription = _databaseRepository.boostedUsers(_authBloc.state.accountType!).listen((boosted) {
 
@@ -106,12 +95,12 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
         .timeout(const Duration(minutes: 30), onTimeout: () { 
         if(state.loadAttempt >=3){
           emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('something went wrong come back another time!');
-        }
+        }else{
         
         add(LoadUsers(userId: event.userId, users: event.users, prefes: event.prefes!,user: event.user));
         emit(state.copyWith(loadAttempt: state.loadAttempt+1));
         throw Exception('took too long retrying...');
-        
+        }
         },);
         
       // } catch (e) {
@@ -125,12 +114,12 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       .timeout(const Duration(seconds: 30), onTimeout: () { 
         if(state.loadAttempt >=3){
           emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('toolong');
-        }
+        }else{
         
         add(LoadUsers(userId: event.userId, users: event.users, prefes: event.prefes!,user: event.user));
         emit(state.copyWith(loadAttempt: state.loadAttempt+1));
         throw Exception('took too long retrying...');
-        
+      }
         },);
     }
     if(event.prefes!.discoverBy == 2){
@@ -139,12 +128,12 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
      .timeout(const Duration(seconds: 30), onTimeout: () { 
         if(state.loadAttempt >=3){
           emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('toolong');
-        }
+        }else{
         
         add(LoadUsers(userId: event.userId, users: event.users, prefes: event.prefes!,user: event.user));
         emit(state.copyWith(loadAttempt: state.loadAttempt+1));
         throw Exception('took too long retrying...');
-        
+     }
         },);
     }
     if(event.prefes!.discoverBy == 3){
@@ -152,17 +141,17 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       .timeout(const Duration(seconds: 30), onTimeout: () { 
         if(state.loadAttempt >=3){
           emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('toolong');
-        }
+        }else{
         
         add(LoadUsers(userId: event.userId, users: event.users, prefes: event.prefes!,user: event.user));
         emit(state.copyWith(loadAttempt: state.loadAttempt+1));
         throw Exception('took too long retrying...');
-        
+        }
         },);
     }
 
  
-    emit(state.copyWith(swipeStatus: SwipeStatus.loaded, users: users, loadFor: LoadFor.daily ));
+    emit(state.copyWith(swipeStatus: SwipeStatus.loaded, users: users, loadFor: LoadFor.daily, loadAttempt: 0 ));
 
     _databaseRepository.updateLastTime(userId: event.userId, gender: event.users);
 
@@ -212,17 +201,12 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   void _swipedRight(SwipeRightEvent event, Emitter<SwipeState> emit) async{
     
     try {
-      if(state.swipeStatus == SwipeStatus.loaded){
-    
-      //final state = this.state as SwipeLoaded;
-     // List<User> users = List.from(state.users)..remove(event.user);
-  
-     // emit(SwipeLoaded(users: users));
     
    final result = await _databaseRepository.userLike(event.user, event.matchUser,event.superLike);
+   if(event.superLike){
+    _paymentBloc.add(ConsumeSuperLike());
+   }
    
-  
-  }
 } on Exception catch (e) {
   // TODO
   print(e.toString());
@@ -261,12 +245,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   
 
   FutureOr<void> _onSwipeEnded(SwipeEnded event, Emitter<SwipeState> emit) {
-   // emit(SwipeCompleted(completedTime: event.completedTime));
-  //  if(state.completedTime != null){
-  //   Future.delayed(const Duration(hours: 24), (){ 
-      
-  //     add(LoadUsers(userId: _authBloc.state.user!.uid , users: _authBloc.state.accountType! )); });
-  //  }
+  
     emit(state.copyWith(completedTime: event.completedTime, swipeStatus: SwipeStatus.completed, users: []));
   }
 
@@ -280,16 +259,19 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
           _databaseRepository.removeBoost(boost: boost);
         }
       }
-    var users = boosted.map((boost) => boost.user).toList();
+    var boosteds = boosted.map((boost) => boost.user).toList();
 
-    if(state.users.isNotEmpty){
-      emit(state.copyWith(users: users, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.boosted, boostedUsers: null));
+    if(state.users.isEmpty && boosteds.isNotEmpty){
+      emit(state.copyWith(users: boosteds, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.boosted, boostedUsers: null));
       NotificationService().showMessageReceivedNotifications(title: 'Matches', body: 'You have match to see!', payload: 'boosted', channelId: 'boosted');
+
+    }else if(boosteds.isNotEmpty){
+      emit(state.copyWith(boostedUsers: boosteds));
     }
   }
 
   FutureOr<void> _onLoadUserAd(LoadUserAd event, Emitter<SwipeState> emit)async {
-    emit(state.copyWith( loadFor: event.loadFor));
+    emit(state.copyWith( loadFor: event.loadFor, swipeStatus: SwipeStatus.completed));
 
     try {
       
@@ -302,7 +284,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     }
     if(event.loadFor == LoadFor.adNearby){
       //emit(state.copyWith(loadFor: event.loadFor));
-      var users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users,2 );
+      var users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users,10 );
 
       emit(state.copyWith(users: users, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad ));
 
@@ -313,7 +295,8 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       if(user !=null){
       emit(state.copyWith(users: [user], swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad ));
       }else{
-        emit(state.copyWith(swipeStatus: SwipeStatus.error ));
+        //emit(state.copyWith(swipeStatus: SwipeStatus.error ));
+        emit(state.copyWith(swipeStatus: SwipeStatus.error,loadFor: LoadFor.ad));
       }
     }
     else
@@ -338,10 +321,11 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
 
 
     } on TimeoutException catch(e){
-      emit(state.copyWith(swipeStatus: SwipeStatus.completed));
+      emit(state.copyWith(swipeStatus: SwipeStatus.error,loadFor: LoadFor.ad));
     }
     catch (e) {
       print(e);
+      emit(state.copyWith(swipeStatus: SwipeStatus.error,loadFor: LoadFor.ad));
       
     }
 
@@ -369,12 +353,18 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     int diff =  DateTime.now().difference(last).inMinutes;
     if(diff >= 1440){
       add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, prefes: prefs ));
+    }else{
+  
+        if(state.swipeStatus == SwipeStatus.initial ){
+          emit(state.copyWith(completedTime: last, swipeStatus: SwipeStatus.completed));
+        
+        }
     }
   }
 
   FutureOr<void> _onEmitBoosted(EmitBoosted event, Emitter<SwipeState> emit) {
 
-      emit(state.copyWith(users: state.boostedUsers, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.boosted, boostedUsers: null));
+      emit(state.copyWith(users: state.boostedUsers, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.boosted, boostedUsers: []));
       NotificationService().showMessageReceivedNotifications(title: 'Matches', body: 'You have match to see!', payload: 'boosted', channelId: 'boosted');
    
   }

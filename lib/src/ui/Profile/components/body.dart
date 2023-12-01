@@ -465,6 +465,9 @@ class Body extends StatelessWidget {
                         );
                         Navigator.pop(context);
                       }
+                      if(profileFrom == ProfileFrom.search){
+                        Navigator.pop(context);
+                      }
                     },
                     child: Container(
                               width: 50,
@@ -516,6 +519,22 @@ class Body extends StatelessWidget {
                           }else{
                             showPaymentDialog(context: context, paymentUi: PaymentUi.superlikes);
                           }
+                      }
+
+                      if(profileFrom == ProfileFrom.search ){
+                      
+                        if(context.read<PaymentBloc>().state.superLikes >0){
+                          context.read<SwipeBloc>().add(
+                            SwipeRightEvent(
+                              user: (context.read<ProfileBloc>().state as ProfileLoaded).user,  
+                              matchUser: user
+                              ));
+
+                        Navigator.pop(context);
+                        }else{
+                            showPaymentDialog(context: context, paymentUi: PaymentUi.superlikes);
+                          }
+                       
                       }
                       },
                       child: Container(
@@ -579,6 +598,19 @@ class Body extends StatelessWidget {
                         Navigator.push(context, MaterialPageRoute(builder: (ctx)=> 
                                           BlocProvider.value(value: ctrx!.read<MatchBloc>(),
                                           child: ItsAMatch(user: likedMeUser! ))));
+                      }
+
+                if(profileFrom == ProfileFrom.search ){
+                      
+
+                          context.read<SwipeBloc>().add(
+                            SwipeRightEvent(
+                              user: (context.read<ProfileBloc>().state as ProfileLoaded).user,  
+                              matchUser: user
+                              ));
+
+                        Navigator.pop(context);
+                       
                       }
 
               },

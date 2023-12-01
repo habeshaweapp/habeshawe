@@ -30,22 +30,24 @@ class SwipeCard extends StatelessWidget {
     return BlocConsumer<SwipeBloc, SwipeState>(
       listener: (context,state){
         if(state.swipeStatus == SwipeStatus.error){
-          Future.delayed(const Duration(hours: 24), (){
+          if(state.loadFor == LoadFor.daily){
+            
+            Future.delayed(const Duration(hours: 24), (){ 
+                               context.read<SwipeBloc>().add(LoadUsers(userId: context.read<AuthBloc>().state.user!.uid , users: context.read<AuthBloc>().state.accountType! ));  
+                               });
+            Future.delayed(const Duration(seconds: 2), (){
               context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
             });
-          if(state.error == 'Exception: dailyMatch'){
-            
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('something went wrong, come back tomorrow!')));
+           
 
-          }else{
-
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error??'something went wrong,')));
           }
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text(state.loadFor == LoadFor.daily? 'something went wrong come back later...': 'Try again!...' ,style: TextStyle(color: Colors.grey, fontSize: 12))));
+       
         }
       },
 
       builder: (context, state) {
-        if(state.swipeStatus == SwipeStatus.loading || state.swipeStatus == SwipeStatus.initial || state.swipeStatus == SwipeStatus.error){
+        if(state.swipeStatus == SwipeStatus.loading || state.swipeStatus == SwipeStatus.initial ){
         
           return const Center(child: CircularProgressIndicator(strokeWidth: 2,) );
           
@@ -99,12 +101,14 @@ class SwipeCard extends StatelessWidget {
                   print("Region $region");
              },
                 superlikeAction: (){
+                  
                     context.read<SwipeBloc>().add(SwipeRightEvent(     
                     user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
                     matchUser: user,
                     superLike: true
-                    )
-                  );
+                    ));
+
+                  
                 }
               )
             );
@@ -138,9 +142,7 @@ class SwipeCard extends StatelessWidget {
                         matchEngine: _matchEngine, 
                         onStackFinished: (){
                           if(state.loadFor == LoadFor.daily){
-                            if(state.boostedUsers.isNotEmpty){
-                              context.read<SwipeBloc>().add(EmitBoosted());
-                            }
+                            
                             context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
 
                               Future.delayed(const Duration(hours: 24), (){ 
@@ -149,10 +151,16 @@ class SwipeCard extends StatelessWidget {
                                
                                });
                             NotificationService().scheduleNotifications(title: 'Daily Match', body: 'your time is up. your daily matches are ready to view', payload: 'daily matches');
+                            if(state.boostedUsers.isNotEmpty){
+                              context.read<SwipeBloc>().add(EmitBoosted());
+                            }
    
                         }else{
-                      
+                          
                           context.read<SwipeBloc>().add(SwipeEnded(completedTime: state.completedTime));
+                          if(state.boostedUsers.isNotEmpty){
+                              context.read<SwipeBloc>().add(EmitBoosted());
+                            }
                           }
                         }, 
                         itemBuilder: (context, index){
@@ -232,7 +240,21 @@ class SwipeCard extends StatelessWidget {
                       if(index == 3){
                          _matchEngine!.currentItem?.like();
                       }
-                      if(index == 2) _matchEngine!.currentItem?.superLike();
+                      if(index == 2){ 
+                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months ){
+                            if(context.read<PaymentBloc>().state.superLikes >0){
+                            _matchEngine!.currentItem?.superLike();
+
+                            }else{
+                              showPaymentDialog(context: context, paymentUi: PaymentUi.superlikes);
+                            }
+
+                            }else{
+                              showPaymentDialog(context: context, paymentUi: PaymentUi.superlikes);
+                            }
+
+                        
+                        }
                       if(index == 0){
                         if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
                           if(context.read<AdBloc>().state.isLoadedRewardedAd){
@@ -297,10 +319,10 @@ class SwipeCard extends StatelessWidget {
           // final remain  = now.difference(state.completedTime!);
           return SwipeCompletedWidget(state: state,);
         }
-        // if(state.swipeStatus == SwipeStatus.error){
-        //   //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('something went wrong come back later...')));
-        //   return SwipeCompletedWidget(state: state);
-        // }
+        if(state.swipeStatus == SwipeStatus.error){
+          //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.loadFor == LoadFor.daily? 'something went wrong come back later...': 'Try again!...' )));
+          return SwipeCompletedWidget(state: state);
+        }
         
         else{
           return Center(child: Text('Get back after a while...'));

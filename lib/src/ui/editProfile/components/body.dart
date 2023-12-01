@@ -94,8 +94,8 @@ class Body extends StatelessWidget {
                           itemBuilder: (context, index) {
                             return
                                 (imagesCount > index) ?
-                                PhotoSelector(imageUrl: state.user.imageUrls[index],):
-                                PhotoSelector(user: state.user);
+                                PhotoSelector(imageUrl: state.user.imageUrls[index],length: state.user.imageUrls.length,):
+                                PhotoSelector(user: state.user, length: state.user.imageUrls.length);
                           }),
                     ),
                   ),

@@ -54,12 +54,12 @@ class SwipeCompletedWidget extends StatelessWidget {
         });
         context.read<AdBloc>().add(TimeOutAd(completedTimeAd: DateTime.now()));
       }
-      if(state.totalAdWatchedReOn >10){
-        if(state.completedTimeAd == null){
-          context.read<AdBloc>().add(TimeOutAd(completedTimeAd: DateTime.now()));
+      // if(state.totalAdWatchedReOn >10){
+      //   if(state.completedTimeAd == null){
+      //     context.read<AdBloc>().add(TimeOutAd(completedTimeAd: DateTime.now()));
 
-        }
-      }
+      //   }
+      //}
           return Stack(
             children: [
               Column(
@@ -157,7 +157,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         children: [
                                           Icon(Icons.location_on_outlined,color: Colors.grey,size: 35.sp, ),
                                           SizedBox(height: 10.h,),
-                                          Text('Find Matches around you\n (within 2km)', textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), ),
+                                          Text('Find Matches around you\n (within 10km)', textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), ),
                                           SizedBox(height: 10.h,),
                                           BlocBuilder<PaymentBloc,PaymentState>(
                                             builder: (context,state) {
@@ -417,7 +417,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
                                         if(context.read<AdBloc>().state.isLoadedRewardedAd){
                                           context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedPrincess));
-                                          if(context.read<AdBloc>().state.adWatchedPrincess!>=9 ){
+                                          if(context.read<AdBloc>().state.adWatchedPrincess!>=24 ){
 
                                               context.read<SwipeBloc>().add(LoadUserAd(
                                               userId: context.read<AuthBloc>().state.user!.uid, 
@@ -455,7 +455,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         SizedBox(width: 10,),
                                         Text(
                                           context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER ?
-                                              'Watch 10 Ads - Get 1 Princess - (${context.read<AdBloc>().state.adWatchedPrincess}/10) watched!'
+                                              'Watch 25 Ads - Get 1 Princess - (${context.read<AdBloc>().state.adWatchedPrincess}/10) watched!'
                                               :context.read<AuthBloc>().state.accountType ==Gender.men?'1 Super Like - Get 1 Princess':'1 Super Like - Get 1 Gentle Men' , 
 
                                            
@@ -496,7 +496,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
                                         if(context.read<AdBloc>().state.isLoadedRewardedAd){
                                           context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedQueen));
-                                        if(context.read<AdBloc>().state.adWatchedQueen! >= 19 ){
+                                        if(context.read<AdBloc>().state.adWatchedQueen! >= 44 ){
                                         context.read<SwipeBloc>().add(LoadUserAd(
                                         userId: context.read<AuthBloc>().state.user!.uid, 
                                         users: context.read<AuthBloc>().state.accountType!,
@@ -534,7 +534,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                             SizedBox(width: 10.h,),
                                             Text(
                                               context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER ?
-                                              'Watch 20 Ads - Get 1 Queen - (${context.read<AdBloc>().state.adWatchedQueen }/20) watched!'
+                                              'Watch 45 Ads - Get 1 Queen - (${context.read<AdBloc>().state.adWatchedQueen }/20) watched!'
                                               :context.read<AuthBloc>().state.accountType == Gender.women?'1 Boost - Get 1 King': '1 Boost - Get 1 Queen' , 
                                               textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), ),
 
@@ -696,7 +696,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                 Card(
                         elevation: 2,
                         color: 
-                        isDark ? state.userPreference!.discoverBy ==DiscoverBy.habeshawelogic.index?  Colors.grey :Colors.grey[900] : state.userPreference!.discoverBy ==DiscoverBy.habeshawelogic.index? Colors.grey[400]: Colors.white,
+                        isDark ? state.userPreference!.discoverBy ==DiscoverBy.habeshawelogic.index?  Colors.grey[800] :Colors.grey[900] : state.userPreference!.discoverBy ==DiscoverBy.habeshawelogic.index? Colors.grey[400]: Colors.white,
                         child: Container(
                           padding: EdgeInsets.all(10),
                           margin: EdgeInsets.only(top: 5, bottom: 5,),
@@ -723,7 +723,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                 ],
                               ),
                               Text('HabeshaWe algorithm gives you the best profiles who is rated beautiful Habesha matches around the world.',
-                               style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                               style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600], fontSize: 11),
                              ),
                             ],
                           ),
@@ -768,7 +768,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                   
                       Card(
                         elevation: 2,
-                        color: isDark ? state.userPreference!.discoverBy ==DiscoverBy.nearby.index?  Colors.grey :Colors.grey[900] : state.userPreference!.discoverBy ==DiscoverBy.nearby.index? Colors.grey[400]: Colors.white,
+                        color: isDark ? state.userPreference!.discoverBy ==DiscoverBy.nearby.index?  Colors.grey[800] :Colors.grey[900] : state.userPreference!.discoverBy ==DiscoverBy.nearby.index? Colors.grey[400]: Colors.white,
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: Column(

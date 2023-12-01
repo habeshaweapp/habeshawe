@@ -227,7 +227,7 @@ class _StartScreenState extends State<StartScreen>
                   style: TextStyle(
                     fontSize: 35,
                     // fontWeight: FontWeight.w300,
-                    color: Colors.grey[700],
+                    color: !isDark? Colors.grey[800]:Colors.grey[400],
                   ),
                 ),
               ),
@@ -250,7 +250,7 @@ class _StartScreenState extends State<StartScreen>
                         style: TextStyle(
                           //color: Colors.white,
                           fontSize: 11,
-                          fontWeight: FontWeight.w300,
+                          //fontWeight: FontWeight.w300,
                           color: Colors.grey
                         ),
                         textAlign: TextAlign.center,
@@ -346,8 +346,8 @@ class _StartScreenState extends State<StartScreen>
                         'Trouble logging in?',
                         style: TextStyle(
                           color: Colors.grey,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w300,
+                          fontSize: 11,
+                          //fontWeight: FontWeight.w300,
 
                         ),
                       ),

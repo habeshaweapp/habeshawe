@@ -18,7 +18,7 @@ class TagHelper{
             }else if(name == VerifiedStatus.king.name){
               verifiedIcon = Icon(FontAwesomeIcons.crown, color: Colors.amber,size:size);
             }else if(name == VerifiedStatus.gentelmen.name){
-              verifiedIcon = Icon(FontAwesomeIcons.userTie, color: Colors.blue, size:size);
+              verifiedIcon = Icon(FontAwesomeIcons.userTie, color: Colors.black, size:size);
             }else if(name == VerifiedStatus.notVerified.name){
                   verifiedIcon =  Icon(Icons.verified_outlined, color: Colors.grey,size: size,);
                 }
@@ -35,11 +35,11 @@ class TagHelper{
   static List<dynamic> getLookingFor(int index){
     List<String> lookignForOpt = [
       'Long-term\n partner',
-      'Long-term,\n open to short',
-      'Short-term,\n open to long',
-      'Someone to chat',
-      'New friends',
-      'Stil figuring it\n out',
+      'Christian\n partner',
+      'Teklil\n marriage',
+      'Nikah,\n keep it halal',
+      'Someone to chat, \nNew friends',
+      'Still figuring it\n out',
     ];
 
     List<Icon> icons =[

@@ -19,6 +19,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   final AuthBloc _authBloc;
   StreamSubscription? _authSubscription;
   StreamSubscription? _matchesSubscription;
+  StreamSubscription? _activeSubscription;
   ScrollController matchController = ScrollController();
   MatchBloc({
     required DatabaseRepository databaseRepository,
@@ -35,6 +36,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     on<UpdateMatches>(_onUpdateMatches);
     on<SearchName>(_onSearchName);
     on<LoadMoreMatches>(_onLoadMoreMatches);
+    on<UpdateactiveMatches>(_onUpdateInactiveMatches);
     
     matchController.addListener(() {
       if(matchController.position.pixels == matchController.position.maxScrollExtent){
@@ -54,6 +56,11 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
     });
 
+    _activeSubscription = _databaseRepository.getactiveMatches(event.userId,event.users).listen((inactive){
+      add(UpdateactiveMatches(activeMatches: inactive ));
+
+    });
+
     }on Exception catch(e){
       print(e);
     }
@@ -61,13 +68,9 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   }
 
   void _onUpdateMatches(UpdateMatches event, Emitter<MatchState> emit){
-    try {
       //emit(MatchLoaded(matchedUsers: event.matchedUsers!));
       emit(state.copyWith(matchedUsers: event.matchedUsers, matchStatus: MatchStatus.loaded));
-      
-    }on Exception catch (e) {
-      print(e.toString());
-    }
+ 
   }
 
 
@@ -89,6 +92,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     // TODO: implement close
     _authSubscription?.cancel();
     _matchesSubscription?.cancel();
+    _activeSubscription?.cancel();
     return super.close();
   }
 
@@ -127,10 +131,14 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     try {
       var newMatches = await _databaseRepository.loadMoreMatches(userId: event.userId, gender:event.gender,startAfter:event.startAfter);
       var matches = state.matchedUsers;
-      emit(state.copyWith(matchedUsers: [...matches, newMatches]));
+      emit(state.copyWith(matchedUsers: [...matches, ...newMatches]));
       
     } catch (e) {
       
     }
+  }
+
+  FutureOr<void> _onUpdateInactiveMatches(UpdateactiveMatches event, Emitter<MatchState> emit) {
+    emit(state.copyWith(activeMatches: event.activeMatches,matchStatus: MatchStatus.loaded));
   }
 }

@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
+import 'package:lomi/src/Data/Repository/Remote/remote_config.dart';
 import 'package:lomi/src/app_route_config.dart';
-import 'package:lomi/src/dataApi/interestslist.dart';
+
 import 'package:lomi/src/ui/onboarding/AfterRegistration/addphotos.dart';
 
 import '../../../Blocs/ThemeCubit/theme_cubit.dart';
@@ -29,8 +30,11 @@ class _EditInterestsState extends State<EditInterests> {
 
   @override
   Widget build(BuildContext context) {
+    final RemoteConfigService remoteConfigService = RemoteConfigService();
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     if(widget. userInterests != null) _selectedList = widget.userInterests! ;
+
+    var inter = remoteConfigService.getInterests().split(',');
     return Scaffold(
       body: SafeArea(
         child:Container(
@@ -65,7 +69,7 @@ class _EditInterestsState extends State<EditInterests> {
                   width: MediaQuery.of(context).size.width*0.9,
                   margin: EdgeInsets.only(top: 10,left: 35),
                   child: Text(
-                    'Let everyone know what you\'re passionate about \nby adding it to your profile.',
+                    'Let everyone know what you\'re passionate about \nby adding it to your profile. (${_selectedList.length}/5)',
                     style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Color.fromARGB(255, 192, 189, 189)),
                     )
                 ),
@@ -86,9 +90,13 @@ class _EditInterestsState extends State<EditInterests> {
                           selectedColor: isDark? Colors.teal: Colors.green,
                           //backgroundColor: Colors.teal,
                           onSelected: (value) {
+                            
+                            if(_selectedList.length <5 || _selectedList.contains(inter[index]) ){
                             setState(() {
                               _selectedList.contains(inter[index]) ? _selectedList.remove(inter[index]) : _selectedList.add(inter[index]);
                             });
+
+                            }
                           },
                           ),
                       )

@@ -73,8 +73,8 @@ class NotificationService{
          AndroidNotificationDetails androidNotificationDetails = 
            AndroidNotificationDetails(
              channelId, 
-            'Message',
-            importance: Importance.max,
+            'Message $channelId',
+            importance: Importance.high,
             priority: Priority.high,
             ticker: 'Message Notification'
             );

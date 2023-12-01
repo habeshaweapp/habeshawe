@@ -91,14 +91,18 @@ Future<void> _onLogInWithGoogle(LogInWithGoogle event, Emitter<AuthState> emit) 
 }
 
 
-  FutureOr<void> _onDeleteAccount(DeleteAccount event, Emitter<AuthState> emit) {
+  FutureOr<void> _onDeleteAccount(DeleteAccount event, Emitter<AuthState> emit)async {
     try {
-       emit(const AuthState.unauthenticated());
-      //_databaseRepository.deleteAccount(userId: state.user!.uid, gender: state.accountType);
-      _authRepository.deleteAccount();
+      var st = state;
+      emit(const AuthState.unauthenticated());
+       
+      await _databaseRepository.deleteAccount(userId: st.user!.uid, gender: st.accountType).then((value) => 
+       _authRepository.deleteAccount()
+      );
+      
       
     } catch (e) {
-      
+      print(e);
     }
   }
 

@@ -74,6 +74,7 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
   }
 
   FutureOr<void> _onLoadRewardedAd(LoadRewardedAd event, Emitter<AdState> emit) {
+    emit(state.copyWith(isLoadedRewardedAd: false));
      _adRepository.createRewardAd(
       onAdLoaded: (ad){
         add(OnRewarededAdLoaded(ad: ad));
@@ -219,7 +220,7 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
   }
 
   FutureOr<void> _onTimeOutAd(TimeOutAd event, Emitter<AdState> emit) {
-    emit(state.copyWith(completedTimeAd: event.completedTimeAd, ));
+    emit(state.copyWith(completedTimeAd: event.completedTimeAd,totalAdWatchedReOn: 100 ));
   }
   
   @override

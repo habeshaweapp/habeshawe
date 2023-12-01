@@ -10,6 +10,7 @@ import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
 import '../../Data/Models/likes_model.dart';
 import '../../Data/Models/model.dart';
+import '../PaymentBloc/payment_bloc.dart';
 
 part 'like_event.dart';
 part 'like_state.dart';
@@ -17,14 +18,17 @@ part 'like_state.dart';
 class LikeBloc extends Bloc<LikeEvent, LikeState> {
   final DatabaseRepository _databaseRepository;
   final AuthBloc _authBloc;
+  final PaymentBloc _paymentBloc;
   StreamSubscription? _authSubscription;
   StreamSubscription? _likesSubscription;
   ScrollController likeController = ScrollController();
   LikeBloc({
     required DatabaseRepository databaseRepository,
-    required AuthBloc authBloc
+    required AuthBloc authBloc,
+    required PaymentBloc paymentBloc
   }) : _databaseRepository = databaseRepository,
         _authBloc = authBloc,
+        _paymentBloc = paymentBloc,
   super(LikeLoading()) {
     on<LoadLikes>(_onLoadLikes);
     on<UpdateLikes>(_onUpdateLikes);
@@ -49,6 +53,10 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
 void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
    try {
   await  _databaseRepository.likeLikedMeUser(event.user, event.likedMeUser, event.isSuperLike!);
+  if(event.isSuperLike!){
+    _paymentBloc.add(ConsumeSuperLike());
+
+  }
 } on Exception catch (e) {
   // TODO
   print(e.toString());

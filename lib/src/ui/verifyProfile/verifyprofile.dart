@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/ui/verifyProfile/components/body.dart';
@@ -31,7 +32,7 @@ class VerifyProfile extends StatelessWidget {
               
               Text('/', style: TextStyle(fontSize: 40),),
 
-              Icon(LineIcons.crown, size: 50, color: Colors.amber,),
+              Icon(user.gender =='men'?FontAwesomeIcons.crown: LineIcons.crown, size: 50, color: Colors.amber,),
               
             ],
           ),

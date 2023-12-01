@@ -64,3 +64,13 @@ class LoadMoreMatches extends MatchEvent{
   // TODO: implement props
   List<Object> get props => [userId, gender,startAfter];
 }
+
+class UpdateactiveMatches extends MatchEvent{
+  final List<UserMatch>? activeMatches;
+  //final List<Like>? likedMeUsers;
+  UpdateactiveMatches({required this.activeMatches});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [activeMatches];
+}

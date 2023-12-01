@@ -362,7 +362,7 @@ class Body extends StatelessWidget {
                                 value: state.userPreference!.maximumDistance!.toDouble(), 
                                 max: 10,
                                 
-                                divisions: 2,
+                                divisions: 10,
                                 onChanged: (value){
                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(maximumDistance: value.toInt())));
                                  isThereChange = true;
@@ -670,7 +670,7 @@ class Body extends StatelessWidget {
           
                     SizedBox(height: 25,),
                     Center(
-                      child: Text('version 1.0.0.3', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
+                      child: Text('version 1.0.0.13', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
                     ),
                     SizedBox(height: 25,),
           

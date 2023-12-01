@@ -33,7 +33,7 @@ final pageController = PageController();
                   physics: AlwaysScrollableScrollPhysics(),
                   controller: pageController ,
                   children: [
-                    PageViewItem(icon: LineIcons.crown,
+                    PageViewItem(icon: user.gender == Gender.women.name? LineIcons.crown:FontAwesomeIcons.crown,
                     color: Colors.amber,
                     title: 'Get Your Crown', 
                     description: 'Get verified and we will reveal your profile and if you stand out you will get Queen tag', 

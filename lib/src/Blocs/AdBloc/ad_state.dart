@@ -98,7 +98,7 @@ class AdState extends Equatable {
       adWatchedPrincess: json['adWatchedPrincess'] as int,
       adWatchedOnline: json['adWatchedOnline'] as int,
       totalAdWatchedReOn: json['totalAdWatchedReOn'] as int,
-      completedTimeAd: json['completedTimeAd'] == null?null: DateTime.parse(json['totalAdWatchedReOn'] as String)
+      completedTimeAd: json['completedTimeAd'] == null?null: DateTime.parse(json['completedTimeAd'] as String)
     );
   }
 }

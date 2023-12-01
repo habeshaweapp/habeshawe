@@ -40,7 +40,7 @@ class ChatList extends StatelessWidget {
           var lastMessage = snapshot.data?.first;
          // time = lastMessage
          if(lastMessage!.senderId == match.id && (lastMessage.seen == null)){
-            NotificationService().showMessageReceivedNotifications(title: match.name, body: lastMessage.message, payload: 'chat', channelId: lastMessage.senderId);
+           // NotificationService().showMessageReceivedNotifications(title: match.name, body: lastMessage.message, payload: 'chat', channelId: lastMessage.id);
           }
           return Text(
             lastMessage.message,

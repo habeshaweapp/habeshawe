@@ -91,7 +91,7 @@ class ChatScreen extends StatelessWidget {
                       ):
 
                       Text(
-                        'last Seen ${DateFormat('hh:mm a').format(snapshot.data?['lastseen'].toDate())}',
+                        lastSeen(snapshot.data?['lastseen'].toDate()),
                         style: Theme.of(context).textTheme.bodySmall,
                         ): const Text('last seen recently', style: TextStyle(fontSize: 12, color: Colors.grey));
                       
@@ -471,6 +471,28 @@ class ChatScreen extends StatelessWidget {
         
       }
     ));
+  }
+
+  String lastSeen(DateTime last){
+    var todaydDate = DateTime.now();
+    var today = DateTime(todaydDate.year, todaydDate.month, todaydDate.day );
+    var yesterday = DateTime(todaydDate.year, todaydDate.month, todaydDate.day-1 );
+    var aDate = DateTime(last.year, last.month, last.day );
+    
+
+    if(aDate == today){
+      return 'last seen at ${DateFormat('hh:mm a').format(last)} ';
+
+    }else if(aDate == yesterday){
+      return 'last seen yesterday at ${DateFormat('hh:mm a').format(last)} ';
+      
+    }
+    else{
+      if(aDate.year == today.year){
+        return 'last seen ${DateFormat.MMMd().format(last)} at ${DateFormat('hh:mm a').format(last)}';
+      }
+      return 'last seen on ${DateFormat.yMMMd().format(aDate).toString()}';
+    }
   }
 
 

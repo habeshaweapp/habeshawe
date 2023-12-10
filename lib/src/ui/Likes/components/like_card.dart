@@ -14,7 +14,8 @@ import '../../../Data/Models/likes_model.dart';
 
 class LikeCard extends StatelessWidget {
   final Like like;
-  const LikeCard({super.key, required this.like});
+  final bool showAd;
+  const LikeCard({super.key, required this.like, required this.showAd});
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +86,7 @@ class LikeCard extends StatelessWidget {
           ): SizedBox(),
           ),
 
-       context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER? SizedBox(
+       context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER? showAd? SizedBox(
           child: Center(
             child: Container(
               decoration: BoxDecoration(
@@ -99,7 +100,7 @@ class LikeCard extends StatelessWidget {
               ),
             ),
           ),
-        ): const SizedBox()
+        ): const SizedBox(): const SizedBox()
       ],
 
 

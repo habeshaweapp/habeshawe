@@ -21,6 +21,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   StreamSubscription? _matchesSubscription;
   StreamSubscription? _activeSubscription;
   ScrollController matchController = ScrollController();
+  ScrollController activeController = ScrollController();
   MatchBloc({
     required DatabaseRepository databaseRepository,
     required AuthBloc authBloc,
@@ -37,11 +38,20 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     on<SearchName>(_onSearchName);
     on<LoadMoreMatches>(_onLoadMoreMatches);
     on<UpdateactiveMatches>(_onUpdateInactiveMatches);
+    on<LoadMoreActiveMatches>(_onLoadMoreActiveMatches);
     
     matchController.addListener(() {
       if(matchController.position.pixels == matchController.position.maxScrollExtent){
         var last= state.matchedUsers.last.timestamp;
         add(LoadMoreMatches(userId: _authBloc.state.user!.uid, gender: _authBloc.state.accountType!, startAfter: last!));
+      }
+    });
+
+    activeController.addListener((){
+      if(activeController.position.pixels == activeController.position.maxScrollExtent){
+        var last = state.activeMatches.last.timestamp;
+        add(LoadMoreActiveMatches(userId: _authBloc.state.user!.uid, gender: _authBloc.state.accountType!, startAfter: last!));
+
       }
     });
   }
@@ -140,5 +150,17 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
   FutureOr<void> _onUpdateInactiveMatches(UpdateactiveMatches event, Emitter<MatchState> emit) {
     emit(state.copyWith(activeMatches: event.activeMatches,matchStatus: MatchStatus.loaded));
+  }
+
+  FutureOr<void> _onLoadMoreActiveMatches(LoadMoreActiveMatches event, Emitter<MatchState> emit)async {
+    try{
+      var newActives = await _databaseRepository.loadMoreActiveMatches(userId: event.userId, gender:event.gender,startAfter:event.startAfter);
+      var actives = state.activeMatches;
+      emit(state.copyWith(activeMatches: [...actives,...newActives]));
+
+
+    }catch(e){
+
+    }
   }
 }

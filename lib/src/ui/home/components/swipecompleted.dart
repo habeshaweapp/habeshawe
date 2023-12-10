@@ -12,6 +12,7 @@ import 'package:slide_countdown/slide_countdown.dart';
 import '../../../Blocs/AdBloc/ad_bloc.dart';
 import '../../../Blocs/ThemeCubit/theme_cubit.dart';
 import '../../../Data/Models/enums.dart';
+import '../../../Data/Repository/Remote/remote_config.dart';
 import '../../UserProfile/userprofile.dart';
 
 class SwipeCompletedWidget extends StatelessWidget {
@@ -35,6 +36,9 @@ class SwipeCompletedWidget extends StatelessWidget {
 
     }
     var isDark = Theme.of(context).brightness == ThemeMode.dark;
+
+    final RemoteConfigService remoteConfigService = RemoteConfigService();
+    bool showAd = remoteConfigService.showAd();
     
     // var remain2  =state.completedTime ==null? Duration(seconds: 60) : Duration(seconds: 60 - now.difference(state.completedTime!).inSeconds);
     // if(state.completedTime != null){
@@ -129,8 +133,8 @@ class SwipeCompletedWidget extends StatelessWidget {
                                   child: InkWell(
                                     onTap: (){
                                       if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
-                                      if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                                        context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedNearby));
+                                      if(context.read<AdBloc>().state.isLoadedRewardedAd || !showAd){
+                                        showAd?context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedNearby)):null;
 
                                       context.read<SwipeBloc>().add(LoadUserAd(
                                       userId: context.read<AuthBloc>().state.user!.uid, 
@@ -157,11 +161,11 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         children: [
                                           Icon(Icons.location_on_outlined,color: Colors.grey,size: 35.sp, ),
                                           SizedBox(height: 10.h,),
-                                          Text('Find Matches around you\n (within 10km)', textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), ),
+                                          Text('Find Matches around you\n (within ${remoteConfigService.updatLocationAfter()}km)', textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), ),
                                           SizedBox(height: 10.h,),
                                           BlocBuilder<PaymentBloc,PaymentState>(
                                             builder: (context,state) {
-                                              return Text( state.subscribtionStatus == SubscribtionStatus.ET_USER || state.subscribtionStatus == SubscribtionStatus.notSubscribed?
+                                              return Text( (state.subscribtionStatus == SubscribtionStatus.ET_USER || state.subscribtionStatus == SubscribtionStatus.notSubscribed) && showAd?
                                                'Watch Ad' : ''
                                                , style: TextStyle(),);
                                             }
@@ -210,8 +214,8 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         highlightColor: state.totalAdWatchedReOn>=3?Colors.white:null,
                                         onTap: (){
                                           if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed ){
-                                          if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                                            context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedRandom));
+                                          if(context.read<AdBloc>().state.isLoadedRewardedAd || !showAd){
+                                            showAd?context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedRandom)):null;
                               
                                           context.read<SwipeBloc>().add(LoadUserAd(
                                           userId: context.read<AuthBloc>().state.user!.uid, 
@@ -244,7 +248,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                                 SizedBox(width: 10.h,),
                                                 BlocBuilder<PaymentBloc,PaymentState>(
                                                   builder: (context,state) {
-                                                    return Text(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed?
+                                                    return Text((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed)&&showAd?
                             
                                                     'Watch Ad - Get 1 random Match' : 'Get 1 random Match'
                                                     ,textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), );
@@ -302,7 +306,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         splashColor: state.totalAdWatchedReOn>=3?Colors.white:null,
                                         highlightColor: state.totalAdWatchedReOn>=3?Colors.white:null,
                                         onTap: (){
-                                          if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed ){
+                                          if((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed) && showAd ){
                                           if(context.read<AdBloc>().state.isLoadedRewardedAd){
                                             context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedOnline));
                                           if(context.read<AdBloc>().state.adWatchedOnline! >=1 ){
@@ -344,7 +348,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                                 builder: (context,statePayment) {
                                                   var txt = state.totalAdWatchedReOn <10? ' - (${context.read<AdBloc>().state.adWatchedOnline}/2) watched':'';
                                                   return Text(
-                                                    context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed?
+                                                    (context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed)&&showAd?
                                                     'Watch 2 Ads - Get 1 Online Match$txt'
                                                     :'Get 1 Online Match', textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), );
                                                 }

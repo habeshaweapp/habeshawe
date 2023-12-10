@@ -14,6 +14,7 @@ import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/user_model.dart';
 import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
+import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
 import 'package:lomi/src/Data/Repository/Payment/payment_repository.dart';
 import 'package:lomi/src/Data/Repository/Storage/storage_repository.dart';
 import 'package:lomi/src/wrapper.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
       RepositoryProvider(create: (context) => AuthRepository()),
       RepositoryProvider(create: (context) => DatabaseRepository()),
       RepositoryProvider(create: (context) => StorageRepository()),
+      RepositoryProvider(create: (context)=> NotificationService())
     ],
       child: MultiBlocProvider(
           providers: [

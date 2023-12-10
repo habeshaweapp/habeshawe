@@ -27,7 +27,9 @@ class RemoteConfigService{
 
       await _remoteConfig.setDefaults(const{
         'interests': 'Jesus,LOve,Start ups,programming, 90s,Memes,Writing,Teddy Afro,Painting,torpa,kasech,Girma,astu,Aynalem,Library,Abrhot,6-kilo-meda,Law,Phd,3AM,Abyot,psychology,Photography,Walking,K-Pop,Reading,Sports,Instagram,Twitter,Facebook,Snapchat,HabeshaWe,Movies,Home Workout,Gym,Pull Up,Skateboarding,Stand Up Comedy,Coffee,Poetry,Singing,Painting,Dancing,Museum,Tea,Freelance,Hip Hop,Nightlife,Highland,Addis Street,Wello-Sefer,Meskel-Flower,Catcalling,Life',
-        'shutDownBefore': '0.0.0'
+        'shutDownBefore': '0.0.0',
+        'UPDATELOCATIONAFTER':10,
+        'showAd':true
       });
 
       await _remoteConfig.fetchAndActivate();
@@ -53,6 +55,10 @@ class RemoteConfigService{
   int getCount(String key) => _remoteConfig.getInt(key);
 
   String getInterests() => _remoteConfig.getString('interests');
+
+  int updatLocationAfter() => _remoteConfig.getInt('UPDATELOCATIONAFTER');
+
+  bool showAd() => _remoteConfig.getBool('showAd');
 
   
 

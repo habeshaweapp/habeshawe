@@ -62,23 +62,29 @@ class Body extends StatelessWidget {
 
     PageController pageController = PageController();
     bool isDart = context.read<ThemeCubit>().state == ThemeMode.dark;
-    double distanceD = calculateDistance(context.read<SharedpreferenceCubit>().state.myLocation!, user.location!);
-
+    
+    var myLocation = context.read<SharedpreferenceCubit>().state.myLocation;
+    double? distanceD;
     int distance = 0;
     String km = context.read<UserpreferenceBloc>().state.userPreference!.showDistancesIn!;
-    if(km == 'mile'){
+    if(myLocation != null){
+      distanceD = calculateDistance(myLocation, user.location!);
+      
+    if(km == 'mi'){
       distanceD = distanceD*0.62137;
       if(distanceD < 1){
         distance = 0;
       }else{
       distance = distanceD.round();
       }
+      
     }else{
       if(distanceD < 1){
         distance = 0;
       }else{
       distance = distanceD.round();
       }
+    }
     }
     // if(imgindex != null){
     //                             pageController.animateToPage(imgindex!.toInt(), duration: Duration(milliseconds: 300), curve: Curves.linear);
@@ -245,7 +251,9 @@ class Body extends StatelessWidget {
                       
 
                       
-                       profileFrom != ProfileFrom.profile? Container(
+                       profileFrom != ProfileFrom.profile?
+                       myLocation != null?
+                        Container(
                           child: 
                           Row(
                             children: [
@@ -258,7 +266,7 @@ class Body extends StatelessWidget {
                                 ),
                             ],
                           ),
-                        ):SizedBox(),
+                        ):SizedBox():const SizedBox(),
                       
                         SizedBox(height: 15,),
     

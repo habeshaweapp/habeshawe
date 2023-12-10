@@ -353,6 +353,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     int diff =  DateTime.now().difference(last).inMinutes;
     if(diff >= 1440){
       add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, prefes: prefs ));
+      NotificationService().showMessageReceivedNotifications(channelId: 'daily',title: 'Daily Match', body: 'your time is up. your daily matches are ready', payload: 'daily matches');
     }else{
   
         if(state.swipeStatus == SwipeStatus.initial ){

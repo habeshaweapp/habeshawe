@@ -25,6 +25,13 @@ class LogInWithGoogle extends AuthEvent{}
 
 class LogOut extends AuthEvent{}
 
-class DeleteAccount extends AuthEvent{}
+class DeleteAccount extends AuthEvent{
+  final String reason;
+  const DeleteAccount({required this.reason});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [reason];
+}
 
 class SignUpCompeleted extends AuthEvent{}

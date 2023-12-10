@@ -9,6 +9,7 @@ import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
 import '../../Data/Repository/Storage/storage_repository.dart';
+import '../SharedPrefes/sharedpreference_cubit.dart';
 
 part 'profile_event.dart';
 part 'profile_state.dart';
@@ -23,10 +24,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required AuthBloc authBloc,
     required DatabaseRepository databaseRepository,
     required StorageRepository storageRepository,
+    
   }) 
   : _authBloc = authBloc,
     _databaseRepository = databaseRepository,
     _storageRepository = storageRepository,
+    
   super(ProfileLoading()) {
     on<LoadProfile>(_onLoadProfile);
     on<UpdateProfile>(_onUpdateProfile);
@@ -36,11 +39,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<VerifyMe>(_onVerifyMe);
     on<DeletePhoto>(_onDeletePhoto);
 
-    // _authSubscription = _authBloc.stream.listen((state) { 
-    //   if(state.user != null && state.accountType != Gender.nonExist  ){
-    //     add(LoadProfile(userId: state.user!.uid, users: state.accountType!));
-    //   }
-    // });
+ 
     add(LoadProfile(userId: _authBloc.state.user!.uid, users: _authBloc. state.accountType!));
   }
 
@@ -117,4 +116,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       print(e.toString());
     }
   }
+
+
 }

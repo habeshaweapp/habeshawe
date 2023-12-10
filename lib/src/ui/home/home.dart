@@ -7,6 +7,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import 'package:lomi/src/Blocs/SharedPrefes/sharedpreference_cubit.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
@@ -39,6 +41,14 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // TODO: implement didChangeAppLifecycleState
     super.didChangeAppLifecycleState(state);
+
+    if(state == AppLifecycleState.paused || state == AppLifecycleState.resumed){
+      if(context.read<ProfileBloc>().state is ProfileLoaded){
+      context.read<SharedpreferenceCubit>().checkLocationChange((context.read<ProfileBloc>().state as ProfileLoaded).user.location!);
+      //context.read<ProfileBloc>().add(UpdateLocation());
+      }
+    }
+ 
 
     if(context.read<UserpreferenceBloc>().state.userPreference!.onlineStatus!){
 
@@ -101,9 +111,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   AppBar appBar(bool isDark) {
     //bool isDark = Theme.of(context).brightness == Brightness.dark;
     var items = [
-      pageIndex == 0 ? 'assets/images/explore_active_icon.svg' :'assets/images/explore_icon.svg',
+      pageIndex == 0 ? 'assets/images/home_active.png' :'assets/images/home.png',
       pageIndex == 1 ? 'assets/images/likes_active_icon.svg' :'assets/images/likes_icon.svg',
-      pageIndex == 2 ? 'assets/images/chat_active_icon.svg' :'assets/images/chat_icon.svg',
+      pageIndex == 2 ? 'assets/images/chat_active.png' :'assets/images/chat_icon.svg',
       pageIndex == 3 ? 'assets/images/account_active_icon.svg' :'assets/images/account_icon.svg',
 
     ];
@@ -131,13 +141,28 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(items.length, (index) {
+            Widget icn = SizedBox();
+
+            if(index == 0){
+               icn = Image.asset(items[index], height: 21, width: 21, );
+
+            }else if(index == 1){
+              icn = SvgPicture.asset(items[index],height: 30, width: 30, );
+            }
+            else if(index == 2){
+              icn =  pageIndex == 2? Image.asset(items[index], height: 22, width: 22, ): SvgPicture.asset(items[index],height: 21, width: 21, ) ;
+            }
+            else if(index == 3){
+              icn = icons[index];
+            }
             return IconButton(
               onPressed: (){
                 setState(() {
                   pageIndex = index;
                 });
               }, 
-              icon: index == 1?SvgPicture.asset(items[index],height: 27, width: 27, ): icons[index]
+             // icon: index != 0?SvgPicture.asset(items[index],height: 27, width: 27, ): Image.asset(items[index], height: 23, width: 27, )
+             icon: icn,
               );
 
           })

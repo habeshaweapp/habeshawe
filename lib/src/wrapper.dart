@@ -63,7 +63,7 @@ class Wrapper extends StatelessWidget {
                   create: (context) => AdBloc(adRepository: AdRepository())),
               BlocProvider(
                   lazy: false,
-                  create: (contet) => SharedpreferenceCubit()..getMyLocation()),
+                  create: (contet) => SharedpreferenceCubit(databaseRepository: context.read<DatabaseRepository>(), authBloc: context.read<AuthBloc>())..getMyLocation()),
               BlocProvider(
                   lazy: false,
                   create: (context) => SwipeBloc(

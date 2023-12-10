@@ -35,7 +35,7 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
 
     //add(LoadNativeAd());
     add(LoadRewardedAd());
-    add(LoadInterstitialAd());
+   // add(LoadInterstitialAd());
   }
 
   FutureOr<void> _onLoadNativeAd(LoadNativeAd event, Emitter<AdState> emit) {
@@ -74,7 +74,7 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
   }
 
   FutureOr<void> _onLoadRewardedAd(LoadRewardedAd event, Emitter<AdState> emit) {
-    emit(state.copyWith(isLoadedRewardedAd: false));
+    //emit(state.copyWith(isLoadedRewardedAd: false));
      _adRepository.createRewardAd(
       onAdLoaded: (ad){
         add(OnRewarededAdLoaded(ad: ad));
@@ -82,7 +82,7 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
       onAdFailedToLoad: (error){
         print(error);
         if(state.numRewardedLoadAttempts <5){
-          add(LoadRewardedAd());
+          //add(LoadRewardedAd());
           emit(state.copyWith(numRewardedLoadAttempts: state.numRewardedLoadAttempts+1));
         }
         add(RewardedAdFailedToLoad());
@@ -91,7 +91,7 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
 
   FutureOr<void> _onOnRewarededAdLoaded(OnRewarededAdLoaded event, Emitter<AdState> emit) {
     
-    emit(state.copyWith(rewardedAd: event.ad, isLoadedRewardedAd: true, reward: null, numRewardedLoadAttempts: 0));
+    emit(state.copyWith(rewardedAd: event.ad, isLoadedRewardedAd: true, reward: null));
       
       //RewardedAdLoaded(ad: event.ad));
   }
@@ -172,8 +172,8 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
       //   emit(state.copyWith(rewardedAd: null,isLoadedRewardedAd: false, reward: null, adWatchedQueen: state.adWatchedQueen! +1 ));
 
       // }
-      emit(state.copyWith(rewardedAd: null));
-      add(LoadRewardedAd());
+      emit(state.copyWith(rewardedAd: null, numRewardedLoadAttempts: 0));
+     // add(LoadRewardedAd());
     }
   }
 

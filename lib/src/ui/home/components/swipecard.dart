@@ -270,7 +270,9 @@ class SwipeCard extends StatelessWidget {
                           if(context.read<PaymentBloc>().state.boosts ==0){
                             showPaymentDialog(context: context, paymentUi: PaymentUi.boosts);
                           }else{
+                            if(context.read<PaymentBloc>().state.boosts >0){
                             context.read<SwipeBloc>().add(BoostMe(user: (context.read<ProfileBloc>().state as ProfileLoaded).user, ));
+                            }
                           }
                         }
                         }

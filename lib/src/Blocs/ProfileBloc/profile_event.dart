@@ -67,3 +67,5 @@ class DeletePhoto extends ProfileEvent{
   // TODO: implement props
   List<Object?> get props => [imageUrl];
 }
+
+class UpdateLocation extends ProfileEvent{}

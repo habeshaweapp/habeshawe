@@ -8,6 +8,7 @@ import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
 
+import '../../../Data/Repository/SharedPrefes/sharedPrefes.dart';
 import 'matches_image_small.dart';
 
 class ChatList extends StatelessWidget {
@@ -39,8 +40,26 @@ class ChatList extends StatelessWidget {
           if(snapshot.hasData){
           var lastMessage = snapshot.data?.first;
          // time = lastMessage
+         var seen = SharedPrefes.getMessagesNotified();
          if(lastMessage!.senderId == match.id && (lastMessage.seen == null)){
-           // NotificationService().showMessageReceivedNotifications(title: match.name, body: lastMessage.message, payload: 'chat', channelId: lastMessage.id);
+           
+           if(seen==null || !seen.contains(lastMessage.id)){
+
+            NotificationService().showMessageReceivedNotifications(title: match.name, body: lastMessage.message, payload: 'chat', channelId: lastMessage.id);
+            
+            seen == null? seen = [lastMessage.id]: seen.add(lastMessage.id);
+            SharedPrefes.setMessagesNotified(seen);
+           }
+           // context.read<NotificationService>().showMessageReceivedNotifications(title: match.name, body: lastMessage.message, payload: 'chat', channelId: lastMessage.id);
+          }
+
+          if(lastMessage.senderId == match.id && (lastMessage.seen != null)){
+            if(seen!=null && seen.contains(lastMessage.id)){
+              seen.remove(lastMessage.id);
+              SharedPrefes.setMessagesNotified(seen);
+
+            }
+
           }
           return Text(
             lastMessage.message,
@@ -71,7 +90,7 @@ class ChatList extends StatelessWidget {
           var time = snapshot.data?.first.timestamp?.toDate();
           var time2 = '';
           if(time != null){
-             time2 = DateFormat('hh:mm a').format(time);
+             time2 = sentTime(time);
           }
           
 
@@ -97,5 +116,32 @@ class ChatList extends StatelessWidget {
         ),
       //Text('7:02 AM', style: Theme.of(context).textTheme.bodySmall,),
     );
+  }
+
+  String sentTime(DateTime date){
+    var todaydDate = DateTime.now();
+    var today = DateTime(todaydDate.year, todaydDate.month, todaydDate.day );
+    var yesterday = DateTime(todaydDate.year, todaydDate.month, todaydDate.day-1 );
+    //var sent = null;
+    
+    var sent = DateTime(date.year, date.month, date.day );
+    
+
+    if(sent == today){
+      return DateFormat('hh:mm a').format(date);
+
+    }
+    else{
+      int diff = todaydDate.difference(date).inDays;
+      if(diff<6){
+        return DateFormat.E().format(date).toString();
+      }
+
+
+      if(sent.year == today.year){
+        return DateFormat.MMMd() .format(date);
+      }
+      return DateFormat('dd.MM.yy') .format(date);
+    }
   }
 }

@@ -17,6 +17,7 @@ class MatchesImage extends StatelessWidget {
   final double height;
   final double width;
   final BoxShape shape;
+  final bool showAd;
 
   const MatchesImage({
     Key? key,
@@ -25,6 +26,7 @@ class MatchesImage extends StatelessWidget {
     this.height = 150,
     this.width = 120,
     this.shape = BoxShape.rectangle,
+    required this.showAd
 });
 
   @override
@@ -96,7 +98,9 @@ class MatchesImage extends StatelessWidget {
           ): SizedBox(),
           ),
 
-       context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER? SizedBox(
+       context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER? 
+       showAd?
+       SizedBox(
           child: Center(
             child: Container(
               decoration: BoxDecoration(
@@ -110,7 +114,7 @@ class MatchesImage extends StatelessWidget {
               ),
             ),
           ),
-        ): const SizedBox()
+        ): const SizedBox(): const SizedBox()
       ],
 
 

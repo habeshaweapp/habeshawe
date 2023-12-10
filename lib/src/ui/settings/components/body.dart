@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
@@ -247,8 +248,8 @@ class Body extends StatelessWidget {
                               child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Only show people from my Country\ncountry (${(context.read<ProfileBloc>().state as ProfileLoaded).user.country}).',  
-                                style: Theme.of(context).textTheme.bodySmall, ),
+                                Text('Only show people from my Country\ncountry - ${(context.read<ProfileBloc>().state as ProfileLoaded).user.country}.',  
+                                style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp), ),
                                 Switch(value: state.userPreference!.onlyShowFromMyCountry!, 
                                 onChanged: (value){
                                   context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(onlyShowFromMyCountry: value)));
@@ -270,8 +271,8 @@ class Body extends StatelessWidget {
                               child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Only show people from my City\ncurrent city (${(context.read<ProfileBloc>().state as ProfileLoaded).user.countryCode}).', 
-                                style: Theme.of(context).textTheme.bodySmall, ),
+                                Text('Only show people from my City\ncurrent city - ${(context.read<ProfileBloc>().state as ProfileLoaded).user.city}.', 
+                                style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp), ),
                                 Switch(value: state.userPreference!.onlyShowFromMyCity??false, 
                                 onChanged: (value){
                                   context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(onlyShowFromMyCity: value, onlyShowFromMyCountry: value)));
@@ -670,7 +671,7 @@ class Body extends StatelessWidget {
           
                     SizedBox(height: 25,),
                     Center(
-                      child: Text('version 1.0.0.13', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
+                      child: Text('version 1.0.0.14', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
                     ),
                     SizedBox(height: 25,),
           
@@ -827,7 +828,7 @@ class Body extends StatelessWidget {
     builder: (ctx)=> AlertDialog(
       title: Text('Delete account?'),
       content: SizedBox(
-        height: 100,
+        height: 125,
         width: MediaQuery.of(context).size.width*0.95,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -835,9 +836,11 @@ class Body extends StatelessWidget {
             Text('This action cannot be undone', style: TextStyle(color: Colors.grey, fontSize: 13),),
             SizedBox(height: 15,),
             Text('Type \"delete\" to confirm', style: TextStyle(color: Colors.grey, fontSize: 12),),
+            
             TextField(
               controller: ctr,
-            )
+            ),
+            Text('*you may be redirected to login again, to complete deletion.', style: TextStyle(color: Colors.grey, fontSize: 10),),
           ],
         ),
       ),
@@ -853,7 +856,7 @@ class Body extends StatelessWidget {
         TextButton(
           onPressed: (){
             if(ctr.text == 'delete'){
-              context.read<AuthBloc>().add(DeleteAccount());
+              context.read<AuthBloc>().add(DeleteAccount(reason: reason));
               Navigator.pop(context);
               Navigator.pop(context);
               

@@ -74,3 +74,15 @@ class UpdateactiveMatches extends MatchEvent{
   // TODO: implement props
   List<Object?> get props => [activeMatches];
 }
+
+class LoadMoreActiveMatches extends MatchEvent{
+  final String userId;
+  final Gender gender;
+  final Timestamp startAfter;
+
+  const LoadMoreActiveMatches({required this.userId, required this.gender, required this.startAfter});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [userId, gender,startAfter];
+}

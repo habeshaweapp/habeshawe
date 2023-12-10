@@ -209,12 +209,12 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   FutureOr<void> _onPaymentStarted(PaymentStarted event, Emitter<PaymentState> emit)async {
     final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid, users: _authBloc.state.accountType!);
     final products = await _paymentRepository.getProducts();
-    if(payment.countryCode != 'ET' || products.isNotEmpty){
+    if(payment.countryCode != 'ET' ){
     //final products = await _paymentRepository.getProducts();
     //emit(SubscribtionState(productDetails: products));
     var expireDate = DateTime.fromMillisecondsSinceEpoch(payment.expireDate, isUtc: true);
     int diff = DateTime.now().difference(expireDate).inDays;
-    if(diff >=3){
+    if(diff >=3 && payment.expireDate != 0){
       
       _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: {}, subscribtionStatus: SubscribtionStatus.notSubscribed.index, paymentType: SubscribtionStatus.notSubscribed.name, expireDate: payment.expireDate);
 

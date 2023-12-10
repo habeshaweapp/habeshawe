@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -74,7 +76,7 @@ class NotificationService{
            AndroidNotificationDetails(
              channelId, 
             'Message $channelId',
-            importance: Importance.high,
+            importance: Importance.max,
             priority: Priority.high,
             ticker: 'Message Notification'
             );
@@ -87,7 +89,7 @@ class NotificationService{
         
 
         await flutterLocalNotificationsPlugin.show(
-          0, 
+          Random().nextInt(100), 
           title, 
           body, 
           notificationDetails,

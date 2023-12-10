@@ -96,7 +96,7 @@ Future<void> _onLogInWithGoogle(LogInWithGoogle event, Emitter<AuthState> emit) 
       var st = state;
       emit(const AuthState.unauthenticated());
        
-      await _databaseRepository.deleteAccount(userId: st.user!.uid, gender: st.accountType).then((value) => 
+      await _databaseRepository.deleteAccount(userId: st.user!.uid, email:st.user!.email,displayName:st.user!.displayName, gender: st.accountType!, reason: event.reason).then((value) => 
        _authRepository.deleteAccount()
       );
       

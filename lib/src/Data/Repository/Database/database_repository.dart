@@ -755,6 +755,9 @@ class DatabaseRepository extends BaseDatabaseRepository{
     try {
 
   Position myLocation = await Geolocator.getCurrentPosition(desiredAccuracy:  LocationAccuracy.low);
+  if(myLocation.isMocked){
+    return [];
+  }
  
   geohash.MyGeoHash myGeoHash = geohash.MyGeoHash();
   String hash = myGeoHash.geoHashForLocation(geohash.GeoPoint(myLocation.latitude, myLocation.longitude));
@@ -1153,7 +1156,8 @@ Future<void> createDemoUsers(List<User> users) async{
         'score':0,
         'adminChoice':'nan',
         'searcName': searchName(user.name),
-        'livingIn': '${user.city}, ${user.country}'
+        'livingIn': '${user.city}, ${user.country}',
+        'creationTimestamp': FieldValue.serverTimestamp()
       });
 
       return true;
@@ -1419,10 +1423,16 @@ Future<void> createDemoUsers(List<User> users) async{
 
   void unMatch({required String userId, required Gender gender, required UserMatch matchUser}) async{
     try {
-      _firebaseFirestore.collection(gender.name)
+      await _firebaseFirestore.collection(gender.name)
         .doc(userId)
         .collection('matches')
         .doc(matchUser.id)
+        .delete();
+
+      await _firebaseFirestore.collection(matchUser.gender)
+        .doc(matchUser.userId)
+        .collection('matches')
+        .doc(userId)
         .delete();
       
     } catch (e) {
@@ -1588,11 +1598,13 @@ Future<void> createDemoUsers(List<User> users) async{
                           'timestamp': FieldValue.serverTimestamp()
                         });
 
-                  _firebaseFirestore.collection(gender.name)
-                    .doc(userId)
-                    .collection('matches')
-                    .doc(reportedUser.id)
-                    .delete();
+                  // _firebaseFirestore.collection(gender.name)
+                  //   .doc(userId)
+                  //   .collection('matches')
+                  //   .doc(reportedUser.id)
+                  //   .delete();
+
+                  unMatch(userId: userId, gender: gender, matchUser: reportedUser);
 
                   
                 } catch (e) {
@@ -1854,13 +1866,16 @@ Future<void> createDemoUsers(List<User> users) async{
     }
   }
 
-  Future<void> deleteAccount({required String userId, Gender? gender})async {
+  Future<void> deleteAccount({required String userId, required Gender gender,required String reason, String? email, String? displayName})async {
     try {
-      await _firebaseFirestore.collection(gender!.name).doc(userId).delete();
+      await _firebaseFirestore.collection(gender.name).doc(userId).delete();
       await _firebaseFirestore.collection('deleted').add({
         'timestamp': FieldValue.serverTimestamp(),
-        'gender': gender?.name,
-        'userId': userId
+        'gender': gender.name,
+        'userId': userId,
+        'reason': reason,
+        'email': email,
+        'displayName': displayName
       });
 
       
@@ -1922,6 +1937,7 @@ Future<void> createDemoUsers(List<User> users) async{
       List<UserMatch> matches = await _firebaseFirestore.collection(gender.name)
                             .doc(userId)
                             .collection('matches')
+                            .where('chatOpened', isEqualTo: false)
                             .orderBy('timestamp',descending: true)
                             .startAfter([startAfter])
                             .limit(10)
@@ -1950,7 +1966,7 @@ Future<void> createDemoUsers(List<User> users) async{
 
   void removeBoost({required Boosted boost}) async {
     try {
-          await _firebaseFirestore.collection('boosted').doc(boost.gender).collection('boosted').doc(boost.user.id).delete();
+          await _firebaseFirestore.collection('boosted').doc(boost.user.gender).collection('boosted').doc(boost.user.id).delete();
 
       
     } catch (e) {
@@ -1979,6 +1995,43 @@ Future<void> createDemoUsers(List<User> users) async{
 
   throw Exception(e);
 }
+  }
+
+  void updateLocation({required String userId,required Gender gender, required List<double> newLocation, required String hash})async {
+    try {
+      await _firebaseFirestore.collection(gender.name)
+              .doc(userId)
+              .update({
+                'location': GeoPoint(newLocation[0],newLocation[1]),
+                'geohash': hash
+
+              });
+      
+    } catch (e) {
+      
+    }
+  }
+
+  Future<List<UserMatch>> loadMoreActiveMatches({required String userId, required Gender gender, required Timestamp startAfter})async {
+    try {
+      var matches = await  _firebaseFirestore.collection(gender.name)
+                    .doc(userId)
+                    .collection('matches')
+                    .where('chatOpened', isEqualTo: true)
+                    .orderBy('timestamp', descending: true)
+                    .startAfter([startAfter])
+                    .limit(10)
+                    .get()
+                    .then((snap) => snap.docs.map(
+                      (doc) => UserMatch.fromSnapshoot(doc)).toList());
+
+      return matches;
+      
+    } catch (e) {
+      
+      throw Exception(e);
+    }
+
   }
 
 }

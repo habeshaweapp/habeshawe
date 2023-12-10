@@ -9,6 +9,8 @@ import 'package:lomi/src/Data/Repository/Remote/remote_config.dart';
 import 'package:lomi/src/app.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'src/Data/Repository/SharedPrefes/sharedPrefes.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -19,6 +21,7 @@ void main() async {
   MobileAds.instance.initialize();
   await NotificationService().init();
   await RemoteConfigService().init();
+  await SharedPrefes.init();
   runApp(const MyApp());
   
 } 

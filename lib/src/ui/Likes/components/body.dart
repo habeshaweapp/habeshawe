@@ -9,6 +9,7 @@ import 'package:lomi/src/Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Models/model.dart';
+import 'package:lomi/src/Data/Repository/Remote/remote_config.dart';
 import 'package:lomi/src/ui/Likes/components/like_card.dart';
 import 'package:lomi/src/ui/itsAmatch/itsAmatch.dart';
 
@@ -27,7 +28,8 @@ class Body extends StatelessWidget {
   Widget build(BuildContext context) {
     //final inactiveMatches = UserMatch.matches.where((match) => match.userId == 1 && match.chat!.isEmpty,).toList();
     //final activeMatches = UserMatch.matches.where((match) => match.userId == 1 && match.chat!.isNotEmpty,).toList();
-
+    final RemoteConfigService remoteConfigService = RemoteConfigService();
+    bool showAd = remoteConfigService.showAd();
     return SingleChildScrollView(
       controller: context.read<LikeBloc>().likeController,
       child: BlocBuilder<LikeBloc, LikeState>(
@@ -95,8 +97,8 @@ class Body extends StatelessWidget {
                                     //context.read<AdBloc>().add(ShowInterstitialAd());
                                     //var subscribtion = context.read<PaymentBloc>().state.subscribtionStatus;
                                     if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
-                                      if(context.read<AdBloc>().state.isLoadedRewardedAd ==true){
-                                       context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedOnline));
+                                      if(context.read<AdBloc>().state.isLoadedRewardedAd ==true || !showAd){
+                                       showAd? context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedOnline)):null;
                                        Navigator.push(context, MaterialPageRoute(
                                                 builder: (ctx) =>
                                                     BlocProvider.value(value: context.read<ProfileBloc>(),
@@ -137,7 +139,9 @@ class Body extends StatelessWidget {
                                
                      
                                       child: LikeCard(
-                                          like: state.likedMeUsers[index]));
+                                          like: state.likedMeUsers[index],
+                                          showAd: showAd,
+                                          ));
 
                                   //LikesImage(url: state.likedMeUsers[index].user.imageUrls[0], height: 20,)
                                   

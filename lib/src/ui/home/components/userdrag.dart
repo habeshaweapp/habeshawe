@@ -28,9 +28,13 @@ class UserCard extends StatelessWidget {
     final pageController = PageController();
     var size= MediaQuery.of(context).size;
     int idx = 0;
-    double distanceD = calculateDistance(context.read<SharedpreferenceCubit>().state.myLocation!, user.location!);
+    var myLocation = context.read<SharedpreferenceCubit>().state.myLocation;
+    double? distanceD;
     int distance = 0;
     String km = context.read<UserpreferenceBloc>().state.userPreference!.showDistancesIn!;
+    if(myLocation != null){
+      distanceD = calculateDistance(myLocation, user.location!);
+      
     if(km == 'mi'){
       distanceD = distanceD*0.62137;
       if(distanceD < 1){
@@ -45,6 +49,7 @@ class UserCard extends StatelessWidget {
       }else{
       distance = distanceD.round();
       }
+    }
     }
     return  Center(
       child: GestureDetector(
@@ -221,7 +226,7 @@ class UserCard extends StatelessWidget {
                                 
                                   Icon(Icons.location_on_outlined, color: Colors.grey, size: 18,),
                                   const SizedBox(width: 4,),
-                                 Container(
+                                  myLocation !=null? Container(
                                    child:  Text(
                                    // user.location != null ?'${distance} $km away ' : '',
                                     distance == 0? 'less than a $km away' :'$distance $km away',
@@ -231,7 +236,7 @@ class UserCard extends StatelessWidget {
                                         
                                 
                                     ),
-                                 ),
+                                 ):SizedBox(),
                                 ],
                               ),
                             ),

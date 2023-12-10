@@ -15,6 +15,7 @@ import '../../../Blocs/MatchBloc/match_bloc.dart';
 import '../../../Blocs/PaymentBloc/payment_bloc.dart';
 import '../../../Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import '../../../Data/Models/enums.dart';
+import '../../../Data/Repository/Remote/remote_config.dart';
 import '../../chat/chatscreen.dart';
 import '../../payment/showPaymentDialog.dart';
 import 'chat_list.dart';
@@ -30,7 +31,8 @@ class Body extends StatelessWidget {
     FocusNode focusNode = FocusNode();
    // final inactiveMatches = UserMatch.matches.where((match) => match.userId == 1 && match.chat!.isEmpty,).toList();
    // final activeMatches = UserMatch.matches.where((match) => match.userId == 1 && match.chat!.isNotEmpty,).toList();
-
+    final RemoteConfigService remoteConfig = RemoteConfigService();
+    bool showAd = remoteConfig.showAd();
 
     return BlocBuilder<MatchBloc, MatchState>(
       builder: (context, state) {
@@ -132,8 +134,13 @@ class Body extends StatelessWidget {
                        // Navigator.push(context,MaterialPageRoute(builder: (context) => ChatScreen(inactiveMatches[index])));
 
                           if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
-                                    if(context.read<AdBloc>().state.isLoadedRewardedAd ==true){
-                                     context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedOnline));
+                                    if(context.read<AdBloc>().state.isLoadedRewardedAd ==true || !showAd){
+                                     showAd ?context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedOnline)):null;
+                                     if(state.isUserSearching){
+                                      if(state.searchResult![index].chatOpened){
+                                        context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType! , matchedUserId: state.searchResult![index].userId));
+                                      }
+                                     }
                                      Navigator.push(context, MaterialPageRoute(
                                               builder: (ctx) =>
                                                   BlocProvider.value(value: context.read<ChatBloc>(),
@@ -160,6 +167,11 @@ class Body extends StatelessWidget {
 
                                   }else
                                   if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly||context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months){
+                                    if(state.isUserSearching){
+                                      if(state.searchResult![index].chatOpened){
+                                        context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType! , matchedUserId: state.searchResult![index].userId));
+                                      }
+                                     }
                                     Navigator.push(context, MaterialPageRoute(
                                               builder: (ctx) =>
                                                   BlocProvider.value(value: context.read<ChatBloc>(),
@@ -182,12 +194,13 @@ class Body extends StatelessWidget {
                                   }else{
                                     showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
                                   }
-
-                                  controller.clear();
-                                  context.read<MatchBloc>().add(SearchName(userId: context.read<AuthBloc>().state.user!.uid, gender: context.read<AuthBloc>().state.accountType!, name: '' ));
+                                  if((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed )&&showAd){
+                                    controller.clear();
+                                    context.read<MatchBloc>().add(SearchName(userId: context.read<AuthBloc>().state.user!.uid, gender: context.read<AuthBloc>().state.accountType!, name: '' ));
+                                  }
                         },
-                      child:state.isUserSearching? state.searchResultFor == SearchResultFor.matched? MatchesImage(match: state.searchResult![index],height: 120, width: 100, ): state.findMeResult!.isNotEmpty? MatchesImage(url: state.findMeResult?[0].imageUrls[0]): SizedBox()
-                      :MatchesImage(match: inactiveMatches[index], height: 120, width: 100,));
+                      child:state.isUserSearching? state.searchResultFor == SearchResultFor.matched? MatchesImage(match: state.searchResult![index],height: 120, width: 100,showAd:showAd ): state.findMeResult!.isNotEmpty? MatchesImage(url: state.findMeResult?[0].imageUrls[0],showAd: showAd,): SizedBox()
+                      :MatchesImage(match: inactiveMatches[index], height: 120, width: 100,showAd: showAd,));
                   }
                   ):
                   Padding(
@@ -221,6 +234,7 @@ class Body extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),
                 itemCount: activeMatches.length,
+                controller: context.read<MatchBloc>().activeController,
                 itemBuilder: (context,index){
                   return InkWell(
                     onTap: (){

@@ -163,9 +163,14 @@ class WelcomeScreen extends StatelessWidget {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: (){
+                        var email = context.read<AuthBloc>().state.user!.email;
+                        var gmail = email ==''?context.read<AuthBloc>().state.user!.displayName:email;
                         User user = User(
                           id: context.read<AuthBloc>().state.user!.uid,
-                          name: '', age: 0, gender: '', imageUrls: [], interests: []
+                          name: '', age: 0, gender: '', imageUrls: [], interests: [],
+                          email: gmail,
+                          provider: email == ''?'twitter':'google'
+
                           );
                         
                         //if(Paint.enableDithering)

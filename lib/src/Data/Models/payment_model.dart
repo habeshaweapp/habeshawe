@@ -15,7 +15,7 @@ class Payment extends Equatable{
   final int boosts;
   final int superLikes;
 
-  const Payment({ this.boosts =0,  this.superLikes =0, this.subscribtionStatus = 1, required this.country, required this.countryCode, required this.placeMark,required this.expireDate, required this.paymentType, required this.paymentDetails });
+  const Payment({ this.boosts =0,  this.superLikes =0, this.subscribtionStatus = 0, required this.country, required this.countryCode, required this.placeMark,required this.expireDate, required this.paymentType, required this.paymentDetails });
 
   factory Payment.fromSnapshoot(DocumentSnapshot snap){
     return Payment(

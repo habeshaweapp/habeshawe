@@ -148,12 +148,15 @@ class AuthRepository extends BaseAuthRepository{
   try {
     final providerData = _firebaseAuth.currentUser?.providerData.first;
 
-    if (AppleAuthProvider().providerId == providerData!.providerId) {
+    if (TwitterAuthProvider().providerId == providerData!.providerId) {
       await _firebaseAuth.currentUser!
-          .reauthenticateWithProvider(AppleAuthProvider());
+          .reauthenticateWithProvider(TwitterAuthProvider());
     } else if (GoogleAuthProvider().providerId == providerData.providerId) {
       await _firebaseAuth.currentUser!
-          .reauthenticateWithProvider(GoogleAuthProvider());
+          .reauthenticateWithProvider(GoogleAuthProvider()).then((value)async {
+            await _googleSignIn.disconnect();
+
+          });
     }
 
     await _firebaseAuth.currentUser?.delete();

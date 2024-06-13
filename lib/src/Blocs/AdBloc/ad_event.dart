@@ -84,3 +84,7 @@ class TimeOutAd extends AdEvent{
   // TODO: implement props
   List<Object> get props => [completedTimeAd];
 }
+
+class IncreaseLoadAttempt extends AdEvent{}
+
+class IncreaseReOn extends AdEvent{}

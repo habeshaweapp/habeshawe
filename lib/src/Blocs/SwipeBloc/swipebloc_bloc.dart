@@ -16,6 +16,7 @@ import '../../Data/Models/likes_model.dart';
 import '../../Data/Models/model.dart';
 import '../../Data/Models/userpreference_model.dart';
 import '../../Data/Repository/Notification/notification_service.dart';
+import '../../Data/Repository/Remote/remote_config.dart';
 import '../AdBloc/ad_bloc.dart';
 import '../AuthenticationBloc/bloc/auth_bloc.dart';
 import '../PaymentBloc/payment_bloc.dart';
@@ -31,6 +32,8 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   StreamSubscription? _authSubscription;
   StreamSubscription? _adSubscription;
   StreamSubscription? _boostedSubscription;
+  final RemoteConfigService remoteConfigService = RemoteConfigService();
+  
   SwipeBloc({
     required DatabaseRepository databaseRepository,
     required AuthBloc authBloc,
@@ -53,17 +56,18 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     on<BoostedLoaded>(_onBoostedLoaded);
     on<LoadUserAd>(_onLoadUserAd);
     on<AdSwipeEnded>(_onAdSwipeEnded);
-    on<BoostMe>(_onBoostMe);
+    
     on<CheckLastTime>(_onCheckLastTime);
     on<EmitBoosted>(_onEmitBoosted);
   
 
     //if(state.completedTime == null && state.users.isEmpty){
-      if(_authBloc.state.firstTime!){
+    if(_authBloc.state.firstTime!){
       add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!));
-      }else{
-        add(CheckLastTime());
-      }
+    }else{
+      add(CheckLastTime());
+    }
+
       
 
     _boostedSubscription = _databaseRepository.boostedUsers(_authBloc.state.accountType!).listen((boosted) {
@@ -91,8 +95,8 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
 
     if(event.prefes!.discoverBy == 0){
       //try {
-        users = await _databaseRepository.getUsersMainLogic(event.userId, event.users, event.prefes!)
-        .timeout(const Duration(minutes: 30), onTimeout: () { 
+        users = await _databaseRepository.getUsersMainLogic(event.userId, event.users, event.prefes!,event.user!)
+        .timeout(const Duration(seconds: 30), onTimeout: () { 
         if(state.loadAttempt >=3){
           emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('something went wrong come back another time!');
         }else{
@@ -186,6 +190,11 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       await _databaseRepository.userPassed(event.user, event.passedUser);
       //await _databaseRepository.addToQueensKings(event.passedUser);
 
+      var users = [...state.users];
+      users.remove(event.passedUser);
+
+      emit(state.copyWith(swipeStatus: SwipeStatus.left, users:users ));
+
 } on Exception catch (e) {
   // TODO
   print(e.toString());
@@ -206,6 +215,15 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
    if(event.superLike){
     _paymentBloc.add(ConsumeSuperLike());
    }
+
+   if(result){
+    emit(state.copyWith(matchedUser: event.matchUser, swipeStatus: SwipeStatus.itsamatch ));
+   }
+
+   var users = [...state.users];
+   users.remove(event.matchUser);
+
+   emit(state.copyWith(swipeStatus: SwipeStatus.right, users:users ));
    
 } on Exception catch (e) {
   // TODO
@@ -254,9 +272,9 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       for(var boost in boosted){
         var boostedTime = boost.timestamp.toDate();
         int diff = DateTime.now().difference(boostedTime).inMinutes;
-        if(diff >30){
+        if(diff >remoteConfigService.boostTime()){
           boosted.remove(boost);
-          _databaseRepository.removeBoost(boost: boost);
+         // _databaseRepository.removeBoost(gender: boost.user.gender, userId: boost.user.id);
         }
       }
     var boosteds = boosted.map((boost) => boost.user).toList();
@@ -337,28 +355,31 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
 
   
 
-  FutureOr<void> _onBoostMe(BoostMe event, Emitter<SwipeState> emit)async {
-    try {
-     await _databaseRepository.boostMe(event.user);
-     _paymentBloc.add(ConsumeBoost());
-      
-    } catch (e) {
-      
-    }
-  }
+
 
   FutureOr<void> _onCheckLastTime(CheckLastTime event, Emitter<SwipeState> emit) async{
+   // emit(state.copyWith(swipeStatus: SwipeStatus.loading));
     var prefs= await _databaseRepository.getPreference(_authBloc.state.user!.uid, _authBloc.state.accountType!);
-    DateTime last = prefs.lastTime!.toDate();
+    DateTime last = prefs.lastTime?.toDate() ??DateTime.now();
     int diff =  DateTime.now().difference(last).inMinutes;
     if(diff >= 1440){
       add(LoadUsers(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, prefes: prefs ));
-      NotificationService().showMessageReceivedNotifications(channelId: 'daily',title: 'Daily Match', body: 'your time is up. your daily matches are ready', payload: 'daily matches');
+      //NotificationService().showMessageReceivedNotifications(channelId: 'daily',title: 'Daily Match', body: 'your time is up. your daily matches are ready', payload: 'daily matches');
     }else{
   
         if(state.swipeStatus == SwipeStatus.initial ){
           emit(state.copyWith(completedTime: last, swipeStatus: SwipeStatus.completed));
         
+        }
+        if(state.swipeStatus == SwipeStatus.left || state.swipeStatus == SwipeStatus.right || state.swipeStatus == SwipeStatus.itsamatch){
+          if(state.users.isNotEmpty){
+            emit(state.copyWith(swipeStatus: SwipeStatus.loaded));
+          }else{
+          emit(state.copyWith(completedTime: last, swipeStatus: SwipeStatus.completed));
+        }
+        }else{
+          emit(state.copyWith(completedTime: last, swipeStatus: SwipeStatus.completed));
+
         }
     }
   }

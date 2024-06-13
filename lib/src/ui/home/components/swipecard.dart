@@ -7,6 +7,7 @@ import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
 
 import 'package:lomi/src/ui/home/components/userdrag.dart';
+import 'package:lomi/src/ui/itsAmatch/itsAmatch.dart';
 import 'package:lomi/src/ui/payment/showPaymentDialog.dart';
 import 'package:swipe_cards/draggable_card.dart';
 import 'package:swipe_cards/swipe_cards.dart';
@@ -19,6 +20,7 @@ import '../../../Blocs/UserPreference/userpreference_bloc.dart';
 import '../../../Data/Models/enums.dart';
 import '../../../Data/Models/likes_model.dart';
 import '../../../Data/Repository/Authentication/auth_repository.dart';
+import '../../../Data/Repository/Remote/remote_config.dart';
 import '../../../dataApi/icons.dart';
 import 'swipecompleted.dart';
 
@@ -27,6 +29,7 @@ class SwipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final RemoteConfigService remoteConfigService = RemoteConfigService();
     return BlocConsumer<SwipeBloc, SwipeState>(
       listener: (context,state){
         if(state.swipeStatus == SwipeStatus.error){
@@ -44,10 +47,16 @@ class SwipeCard extends StatelessWidget {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text(state.loadFor == LoadFor.daily? 'something went wrong come back later...': 'Try again!...' ,style: TextStyle(color: Colors.grey, fontSize: 12))));
        
         }
+
+        if(state.swipeStatus == SwipeStatus.itsamatch){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=> ItsAMatch(user: Like(userId: state.matchedUser!.id, timestamp: Timestamp.fromDate(DateTime.now()), user: state.matchedUser!)) ));
+        }
       },
 
+      buildWhen: (previous, current) => (current.swipeStatus != SwipeStatus.itsamatch && current.swipeStatus != SwipeStatus.right && current.swipeStatus != SwipeStatus.left),
+
       builder: (context, state) {
-        if(state.swipeStatus == SwipeStatus.loading || state.swipeStatus == SwipeStatus.initial ){
+        if(state.swipeStatus == SwipeStatus.loading || state.swipeStatus == SwipeStatus.initial){
         
           return const Center(child: CircularProgressIndicator(strokeWidth: 2,) );
           
@@ -102,11 +111,30 @@ class SwipeCard extends StatelessWidget {
              },
                 superlikeAction: (){
                   
-                    context.read<SwipeBloc>().add(SwipeRightEvent(     
-                    user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
-                    matchUser: user,
-                    superLike: true
-                    ));
+                    
+
+
+                    if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months ){
+                            if(context.read<PaymentBloc>().state.superLikes >0){
+                           // _matchEngine!.currentItem?.superLike();
+                              context.read<SwipeBloc>().add(SwipeRightEvent(     
+                                user: (context.read<ProfileBloc>().state as ProfileLoaded).user,
+                                matchUser: user,
+                                superLike: true
+                                ));
+
+                            }else{
+                              _matchEngine?.rewindMatch();
+                              showPaymentDialog(context: context, paymentUi: PaymentUi.superlikes);
+
+                            }
+
+                            }else if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
+                              showPaymentDialog(context: context, paymentUi: PaymentUi.superlikes);
+                              _matchEngine?.rewindMatch();
+                            }else{
+                              _matchEngine?.rewindMatch();
+                            }
 
                   
                 }
@@ -170,7 +198,7 @@ class SwipeCard extends StatelessWidget {
                         },
                         leftSwipeAllowed: true,
                         rightSwipeAllowed: true,
-                        upSwipeAllowed: true,
+                        upSwipeAllowed: context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER?false: true,
                         
             
                         likeTag: Container(
@@ -256,22 +284,30 @@ class SwipeCard extends StatelessWidget {
                         
                         }
                       if(index == 0){
-                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
-                          if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                            context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedRandom));
-                            _matchEngine?.rewindMatch();
-                          }
-                        }else{
+                        // if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
+                        //   if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                        //     context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedRandom));
+                        //     _matchEngine?.rewindMatch();
+                        //   }
+                        // }else{
+                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly||context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months){
+
                         _matchEngine?.rewindMatch();
+                        }else if(!remoteConfigService.ETusersPay() && context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
+                          _matchEngine?.rewindMatch();
+                        }
+                        else{
+                          showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
                         }
                         }
                       if(index == 4){ 
-                        if(context.read<PaymentBloc>().state.subscribtionStatus != SubscribtionStatus.ET_USER ){
+                        if(context.read<PaymentBloc>().state.productDetails != null ){
                           if(context.read<PaymentBloc>().state.boosts ==0){
                             showPaymentDialog(context: context, paymentUi: PaymentUi.boosts);
                           }else{
                             if(context.read<PaymentBloc>().state.boosts >0){
-                            context.read<SwipeBloc>().add(BoostMe(user: (context.read<ProfileBloc>().state as ProfileLoaded).user, ));
+                            context.read<PaymentBloc>().add(BoostMe(user: (context.read<ProfileBloc>().state as ProfileLoaded).user, ));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text('You are boosted!', style: TextStyle(fontSize: 12),)));
                             }
                           }
                         }
@@ -324,6 +360,14 @@ class SwipeCard extends StatelessWidget {
         if(state.swipeStatus == SwipeStatus.error){
           //ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.loadFor == LoadFor.daily? 'something went wrong come back later...': 'Try again!...' )));
           return SwipeCompletedWidget(state: state);
+        }
+
+        if(state.swipeStatus == SwipeStatus.left || state.swipeStatus == SwipeStatus.right ){
+          if(state.users.isEmpty){
+            return SwipeCompletedWidget(state: state);
+          }else{
+            return const Center(child: CircularProgressIndicator(strokeWidth: 2,),);
+          }
         }
         
         else{

@@ -37,7 +37,7 @@ class ChatList extends StatelessWidget {
     
         stream:  context.read<DatabaseRepository>().getChats(context.read<AuthBloc>().state.user!.uid, context.read<AuthBloc>().state.accountType!, match.userId),
         builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot){
-          if(snapshot.hasData){
+          if(snapshot.hasData && snapshot.data!.isNotEmpty){
           var lastMessage = snapshot.data?.first;
          // time = lastMessage
          var seen = SharedPrefes.getMessagesNotified();
@@ -49,6 +49,7 @@ class ChatList extends StatelessWidget {
             
             seen == null? seen = [lastMessage.id]: seen.add(lastMessage.id);
             SharedPrefes.setMessagesNotified(seen);
+            SharedPrefes.newMessage.add('newMessage');
            }
            // context.read<NotificationService>().showMessageReceivedNotifications(title: match.name, body: lastMessage.message, payload: 'chat', channelId: lastMessage.id);
           }
@@ -86,7 +87,7 @@ class ChatList extends StatelessWidget {
         stream:  context.read<DatabaseRepository>().getChats(context.read<AuthBloc>().state.user!.uid,context.read<AuthBloc>().state.accountType!, match.userId),
        
         builder: (BuildContext context, AsyncSnapshot<List<Message>> snapshot){
-          if(snapshot.hasData){
+          if(snapshot.hasData && snapshot.data!.isNotEmpty){
           var time = snapshot.data?.first.timestamp?.toDate();
           var time2 = '';
           if(time != null){

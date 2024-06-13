@@ -31,6 +31,8 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
     on<RewardedAdFailedToLoad>(_onRewardedAdFailedToLoad);
     on<ResetTotalReON>(_onResetTotalReOn);
     on<TimeOutAd>(_onTimeOutAd);
+    on<IncreaseLoadAttempt>(_onIncreaseLoadAttempt);
+    on<IncreaseReOn>(_onIncreaseReOn);
     
 
     //add(LoadNativeAd());
@@ -74,7 +76,7 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
   }
 
   FutureOr<void> _onLoadRewardedAd(LoadRewardedAd event, Emitter<AdState> emit) {
-    //emit(state.copyWith(isLoadedRewardedAd: false));
+    emit(state.copyWith(isLoadedRewardedAd: false));
      _adRepository.createRewardAd(
       onAdLoaded: (ad){
         add(OnRewarededAdLoaded(ad: ad));
@@ -82,8 +84,8 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
       onAdFailedToLoad: (error){
         print(error);
         if(state.numRewardedLoadAttempts <5){
-          //add(LoadRewardedAd());
-          emit(state.copyWith(numRewardedLoadAttempts: state.numRewardedLoadAttempts+1));
+          add(LoadRewardedAd());
+          add(IncreaseLoadAttempt());
         }
         add(RewardedAdFailedToLoad());
       });
@@ -233,5 +235,13 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
   Map<String, dynamic>? toJson(AdState state) {
     // TODO: implement toJson
     return state.toJson();
+  }
+
+  FutureOr<void> _onIncreaseLoadAttempt(IncreaseLoadAttempt event, Emitter<AdState> emit) {
+    emit(state.copyWith(numRewardedLoadAttempts: state.numRewardedLoadAttempts+1));
+  }
+
+  FutureOr<void> _onIncreaseReOn(IncreaseReOn event, Emitter<AdState> emit) {
+    emit(state.copyWith(totalAdWatchedReOn: state.totalAdWatchedReOn+1));
   }
 }

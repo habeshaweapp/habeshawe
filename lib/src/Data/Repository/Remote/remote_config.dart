@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:rxdart/rxdart.dart';
@@ -25,11 +27,27 @@ class RemoteConfigService{
         )
       );
 
-      await _remoteConfig.setDefaults(const{
-        'interests': 'Jesus,LOve,Start ups,programming, 90s,Memes,Writing,Teddy Afro,Painting,torpa,kasech,Girma,astu,Aynalem,Library,Abrhot,6-kilo-meda,Law,Phd,3AM,Abyot,psychology,Photography,Walking,K-Pop,Reading,Sports,Instagram,Twitter,Facebook,Snapchat,HabeshaWe,Movies,Home Workout,Gym,Pull Up,Skateboarding,Stand Up Comedy,Coffee,Poetry,Singing,Painting,Dancing,Museum,Tea,Freelance,Hip Hop,Nightlife,Highland,Addis Street,Wello-Sefer,Meskel-Flower,Catcalling,Life',
+      await _remoteConfig.setDefaults({
+        'interests': 'Jesus,LOve,Start ups,programming, 90s,Memes,Writing,Teddy Afro,Painting,torpa,kasech,Girma,astu,Aynalem,Library,Abrhot,6-kilo-meda,Law,Phd,3AM,Abyot,psychology,Photography,Walking,K-Pop,Reading,Sports,Instagram,Twitter,Facebook,Snapchat,HabeshaWe,Movies,Home Workout,Gym,Pull Up,Skateboarding,Stand Up Comedy,Coffee,Poetry,Singing,Painting,Dancing,Museum,Tea,Freelance,Hip Hop,Nightlife,Highland,Addis Street,Wello-Sefer,Meskel-Flower,Life',
         'shutDownBefore': '0.0.0',
         'UPDATELOCATIONAFTER':10,
-        'showAd':true
+        'showAd':true,
+        'boostTime':30,
+        'sampleTexts': 'Temari nesh serategna?, Hi kongo, Hey, Hi',
+        'numbers' : jsonEncode({
+          'queensNumber':2,
+          'gentsNumber':3,
+          'howManyADayWomen':10,
+          'howManyADayMen':10,
+          'maxKmNearBy':2,
+          'numberOfDiascora':10,
+          'adsForQueen': 10,
+          'adsForPrincess': 5,
+          'settingsKmNearBy':10
+        }),
+        'ETusersPay':false,
+        'showDeleteAccount':false
+        
       });
 
       await _remoteConfig.fetchAndActivate();
@@ -60,6 +78,25 @@ class RemoteConfigService{
 
   bool showAd() => _remoteConfig.getBool('showAd');
 
+  int boostTime() => _remoteConfig.getInt('boostTime');
+
+  String sampleTexts() => _remoteConfig.getString('sampleTexts');
+
+  bool ETusersPay() => _remoteConfig.getBool('ETusersPay');
+
+  bool showDeleteAccount() => _remoteConfig.getBool('showDeleteAccount');
+
+  // int queenNumber() => _remoteConfig.getInt('queensNumber');
+
+  // int gentNumber() => _remoteConfig.getInt('gentsNumber');
+
+  // int howManyADayWomen() => _remoteConfig.getInt('howManyADayWomen');
+
+  // int howManyADayMen() => _remoteConfig.getInt('howManyADayMen');
+
+  // int maxKmNearBy() => _remoteConfig.getInt('maxKmNearBy');
+  
+  Map<String, dynamic> getNumbers() => jsonDecode(_remoteConfig.getString('numbers')) as Map<String,dynamic>;
   
 
   // static void checkShutUpdate(){

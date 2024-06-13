@@ -37,9 +37,9 @@ class Body extends StatelessWidget {
   final ProfileFrom profileFrom;
   final Like? likedMeUser;
   final MatchEngine? matchEngine;
-  final BuildContext? ctrx;
+  final BuildContext ctrx;
 
-   Body({Key? key, required this.user, required this.profileFrom,this.likedMeUser, this.matchEngine, this.ctrx}) : super(key: key);
+   Body({Key? key, required this.user, required this.profileFrom,this.likedMeUser, this.matchEngine, required this.ctrx}) : super(key: key);
 
    Future<Position> getCurrentPosition()async{
     return await Geolocator.getCurrentPosition();
@@ -52,7 +52,7 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context)  {
-    var profileState = context.read<ProfileBloc>().state as ProfileLoaded;
+    //var profileState = context.read<ProfileBloc>().state as ProfileLoaded;
     //profileState.user.location;    411.42, 843.42
     var size = MediaQuery.of(context).size;
     var intersts = ['startup', 'Progamming', 'coding', 'flutter', 'dart', 'aynalem', 'gete', 'jesus', 'tsinat', 'betbalew layi'];
@@ -63,10 +63,10 @@ class Body extends StatelessWidget {
     PageController pageController = PageController();
     bool isDart = context.read<ThemeCubit>().state == ThemeMode.dark;
     
-    var myLocation = context.read<SharedpreferenceCubit>().state.myLocation;
+    var myLocation = ctrx!.read<SharedpreferenceCubit>().state.myLocation;
     double? distanceD;
     int distance = 0;
-    String km = context.read<UserpreferenceBloc>().state.userPreference!.showDistancesIn!;
+    String km = ctrx!.read<UserpreferenceBloc>().state.userPreference!.showDistancesIn!;
     if(myLocation != null){
       distanceD = calculateDistance(myLocation, user.location!);
       
@@ -225,7 +225,7 @@ class Body extends StatelessWidget {
                         //     style: TextStyle(fontSize: 14, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),
                         //     ),
                         // ),
-                        SizedBox(height: 5,),
+                        SizedBox(height:(user.jobTitle !=null && user.jobTitle !='' ) || (user.company!=null && user.company!='')? 5:null,),
                         user.school!=null?SizedBox(
                           child: Row(
                             children: [
@@ -443,7 +443,7 @@ class Body extends StatelessWidget {
 
             
 
-           profileFrom != ProfileFrom.profile? Positioned(
+           (profileFrom != ProfileFrom.profile && profileFrom != ProfileFrom.chat)? Positioned(
             bottom: 20,
             //left: MediaQuery.of(context).size.width*0.4,
             right: MediaQuery.of(context).size.width*0.3,
@@ -650,7 +650,8 @@ class Body extends StatelessWidget {
                 ],
               ),
             
-            ):Positioned(
+            ):profileFrom == ProfileFrom.profile?
+            Positioned(
               bottom: 20,
               right: 30,
               child: FloatingActionButton(
@@ -669,7 +670,7 @@ class Body extends StatelessWidget {
                                 Icons.edit,
                                 color: isDark? Colors.white: Colors.black,
                               ),
-                            ),),
+                            ),):const SizedBox(),
 
            // Icon(Icons.arrow_back),
             // IconButton(

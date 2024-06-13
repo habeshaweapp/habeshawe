@@ -57,6 +57,16 @@ void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
     _paymentBloc.add(ConsumeSuperLike());
 
   }
+
+  var likes = (state as LikeLoaded).likedMeUsers;
+ // likes.remove(event.likedMeUser);
+  List<Like> modLikes = [...likes];
+  modLikes.remove(event.likedMeUser);
+  add(UpdateLikes(users: modLikes));
+
+//shwutii is enii mini mo lavarrrrrr
+//the code above is dope i descovered it 
+  
 } on Exception catch (e) {
   // TODO
   print(e.toString());
@@ -84,6 +94,12 @@ void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
   void _onDeleteLikedMeUser(DeleteLikedMeUser event, Emitter<LikeState> emit) async{
     try {
       _databaseRepository.deleteLikedMeUser(event.userId,event.users, event.likedMeUserId);
+
+      var likes = (state as LikeLoaded).likedMeUsers;
+      List<Like> modLikes = [...likes];
+ // modLikes.remove(event.likedMeUser);
+      modLikes.removeWhere((element) => element.userId == event.likedMeUserId);
+      add(UpdateLikes(users: modLikes));
     }on Exception catch (e) {
       print(e.toString());
     }

@@ -87,16 +87,7 @@ class AdSwipeEnded extends SwipeEvent{
   List<Object?> get props => [completedTime];
 }
 
-class BoostMe extends SwipeEvent{
- 
-  final User user;
-  
-   BoostMe({required this.user});
 
-  @override
-  // TODO: implement props
-  List<Object?> get props => [user];
-}
 
 class CheckLastTime extends SwipeEvent{}
 

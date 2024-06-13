@@ -11,7 +11,8 @@ class PaymentState extends Equatable {
     this.purchaseDetails,
     this.boosts =0,
     this.superLikes=0,
-    this.selectedProduct
+    this.selectedProduct,
+    this.boostedTime
   });
 
   final SubscribtionStatus subscribtionStatus;
@@ -20,6 +21,7 @@ class PaymentState extends Equatable {
   final int boosts;
   final int superLikes;
   final ProductDetails? selectedProduct;
+  final DateTime? boostedTime;
 
 
   PaymentState copyWith({
@@ -28,7 +30,9 @@ class PaymentState extends Equatable {
     List<PurchaseDetails>? purchaseDetails,
     int? boosts,
     int? superLikes,
-    ProductDetails? selectedProduct
+    ProductDetails? selectedProduct,
+    DateTime? boostedTime,
+    bool? makeNull
 
   }){
     return PaymentState(
@@ -37,37 +41,14 @@ class PaymentState extends Equatable {
       purchaseDetails: purchaseDetails ?? this.purchaseDetails,
       boosts: boosts ?? this.boosts,
       superLikes: superLikes ?? this.superLikes,
-      selectedProduct: selectedProduct??this.selectedProduct
+      selectedProduct: selectedProduct??this.selectedProduct,
+      boostedTime: makeNull==true?null: boostedTime??  this.boostedTime
     );
   }
   
   @override
-  List<Object?> get props => [subscribtionStatus, productDetails, purchaseDetails,boosts,superLikes, selectedProduct];
+  List<Object?> get props => [subscribtionStatus, productDetails, purchaseDetails,boosts,superLikes, selectedProduct,boostedTime];
 }
 
 class PaymentInitial extends PaymentState {}
 
-// class NotSubscribed extends PaymentState{}
-
-// class Subscribed extends PaymentState{
-//   String subscribtionType;
-
-//   Subscribed({required this.subscribtionType});
-// }
-// class SubscribtionState extends PaymentState{
-//   List<ProductDetails>? productDetails;
-//   String? subscribtionType;
-
-//   SubscribtionState({this.productDetails, this.subscribtionType});
-
-//   SubscribtionState copyWith({
-//   List<ProductDetails>? productDetails,
-//   String? subscribtionType
-//   }){
-//     return SubscribtionState(
-//       productDetails: productDetails ?? this.productDetails,
-//       subscribtionType: subscribtionType ?? this.subscribtionType,
-//     );
-//   }
-  
-// }

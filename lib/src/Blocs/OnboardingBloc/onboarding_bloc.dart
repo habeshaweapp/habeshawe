@@ -97,14 +97,14 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   FutureOr<void> _onCompleteOnboarding(CompleteOnboarding event, Emitter<OnboardingState> emit) async {
     try {
       //_databaseRepository.createUser(event.user.copyWith(country: event.placeMark.country, countryCode: event.placeMark.isoCountryCode));
-      if(!event.isMocked){
+      //if(!event.isMocked){
       bool completed = await _databaseRepository.completeOnboarding(placeMark: event.placeMark, user: event.user, isMocked: event.isMocked);
      
 
       if(completed){
         _authBloc.add(AuthUserChanged(user: _authBloc.state.user, firstTime: true));
       }
-      }
+     // }
       
     } catch (e) {
       

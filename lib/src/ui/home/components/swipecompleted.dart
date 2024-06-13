@@ -104,7 +104,10 @@ class SwipeCompletedWidget extends StatelessWidget {
                             ),
     
                              SizedBox(height: 25.h,),
-                            const Divider(),
+                            const Padding(
+                              padding: const EdgeInsets.symmetric(horizontal:15.0),
+                              child: const Divider(),
+                            ),
                              SizedBox(height: 25.h,),
 
                             //Spacer(),
@@ -143,7 +146,12 @@ class SwipeCompletedWidget extends StatelessWidget {
                                       limit: 30
                                       ));
 
-                                      }
+                                      }else{
+                                        if(!context.read<AdBloc>().state.isLoadedRewardedAd){
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                          context.read<AdBloc>().add(LoadRewardedAd());
+                                        }
+                                        }
                                       }else{
                                         context.read<SwipeBloc>().add(LoadUserAd(
                                           userId: context.read<AuthBloc>().state.user!.uid, 
@@ -161,7 +169,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         children: [
                                           Icon(Icons.location_on_outlined,color: Colors.grey,size: 35.sp, ),
                                           SizedBox(height: 10.h,),
-                                          Text('Find Matches around you\n (within ${remoteConfigService.updatLocationAfter()}km)', textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), ),
+                                          Text('Find Matches around you\n (within ${remoteConfigService.getNumbers()['maxKmNearBy']}km)', textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), ),
                                           SizedBox(height: 10.h,),
                                           BlocBuilder<PaymentBloc,PaymentState>(
                                             builder: (context,state) {
@@ -210,11 +218,11 @@ class SwipeCompletedWidget extends StatelessWidget {
                                       //color: state.totalAdWatchedReOn<=10? Colors.grey.withOpacity(0.8):null,
                                       
                                       child: InkWell(
-                                        splashColor: state.totalAdWatchedReOn>=3?Colors.white:null,
-                                        highlightColor: state.totalAdWatchedReOn>=3?Colors.white:null,
+                                        splashColor: state.totalAdWatchedReOn>=10?Colors.white:null,
+                                        highlightColor: state.totalAdWatchedReOn>=10?Colors.white:null,
                                         onTap: (){
-                                          if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed ){
-                                          if(context.read<AdBloc>().state.isLoadedRewardedAd || !showAd){
+                                          if((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed) && showAd ){
+                                          if(context.read<AdBloc>().state.isLoadedRewardedAd){
                                             showAd?context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedRandom)):null;
                               
                                           context.read<SwipeBloc>().add(LoadUserAd(
@@ -224,7 +232,14 @@ class SwipeCompletedWidget extends StatelessWidget {
                                           limit: 1
                                           ));
                               
-                                          }
+                                          }else{
+                                                
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                                    context.read<AdBloc>().add(LoadRewardedAd());
+                                     
+                                        }
+
+
                                           }else{
                                             
                                             context.read<SwipeBloc>().add(LoadUserAd(
@@ -234,6 +249,8 @@ class SwipeCompletedWidget extends StatelessWidget {
                                               limit: 1
                                               )
                                             );
+
+                                            context.read<AdBloc>().add(IncreaseReOn());
                             
                                           }
                                         },
@@ -303,8 +320,8 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(5)),
                                       
                                       child: InkWell(
-                                        splashColor: state.totalAdWatchedReOn>=3?Colors.white:null,
-                                        highlightColor: state.totalAdWatchedReOn>=3?Colors.white:null,
+                                        splashColor: state.totalAdWatchedReOn>=10?Colors.white:null,
+                                        highlightColor: state.totalAdWatchedReOn>=10?Colors.white:null,
                                         onTap: (){
                                           if((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed) && showAd ){
                                           if(context.read<AdBloc>().state.isLoadedRewardedAd){
@@ -322,6 +339,12 @@ class SwipeCompletedWidget extends StatelessWidget {
                                           }
 
                                           }
+                                          else{
+                                                
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad loading...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                                    context.read<AdBloc>().add(LoadRewardedAd());
+                                     
+                                        }
                                           }else{
                                             context.read<SwipeBloc>().add(LoadUserAd(
                                             userId: context.read<AuthBloc>().state.user!.uid, 
@@ -330,6 +353,8 @@ class SwipeCompletedWidget extends StatelessWidget {
                                             limit: 1
                                             )
                                             );
+
+                                            context.read<AdBloc>().add(IncreaseReOn());
 
                                           }
                               
@@ -421,7 +446,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
                                         if(context.read<AdBloc>().state.isLoadedRewardedAd){
                                           context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedPrincess));
-                                          if(context.read<AdBloc>().state.adWatchedPrincess!>=24 ){
+                                          if(context.read<AdBloc>().state.adWatchedPrincess!>= remoteConfigService.getNumbers()['adsForPrincess'] ){
 
                                               context.read<SwipeBloc>().add(LoadUserAd(
                                               userId: context.read<AuthBloc>().state.user!.uid, 
@@ -431,6 +456,11 @@ class SwipeCompletedWidget extends StatelessWidget {
                                               ));
                                           }
                             
+                                        }else{
+                                                
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad loading...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                                    context.read<AdBloc>().add(LoadRewardedAd());
+                                     
                                         }
 
                                         }else{
@@ -451,15 +481,15 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         }
                                       },
                                       child: Padding(
-                                        padding:  EdgeInsets.symmetric(vertical: 10.h, horizontal: 25.w),
+                                        padding:  EdgeInsets.symmetric(vertical: 14.h, horizontal: 25.w),
                                         child: Row(
                                           //mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            context.read<AuthBloc>().state.accountType ==Gender.men? Icon(LineIcons.crown, color: Colors.pink[300], size: 25.sp, ):Icon(FontAwesomeIcons.userTie, color: Colors.black, size: 24.sp, ),
+                                            context.read<AuthBloc>().state.accountType ==Gender.men? Icon(LineIcons.crown, color: Colors.pink[300], size: 25.sp, ):Icon(FontAwesomeIcons.userTie, color: Colors.black, size: 20.sp, ),
                                         SizedBox(width: 10,),
                                         Text(
                                           context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER ?
-                                              'Watch 25 Ads - Get 1 Princess - (${context.read<AdBloc>().state.adWatchedPrincess}/10) watched!'
+                                              'Watch ${remoteConfigService.getNumbers()['adsForPrincess']} Ads - Get 1 ${context.read<AuthBloc>().state.accountType == Gender.women?'Gentle Man':'Princess'} - (${context.read<AdBloc>().state.adWatchedPrincess}/${remoteConfigService.getNumbers()['adsForPrincess']}) watched!'
                                               :context.read<AuthBloc>().state.accountType ==Gender.men?'1 Super Like - Get 1 Princess':'1 Super Like - Get 1 Gentle Men' , 
 
                                            
@@ -500,7 +530,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
                                         if(context.read<AdBloc>().state.isLoadedRewardedAd){
                                           context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedQueen));
-                                        if(context.read<AdBloc>().state.adWatchedQueen! >= 44 ){
+                                        if(context.read<AdBloc>().state.adWatchedQueen! >= remoteConfigService.getNumbers()['adsForQueen'] ){
                                         context.read<SwipeBloc>().add(LoadUserAd(
                                         userId: context.read<AuthBloc>().state.user!.uid, 
                                         users: context.read<AuthBloc>().state.accountType!,
@@ -509,6 +539,11 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         ));
                                         }
                             
+                                        }else{
+                                                
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                                    context.read<AdBloc>().add(LoadRewardedAd());
+                                     
                                         }
                                         }else{
                                           if(context.read<PaymentBloc>().state.boosts >0){
@@ -538,7 +573,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                             SizedBox(width: 10.h,),
                                             Text(
                                               context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER ?
-                                              'Watch 45 Ads - Get 1 Queen - (${context.read<AdBloc>().state.adWatchedQueen }/20) watched!'
+                                              'Watch ${remoteConfigService.getNumbers()['adsForQueen']} Ads - Get 1 ${context.read<AuthBloc>().state.accountType == Gender.women?'King':'Queen'} - (${context.read<AdBloc>().state.adWatchedQueen }/${remoteConfigService.getNumbers()['adsForQueen']}) watched!'
                                               :context.read<AuthBloc>().state.accountType == Gender.women?'1 Boost - Get 1 King': '1 Boost - Get 1 Queen' , 
                                               textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), ),
 

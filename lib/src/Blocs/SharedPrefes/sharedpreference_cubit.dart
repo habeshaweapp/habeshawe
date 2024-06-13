@@ -14,6 +14,7 @@ part 'sharedpreference_state.dart';
 
 class SharedpreferenceCubit extends Cubit<Location> with HydratedMixin {
   late Position myLocation;
+  int howManyRequests= 0;
   final DatabaseRepository _databaseRepository;
   final AuthBloc _authBloc;
   final RemoteConfigService remoteConfigService = RemoteConfigService();
@@ -47,6 +48,7 @@ class SharedpreferenceCubit extends Cubit<Location> with HydratedMixin {
       
 
     permission = await Geolocator.checkPermission();
+    howManyRequests ++;
 
     if(permission == LocationPermission.denied){
       permission = await Geolocator.requestPermission();

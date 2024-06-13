@@ -11,7 +11,9 @@ import 'package:intl/intl.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Repository/Payment/payment_repository.dart';
+import 'package:lomi/src/Data/Repository/Remote/remote_config.dart';
 
+import '../../Data/Models/user.dart';
 import '../../Data/Repository/Database/database_repository.dart';
 
 part 'payment_event.dart';
@@ -22,6 +24,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   final DatabaseRepository _databaseRepository;
   final AuthBloc _authBloc;
   StreamSubscription? _purchaseSubscription;
+  final RemoteConfigService remoteConfigService = RemoteConfigService();
 
   List<String> subIds = ['monthly', 'yearly', '6months','premium'];
   List<String> boostsIds = ['1boost', '5boosts', '10boosts'];
@@ -42,6 +45,8 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     on<BuySuperLikes>(_onBuySuperLikes);
     on<ConsumeBoost>(_onConsumeBoost);
     on<ConsumeSuperLike>(_onConsumeSuperLike);
+    on<BoostMe>(_onBoostMe);
+    on<MakeNull>(_onMakeNull);
 
     add(PaymentStarted());
 
@@ -173,13 +178,13 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
                 }
 
                 emit(state.copyWith(superLikes: state.superLikes + likes ));
-                _databaseRepository.updateConsumable(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'boosts', value: state.superLikes!);
+                _databaseRepository.updateConsumable(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, field: 'likes', value: state.superLikes!,);
               }
 
 
             }
           }
-        }
+        }  //251713442718
       }
     }
     // }else{
@@ -209,8 +214,8 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   FutureOr<void> _onPaymentStarted(PaymentStarted event, Emitter<PaymentState> emit)async {
     final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid, users: _authBloc.state.accountType!);
     final products = await _paymentRepository.getProducts();
-    if(payment.countryCode != 'ET' ){
-    //final products = await _paymentRepository.getProducts();
+    if(payment.countryCode != 'ET' ||  remoteConfigService.ETusersPay() ){
+    final products = await _paymentRepository.getProducts();
     //emit(SubscribtionState(productDetails: products));
     var expireDate = DateTime.fromMillisecondsSinceEpoch(payment.expireDate, isUtc: true);
     int diff = DateTime.now().difference(expireDate).inDays;
@@ -222,13 +227,27 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
       emit(state.copyWith(productDetails: products, subscribtionStatus: SubscribtionStatus.notSubscribed, boosts: payment.boosts, superLikes: payment.superLikes ));
     }else{
 
-    emit(state.copyWith(productDetails: products, subscribtionStatus: SubscribtionStatus.values[payment.subscribtionStatus], boosts: payment.boosts, superLikes: payment.superLikes ));
+      emit(state.copyWith(productDetails: products, subscribtionStatus: SubscribtionStatus.values[payment.subscribtionStatus], boosts: payment.boosts, superLikes: payment.superLikes ));
 
-     }
+    }
   }
   else{
     emit(state.copyWith(subscribtionStatus: SubscribtionStatus.ET_USER, productDetails: products, boosts: payment.boosts, superLikes: payment.superLikes ));
+  }
 
+  if(payment.boostedTime !=null){
+    int diff = DateTime.now().difference(payment.boostedTime!.toDate()).inSeconds;
+    if(diff > remoteConfigService.boostTime()*60){
+      _databaseRepository.removeBoost(gender: _authBloc.state.accountType!.name,userId: _authBloc.state.user!.uid);
+    }
+    else{
+      Future.delayed(Duration(seconds: remoteConfigService.boostTime()*60-diff),(){
+      _databaseRepository.removeBoost(gender: _authBloc.state.accountType!.name,userId: _authBloc.state.user!.uid);
+      add(MakeNull());
+
+
+      });
+    }
   }
 }
 
@@ -294,6 +313,26 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
 
   }
 
+    FutureOr<void> _onBoostMe(BoostMe event, Emitter<PaymentState> emit)async {
+      
+    try {
+     await _databaseRepository.boostMe(event.user,remoteConfigService.boostTime());
+     add(ConsumeBoost());
+     emit(state.copyWith(boostedTime: DateTime.now()));
+     Future.delayed(Duration(minutes: remoteConfigService.boostTime()),(){
+      //emit(state.copyWith(boostedTime: null));
+      add(MakeNull());
+     });
+      
+    } catch (e) {
+      
+    }
+  }
+
 
   
+
+  FutureOr<void> _onMakeNull(MakeNull event, Emitter<PaymentState> emit) {
+    emit(state.copyWith(boostedTime: null,makeNull: true));
+  }
 }

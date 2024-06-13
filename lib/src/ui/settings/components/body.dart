@@ -9,6 +9,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
+import 'package:lomi/src/Data/Repository/Remote/remote_config.dart';
 
 import '../../../Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import '../../../Blocs/UserPreference/userpreference_bloc.dart';
@@ -24,6 +25,7 @@ class Body extends StatelessWidget {
     bool isThereChange = false;
     Color? cardColor = Color.fromARGB(255, 41, 39, 39);
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
+     final RemoteConfigService remoteConfig = RemoteConfigService();
     return BlocBuilder<UserpreferenceBloc, UserPreferenceState>(
       builder: (context, state) {
         if(state.userPreferenceStatus == UserPreferenceStatus.loading){
@@ -31,6 +33,15 @@ class Body extends StatelessWidget {
         }
 
         if(state.userPreferenceStatus == UserPreferenceStatus.loaded){
+          int remoteMax = remoteConfig.getNumbers()['settingsKmNearBy'];
+          int prefMax = state.userPreference!.maximumDistance!;
+          if(prefMax > remoteMax){
+            prefMax = remoteMax;
+
+            context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(maximumDistance: remoteMax)));
+            isThereChange = true;
+
+          }
           return WillPopScope(
             onWillPop: ()async{
 
@@ -49,37 +60,37 @@ class Body extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Account Settings',
-                      style: TextStyle(
-                        //fontWeight: FontWeight.bold,
-                        fontSize: 16
-                      ) 
-                    ),
+                    // Text('Account Settings',
+                    //   style: TextStyle(
+                    //     //fontWeight: FontWeight.bold,
+                    //     fontSize: 16
+                    //   ) 
+                    // ),
             
-                    Card(
-                      color: isDark ? cardColor : Colors.white,
-                      elevation: 2,
-                      child: Container(
-                        padding: EdgeInsets.all(10),
-                        margin: EdgeInsets.only(top: 10, bottom: 10,),
-                        decoration: BoxDecoration(
-                          //color: Colors.white,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Phone Number'),
-                            Text('${state.userPreference!.phoneNumber}'),
-                          ],
-                        ),
-                      ),
-                    ),
+                    // Card(
+                    //   color: isDark ? cardColor : Colors.white,
+                    //   elevation: 2,
+                    //   child: Container(
+                    //     padding: EdgeInsets.all(10),
+                    //     margin: EdgeInsets.only(top: 10, bottom: 10,),
+                    //     decoration: BoxDecoration(
+                    //       //color: Colors.white,
+                    //     ),
+                    //     child: Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //       children: [
+                    //         Text('Phone Number'),
+                    //         Text('${state.userPreference!.phoneNumber}'),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
             
-                    Text('Verify a Phone Number to help secure your account.',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
-                    ),
+                    // Text('Verify a Phone Number to help secure your account.',
+                    //     style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                    // ),
             
-                    SizedBox(height: 25,),
+                    // SizedBox(height: 5,),
             
                     Text('Discovery Settings',
                       style: TextStyle(
@@ -114,7 +125,7 @@ class Body extends StatelessWidget {
                                 }),
                               ],
                             ),
-                            Text('HabeshaWe algorithm gives you the best profiles who is rated beautiful Habesha profile around the world.',
+                            Text('HabeshaWe algorithm gives you the best profiles who is rated beautiful Habesha Matches around the world.',
                         style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
                     ),
                           ],
@@ -291,7 +302,7 @@ class Body extends StatelessWidget {
                               child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Only show Recently-Active/Online matches', 
+                                Text('Only show Recently-Active matches', 
                                 style: Theme.of(context).textTheme.bodySmall, ),
                                 Switch(value: state.userPreference!.onlyShowOnlineMatches??false, 
                                 onChanged: (value){
@@ -344,7 +355,7 @@ class Body extends StatelessWidget {
                                   }),
                                 ],
                               ),
-                              Text('find peoples nearby within 2km away from you. this method is free you can use it anytime of the day with out time limit if there are peoples near you they will appear.',
+                              Text('find peoples nearby, within ${remoteConfig.getNumbers()['settingsKmNearBy']}-km from you.',
                           style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
                                           ),
                               Padding(
@@ -360,10 +371,10 @@ class Body extends StatelessWidget {
                               AbsorbPointer(
                                 absorbing: state.userPreference!.discoverBy != DiscoverBy.nearby.index,
                                 child: Slider(
-                                value: state.userPreference!.maximumDistance!.toDouble(), 
-                                max: 10,
+                                value: prefMax .toDouble(), 
+                                max: (remoteConfig.getNumbers()['settingsKmNearBy'] as int).toDouble(),
                                 
-                                divisions: 10,
+                                divisions: remoteConfig.getNumbers()['settingsKmNearBy'],
                                 onChanged: (value){
                                  context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(maximumDistance: value.toInt())));
                                  isThereChange = true;
@@ -671,10 +682,11 @@ class Body extends StatelessWidget {
           
                     SizedBox(height: 25,),
                     Center(
-                      child: Text('version 1.0.0.14', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
+                      child: Text('version 1.0.0.20', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
                     ),
                     SizedBox(height: 25,),
           
+          remoteConfig.showDeleteAccount()?
                     InkWell(
                       onTap: (){
                         showDialog(
@@ -766,7 +778,7 @@ class Body extends StatelessWidget {
                       ),
           
                       
-                    ),
+                    ):const SizedBox(),
           
           
           

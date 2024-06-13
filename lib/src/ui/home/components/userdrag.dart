@@ -31,7 +31,7 @@ class UserCard extends StatelessWidget {
     var myLocation = context.read<SharedpreferenceCubit>().state.myLocation;
     double? distanceD;
     int distance = 0;
-    String km = context.read<UserpreferenceBloc>().state.userPreference!.showDistancesIn!;
+    String km = context.read<UserpreferenceBloc>().state.userPreference?.showDistancesIn!??'km';
     if(myLocation != null){
       distanceD = calculateDistance(myLocation, user.location!);
       
@@ -219,14 +219,14 @@ class UserCard extends StatelessWidget {
                             ),
   
                             SizedBox(height: 10,),
-                            Container(
+                            myLocation !=null?Container(
                               margin: EdgeInsets.only(left: 10),
                               child: Row(
                                 children: [
                                 
                                   Icon(Icons.location_on_outlined, color: Colors.grey, size: 18,),
                                   const SizedBox(width: 4,),
-                                  myLocation !=null? Container(
+                                   Container(
                                    child:  Text(
                                    // user.location != null ?'${distance} $km away ' : '',
                                     distance == 0? 'less than a $km away' :'$distance $km away',
@@ -236,12 +236,12 @@ class UserCard extends StatelessWidget {
                                         
                                 
                                     ),
-                                 ):SizedBox(),
+                                 )
                                 ],
                               ),
-                            ),
+                            ):SizedBox(),
 
-                            SizedBox(height: 10,),
+                            SizedBox(height:myLocation !=null? 10:null,),
 
                             Container(
                               margin: EdgeInsets.only(left: 10),
@@ -317,7 +317,7 @@ class UserCard extends StatelessWidget {
                                         child: BlocProvider.value(value: context.read<UserpreferenceBloc>(),
                                         child: BlocProvider.value(value: context.read<SharedpreferenceCubit>(),
                                         child: 
-                                        Profile(user: user, profileFrom: ProfileFrom.swipe, matchEngine: matchEngine))))));
+                                        Profile(user: user, profileFrom: ProfileFrom.swipe, matchEngine: matchEngine,ctrx: context,))))));
                           
                         },
                         child: Container(

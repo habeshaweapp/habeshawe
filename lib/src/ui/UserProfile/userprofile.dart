@@ -21,6 +21,7 @@ import 'package:lomi/src/ui/Profile/profile.dart';
 import 'package:lomi/src/ui/editProfile/editProfile.dart';
 import 'package:lomi/src/ui/settings/settings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:slide_countdown/slide_countdown.dart';
 
 import '../../Blocs/ProfileBloc/profile_bloc.dart';
 import '../../Blocs/UserPreference/userpreference_bloc.dart';
@@ -28,6 +29,7 @@ import '../../Data/Models/enums.dart';
 import '../../Data/Models/user_model.dart';
 import '../../Data/Models/userpreference_model.dart';
 import '../../Data/Repository/Authentication/auth_repository.dart';
+import '../../Data/Repository/Remote/remote_config.dart';
 import '../payment/showPaymentDialog.dart';
 import '../verifyProfile/verifyprofile.dart';
 import 'components/bottomprofile.dart';
@@ -161,7 +163,7 @@ class UserProfile extends StatelessWidget {
                                           value: context.read<UserpreferenceBloc>(),
                                           child:BlocProvider.value(value: context.read<SharedpreferenceCubit>(),
                                         child:
-                                          Profile(user: state.user, profileFrom: ProfileFrom.profile,)))) 
+                                          Profile(user: state.user, profileFrom: ProfileFrom.profile,ctrx: context,)))) 
                                     ));
                                   },
                                   child: CircleAvatar(
@@ -282,9 +284,9 @@ class UserProfile extends StatelessWidget {
                             return ProfileBox(
                               isDark: isDark, 
                               onTap: (){
-                                if(context.read<PaymentBloc>().state.productDetails.isNotEmpty){
+                               // if(context.read<PaymentBloc>().state.productDetails.isNotEmpty){
                                   showPaymentDialog(context:context, paymentUi: PaymentUi.superlikes);
-                                }
+                               // }
                               },
                               title: 'Super Likes',
                               superLikes: state.superLikes,
@@ -313,9 +315,9 @@ class UserProfile extends StatelessWidget {
                             icon: Icons.diamond,
                             color: Colors.amber,
                             onTap: (){
-                              if(context.read<PaymentBloc>().state.productDetails.isNotEmpty){
+                             // if(context.read<PaymentBloc>().state.productDetails.isNotEmpty){
                                showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
-                              }
+                             // }
 
                             }
                           ),
@@ -358,12 +360,13 @@ class UserProfile extends StatelessWidget {
 
 
     void showBoostsSheet(BuildContext context, int boosts){
+      final RemoteConfigService remoteConfig = RemoteConfigService();
     
     showModalBottomSheet(
       context: context, 
       builder: (ctx){
         return SizedBox(
-          height: 250.h,
+          height: 270.h,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -387,7 +390,7 @@ class UserProfile extends StatelessWidget {
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text('Be a top profile everywhere in the world for 30 minutes to get more matches', 
+                child: Text('Be a top profile everywhere in the world for ${remoteConfig.boostTime()} minutes to get more matches', 
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 11, fontWeight: FontWeight.w300),
 
@@ -407,7 +410,52 @@ class UserProfile extends StatelessWidget {
                         Text('Boosts'),
                         Text('${context.read<PaymentBloc>().state.boosts} left', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w300), textAlign: TextAlign.start,)
                       ],
-                    )
+                    ),
+                    Spacer(flex: 3,),
+                    context.read<PaymentBloc>().state.boostedTime == null?ElevatedButton(
+                onPressed: ()async{
+                  // var us = await context.read<DatabaseRepository>().getUserbyId('f78nRlbhlodY0h6u87HTV35RHNq1', 'women');
+                  // context.read<PaymentBloc>().add(BoostMe(user: us ));
+          
+                  if(context.read<PaymentBloc>().state.boosts == 0){
+                  if(context.read<PaymentBloc>().state.productDetails.isNotEmpty){
+                    Navigator.pop(context);
+                  showPaymentDialog(context:context, paymentUi: PaymentUi.boosts);
+                  }
+                  }else{
+                    if(context.read<PaymentBloc>().state.boosts > 0){
+                      context.read<PaymentBloc>().add(BoostMe(user: (context.read<ProfileBloc>().state as ProfileLoaded).user));
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text('You are boosted!', style: TextStyle(fontSize: 12),)));
+                      Navigator.pop(context);
+
+                    
+                    }
+
+                  }
+                },
+               child: Padding(
+                 padding: const EdgeInsets.all(8.0),
+                 child: Text('Boost',style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white),),
+               ),
+               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.purple[400],
+                shape: const StadiumBorder()
+               ),
+               ):
+                                                  Padding(  
+                                                          padding:  EdgeInsets.only(left:20.0.w),
+                                                          child:  SlideCountdown(
+                                                            duration: Duration(seconds: remoteConfig.boostTime()*60 - DateTime.now().difference(context.read<PaymentBloc>().state.boostedTime ??DateTime.now()).inSeconds),
+                                                          
+                                                          textStyle: TextStyle(fontSize: 12, color: Colors.white),
+                                                          padding: EdgeInsets.symmetric(horizontal: 7,vertical: 2),
+                                                        
+                                                          ),
+                                                        ),
+
+                                      Spacer(),
+
+
                   ],
                 ),
               ),
@@ -415,10 +463,10 @@ class UserProfile extends StatelessWidget {
 
               ElevatedButton(
                 onPressed: (){
-                  if(context.read<PaymentBloc>().state.productDetails.isNotEmpty){
+                 // if(context.read<PaymentBloc>().state.productDetails.isNotEmpty){
                     Navigator.pop(context);
                   showPaymentDialog(context:context, paymentUi: PaymentUi.boosts);
-                  }
+                 // }
                 },
                child: Padding(
                  padding: const EdgeInsets.all(8.0),

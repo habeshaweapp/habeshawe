@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
@@ -78,7 +79,7 @@ class _InterestsState extends State<Interests> {
                         spacing: 5,
                         children: List.generate(remoteInterests.length, (index) => 
                             ChoiceChip(
-                            label: Text(remoteInterests[index],style: TextStyle(color: _selectedList.contains(remoteInterests[index])? isDark? Colors.black:Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w300),), 
+                            label: Text(remoteInterests[index],style: TextStyle(color: _selectedList.contains(remoteInterests[index])? isDark? Colors.black:Colors.white : Colors.black, fontSize: 12.sp, fontWeight: FontWeight.w300),), 
                             selected: _selectedList.contains(remoteInterests[index]),
                             selectedColor: isDark?Colors.teal: Colors.green,
                             //backgroundColor: Colors.teal,
@@ -110,7 +111,9 @@ class _InterestsState extends State<Interests> {
                     
                     
                   if (state is OnboardingLoaded){
-                  return Center(
+                  return Container(
+                  
+                    child: Center(
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width*0.70,
                       height: 50,
@@ -132,6 +135,7 @@ class _InterestsState extends State<Interests> {
                         
                         ),
                     ),
+                  )
                   );
                   }
                   else{return Center(child: CircularProgressIndicator(),);}

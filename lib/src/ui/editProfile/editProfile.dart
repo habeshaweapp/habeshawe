@@ -21,9 +21,14 @@ class EditProfile extends StatelessWidget {
         leading: BackButton(
           color: isDark? Colors.teal: Colors.green,
         ),
-        systemOverlayStyle: SystemUiOverlayStyle(
-        systemNavigationBarColor: isDark ? Color.fromARGB(51, 182, 180, 180) : Colors.white,
-        systemNavigationBarIconBrightness: !isDark? Brightness.dark: Brightness.light,
+      //   systemOverlayStyle: SystemUiOverlayStyle(
+      //   systemNavigationBarColor: isDark ? Color.fromARGB(51, 182, 180, 180) : Colors.white,
+      //   systemNavigationBarIconBrightness: !isDark? Brightness.dark: Brightness.light,
+      // ),
+
+      systemOverlayStyle: SystemUiOverlayStyle(
+        systemNavigationBarColor: isDark ? Colors.grey[900] : Colors.white,
+        systemNavigationBarIconBrightness: isDark? Brightness.light: Brightness.dark,
       ),
       ),
 

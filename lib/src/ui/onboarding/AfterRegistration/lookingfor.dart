@@ -31,13 +31,13 @@ class _LookingForState extends State<LookingFor> {
       'Still figuring it\n out',
     ];
 
-     List<Icon> icons =[
+     List<Widget> icons =[
       Icon(FontAwesomeIcons.heartPulse, color: Colors.red,),
       Icon(FontAwesomeIcons.bookBible, color:Colors.black),
       Icon(FontAwesomeIcons.crown, color: Colors.amber,),
-      Icon(Icons.diamond_outlined, color: Colors.black,),
-      Icon(FontAwesomeIcons.hand, color: Colors.black),
-      Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.black)
+      Icon(Icons.diamond_outlined, color: Colors.pink,),
+      Image.asset('assets/icons/goodbye.png', height: 27,width: 27,),
+      Image.asset('assets/icons/rolling-eyes.png', height: 27,width: 27,)
 
     ];
     

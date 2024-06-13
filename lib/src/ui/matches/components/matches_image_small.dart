@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -114,7 +116,20 @@ class MatchesImage extends StatelessWidget {
               ),
             ),
           ),
-        ): const SizedBox(): const SizedBox()
+        ): const SizedBox(): const SizedBox(),
+
+         context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed?
+          Center(
+            child: ClipRRect(
+              borderRadius:BorderRadius.all(Radius.circular(8)),
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY:10.0),
+                  child: Container(
+                  
+                  )
+                )
+            ),
+          ):const SizedBox()
       ],
 
 

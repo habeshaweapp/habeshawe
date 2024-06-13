@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:lomi/src/Data/Models/looking_for_datas.dart';
 import 'package:lomi/src/ui/editProfile/components/photoselector.dart';
 
 import '../../../Blocs/ProfileBloc/profile_bloc.dart';
@@ -570,8 +571,8 @@ class Body extends StatelessWidget {
                                   crossAxisSpacing: 5,
                                   children: List.generate(6, 
                                   (index) => LookingForItem(
-                                    title: LookingForItem. lookignForOpt[index], 
-                                    icon:LookingForItem. icons[index], 
+                                    title: lookignForOptions[index], 
+                                    icon:lookingForIcons[index], 
                                     isSelected: selectedIndex == index, 
                                     onTap: (){
                                       context.read<ProfileBloc>().add(EditUserProfile(user: user.copyWith(lookingFor: index)));

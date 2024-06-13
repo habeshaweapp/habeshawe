@@ -72,11 +72,11 @@ class _PhotoSelectorState extends State<PhotoSelector> {
             icon: const Icon(Icons.add_circle,color: Colors.teal,),
             onPressed: () async{
               ImagePicker _picker = ImagePicker();
-               List<XFile?> _image = await _picker.pickMultiImage();
+               XFile? _image = await _picker.pickImage(source: ImageSource.gallery);
                //_picker.pickImage(source: ImageSource.values[ImageSource.Gall,ImageSource.CameraDevice]);
                List<XFile> images =[];
   
-              if(_image.isEmpty) {
+              if(_image==null) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No image selected')));
 
               }
@@ -84,20 +84,20 @@ class _PhotoSelectorState extends State<PhotoSelector> {
               else{
                 setState(() {
                   isPhotoSelected =true;
-                  imageFile =File(_image[0]!.path);
+                  imageFile =File(_image!.path);
                 });
-                for(var img in _image){
+                //for(var img in _image){
 
-                final lastIndex = img!.path.lastIndexOf(new RegExp(r'.jp'));
-                final splitted = img.path.substring(0, (lastIndex));
-                final outPath = "${splitted}_out${img.path.substring(lastIndex)}";
-                var image = await FlutterImageCompress.compressAndGetFile(img.path, outPath, quality: 50
+                final lastIndex = _image!.path.lastIndexOf(new RegExp(r'.jp'));
+                final splitted = _image.path.substring(0, (lastIndex));
+                final outPath = "${splitted}_out_${DateTime.now().toString().replaceAll(' ', '_')}${_image.path.substring(lastIndex)}";
+                var image = await FlutterImageCompress.compressAndGetFile(_image.path, outPath, quality: 50
                 );
                 //images.add(image!);
                 //context.read<ProfileBloc>().add(UpdateProfileImages(user: widget.user, image: image!));
                 context.read<OnboardingBloc>().add(UpdateUserImages(image: image!));
               }
-              }
+              
               if(_image !=null){
                 print('image uploading.........');
                // StorageRepository().uploadImage(_image);

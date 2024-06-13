@@ -15,10 +15,12 @@ import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import '../report/report.dart';
 import 'components/body.dart';
 import 'components/bottomsendmessage.dart';
+import 'components/view_profile.dart';
 
 class ChatScreen extends StatelessWidget {
-  const ChatScreen(this.userMatch, {super.key});
+  const ChatScreen({required this.userMatch, required this.ctx, super.key});
   final UserMatch userMatch;
+  final BuildContext ctx;
 
 
   @override
@@ -42,7 +44,14 @@ class ChatScreen extends StatelessWidget {
             icon: Icon(Icons.arrow_back, color: !isDark ? Colors.black.withOpacity(0.7) : Colors.white),
             ),
           ),
-        title: Row(
+        title: GestureDetector(
+          onTap: (){
+            Navigator.push(context, MaterialPageRoute(
+              builder: (ctxt)=>
+    
+              ViewProfile(match: userMatch,ctrx: ctx,profileFrom: ProfileFrom.chat,)));
+          },
+          child: Row(
           
           children: [
             CircleAvatar(
@@ -64,8 +73,11 @@ class ChatScreen extends StatelessWidget {
                         return SizedBox();
                       }
                       if(snapshot.hasData){
+                        var last = snapshot.data?['lastseen'].toDate();
+                        var diff = DateTime.now().difference(last).inHours;
+                        bool isRecently = diff <3;
 
-                      return snapshot.data?['showstatus'] ? snapshot.data!['online']? Row(
+                      return snapshot.data?['showstatus'] ? (snapshot.data!['online'] && isRecently) ? Row(
                         children: [
                           
                           Container(
@@ -113,6 +125,7 @@ class ChatScreen extends StatelessWidget {
                 ],),
             )
           ],
+        )
         ),
        // leading: Icon(Icons.arrow_back_ios_new, color: Colors.black,),
        actions: [
@@ -146,7 +159,7 @@ class ChatScreen extends StatelessWidget {
         systemNavigationBarIconBrightness:isDark?Brightness.light: Brightness.dark,
       ),
       ),
-      body: Body(userMatch),
+      body: Body(userMatch,ctx),
 
       //bottomNavigationBar: BottomSendMessage(userMatch) ,
     );

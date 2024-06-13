@@ -102,7 +102,7 @@ class NotificationService{
       }) async {
        
           tz.initializeTimeZones();
-try{
+    try{
 
 
     await flutterLocalNotificationsPlugin.zonedSchedule(
@@ -131,11 +131,11 @@ try{
   }
 
   Future<void> cancelNotifications(int id) async{
-    await flutterLocalNotificationsPlugin.cancel(id);
+   // await flutterLocalNotificationsPlugin.cancel(id);
   }
 
   Future<void> cancelAllNotifications() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
+   // await flutterLocalNotificationsPlugin.cancelAll();
   }
       
   

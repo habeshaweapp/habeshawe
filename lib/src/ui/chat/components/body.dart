@@ -15,10 +15,13 @@ import 'package:lomi/src/ui/chat/components/fullimage.dart';
 
 import '../../../Blocs/ChatBloc/chat_bloc.dart';
 import '../../../Blocs/MatchBloc/match_bloc.dart';
+import '../../../Data/Models/enums.dart';
+import 'view_profile.dart';
 
 class Body extends StatefulWidget {
-   Body(this.userMatch,);
+   Body(this.userMatch,this.ctx);
    final UserMatch userMatch;
+   final BuildContext ctx;
 
    
 
@@ -363,21 +366,27 @@ class _BodyState extends State<Body> {
                     Spacer(flex: 1,),
                     
                     
-                    CircleAvatar(
-                      radius: 100,
-                      backgroundImage: 
-                      // NetworkImage(
-                      //   userMatch.matchedUser.imageUrls[0],
-                      // ),
-                      CachedNetworkImageProvider(
-                              widget.userMatch.imageUrls[0],
-                            ),
+                    GestureDetector(
+                      onTap: (){
+                         Navigator.push(context, MaterialPageRoute(
+                             builder: (ctxt)=>
+    
+                                    ViewProfile(match: widget.userMatch,ctrx: widget.ctx,profileFrom: ProfileFrom.chat,)));
+                      },
+                      child: CircleAvatar(
+                        radius: 100,
+                        backgroundImage: 
+                        // NetworkImage(
+                        //   userMatch.matchedUser.imageUrls[0],
+                        // ),
+                        CachedNetworkImageProvider(
+                                widget.userMatch.imageUrls[0],
+                              ),
+                      ),
                     ), 
                     SizedBox(height: 15),
                     Text('You matched with ${widget.userMatch.name}'),
-                    Text('${DateTime.now().difference(widget.userMatch.timestamp!.toDate()).inMinutes <60?
-                          DateTime.now().difference(widget.userMatch.timestamp!.toDate()).inMinutes:DateTime.now().difference(widget.userMatch.timestamp!.toDate()).inHours
-                    } ${DateTime.now().difference(widget.userMatch.timestamp!.toDate()).inMinutes>60?'hours':'minutes'} ago', style: Theme.of(context).textTheme.bodySmall,),
+                    Text(matchedTimecal(widget.userMatch.timestamp!), style: Theme.of(context).textTheme.bodySmall,),
                     SizedBox(height: 15,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -487,7 +496,7 @@ class _BodyState extends State<Body> {
                             if(img != null){
                             final lastIndex = img.path.lastIndexOf(RegExp(r'.jp'));
                             final splitted = img.path.substring(0, (lastIndex));
-                            final outPath = "${splitted}_out${img.path.substring(lastIndex)}";
+                            final outPath = "${splitted}_out_${DateTime.now().toString().replaceAll(' ', '_')}${img.path.substring(lastIndex)}";
                             var image = await FlutterImageCompress.compressAndGetFile(img.path, outPath, quality: 75
                             );
 
@@ -814,6 +823,28 @@ class _BodyState extends State<Body> {
 
   void getPosition(TapDownDetails details) {
     tapxy = details.globalPosition;
+  }
+
+  String matchedTimecal(Timestamp timestamp){
+    String result = '';
+    if(DateTime.now().difference(timestamp.toDate()).inMinutes <60){
+      result = '${DateTime.now().difference(timestamp.toDate()).inMinutes} minutes ago';
+    }
+    else 
+    if(DateTime.now().difference(timestamp.toDate()).inHours <48){
+      result = '${DateTime.now().difference(timestamp.toDate()).inHours} hour ago';
+    }
+    else{
+      result = '${DateTime.now().difference(timestamp.toDate()).inDays} days ago';
+    }
+
+
+    return result;
+
+
+    // ${DateTime.now().difference(widget.userMatch.timestamp!.toDate()).inMinutes <60?
+    //                       DateTime.now().difference(widget.userMatch.timestamp!.toDate()).inMinutes:DateTime.now().difference(widget.userMatch.timestamp!.toDate()).inHours
+    //                 } ${DateTime.now().difference(widget.userMatch.timestamp!.toDate()).inMinutes>60?'hours':'minutes'} ago
   }
 }
  

@@ -14,8 +14,9 @@ class Payment extends Equatable{
   final int subscribtionStatus;
   final int boosts;
   final int superLikes;
+  final Timestamp? boostedTime;
 
-  const Payment({ this.boosts =0,  this.superLikes =0, this.subscribtionStatus = 0, required this.country, required this.countryCode, required this.placeMark,required this.expireDate, required this.paymentType, required this.paymentDetails });
+  const Payment({ this.boosts =0,  this.superLikes =0, this.subscribtionStatus = 0, required this.country, required this.countryCode, required this.placeMark,required this.expireDate, required this.paymentType, required this.paymentDetails,this.boostedTime });
 
   factory Payment.fromSnapshoot(DocumentSnapshot snap){
     return Payment(
@@ -27,7 +28,9 @@ class Payment extends Equatable{
       paymentDetails: snap['paymentDetails'],
       subscribtionStatus: snap['subscribtionStatus'],
       boosts: snap['boosts'],
-      superLikes: snap['superLikes']
+      superLikes: snap['superLikes'],
+      boostedTime: (snap.data() as Map<String,dynamic>).containsKey('boostedTime')?snap['boostedTime']:null
+
       );
   }
 
@@ -41,7 +44,8 @@ class Payment extends Equatable{
       'paymentDetails': paymentDetails,
       'subscribtionStatus': subscribtionStatus,
       'boosts': boosts,
-      'superLikes': superLikes
+      'superLikes': superLikes,
+      'boostedTime': boostedTime
     };
   }
 
@@ -49,7 +53,7 @@ class Payment extends Equatable{
 
   @override
   // TODO: implement props
-  List<Object?> get props => [country, countryCode,placeMark,expireDate,paymentType,paymentDetails,subscribtionStatus,boosts,superLikes];
+  List<Object?> get props => [country, countryCode,placeMark,expireDate,paymentType,paymentDetails,subscribtionStatus,boosts,superLikes, boostedTime];
 
 
 }

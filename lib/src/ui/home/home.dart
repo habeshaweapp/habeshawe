@@ -12,6 +12,7 @@ import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
+import 'package:lomi/src/Data/Repository/SharedPrefes/sharedPrefes.dart';
 import 'package:lomi/src/ui/Likes/likes.dart';
 import 'package:lomi/src/ui/home/ExplorePage.dart';
 import 'package:lomi/src/ui/matches/matches_screen.dart';
@@ -44,13 +45,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     if(state == AppLifecycleState.paused || state == AppLifecycleState.resumed){
       if(context.read<ProfileBloc>().state is ProfileLoaded){
+        if(context.read<SharedpreferenceCubit>().howManyRequests <5){
       context.read<SharedpreferenceCubit>().checkLocationChange((context.read<ProfileBloc>().state as ProfileLoaded).user.location!);
+        }
       //context.read<ProfileBloc>().add(UpdateLocation());
       }
     }
  
 
-    if(context.read<UserpreferenceBloc>().state.userPreference!.onlineStatus!){
+    if(context.read<UserpreferenceBloc>().state.userPreference?.onlineStatus!??false){
 
     if(state == AppLifecycleState.resumed){
       //online
@@ -59,15 +62,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         gender: context.read<AuthBloc>().state.accountType!, 
         online: true
         );
+      
+      SharedPrefes.setAppState(true);
 
     }
-    if(state == AppLifecycleState.paused || state == AppLifecycleState.inactive){
+    else{
       //offline
       context.read<DatabaseRepository>().updateOnlinestatus(
         userId: context.read<AuthBloc>().state.user!.uid, 
         gender: context.read<AuthBloc>().state.accountType!, 
         online: false
         );
+
+        SharedPrefes.setAppState(false);
 
     }
 
@@ -102,7 +109,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     return Scaffold(
       //backgroundColor: Colors.transparent,
       appBar: appBar(isDark),
-      body: HomeBody(),
+      body:  HomeBody(),
     );
 
     
@@ -111,9 +118,9 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   AppBar appBar(bool isDark) {
     //bool isDark = Theme.of(context).brightness == Brightness.dark;
     var items = [
-      pageIndex == 0 ? 'assets/images/home_active.png' :'assets/images/home.png',
+      'assets/images/home_active.png',
       pageIndex == 1 ? 'assets/images/likes_active_icon.svg' :'assets/images/likes_icon.svg',
-      pageIndex == 2 ? 'assets/images/chat_active.png' :'assets/images/chat_icon.svg',
+      pageIndex == 2 ? 'assets/images/chat_icon.svg' :'assets/images/chat_icon.svg',
       pageIndex == 3 ? 'assets/images/account_active_icon.svg' :'assets/images/account_icon.svg',
 
     ];
@@ -122,7 +129,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
       Icon(Icons.home, color: pageIndex == 0?isDark? Colors.white: Colors.black: Colors.grey ,size: 27,),
       Icon(Icons.home, color: pageIndex == 0?isDark? Colors.white: Colors.black: Colors.grey ,size: 27,),
       Icon(LineIcons.facebookMessenger , color: pageIndex == 2?isDark? Colors.white: Colors.black: Colors.grey ,size: 27,),
-      Icon(Icons.person, color: pageIndex == 3?isDark? Colors.white: Colors.black: Colors.grey ,size: 27,),
+      Icon(Icons.person, color: pageIndex == 3?isDark? Colors.white: Colors.black: Colors.grey ,size: 28.sp,),
       
     ];
     return AppBar(
@@ -144,13 +151,85 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             Widget icn = SizedBox();
 
             if(index == 0){
-               icn = Image.asset(items[index], height: 21, width: 21, );
+               icn = Image.asset(items[index], height: 22.sp, width: 22.sp,color:pageIndex == 0?isDark?Colors.white:Colors.black: Colors.grey,);
 
             }else if(index == 1){
-              icn = SvgPicture.asset(items[index],height: 30, width: 30, );
+             // icn = SvgPicture.asset(items[index] );
+              icn = Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  SvgPicture.asset(items[index],height: isDark?28.sp:null, ),
+                  
+                  StreamBuilder(
+                    stream: SharedPrefes.newLike,
+                    builder: (context,AsyncSnapshot<String> snapshot){
+                      if(snapshot.hasError){
+                        return SizedBox();
+                      }
+                      if(snapshot.hasData){
+                        if(snapshot.data == 'newLike'){
+                          return Container(
+                                            height: 6,
+                                            width: 6,
+                                            decoration: BoxDecoration(
+                                              shape:  BoxShape.circle,
+                                              color: Colors.red,
+                                              
+                            
+                                            ),
+                                          
+                                  );
+                        }else{
+                          return const SizedBox();
+                        }
+                      }else{
+                        return const SizedBox();
+                      }
+                    },
+                  )
+                  
+                 
+                 ],
+              );
             }
             else if(index == 2){
-              icn =  pageIndex == 2? Image.asset(items[index], height: 22, width: 22, ): SvgPicture.asset(items[index],height: 21, width: 21, ) ;
+              icn = Stack(
+                alignment: Alignment.topRight,
+                children: [
+                 SvgPicture.asset(items[index],
+                  height: 21.sp, width: 21.sp,
+                  colorFilter:pageIndex == 2? ColorFilter.mode(isDark?Colors.white:Colors.black, BlendMode.srcIn):null, 
+                 ),
+                 StreamBuilder(
+                    stream: SharedPrefes.newMessage,
+                    builder: (context, AsyncSnapshot<String> snapshot){
+                      if(snapshot.hasError){
+                        return SizedBox();
+                      }
+                      if(snapshot.hasData){
+                        if(snapshot.data == 'newMessage'){
+                          return Container(
+                                            height: 6,
+                                            width: 6,
+                                            decoration: BoxDecoration(
+                                              shape:  BoxShape.circle,
+                                              color: Colors.red,
+                                              
+                            
+                                            ),
+                                          
+                                  );
+                        }else{
+                          return const SizedBox();
+                        }
+                      }else{
+                        return const SizedBox();
+                      }
+                    },
+                  )
+                 
+                 ],
+              );
             }
             else if(index == 3){
               icn = icons[index];
@@ -160,6 +239,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
                 setState(() {
                   pageIndex = index;
                 });
+                if(index == 1){
+                  int temp = SharedPrefes.getTempLikesCounts()??-1;
+                  if(temp != -1){
+                    SharedPrefes.setLikesCount(temp);
+                    SharedPrefes.setTempLikesCount(-1);
+                  }
+                  SharedPrefes.newLike.add('null');
+                }
+                if(index == 2){
+                  SharedPrefes.newMessage.add('null');
+                }
               }, 
              // icon: index != 0?SvgPicture.asset(items[index],height: 27, width: 27, ): Image.asset(items[index], height: 23, width: 27, )
              icon: icn,

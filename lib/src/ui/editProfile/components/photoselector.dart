@@ -84,11 +84,15 @@ class _PhotoSelectorState extends State<PhotoSelector> {
                   isPhotoSelected =true;
                   imageFile =File(_image[0]!.path);
                 });
+
+                if(_image.length + widget.length > 6){
+                  _image = _image.sublist(0,6-widget.length);
+                }
                 for(var img in _image){
 
                 final lastIndex = img!.path.lastIndexOf(new RegExp(r'.jp'));
                 final splitted = img.path.substring(0, (lastIndex));
-                final outPath = "${splitted}_out${img.path.substring(lastIndex)}";
+                final outPath = "${splitted}_out_${DateTime.now().toString().replaceAll(' ', '_')}${img.path.substring(lastIndex)}";
                 var image = await FlutterImageCompress.compressAndGetFile(img.path, outPath, quality: 50
                 );
                 //images.add(image!);

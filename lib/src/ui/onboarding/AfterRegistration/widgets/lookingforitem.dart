@@ -7,7 +7,7 @@ import '../../../../Blocs/ThemeCubit/theme_cubit.dart';
 
 class LookingForItem extends StatelessWidget {
   final String title;
-  final Icon icon;
+  final Widget icon;
   final bool isSelected;
   final VoidCallback onTap;
   const LookingForItem ({super.key,required this.title, required this.icon, required this.isSelected,required this.onTap });
@@ -23,13 +23,14 @@ class LookingForItem extends StatelessWidget {
       'Still figuring it\n out',
     ];
 
-    static List<Icon> icons =[
+    static List<dynamic> icons =[
       Icon(FontAwesomeIcons.heartPulse, color: Colors.red,),
       Icon(FontAwesomeIcons.bookBible, color:Colors.black),
       Icon(FontAwesomeIcons.crown, color: Colors.amber,),
-      Icon(FontAwesomeIcons.diamond, color: Colors.amber,),
-      Icon(FontAwesomeIcons.hand, color: Colors.black),
-      Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.black)
+      Icon(Icons.diamond, color: Colors.pink,),
+      Image.asset('assets/icons/goodbye.png', height: 27,width: 27,),
+      Image.asset('assets/icons/rolling-eyes.png', height: 27,width: 27,)
+      //Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.black)
 
     ];
     

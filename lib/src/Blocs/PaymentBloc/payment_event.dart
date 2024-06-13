@@ -49,3 +49,16 @@ class BuySuperLikes extends PaymentEvent{
 }
 
 class ConsumeSuperLike extends PaymentEvent{}
+
+class BoostMe extends PaymentEvent{
+ 
+  final User user;
+  
+   BoostMe({required this.user});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [user];
+}
+
+class MakeNull extends PaymentEvent{}

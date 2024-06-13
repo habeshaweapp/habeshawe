@@ -15,10 +15,10 @@ class Profile extends StatelessWidget {
   final ProfileFrom profileFrom;
   final Like? likedMeUser;
   final MatchEngine? matchEngine;
-  final BuildContext? ctrx;
+  final BuildContext ctrx;
   
 
-   Profile({Key? key, required this.user,required this.profileFrom, this.likedMeUser, this.matchEngine, this.ctrx }) : super(key: key);
+   Profile({Key? key, required this.user,required this.profileFrom, this.likedMeUser, this.matchEngine,required this.ctrx }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

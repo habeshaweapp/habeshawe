@@ -10,13 +10,13 @@ List<String> lookignForOptions = [
       'Still figuring it\n out',
     ];
 
-  List<Icon> lookingForIcons =[
+  List<Widget> lookingForIcons =[
       const Icon(FontAwesomeIcons.heartPulse, color: Colors.red,),
       const Icon(FontAwesomeIcons.bookBible, color:Colors.black),
       const Icon(FontAwesomeIcons.crown, color: Colors.amber,),
-      const Icon(Icons.diamond_outlined, color: Colors.black,),
-      const Icon(FontAwesomeIcons.hand, color: Colors.black),
-      const Icon(FontAwesomeIcons.faceRollingEyes, color:Colors.black)
+      const Icon(Icons.diamond_outlined, color: Colors.pink,),
+      Image.asset('assets/icons/goodbye.png', height: 27,width: 27,),
+      Image.asset('assets/icons/rolling-eyes.png', height: 27,width: 27,)
 
     ];
     

@@ -169,7 +169,8 @@ class WelcomeScreen extends StatelessWidget {
                           id: context.read<AuthBloc>().state.user!.uid,
                           name: '', age: 0, gender: '', imageUrls: [], interests: [],
                           email: gmail,
-                          provider: email == ''?'twitter':'google'
+                          provider: email == ''?'twitter':'google',
+                          phoneNumber: context.read<AuthBloc>().state.user!.phoneNumber
 
                           );
                         
@@ -177,7 +178,7 @@ class WelcomeScreen extends StatelessWidget {
                         context.read<OnboardingBloc>().add(StartOnBoarding(user: user));
                        // GoRouter.of(context).pushNamed(MyAppRouteConstants.nameRouteName);
                        Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
-                                                                                                      child: const Phone() )));
+                                                                                                      child: const NameScreen() )));
                       }, 
                       child: Text('I Agree', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                       style: ElevatedButton.styleFrom(

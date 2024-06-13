@@ -67,8 +67,9 @@ class UserpreferenceBloc extends Bloc<UserpreferenceEvent, UserPreferenceState> 
 
   @override
   Future<void> close() async {
-    _authSubscription?.cancel();
     _prefesSubscription?.cancel();
+    _authSubscription?.cancel();
+    
     super.close();
   }
 }

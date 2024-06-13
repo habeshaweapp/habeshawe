@@ -46,5 +46,5 @@ abstract class BaseDatabaseRepository{
 
 
   //Habeshawe main logic
-  Future<List<User>> getUsersMainLogic(String userId, Gender gender, UserPreference preference);
+  Future<List<User>> getUsersMainLogic(String userId, Gender gender, UserPreference preference, User my);
 }

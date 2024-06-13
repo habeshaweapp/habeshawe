@@ -92,8 +92,9 @@ class _EditInterestsState extends State<EditInterests> {
                           onSelected: (value) {
                             
                             if(_selectedList.length <5 || _selectedList.contains(inter[index]) ){
+
                             setState(() {
-                              _selectedList.contains(inter[index]) ? _selectedList.remove(inter[index]) : _selectedList.add(inter[index]);
+                              _selectedList.contains(inter[index]) ?_selectedList.length <=3?null: _selectedList.remove(inter[index]) : _selectedList.add(inter[index]);
                             });
 
                             }

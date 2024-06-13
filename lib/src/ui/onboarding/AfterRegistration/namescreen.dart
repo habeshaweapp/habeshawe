@@ -53,6 +53,7 @@ class NameScreen extends StatelessWidget {
                         child: Container(
                           width: MediaQuery.of(context).size.width*0.7,
                           child: TextField(
+                            textCapitalization: TextCapitalization.words,
                             decoration: InputDecoration(
                               hintText: 'First Name'
                             ),
@@ -84,7 +85,7 @@ class NameScreen extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: (){
                               //GoRouter.of(context).pushNamed(MyAppRouteConstants.genderRouteName);
-                              if(state.user.name.length >2 && state.user.name.length < 15 ){
+                              if(state.user.name.length >2 && state.user.name.length < 15&& state.user.name.contains(RegExp('^[a-zA-Z]+')) ){
                               Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
                                                                                                       child: const GenderScreen() )));
                                 }else{

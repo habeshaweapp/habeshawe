@@ -151,10 +151,21 @@ class EnableLocation extends StatelessWidget {
                            
 
                           }
-                          if(context.mounted && placeMark.isNotEmpty ){
-                            context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: choosenPlaceMark, user: state.user.copyWith(geohash: hash,location: [position.latitude, position.longitude], country: choosenPlaceMark.country, countryCode: choosenPlaceMark.isoCountryCode, city: choosenPlaceMark.locality ), isMocked: position.isMocked));
-                            //Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const SplashScreen()));
+                          // bool conts = !choosenPlaceMark.locality!.contains(RegExp('^[a-zA-Z]+'));
+                          // if(conts){
+                          //   for(var place in placeMark){
+                          //     if(place.locality!.contains(RegExp('^[a-zA-Z]+'))){
+                          //       choosenPlaceMark = place;
+                          //       break;
+                          //     }
+
+                          // }
+                          // }
+                       
+                          if(placeMark.isNotEmpty ){
+                            context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: choosenPlaceMark, user: state.user.copyWith(geohash: hash,location: [position.latitude, position.longitude], country: choosenPlaceMark.country, countryCode: position.isMocked?'mocked': choosenPlaceMark.isoCountryCode, city: choosenPlaceMark.locality ), isMocked: position.isMocked));
+           
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const SplashScreen()),(route) => false);
                           }
 
                           if(placeMark.isEmpty){
@@ -162,6 +173,7 @@ class EnableLocation extends StatelessWidget {
                           }
 
 
+                        
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try Again! something went wrong', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),)));
                                      
@@ -169,7 +181,8 @@ class EnableLocation extends StatelessWidget {
                        
  
                        
-                      }, 
+                      }
+                      , 
                       child: Text('ALLOW LOCATION', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                       style: ElevatedButton.styleFrom(
                         shape: StadiumBorder(),

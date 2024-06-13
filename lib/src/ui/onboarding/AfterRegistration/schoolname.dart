@@ -58,6 +58,7 @@ class SchoolName extends StatelessWidget {
                 child: Container(
                   width: MediaQuery.of(context).size.width*0.7,
                   child: TextField(
+                    textCapitalization: TextCapitalization.words,
                     decoration: InputDecoration(
                       hintText: 'University/school name'
                     ),
@@ -88,9 +89,13 @@ class SchoolName extends StatelessWidget {
                   child: ElevatedButton(
                     onPressed: (){
                      // GoRouter.of(context).pushNamed(MyAppRouteConstants.interestsRouteName);
-                     if(state.user.school !=null && state.user.school!.length >1){
+                     if(state.user.school !=null && state.user.school!.length >1 ){
                         Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
                                                                                                       child: const Interests() )));
+                    }else{
+                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('please input a valid school!', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12)) ,backgroundColor: Colors.black38, ));
+
+
                     }
                     }, 
                     child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),

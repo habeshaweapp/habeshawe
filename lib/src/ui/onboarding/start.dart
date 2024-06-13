@@ -50,9 +50,10 @@ class _StartScreenState extends State<StartScreen>
 
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
-        systemNavigationBarColor: isDark ? const Color.fromARGB(51, 182, 180, 180) : Colors.white,
-        systemNavigationBarIconBrightness: !isDark? Brightness.dark: Brightness.light,
+        systemNavigationBarColor: isDark ? Colors.grey[900] : Colors.white,
+        systemNavigationBarIconBrightness: isDark? Brightness.light: Brightness.dark,
       ),
+      
     );
     return Scaffold(
       body: Container(
@@ -77,7 +78,7 @@ class _StartScreenState extends State<StartScreen>
                   child: Stack(
                   children: [
                     Positioned(
-                      left: 15,
+                      left: 15.w,
                       child: SizedBox(
                         height: size.height,
                         child: VerticalDivider(
@@ -89,7 +90,7 @@ class _StartScreenState extends State<StartScreen>
                     ),
                      
                     Positioned(
-                      left: 30,
+                      left: 30.w,
                       child: SizedBox(
                         height: size.height,
                         child: VerticalDivider(
@@ -99,7 +100,7 @@ class _StartScreenState extends State<StartScreen>
                       ),
                     ),
                     Positioned(
-                        left: 40,
+                        left: 40.w,
                         child:
                     SizedBox(
                       height: size.height,
@@ -117,7 +118,7 @@ class _StartScreenState extends State<StartScreen>
                 child: Stack(
                   children: [
                     Positioned(
-                      left: 15,
+                      left: 15.w,
                       child: SizedBox(
                         height: size.height,
                         child: VerticalDivider(
@@ -129,7 +130,7 @@ class _StartScreenState extends State<StartScreen>
                     ),
                      
                     Positioned(
-                      left: 30,
+                      left: 30.w,
                       child: SizedBox(
                         height: size.height,
                         child: VerticalDivider(
@@ -139,7 +140,7 @@ class _StartScreenState extends State<StartScreen>
                       ),
                     ),
                     Positioned(
-                        left: 40,
+                        left: 40.w,
                         child:
                     SizedBox(
                       height: size.height,
@@ -225,7 +226,7 @@ class _StartScreenState extends State<StartScreen>
                 child: Text(
                   "HABESHAWE",
                   style: TextStyle(
-                    fontSize: 35,
+                    fontSize: 35.sp,
                     // fontWeight: FontWeight.w300,
                     color: !isDark? Colors.grey[800]:Colors.grey[400],
                   ),

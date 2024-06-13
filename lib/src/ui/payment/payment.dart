@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Blocs/PaymentBloc/payment_bloc.dart';
 import '../../Blocs/ThemeCubit/theme_cubit.dart';
@@ -118,7 +119,7 @@ class _PaymentState extends State<Payment> {
                         top: Radius.circular(15),
                       )),
                   child: widget.paymentUi == PaymentUi.subscription
-                      ? state.subscribtionStatus == SubscribtionStatus.notSubscribed? Column(
+                      ? (state.subscribtionStatus == SubscribtionStatus.notSubscribed|| state.subscribtionStatus == SubscribtionStatus.ET_USER)? Column(
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(10.0),
@@ -223,7 +224,7 @@ class _PaymentState extends State<Payment> {
                 ),
               
             //SizedBox(height: 25,),
-            state.productDetails.isNotEmpty?
+            state.productDetails.isNotEmpty  ?
             SizedBox(
               //height: 100,
               child: Row(
@@ -252,15 +253,58 @@ class _PaymentState extends State<Payment> {
                         })),
               ),
             )
-            :Container(
-              margin: EdgeInsets.only(top: 55.h),
-              child: Center(
-                child: Padding(
-                  padding:  EdgeInsets.all(23.0.h),
-                  child: Text('please check your play/App store, \nNO products available... ',textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10.sp),),
-                ),
-              ),
-            ),
+            // : context.read<PaymentBloc>().state.subscribtionStatus != SubscribtionStatus.ET_USER? Container(
+            //   margin: EdgeInsets.only(top: 55.h),
+            //   child: Center(
+            //     child: Padding(
+            //       padding:  EdgeInsets.all(23.0.h),
+            //       child: Text('please check your play/App store, \nNO products available... ',textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10.sp),),
+            //     ),
+            //   ),
+            // )
+             :Center(
+               child: Container(
+                margin: EdgeInsets.only(top: 70.h),
+                child: Center(
+                  child: ElevatedButton(
+                    onPressed: ()async{
+                      const url = 'https://t.me/habeshaweapp';
+             
+                    if(await canLaunchUrl(Uri.parse(url))){
+                      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+             
+                    }else{
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('please Go to playstore and update!')));
+                    }
+             
+                    },  
+                     child: Text('Open Telegram')
+                    )
+                  ),
+                         ),
+             ),
+
+            //  state.subscribtionStatus == SubscribtionStatus.ET_USER?
+            //   Center(
+            //     child: Container(
+            //       child: Center(
+            //       child: ElevatedButton(
+            //         onPressed: ()async{
+            //           const url = 'https://t.me/habeshaweapp';
+             
+            //         if(await canLaunchUrl(Uri.parse(url))){
+            //           await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+             
+            //         }else{
+            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('please Go to playstore and update!')));
+            //         }
+             
+            //         },  
+            //          child: Text('Open Telegram')
+            //         )
+            //       ),
+            //              ),
+            //  ):SizedBox(),
 
             
 

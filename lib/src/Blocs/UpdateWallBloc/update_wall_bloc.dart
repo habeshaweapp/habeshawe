@@ -10,7 +10,7 @@ part 'update_wall_state.dart';
 
 class UpdateWallBloc extends Bloc<UpdateWallEvent, UpdateWallState> {
   final RemoteConfigService remoteConfigService = RemoteConfigService();
-  Version currentVersion = Version(1, 0, 4);
+  Version currentVersion = Version(1, 0, 20);
   UpdateWallBloc() : super(UpdateWallInitial()) {
     on<ShutDownEvent>((event, emit) {
       // TODO: implement event handler

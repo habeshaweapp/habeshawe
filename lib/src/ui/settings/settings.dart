@@ -56,7 +56,7 @@ class Settings extends StatelessWidget {
                 builder: (_,value,__){
                   return Transform.rotate(
                 angle: -10,
-                child: Icon(value?Icons.brightness_2 : Icons.brightness_4,size: 17,color:value? Colors.black:Colors.white, ));
+                child: Icon(value?Icons.brightness_2 : Icons.wb_sunny,size: 17,color:value? Colors.black:Colors.white, ));
                 }),
             ),
           ),

@@ -1,12 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import 'package:lomi/src/Blocs/InternetBloc/internet_bloc.dart';
 import 'package:lomi/src/Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/userpreference_model.dart';
@@ -36,6 +40,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     listenToNotification();
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+
+    //  if(SharedPrefes.getFirstLogIn() == true){
+    //       SharedPrefes.setFirstLogIn(false);
+    //     }
   }
 
   @override
@@ -57,45 +65,87 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     if(state == AppLifecycleState.resumed){
       //online
-      context.read<DatabaseRepository>().updateOnlinestatus(
-        userId: context.read<AuthBloc>().state.user!.uid, 
-        gender: context.read<AuthBloc>().state.accountType!, 
-        online: true
-        );
+      // context.read<DatabaseRepository>().updateOnlinestatus(
+      //   userId: context.read<AuthBloc>().state.user!.uid, 
+      //   gender: context.read<AuthBloc>().state.accountType!, 
+      //   online: true
+      //   );
+      context.read<AuthBloc>().add(const ActivityStatus(active: true));
       
-      SharedPrefes.setAppState(true);
+     
 
     }
-    else{
+    else if(state == AppLifecycleState.paused){
+      context.read<AuthBloc>().add(const ActivityStatus(active: false));
+      
       //offline
-      context.read<DatabaseRepository>().updateOnlinestatus(
-        userId: context.read<AuthBloc>().state.user!.uid, 
-        gender: context.read<AuthBloc>().state.accountType!, 
-        online: false
-        );
+      // context.read<DatabaseRepository>().updateOnlinestatus(
+      //   userId: context.read<AuthBloc>().state.user!.uid, 
+      //   gender: context.read<AuthBloc>().state.accountType!, 
+      //   online: false
+      //   );
 
-        SharedPrefes.setAppState(false);
+      // FlutterBackgroundService().invoke('activityStatus',
+      //       {
+      //         'userId': context.read<AuthBloc>().state.user!.uid, 
+      //         'gender': context.read<AuthBloc>().state.accountType!.index, 
+      //         'online': false
+      //       });
+
+      // FlutterBackgroundService().sendData(
+      //       {
+      //         'action':'activityStatus',
+      //         'userId': context.read<AuthBloc>().state.user!.uid, 
+      //         'gender': context.read<AuthBloc>().state.accountType!.index, 
+      //         'online': false
+      //       });
+
+        
+
+       
 
     }
+
+    }
+
+    if(state == AppLifecycleState.resumed){
+       SharedPrefes.setAppState(true);
+      SharedPrefes.setInBackground(false);
+
+    }else if(state == AppLifecycleState.paused){
+      SharedPrefes.setAppState(false);
+      SharedPrefes.setInBackground(true);
+      if(SharedPrefes.getFirstLogIn() == true){
+        SharedPrefes.setFirstLogIn(false);
+      }
 
     }
   }
 
   listenToNotification(){
-    NotificationService.onClickNotification.stream.listen((payload) {
+    listNav= NotificationService.onClickNotification.stream.listen((payload) {
       if(payload == 'chat'){
         setState(() {
           pageIndex = 2;
+        });
+      }
+
+      if(payload == 'like'){
+        setState(() {
+          pageIndex = 1;
         });
       }
       
     });
   }
 
+  StreamSubscription? listNav;
+
   @override
-  void dispose() {
+  void dispose() { 
     // TODO: implement dispose
     WidgetsBinding.instance.removeObserver(this);
+    listNav?.cancel();
     super.dispose();
   }
 
@@ -109,7 +159,19 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     return Scaffold(
       //backgroundColor: Colors.transparent,
       appBar: appBar(isDark),
-      body:  HomeBody(),
+      body: HomeBody()
+      //  BlocConsumer<InternetBloc,InternetStatus>(
+      //   listener: (context, state) {
+      //     if(state.isConnected==false){
+      //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Connection...'),duration: Duration(seconds: 60),));
+
+      //     }
+      //   },
+      //   buildWhen: (previous, current) => (previous.isConnected == false&&current.isConnected==true),
+      //   builder: (context,state) {
+      //     return HomeBody();
+      //   }
+      // ),
     );
 
     
@@ -269,7 +331,7 @@ Widget HomeBody(){
     children: const  [
        ExplorePage(),
        LikesScreen(),
-        MatchesScreen(),
+       MatchesScreen(),
        UserProfile() 
     ],
   );

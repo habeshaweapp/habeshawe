@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lomi/src/Blocs/UpdateWallBloc/update_wall_bloc.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class UpdateWall extends StatelessWidget {
@@ -7,11 +9,12 @@ class UpdateWall extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shutz = (context.read<UpdateWallBloc>().state as ShutDownThisApp).shutz;
     return Scaffold(
       body: SafeArea(
         child: Container(
           width: double.infinity,
-          child: Column(
+          child:shutz == Shuts.update?  Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             
             children: [
@@ -63,7 +66,21 @@ class UpdateWall extends StatelessWidget {
               // child: Text('Not now'))
         
             ],
-          ),
+          ):shutz == Shuts.fake? Column(
+            children: [
+
+              ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset('assets/images/habeshawelogo.png',width: 120,height: 120,)),
+              Padding(
+                padding: const EdgeInsets.only(top:15.0),
+                child: Text('You\'re BLOCKED',
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.red),
+                ),
+              ),
+
+            ],
+          ):const SizedBox(),
         ),
       ),
       

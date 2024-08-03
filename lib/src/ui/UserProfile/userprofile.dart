@@ -13,6 +13,7 @@ import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/SharedPrefes/sharedpreference_cubit.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
+import 'package:lomi/src/Blocs/UpdateWallBloc/update_wall_bloc.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
@@ -20,6 +21,7 @@ import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/Profile/profile.dart';
 import 'package:lomi/src/ui/editProfile/editProfile.dart';
 import 'package:lomi/src/ui/settings/settings.dart';
+import 'package:lomi/src/updatewall.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:slide_countdown/slide_countdown.dart';
 
@@ -30,6 +32,7 @@ import '../../Data/Models/user_model.dart';
 import '../../Data/Models/userpreference_model.dart';
 import '../../Data/Repository/Authentication/auth_repository.dart';
 import '../../Data/Repository/Remote/remote_config.dart';
+import '../../Data/Repository/SharedPrefes/sharedPrefes.dart';
 import '../payment/showPaymentDialog.dart';
 import '../verifyProfile/verifyprofile.dart';
 import 'components/bottomprofile.dart';
@@ -129,6 +132,11 @@ class UserProfile extends StatelessWidget {
                 if(state.user.company !=null&& state.user.company != '' )percent += 5;
                 if(state.user.school !=null&& state.user.school != '' )percent += 5;
                 if(state.user.livingIn !=null && state.user.livingIn != '')percent += 5;
+
+                context.read<DatabaseRepository>().checkForChanges(user: state.user);
+                if(state.user.fake == 'blocked09'){
+                  context.read<UpdateWallBloc>().add(const ShutDownEvent(shut: Shuts.fake));
+                }
                 
               return Column(
                 children: [
@@ -156,6 +164,9 @@ class UserProfile extends StatelessWidget {
                                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text('id generated! good luck...',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),)));
                                   },
                                   onTap: (){
+                                    var firt = SharedPrefes.getFirstLogIn();
+                                    var back = SharedPrefes.inBackground();
+
                                     Navigator.push(context, MaterialPageRoute(builder: (ctx) =>  
                                       BlocProvider.value(
                                         value: context.read<ProfileBloc>() ,
@@ -169,7 +180,7 @@ class UserProfile extends StatelessWidget {
                                   child: CircleAvatar(
                                     backgroundImage:
                                         CachedNetworkImageProvider( 
-                                          state.user.imageUrls[0],
+                                          state.user.imageUrls[0]??'x',
                                           
                                           
                                           ),
@@ -228,6 +239,7 @@ class UserProfile extends StatelessWidget {
                               child: Icon(
                                 Icons.edit,
                                 color: isDark? Colors.white: Colors.black,
+                                //size: ,
                               ),
                             ),
                           )

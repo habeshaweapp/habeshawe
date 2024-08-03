@@ -34,9 +34,12 @@ class NameScreen extends StatelessWidget {
                         value: 0.2,
         
                       ),
-                     const Padding(
+                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(LineIcons.arrowLeft , size: 35,),
+                        child: GestureDetector(
+                          onTap: ()=>Navigator.pop(context),
+                          
+                          child: Icon(Icons.arrow_back,size: 35,)),
                       ),
         
                       Container(
@@ -69,7 +72,7 @@ class NameScreen extends StatelessWidget {
                           width: MediaQuery.of(context).size.width*0.7,
                           margin: EdgeInsets.only(top: 10),
                           child: Text(
-                            'This is how  it will appear in Lomi and you will not be able to change it',
+                            'This is how  it will appear in HabeshaWe and you will not be able to change it',
                             style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w300),
                             )
                         ),
@@ -89,7 +92,7 @@ class NameScreen extends StatelessWidget {
                               Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
                                                                                                       child: const GenderScreen() )));
                                 }else{
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('please input a valid name!', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12)) ,backgroundColor: Colors.black38, ));
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('please input a valid name!', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12,color: Colors.white)) ,backgroundColor: Colors.black38, ));
 
                                 }
                             }, 

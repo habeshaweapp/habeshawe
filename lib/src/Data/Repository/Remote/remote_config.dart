@@ -43,10 +43,19 @@ class RemoteConfigService{
           'numberOfDiascora':10,
           'adsForQueen': 10,
           'adsForPrincess': 5,
-          'settingsKmNearBy':10
+          'settingsKmNearBy':10,
+          'useMainLogic':false
         }),
         'ETusersPay':false,
-        'showDeleteAccount':false
+        'showDeleteAccount':false,
+        'ai': jsonEncode({
+          'screenshot': true,
+          'poster': true,
+          'screenshotConfidence': 0.5,
+          'posterConfidence':0.5
+        }),
+        'showAdREORN': false,
+        'ETbuyQP': false
         
       });
 
@@ -97,6 +106,14 @@ class RemoteConfigService{
   // int maxKmNearBy() => _remoteConfig.getInt('maxKmNearBy');
   
   Map<String, dynamic> getNumbers() => jsonDecode(_remoteConfig.getString('numbers')) as Map<String,dynamic>;
+
+  Map<String, dynamic> ai() => jsonDecode(_remoteConfig.getString('ai')) as Map<String,dynamic>;
+  
+  bool showAdREORN() => _remoteConfig.getBool('showAdREORN');
+
+  bool ETbuyQP() => _remoteConfig.getBool('ETbuyQP');
+
+
   
 
   // static void checkShutUpdate(){

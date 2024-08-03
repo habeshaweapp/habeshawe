@@ -132,6 +132,9 @@ class AuthRepository extends BaseAuthRepository{
   Future<void> deleteAccount()async{
     try {
       await _firebaseAuth.currentUser!.delete();
+      if(await _googleSignIn.isSignedIn()){
+        await _googleSignIn.disconnect();
+      }
       
     }on FirebaseAuthException catch (e){
       if(e.code == "requires-recent-login"){

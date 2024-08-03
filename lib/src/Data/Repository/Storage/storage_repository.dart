@@ -72,4 +72,10 @@ class StorageRepository extends BaseStorageRepository{
 
   }
   
+
+
+Future<void> deletePhoto(String url)async{
+  return await storage.refFromURL(url).delete();
+}
+
 }

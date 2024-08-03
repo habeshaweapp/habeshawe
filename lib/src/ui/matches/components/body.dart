@@ -73,7 +73,18 @@ class Body extends StatelessWidget {
                       hintText:  'Search Match',
                       contentPadding: EdgeInsets.zero,
                       icon: Icon(Icons.search,),
-                      counterText: ''
+                      counterText: '',
+                      suffixIcon: state.isUserSearching? Padding(
+                        padding: EdgeInsets.zero,
+                        child: GestureDetector(
+                          onTap: (){
+                            controller.clear();
+                             context.read<MatchBloc>().add(SearchName(userId: context.read<AuthBloc>().state.user!.uid, gender: context.read<AuthBloc>().state.accountType!, name: '' ));
+                          },
+                          child: Icon(Icons.cancel, color: Colors.grey[400],),
+                        ),
+                        ):null,
+                        suffixIconConstraints: BoxConstraints.tight(const Size(40, 20))
     
                     ),
                     style: TextStyle(fontSize: 12),
@@ -90,6 +101,7 @@ class Body extends StatelessWidget {
                       FocusManager.instance.primaryFocus!.unfocus();
                      // controller.clear();
                     },
+                    
                     // onTap: (){
                     //   if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed ){
                      
@@ -139,13 +151,18 @@ class Body extends StatelessWidget {
                           return SizedBox();
                         }
                         if(snapshot.hasData ){
-                          int prev = SharedPrefes.getMatchesCount()??0;
+                          int? prev = SharedPrefes.getMatchesCount();
+                          if(prev !=null){
+                            
                           if(snapshot.data !=null && snapshot.data! > prev){
                            // NotificationService().showMessageReceivedNotifications(title: 'New Match', body: 'you have a new match!', payload: 'matches', channelId: 'matches');
+
                             SharedPrefes.setMatchesCount(snapshot.data!);
-                            SharedPrefes.newMessage.add('newMessage');
-    
-    
+                            if(prev !=0) SharedPrefes.newMessage.add('newMessage');
+                          }
+                          }
+                          else{
+                            SharedPrefes.setMatchesCount(0);
                           }
     
                           return Text(
@@ -172,7 +189,7 @@ class Body extends StatelessWidget {
                   padding: const EdgeInsets.only(left:0.0),
                   child: SizedBox(
                     height: 150,
-                    child: (inactiveMatches.length !=0 || state.searchResult!.isNotEmpty )?
+                    child: (inactiveMatches.length !=0 || state.searchResult!.isNotEmpty||state.findMeResult!.isNotEmpty )?
                     
                     
                      ListView.builder(
@@ -267,7 +284,7 @@ class Body extends StatelessWidget {
                         border: Border.all(color: isDark ? Colors.teal: Colors.green),
                         borderRadius: BorderRadius.circular(20)
                                         ),
-                                        child: Center(child: Text('New matches\nwill appear\n here',textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10,fontWeight: FontWeight.w300),)),
+                                        child: Center(child: Text('${state.isUserSearching?'Match\n':'New matches\n'}will appear\n here',textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10,fontWeight: FontWeight.w300),)),
                         ),
                       ),
                   ),

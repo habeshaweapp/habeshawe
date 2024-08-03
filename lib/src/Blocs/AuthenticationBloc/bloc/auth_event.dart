@@ -35,3 +35,12 @@ class DeleteAccount extends AuthEvent{
 }
 
 class SignUpCompeleted extends AuthEvent{}
+
+class ActivityStatus extends AuthEvent{
+  final bool active;
+  const ActivityStatus({required this.active});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [active];
+}

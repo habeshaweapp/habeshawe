@@ -94,7 +94,7 @@ class Body extends StatelessWidget {
             
                     Text('Discovery Settings',
                       style: TextStyle(
-                        //fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold,
                         fontSize: 17,
                         //color: Colors.grey[800],
                       ) 
@@ -570,6 +570,8 @@ class Body extends StatelessWidget {
                       style: TextStyle(
                        // fontWeight: FontWeight.bold,
                         fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                       
                         //color: Colors.grey[800],
                       ) 
                     ),
@@ -586,7 +588,9 @@ class Body extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Show Distances in', style: TextStyle(fontSize: 17, color: Colors.grey)),
+                                Text('Show Distances in', 
+                                style: TextStyle(fontSize: 17, color: Colors.grey)
+                                ),
                                 Text(state.userPreference!.showDistancesIn!)
                               ],
                             ),
@@ -682,11 +686,11 @@ class Body extends StatelessWidget {
           
                     SizedBox(height: 25,),
                     Center(
-                      child: Text('version 1.0.0.20', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
+                      child: Text('version 2.0.0.25', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
                     ),
                     SizedBox(height: 25,),
           
-          remoteConfig.showDeleteAccount()?
+          (remoteConfig.showDeleteAccount() || state.userPreference!.showDelete)?
                     InkWell(
                       onTap: (){
                         showDialog(

@@ -9,6 +9,8 @@ class SharedPrefes{
   static const _keyTempLikes = 'templikes';
   static const _KeyMatches = 'matches';
   static const _keyTempMatches = 'tempMatches';
+  static const _KeyfirstLogIn = 'firstLogIn';
+  static const _keyInBackground = 'inBackground';
 
   static Future init() async => 
     _preferences = await SharedPreferences.getInstance();
@@ -40,5 +42,26 @@ class SharedPrefes{
   static int? getTempMatchesCounts()=> _preferences.getInt(_keyTempMatches);
 
   static Future setTempMatchesCount(int count)async => await _preferences.setInt(_keyTempMatches, count);
+
+  static bool? getFirstLogIn()=> _preferences.getBool(_KeyfirstLogIn);
+
+  static Future setFirstLogIn(bool isFirst)async=> await _preferences.setBool(_KeyfirstLogIn, isFirst);
+
+  static Future setInBackground(bool back)async => await _preferences.setBool(_keyInBackground, back);
+
+  static bool? inBackground() => _preferences.getBool(_keyInBackground);
+
+
+  static Future setUserId(String userId)async => await _preferences.setString('userId', userId);
+  static String? getUserId()=>_preferences.getString('userId');
+
+  static Future setGender(int gender)async => await _preferences.setInt('gender', gender);
+  static int? getGender()=>_preferences.getInt('gender');
+
+
+
+  static void clear(){
+    _preferences.clear();
+  }
 
 }

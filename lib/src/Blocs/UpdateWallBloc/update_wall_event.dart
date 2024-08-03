@@ -6,7 +6,14 @@ class UpdateWallEvent extends Equatable {
   @override
   List<Object> get props => [];
 }
+enum Shuts{update,fake}
+class ShutDownEvent extends UpdateWallEvent{
+  final Shuts shut;
+  const ShutDownEvent({required this.shut});
 
-class ShutDownEvent extends UpdateWallEvent{}
+  @override
+  // TODO: implement props
+  List<Object> get props => [shut];
+}
 
 class CheckShutDown extends UpdateWallEvent{}

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
+import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
+import 'package:lomi/src/Data/Repository/SharedPrefes/sharedPrefes.dart';
 
 import '../../Data/Models/likes_model.dart';
 import '../../Data/Models/model.dart';
@@ -45,6 +47,7 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
       if(likeController.position.pixels == likeController.position.maxScrollExtent ){
         var likes = (state as LikeLoaded).likedMeUsers.last;
         add(LoadMoreLikes(userId: _authBloc.state.user!.uid, gender: _authBloc.state.accountType!, startAfter: likes.timestamp));
+       
 
       }
     });
@@ -78,6 +81,11 @@ void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
     try {
        _likesSubscription = _databaseRepository.getLikedMeUsers(event.userId, event.users).listen((users) { 
         add(UpdateLikes(users: users));
+        var back = SharedPrefes.inBackground();
+         if(back == true){
+          NotificationService().showMessageReceivedNotifications(title: 'New Like', body: 'Someone swiped right on you!', payload: 'newLike', channelId: 'like');
+
+        }
       });
       
     } catch (e) {

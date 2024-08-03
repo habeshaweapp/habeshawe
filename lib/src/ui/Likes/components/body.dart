@@ -99,15 +99,17 @@ class Body extends StatelessWidget {
                                           return SizedBox();
                                         }
                                         if(snapshot.hasData){
-                                          int prevCount = SharedPrefes.getLikesCounts()??0;
-                                          if(snapshot.data!=null && snapshot.data! > prevCount){
-                                            NotificationService().showMessageReceivedNotifications(title: 'New Likes', body: 'you have new likes', payload: 'likes', channelId: 'likes');
+                                          int? prevCount = SharedPrefes.getLikesCounts();
+                                          if(prevCount!= null){
+                                          if(snapshot.data!=null && (snapshot.data! > prevCount)){
+                                            //NotificationService().showMessageReceivedNotifications(title: 'New Likes', body: 'you have new like', payload: 'likes', channelId: 'likes');
                                             SharedPrefes.setTempLikesCount(snapshot.data!);
                                             SharedPrefes.newLike.add('newLike');
                                             SharedPrefes.setLikesCount(snapshot.data!);
                                           }else{
                                             SharedPrefes.setTempLikesCount(-1);
       
+                                          }
                                           }
                                           
                                           return Row(

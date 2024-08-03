@@ -6,14 +6,18 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lomi/src/Blocs/InternetBloc/internet_bloc.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Models/tag_helper.dart';
 
+import '../../../Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import '../../../Blocs/PaymentBloc/payment_bloc.dart';
 import '../../../Data/Models/likes_model.dart';
 import 'package:blur/blur.dart';
+
+import '../../../Data/Repository/Database/database_repository.dart';
 
 class LikeCard extends StatelessWidget {
   final Like like;
@@ -31,7 +35,24 @@ class LikeCard extends StatelessWidget {
           image: DecorationImage(
             //opacity: 1,
             //colorFilter: ColorFilter.mode(Colors.grey[900]!, BlendMode.modulate),
-            image: CachedNetworkImageProvider(like.user.imageUrls[0]),
+            image: CachedNetworkImageProvider(
+              like.user.imageUrls[0],
+              errorListener: () {
+                if(context.read<InternetBloc>().state.isConnected == true){
+                    context.read<DatabaseRepository>().changeMatchImage(
+                                userId: context.read<AuthBloc>().state.user!.uid, 
+                                userGender: context.read<AuthBloc>().state.accountType!,
+                                match: {
+                                  'id': like.userId,
+                                  'gender': like.user.gender,
+                                  'imageUrls':like.user.imageUrls
+                                }, 
+                                from: 'likes');
+                          
+                }
+                
+              },
+              ),
             fit: BoxFit.cover,
             
             //opacity: 0.7,

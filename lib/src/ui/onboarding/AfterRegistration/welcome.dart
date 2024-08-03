@@ -8,6 +8,7 @@ import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
+import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/onboarding/AfterRegistration/namescreen.dart';
 import 'package:lomi/src/ui/onboarding/onboardAllScreens.dart';
@@ -35,14 +36,15 @@ class WelcomeScreen extends StatelessWidget {
                   value: 0.1,
             
                 ),
-                // Padding(
-                //   padding: const EdgeInsets.all(8.0),
-                //   child: GestureDetector(
-                //     onTap: (){
-                //       Navigator.pop(context);
-                //     },
-                //     child: Icon(LineIcons.times,size: 35,)),
-                // ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GestureDetector(
+                    onTap: (){
+                    // Navigator.pop(context);
+                      context.read<AuthRepository>().deleteAccount();
+                    },
+                    child: Icon(LineIcons.times,size: 35,)),
+                ),
                 SizedBox(height: 35.h,),
             
                 Padding(
@@ -167,7 +169,7 @@ class WelcomeScreen extends StatelessWidget {
                         var gmail = email ==''?context.read<AuthBloc>().state.user!.displayName:email;
                         User user = User(
                           id: context.read<AuthBloc>().state.user!.uid,
-                          name: '', age: 0, gender: '', imageUrls: [], interests: [],
+                          name: '', age: 0, gender: '', imageUrls:const [null,null,null,null,null,null], interests: [],
                           email: gmail,
                           provider: email == ''?'twitter':'google',
                           phoneNumber: context.read<AuthBloc>().state.user!.phoneNumber

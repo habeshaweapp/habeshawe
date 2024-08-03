@@ -95,8 +95,8 @@ class Body extends StatelessWidget {
                           itemBuilder: (context, index) {
                             return
                                 (imagesCount > index) ?
-                                PhotoSelector(imageUrl: state.user.imageUrls[index],length: state.user.imageUrls.length,):
-                                PhotoSelector(user: state.user, length: state.user.imageUrls.length);
+                                PhotoSelector(imageUrl: state.user.imageUrls[index],length: state.user.imageUrls.length,notblank: true,):
+                                PhotoSelector(user: state.user, length: state.user.imageUrls.length,notblank:false);
                           }),
                     ),
                   ),
@@ -265,7 +265,7 @@ class Body extends StatelessWidget {
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'In cm', 
-                      icon: Icon(LineIcons.rulerVertical, size:18, color:isDark? Colors.grey: Colors.black ),
+                      icon: Transform.rotate(angle:10,child: Icon(LineIcons.rulerVertical, size:18, color:isDark? Colors.grey: Colors.black )),
                       counterText: ''        
                     ),
                     keyboardType: TextInputType.number,
@@ -460,7 +460,7 @@ class Body extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal:15),
                   child: TextField(
                     //minLines: 1,
-                    enabled: false,
+                   // enabled: false,
                     maxLines: 1,
                     decoration: InputDecoration(
                       border: InputBorder.none,

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/app_route_config.dart';
@@ -38,6 +39,14 @@ class _AddPhotosState extends State<AddPhotos> {
             }
             if(state is OnboardingLoaded){
              var imagesCount = state.user.imageUrls.length;
+             int count = 0;
+             List<dynamic> images = state.user.imageUrls;
+                              
+                              images.forEach((element) {
+                                if(element !=null){
+                                  count +=1;
+                                }
+                              });
             return Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
@@ -77,7 +86,23 @@ class _AddPhotosState extends State<AddPhotos> {
                               )
                           ),
                       ),
-                      Spacer(flex: 1,),
+
+                     
+                     Spacer(flex: 1,),
+
+                       state.user.gender=='women'? Center(
+                        child: Container(
+                            width: MediaQuery.of(context).size.width*0.9,
+                            margin: EdgeInsets.only(top: 10,left: 35,right: 35),
+                            child: Text(
+                              'Make you first photo Habesha Kemis. keep the\nculture queen!',
+                              style: Theme.of(context).textTheme.bodySmall!,
+                              textAlign: TextAlign.center,
+                              )
+                          ),
+                      ):SizedBox(),
+
+                      SizedBox(height: 10.h,),
         
                       // BlocBuilder<ImagesBloc, ImagesState>(
                       //   builder: (context, state) {
@@ -96,8 +121,10 @@ class _AddPhotosState extends State<AddPhotos> {
                                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3, childAspectRatio: 0.66), 
                                   itemCount: 6,
                                   itemBuilder:  (context, index) {
-                                    return (imagesCount > index) ?
-                                    PhotoSelector(imageUrl: state.user.imageUrls[index],):PhotoSelector();
+                                    return 
+                                    //(imagesCount > index) ?
+                                    state.user.imageUrls[index] !=null?
+                                    PhotoSelector(imageUrl: state.user.imageUrls[index],index:index):PhotoSelector(index: index,);
                                     // (state.selectedImages == null || state.selectedImages!.isEmpty)? PhotoSelector():
                                     // (state.selectedImages!.isNotEmpty)?
                                     //  PhotoSelector(selectedImage: File(state.selectedImages![index-imagesCount]!.path)):
@@ -109,6 +136,11 @@ class _AddPhotosState extends State<AddPhotos> {
                                   ),
                               ),
                             ),
+
+                            
+
+                           
+              
             
                             
                             
@@ -175,7 +207,8 @@ class _AddPhotosState extends State<AddPhotos> {
                           height: 50,
                           child: ElevatedButton(
                             onPressed: (){
-                              if(state.user.imageUrls.length >=2){
+                              
+                              if(count >=2){
                               Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
                                                                                                       child: const EnableLocation() )));
                               }
@@ -183,7 +216,7 @@ class _AddPhotosState extends State<AddPhotos> {
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                             style: ElevatedButton.styleFrom(
                               shape: StadiumBorder(),
-                              backgroundColor: state.user.imageUrls.length <2?Colors.grey:null
+                              backgroundColor: count <2?Colors.grey:null
                             ),
                             
                             ),

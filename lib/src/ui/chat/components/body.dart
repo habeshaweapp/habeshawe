@@ -163,7 +163,7 @@ class _BodyState extends State<Body> {
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
                                                     //Icon(Icons.check, size: 13,),
-                                                    (context.read<InternetBloc>().state as InternetStatus).isConnected ?
+                                                   context.read<InternetBloc>().state.isConnected ==true ?
                                                     Text(state.messages[index].timestamp != null ? DateFormat('hh:mm a').format(state.messages[index].timestamp!.toDate() ):DateFormat('hh:mm a').format(DateTime.now()) ,
                                                         style: TextStyle(fontSize: 8),
                                                         
@@ -214,7 +214,7 @@ class _BodyState extends State<Body> {
                                                         mainAxisSize: MainAxisSize.min,
                                                         children: [
                                                           //Icon(Icons.check, size: 13,),
-                                                          (context.read<InternetBloc>().state as InternetStatus).isConnected ?
+                                                          context.read<InternetBloc>().state.isConnected ==true ?
                                                           Text(state.messages[index].timestamp != null ? DateFormat('hh:mm a').format(state.messages[index].timestamp!.toDate() ):DateFormat('hh:mm a').format(DateTime.now()) ,
                                                               style: TextStyle(fontSize: 8, color: Colors.white),
                                                               
@@ -327,7 +327,7 @@ class _BodyState extends State<Body> {
                                                         mainAxisSize: MainAxisSize.min,
                                                         children: [
                                                           //Icon(Icons.check, size: 13,),
-                                                          (context.read<InternetBloc>().state as InternetStatus).isConnected ?
+                                                          context.read<InternetBloc>().state.isConnected ==true ?
                                                           Text(state.messages[index].timestamp != null ? DateFormat('hh:mm a').format(state.messages[index].timestamp!.toDate() ):DateFormat('hh:mm a').format(DateTime.now()) ,
                                                               style: TextStyle(fontSize: 8, color: Colors.white),
                                                               

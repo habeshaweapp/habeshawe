@@ -55,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     
-                    SizedBox(width: 60,),
+                    SizedBox(width: 40,),
                     SizedBox(
                       height: size.height,
                       child: VerticalDivider(

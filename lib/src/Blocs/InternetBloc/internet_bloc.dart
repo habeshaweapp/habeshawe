@@ -7,9 +7,9 @@ import 'package:equatable/equatable.dart';
 part 'internet_event.dart';
 part 'internet_state.dart';
 
-class InternetBloc extends Bloc<InternetEvent, InternetState> {
+class InternetBloc extends Bloc<InternetEvent, InternetStatus> {
   StreamSubscription? _subscription;
-  InternetBloc() : super(InternetInitial()){
+  InternetBloc() : super(const InternetStatus(isConnected: null)){
     on<ConnectionChanged>(_onConnectionChanged);
 
     _subscription = Connectivity().onConnectivityChanged.listen((result) {
@@ -18,7 +18,7 @@ class InternetBloc extends Bloc<InternetEvent, InternetState> {
      });
   }
 
-  void _onConnectionChanged(ConnectionChanged event, Emitter<InternetState> emit) {
+  void _onConnectionChanged(ConnectionChanged event, Emitter<InternetStatus> emit) {
     if(event.result == ConnectivityResult.none){
       emit(const InternetStatus(isConnected: false));
     }else{

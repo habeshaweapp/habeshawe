@@ -52,12 +52,16 @@ class SwipeCompletedWidget extends StatelessWidget {
         builder: (context, state) {
           
           if(state.totalAdWatchedReOn ==10){
-        Future.delayed(const Duration(hours: 1), (){
-          context.read<AdBloc>().add(ResetTotalReON());
+        // Future.delayed(const Duration(hours: 1), (){
+        //   context.read<AdBloc>().add(ResetTotalReON());
 
-        });
+        // });
         context.read<AdBloc>().add(TimeOutAd(completedTimeAd: DateTime.now()));
       }
+      // if(state.completedTimeAd != null && state.completedTimeAd!.difference(DateTime.now()).inMinutes > 60){
+      //   context.read<AdBloc>().add(ResetTotalReON());
+
+      // }
       // if(state.totalAdWatchedReOn >10){
       //   if(state.completedTimeAd == null){
       //     context.read<AdBloc>().add(TimeOutAd(completedTimeAd: DateTime.now()));
@@ -136,8 +140,14 @@ class SwipeCompletedWidget extends StatelessWidget {
                                   child: InkWell(
                                     onTap: (){
                                       if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
-                                      if(context.read<AdBloc>().state.isLoadedRewardedAd || !showAd){
-                                        showAd?context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedNearby)):null;
+                                        if(remoteConfigService.showAdREORN()){
+                                        
+                                        if(!context.read<AdBloc>().state.isLoadedRewardedAd){
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                          context.read<AdBloc>().add(LoadRewardedAd());
+                                        }else{
+                                        
+                                        context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedNearby));
 
                                       context.read<SwipeBloc>().add(LoadUserAd(
                                       userId: context.read<AuthBloc>().state.user!.uid, 
@@ -145,13 +155,18 @@ class SwipeCompletedWidget extends StatelessWidget {
                                       loadFor: LoadFor.adNearby,
                                       limit: 30
                                       ));
+                                        }
 
                                       }else{
-                                        if(!context.read<AdBloc>().state.isLoadedRewardedAd){
-                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
-                                          context.read<AdBloc>().add(LoadRewardedAd());
-                                        }
-                                        }
+
+                                        context.read<SwipeBloc>().add(LoadUserAd(
+                                            userId: context.read<AuthBloc>().state.user!.uid, 
+                                            users: context.read<AuthBloc>().state.accountType!,
+                                            loadFor: LoadFor.adNearby,
+                                            limit: 30
+                                            ));
+
+                                      }
                                       }else{
                                         context.read<SwipeBloc>().add(LoadUserAd(
                                           userId: context.read<AuthBloc>().state.user!.uid, 
@@ -173,9 +188,9 @@ class SwipeCompletedWidget extends StatelessWidget {
                                           SizedBox(height: 10.h,),
                                           BlocBuilder<PaymentBloc,PaymentState>(
                                             builder: (context,state) {
-                                              return Text( (state.subscribtionStatus == SubscribtionStatus.ET_USER || state.subscribtionStatus == SubscribtionStatus.notSubscribed) && showAd?
+                                              return Text( (state.subscribtionStatus == SubscribtionStatus.ET_USER || state.subscribtionStatus == SubscribtionStatus.notSubscribed) && remoteConfigService.showAdREORN()?
                                                'Watch Ad' : ''
-                                               , style: TextStyle(),);
+                                               , style: TextStyle(fontSize: 11.sp,color: Colors.grey),);
                                             }
                                           ),
                                          
@@ -187,7 +202,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                                 width: 10,
                                                 child: CircularProgressIndicator(strokeWidth: 2,));
                                             }else{
-                                              return SizedBox();
+                                              return const SizedBox(height:10);
                                             }
 
                                           })
@@ -221,7 +236,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         splashColor: state.totalAdWatchedReOn>=10?Colors.white:null,
                                         highlightColor: state.totalAdWatchedReOn>=10?Colors.white:null,
                                         onTap: (){
-                                          if((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed) && showAd ){
+                                          if((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed) && remoteConfigService.showAdREORN() ){
                                           if(context.read<AdBloc>().state.isLoadedRewardedAd){
                                             showAd?context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedRandom)):null;
                               
@@ -265,7 +280,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                                 SizedBox(width: 10.h,),
                                                 BlocBuilder<PaymentBloc,PaymentState>(
                                                   builder: (context,state) {
-                                                    return Text((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed)&&showAd?
+                                                    return Text((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed)&&remoteConfigService.showAdREORN()?
                             
                                                     'Watch Ad - Get 1 random Match' : 'Get 1 random Match'
                                                     ,textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), );
@@ -323,7 +338,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         splashColor: state.totalAdWatchedReOn>=10?Colors.white:null,
                                         highlightColor: state.totalAdWatchedReOn>=10?Colors.white:null,
                                         onTap: (){
-                                          if((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed) && showAd ){
+                                          if((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed) && remoteConfigService.showAdREORN() ){
                                           if(context.read<AdBloc>().state.isLoadedRewardedAd){
                                             context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedOnline));
                                           if(context.read<AdBloc>().state.adWatchedOnline! >=1 ){
@@ -371,11 +386,11 @@ class SwipeCompletedWidget extends StatelessWidget {
                                               BlocBuilder
                                               <PaymentBloc,PaymentState>(
                                                 builder: (context,statePayment) {
-                                                  var txt = state.totalAdWatchedReOn <10? ' - (${context.read<AdBloc>().state.adWatchedOnline}/2) watched':'';
+                                                  var txt = state.totalAdWatchedReOn <10? ' - (${context.read<AdBloc>().state.adWatchedOnline}/2)':'';
                                                   return Text(
-                                                    (context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed)&&showAd?
-                                                    'Watch 2 Ads - Get 1 Online Match$txt'
-                                                    :'Get 1 Online Match', textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), );
+                                                    (context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed)&&remoteConfigService.showAdREORN()?
+                                                    'Watch 2 Ads - Get 1 Recently Active Match$txt'
+                                                    :'Get 1 Recently Active Match', textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), );
                                                 }
                                               ),
                                               state.totalAdWatchedReOn >=10&&state.completedTimeAd!=null ?  Padding(
@@ -443,7 +458,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                     
                                     child: InkWell(
                                       onTap: (){
-                                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
+                                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER && !remoteConfigService.ETbuyQP()){
                                         if(context.read<AdBloc>().state.isLoadedRewardedAd){
                                           context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedPrincess));
                                           if(context.read<AdBloc>().state.adWatchedPrincess!>= remoteConfigService.getNumbers()['adsForPrincess'] ){
@@ -488,7 +503,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                             context.read<AuthBloc>().state.accountType ==Gender.men? Icon(LineIcons.crown, color: Colors.pink[300], size: 25.sp, ):Icon(FontAwesomeIcons.userTie, color: Colors.black, size: 20.sp, ),
                                         SizedBox(width: 10,),
                                         Text(
-                                          context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER ?
+                                          (context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER && !remoteConfigService.ETbuyQP()) ?
                                               'Watch ${remoteConfigService.getNumbers()['adsForPrincess']} Ads - Get 1 ${context.read<AuthBloc>().state.accountType == Gender.women?'Gentle Man':'Princess'} - (${context.read<AdBloc>().state.adWatchedPrincess}/${remoteConfigService.getNumbers()['adsForPrincess']}) watched!'
                                               :context.read<AuthBloc>().state.accountType ==Gender.men?'1 Super Like - Get 1 Princess':'1 Super Like - Get 1 Gentle Men' , 
 
@@ -527,7 +542,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                     
                                     child: InkWell(
                                       onTap: (){
-                                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
+                                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER && !remoteConfigService.ETbuyQP()){
                                         if(context.read<AdBloc>().state.isLoadedRewardedAd){
                                           context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedQueen));
                                         if(context.read<AdBloc>().state.adWatchedQueen! >= remoteConfigService.getNumbers()['adsForQueen'] ){
@@ -572,7 +587,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                             ),
                                             SizedBox(width: 10.h,),
                                             Text(
-                                              context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER ?
+                                              (context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER && !remoteConfigService.ETbuyQP()) ?
                                               'Watch ${remoteConfigService.getNumbers()['adsForQueen']} Ads - Get 1 ${context.read<AuthBloc>().state.accountType == Gender.women?'King':'Queen'} - (${context.read<AdBloc>().state.adWatchedQueen }/${remoteConfigService.getNumbers()['adsForQueen']}) watched!'
                                               :context.read<AuthBloc>().state.accountType == Gender.women?'1 Boost - Get 1 King': '1 Boost - Get 1 Queen' , 
                                               textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), ),

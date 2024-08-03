@@ -19,6 +19,7 @@ import '../../Data/Repository/Notification/notification_service.dart';
 import '../../Data/Repository/Remote/remote_config.dart';
 import '../AdBloc/ad_bloc.dart';
 import '../AuthenticationBloc/bloc/auth_bloc.dart';
+import '../InternetBloc/internet_bloc.dart';
 import '../PaymentBloc/payment_bloc.dart';
 
 part 'swipebloc_event.dart';
@@ -29,9 +30,11 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   final AuthBloc _authBloc;
   final AdBloc _adBloc;
   final PaymentBloc _paymentBloc;
+  final InternetBloc _internetBloc;
   StreamSubscription? _authSubscription;
   StreamSubscription? _adSubscription;
   StreamSubscription? _boostedSubscription;
+  StreamSubscription? _internetSubscription;
   final RemoteConfigService remoteConfigService = RemoteConfigService();
   
   SwipeBloc({
@@ -39,11 +42,13 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     required AuthBloc authBloc,
     required AdBloc adBloc,
     required PaymentBloc paymentBloc,
+    required InternetBloc internetBloc,
   }) :
   _databaseRepository = databaseRepository,
   _authBloc = authBloc,
   _adBloc = adBloc,
   _paymentBloc = paymentBloc,
+  _internetBloc = internetBloc,
    super(const SwipeState()) 
   {
     on<LoadUsers>(_loadusers);
@@ -77,6 +82,16 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
        
      },);
 
+
+    // _internetSubscription = _internetBloc.stream.listen((status) {
+    //   if(status.isConnected == true){
+    //     if(state.swipeStatus == SwipeStatus.completed){
+    //     add(CheckLastTime());
+    //     }
+    //   }
+      
+    // });
+
     
   }
 
@@ -96,7 +111,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     if(event.prefes!.discoverBy == 0){
       //try {
         users = await _databaseRepository.getUsersMainLogic(event.userId, event.users, event.prefes!,event.user!)
-        .timeout(const Duration(seconds: 30), onTimeout: () { 
+        .timeout(const Duration(seconds: 60), onTimeout: () { 
         if(state.loadAttempt >=3){
           emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('something went wrong come back another time!');
         }else{
@@ -115,7 +130,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     }
     if(event.prefes!.discoverBy == 1){
       users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users, event.prefes!, event.user!)
-      .timeout(const Duration(seconds: 30), onTimeout: () { 
+      .timeout(const Duration(seconds: 60), onTimeout: () { 
         if(state.loadAttempt >=3){
           emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('toolong');
         }else{
@@ -129,7 +144,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     if(event.prefes!.discoverBy == 2){
 
      users = await _databaseRepository.getUsersBasedonNearBy(event.userId, event.users,5)
-     .timeout(const Duration(seconds: 30), onTimeout: () { 
+     .timeout(const Duration(seconds: 60), onTimeout: () { 
         if(state.loadAttempt >=3){
           emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('toolong');
         }else{
@@ -141,17 +156,17 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
         },);
     }
     if(event.prefes!.discoverBy == 3){
-      users = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users)
-      .timeout(const Duration(seconds: 30), onTimeout: () { 
-        if(state.loadAttempt >=3){
-          emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('toolong');
-        }else{
+      // users = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users)
+      // .timeout(const Duration(seconds: 60), onTimeout: () { 
+      //   if(state.loadAttempt >=3){
+      //     emit(state.copyWith(swipeStatus: SwipeStatus.completed)); throw Exception('toolong');
+      //   }else{
         
-        add(LoadUsers(userId: event.userId, users: event.users, prefes: event.prefes!,user: event.user));
-        emit(state.copyWith(loadAttempt: state.loadAttempt+1));
-        throw Exception('took too long retrying...');
-        }
-        },);
+      //   add(LoadUsers(userId: event.userId, users: event.users, prefes: event.prefes!,user: event.user));
+      //   emit(state.copyWith(loadAttempt: state.loadAttempt+1));
+      //   throw Exception('took too long retrying...');
+      //   }
+      //   },);
     }
 
  
@@ -295,9 +310,13 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
       
     
     if(event.loadFor == LoadFor.adOnline){
-      var user = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users,limit:event.limit);
+      var user = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users);
+      if(user !=null){
+      emit(state.copyWith(users: [user], swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad) );
+      }else{
+        emit(state.copyWith(swipeStatus: SwipeStatus.error,loadFor: LoadFor.ad));
 
-      emit(state.copyWith(users: user, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad) );
+      }
 
     }
     if(event.loadFor == LoadFor.adNearby){
@@ -377,7 +396,12 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
           }else{
           emit(state.copyWith(completedTime: last, swipeStatus: SwipeStatus.completed));
         }
-        }else{
+        
+        }else if(state.swipeStatus == SwipeStatus.completed && state.users.isNotEmpty){
+          emit(state.copyWith(swipeStatus: SwipeStatus.loaded));
+
+        }
+        else{
           emit(state.copyWith(completedTime: last, swipeStatus: SwipeStatus.completed));
 
         }

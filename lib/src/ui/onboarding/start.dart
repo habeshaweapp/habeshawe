@@ -13,8 +13,10 @@ import 'package:lomi/src/Blocs/ContinueWith/continuewith_cubit.dart';
 import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/app_route_config.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../Data/Models/userpreference_model.dart';
+import '../../Data/Repository/SharedPrefes/sharedPrefes.dart';
 
 class StartScreen extends StatefulWidget {
    StartScreen({super.key});
@@ -179,7 +181,7 @@ class _StartScreenState extends State<StartScreen>
             builder: (_,value,__){
               return Transform.rotate(
                 angle: -10,
-                child: Icon(value?Icons.brightness_4 : Icons.brightness_2,size: 17, ));
+                child: Icon(value?Icons.wb_sunny : Icons.brightness_2,size: 17, ));
             }),
         ),
       ),
@@ -247,7 +249,8 @@ class _StartScreenState extends State<StartScreen>
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 40),
                       child: const Text(
-                        'By clicking Log In, you agree with our Terms. Learn how we process your data in our Privacy Policy and \nCookies Policy.',
+                        //'By clicking Log In, you agree with our Terms. Learn how we process your data in our Privacy Policy and \nCookies Policy.',
+                        'By continuing with an account, you agree to our Terms of Service and acknowledge that you have read our \nPrivacy Policy.',
                         style: TextStyle(
                           //color: Colors.white,
                           fontSize: 11,
@@ -307,11 +310,12 @@ class _StartScreenState extends State<StartScreen>
               
                         //await context.read<AuthBloc>().add(LogInWithGoogle());
                         try{
+                          
                         await context
                             .read<ContinuewithCubit>()
                             .continueWithGoogle();
                         }catch(e){
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()),));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('try again...'),backgroundColor: Colors.black38,));
                         }
               
                      
@@ -330,11 +334,20 @@ class _StartScreenState extends State<StartScreen>
                         icon: isDark?'assets/images/xlogodark.png': 'assets/icons/twitterlogo.png',
                         color: Colors.blue,
                         isDark: isDark,
+                        iconHeight: isDark? 28:17,
+                        iconWidth: isDark? 28:17,
                         onPressed: () async {
+                          try{
                           await context
                               .read<ContinuewithCubit>()
                               .continueWithTwitter();
-                        }),
+                              }catch(e){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('try again...'),backgroundColor: Colors.black38,));
+                        }
+                        }
+                        ),
+
+                        
                 
                  
                     SizedBox(
@@ -343,13 +356,26 @@ class _StartScreenState extends State<StartScreen>
                     ),
                     //const Spacer(),
                     Center(
-                      child: Text(
-                        'Trouble logging in?',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 11,
-                          //fontWeight: FontWeight.w300,
+                      child: GestureDetector(
+                        onTap: ()async{
+                          const url = 'https://linktr.ee/habeshawe';
 
+                          if(await canLaunchUrl(Uri.parse(url))){
+                            await launchUrl(Uri.parse(url));
+
+                          }else{
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('contact us on telegram! @habeshaweapp')));
+                          }
+
+                        },
+                        child: Text(
+                          'Trouble logging in?',
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 11,
+                            //fontWeight: FontWeight.w300,
+                      
+                          ),
                         ),
                       ),
                     ),
@@ -377,6 +403,8 @@ class _StartScreenState extends State<StartScreen>
       required String icon,
       required Color color,
       required bool isDark,
+      double iconHeight = 17,
+      double iconWidth = 17,
       required void Function() onPressed}) {
     //bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Container(
@@ -396,12 +424,12 @@ class _StartScreenState extends State<StartScreen>
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 5.0),
+              padding:  EdgeInsets.only(left: isDark&&iconHeight!=17?0: 5.0),
               child: Image.asset(
                 icon,
                 //color: color,
-                height: 17,
-                width: 17,
+                height: iconHeight,
+                width: iconWidth,
               ),
             ),
             Text(text,
@@ -410,7 +438,8 @@ class _StartScreenState extends State<StartScreen>
                         ? Colors.white.withOpacity(0.6)
                         : Colors.black.withOpacity(0.4),
                     fontWeight: FontWeight.bold,
-                    fontSize: MediaQuery.of(context).size.width * 0.03,
+                   // fontSize: MediaQuery.of(context).size.width * 0.03,
+                    fontSize: 12.5.sp,
                     overflow: TextOverflow.ellipsis)),
             SizedBox(
               width: 10,

@@ -111,6 +111,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   FutureOr<void> _onDeletePhoto(DeletePhoto event, Emitter<ProfileState> emit)async {
     try {
     await _databaseRepository.deletePhoto(imageUrl:event.imageUrl, userId: event.userId, users:event.users);
+    await _storageRepository.deletePhoto(event.imageUrl);
    
     } catch (e) {
       print(e.toString());

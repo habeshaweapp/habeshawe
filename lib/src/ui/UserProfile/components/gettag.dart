@@ -36,7 +36,7 @@ final pageController = PageController();
                     PageViewItem(icon: user.gender == Gender.women.name? LineIcons.crown:FontAwesomeIcons.crown,
                     color: Colors.amber,
                     title: 'Get Your Crown', 
-                    description: 'Get verified and we will review your profile and if you stand out you will get Queen tag', 
+                    description: 'Get verified and we will review your profile and if you stand out you will get ${user.gender == Gender.men.name?'King':'Queen'} tag', 
                     buttonText: user.gender == Gender.women.name? 'Apply  To Queen': 'Apply To King',
                     ontap: ontap 
                     ),

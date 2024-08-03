@@ -163,7 +163,10 @@ class EnableLocation extends StatelessWidget {
                           // }
                        
                           if(placeMark.isNotEmpty ){
-                            context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: choosenPlaceMark, user: state.user.copyWith(geohash: hash,location: [position.latitude, position.longitude], country: choosenPlaceMark.country, countryCode: position.isMocked?'mocked': choosenPlaceMark.isoCountryCode, city: choosenPlaceMark.locality ), isMocked: position.isMocked));
+                            List<dynamic> imageUrls = [...state.user.imageUrls];
+                            imageUrls.removeWhere((element) => element == null);
+
+                            context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: choosenPlaceMark, user: state.user.copyWith(geohash: hash,location: [position.latitude, position.longitude], country: choosenPlaceMark.country, countryCode: position.isMocked?'mocked': choosenPlaceMark.isoCountryCode, city: choosenPlaceMark.locality,imageUrls: imageUrls ), isMocked: position.isMocked));
            
                             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const SplashScreen()),(route) => false);
                           }

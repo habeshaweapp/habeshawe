@@ -27,11 +27,12 @@ class UpdateUser extends OnboardingEvent{
 class UpdateUserImages extends OnboardingEvent{
   final User? user;
   final XFile image;
+  final int index;
 
-  UpdateUserImages({this.user, required this.image});
+  UpdateUserImages({this.user, required this.image, required this.index});
 
   @override
-  List<Object?> get props => [user, image];
+  List<Object?> get props => [user, image,index];
 }
 
 class EditUser extends OnboardingEvent{

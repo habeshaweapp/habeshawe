@@ -6,10 +6,13 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
+import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
+import 'package:lomi/src/Data/Repository/SharedPrefes/sharedPrefes.dart';
 
 
 part 'auth_event.dart';
@@ -37,6 +40,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogInWithGoogle>(_onLogInWithGoogle);
     on<LogOut>(_onLogOut);
     on<DeleteAccount>(_onDeleteAccount);
+    on<ActivityStatus>(_onActivityStatus);
     //on<SignUpCompeleted>(_onSignUpCompeleted);
   }
 
@@ -61,6 +65,47 @@ void _authUserChanged(AuthUserChanged event, Emitter<AuthState> emit) async{
     }
     
     emit(AuthState.authenticated(user: event.user!,accountType: isUserAlreadyRegistered , isCompleted: isCompleted, firstTime: event.firstTime));
+
+    // bool isRunning =await FlutterBackgroundService().isServiceRunning();
+    // if( !isRunning){
+
+    // }
+
+    if(isCompleted){
+      var isRunning =await FlutterBackgroundService().isRunning();
+      var userId = event.user!.uid;
+      //var isFirst = SharedPrefes.getFirstLogIn();
+
+      if(!isRunning){
+        await FlutterBackgroundService().startService();
+        FlutterBackgroundService().invoke('user',
+          {
+            'userId': userId,
+            'gender': isUserAlreadyRegistered.index,         
+          }
+        );
+
+      }
+    }
+      
+    //   if(isRunning){
+
+    //     //if(isFirst == null || isFirst ==true){
+       
+    //     FlutterBackgroundService().invoke('user',
+    //       {
+    //         'userId': userId,
+    //         'gender': isUserAlreadyRegistered.index,
+    //         'isFirst': isFirst
+    //       }
+    //     );
+
+    //    // }
+
+    //   }else{
+    //      FlutterBackgroundService().startService();
+    //   }
+    // }
     
   }else{
     emit(AuthState.unauthenticated());
@@ -83,6 +128,11 @@ FutureOr<void> _onLogOut(LogOut event, Emitter<AuthState> emit) async {
   await _authRepository.signOut();
   // emit(const AuthState.unauthenticated());
   await HydratedBloc.storage.clear();
+  SharedPrefes.clear();
+  FlutterBackgroundService().invoke('stopService');
+  NotificationService.onClickNotification.close();
+
+  //FlutterBackgroundService().sendData({'action':'stopService'});
 
 }
 
@@ -107,8 +157,11 @@ Future<void> _onLogInWithGoogle(LogInWithGoogle event, Emitter<AuthState> emit) 
   }
 
  
+
+  FutureOr<void> _onActivityStatus(ActivityStatus event, Emitter<AuthState> emit) {
+    _databaseRepository.updateOnlinestatus(userId: state.user!.uid, gender: state.accountType!, online: event.active);
+
+  }
+
 }
-
-
-
 

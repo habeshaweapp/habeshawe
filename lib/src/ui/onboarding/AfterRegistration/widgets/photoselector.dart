@@ -5,8 +5,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import 'package:lomi/src/Data/Repository/Remote/remote_config.dart';
 
 import '../../../../Blocs/OnboardingBloc/onboarding_bloc.dart';
 import '../../../../Blocs/ThemeCubit/theme_cubit.dart';
@@ -16,10 +19,11 @@ import '../../../../Data/Models/user.dart';
 
 
 class PhotoSelector extends StatefulWidget {
-  const PhotoSelector({super.key, this.imageUrl, this.user});
+  const PhotoSelector({super.key, this.imageUrl, this.user,required this.index});
 
   final String? imageUrl;
   final User? user;
+  final int index;
 
   @override
   State<PhotoSelector> createState() => _PhotoSelectorState();
@@ -28,8 +32,12 @@ class PhotoSelector extends StatefulWidget {
 class _PhotoSelectorState extends State<PhotoSelector> {
    bool isPhotoSelected = false;
    File? imageFile;
+   bool validPhoto = true;
+
+   RemoteConfigService remoteConfig = RemoteConfigService();
   @override
   Widget build(BuildContext context) {
+    
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10, right: 5),
@@ -37,11 +45,13 @@ class _PhotoSelectorState extends State<PhotoSelector> {
         //width: 100,
        // height: 150,
         decoration: BoxDecoration(
-          border: Border.all(width: 1),
+          border: Border.all(width: 1, color: !validPhoto?Colors.red: Color(0xFF000000) ),
           borderRadius: BorderRadius.circular(10),
           
-          color: isDark ? Colors.grey[900]:
+          
+          color:  isDark ? Colors.grey[900]:
           Colors.grey[200]!.withOpacity(0.6)
+            
         ),
         child:
         (widget.imageUrl == null) ?
@@ -82,11 +92,23 @@ class _PhotoSelectorState extends State<PhotoSelector> {
               }
 
               else{
+                // final InputImage inputImage = InputImage.fromFilePath(_image.path);
+                // final ImageLabelerOptions options = ImageLabelerOptions();
+                // final imageLabeler = ImageLabeler(options: options);
+                
                 setState(() {
                   isPhotoSelected =true;
-                  imageFile =File(_image!.path);
+                  imageFile =File(_image.path);
+                  validPhoto=true;
                 });
+
+                validPhoto = await processImage(_image.path);
+
+                // List<ImageLabel> labels =await imageLabeler.processImage(inputImage);
+                // print(labels);
                 //for(var img in _image){
+
+                if(validPhoto){
 
                 final lastIndex = _image!.path.lastIndexOf(new RegExp(r'.jp'));
                 final splitted = _image.path.substring(0, (lastIndex));
@@ -95,15 +117,24 @@ class _PhotoSelectorState extends State<PhotoSelector> {
                 );
                 //images.add(image!);
                 //context.read<ProfileBloc>().add(UpdateProfileImages(user: widget.user, image: image!));
-                context.read<OnboardingBloc>().add(UpdateUserImages(image: image!));
+                context.read<OnboardingBloc>().add(UpdateUserImages(image: image!,index: widget.index));
+              }
+              else{
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please use your real photo only!!! your account will be banned!',style: TextStyle(color: Colors.red),)));
+                setState(() {
+                  isPhotoSelected =false;
+                  imageFile = null;
+                  validPhoto = false;
+                });
+              }
               }
               
-              if(_image !=null){
-                print('image uploading.........');
-               // StorageRepository().uploadImage(_image);
-               // context.read<OnboardingBloc>().add(UpdateUserImages(image: _image));
-               //context.read<ProfileBloc>().add(UpdateProfileImages(user: user, image: _image));
-              }
+              // if(_image !=null){
+              //   print('image uploading.........');
+              //  // StorageRepository().uploadImage(_image);
+              //  // context.read<OnboardingBloc>().add(UpdateUserImages(image: _image));
+              //  //context.read<ProfileBloc>().add(UpdateProfileImages(user: user, image: _image));
+              // }
             },
             )
           ): ClipRRect(
@@ -162,6 +193,46 @@ class _PhotoSelectorState extends State<PhotoSelector> {
     
       ),
     );
+  } 
+  
+  Future<bool> processImage(String path) async{
+       final InputImage inputImage = InputImage.fromFilePath(path);
+       final ImageLabelerOptions options = ImageLabelerOptions();
+       final opts = FaceDetectorOptions();
+       final faceDetector = FaceDetector(options: opts);
+       final imageLabeler = ImageLabeler(options: options);
+
+      List<ImageLabel> labels =await imageLabeler.processImage(inputImage);
+      List<Face> faces = await faceDetector.processImage(inputImage);
+      final remote = remoteConfig.ai();
+    
+      
+      if(faces.isEmpty){
+        return false;
+      }
+if(remote['screenshot'] || remote['poster']){
+      for (var label in labels) {
+        if(remote['screenshot']){
+        if(label.label == 'Screenshot'){
+         if(label.confidence >remote['screenshotConfidence']){
+          return false;
+         }
+        }
+        }
+    if(remote['poster']){
+        if(label.label == 'Poster'){
+          if(label.confidence >remote['posterConfidence']){
+          return false;
+         }
+        }
+    }
+
+
+      }
+}
+
+      return true;
+
   }
 }
 

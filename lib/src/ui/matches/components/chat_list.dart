@@ -21,13 +21,19 @@ class ChatList extends StatelessWidget {
     return ListTile(
       leading: 
       //MatchesImage(url: imageUrl),
+      
       ClipRRect(
         borderRadius: BorderRadius.circular(50),
-        child: CachedNetworkImage(imageUrl: match.imageUrls.isNotEmpty? match.imageUrls[0]: 'placeholder', 
+        child:match.imageUrls.isNotEmpty? CachedNetworkImage(imageUrl: match.imageUrls[0], 
           fit: BoxFit.cover, 
           height: 50,
           width: 50,
-          )
+          ):Container(
+            color: Colors.grey[300],
+            height: 50,
+            width: 50,
+        
+      ),
       ),
 
       title: Text(match.name,
@@ -44,12 +50,15 @@ class ChatList extends StatelessWidget {
          if(lastMessage!.senderId == match.id && (lastMessage.seen == null)){
            
            if(seen==null || !seen.contains(lastMessage.id)){
+            if(SharedPrefes.getFirstLogIn()==false){
 
             NotificationService().showMessageReceivedNotifications(title: match.name, body: lastMessage.message, payload: 'chat', channelId: lastMessage.id);
+            }
             
             seen == null? seen = [lastMessage.id]: seen.add(lastMessage.id);
             SharedPrefes.setMessagesNotified(seen);
             SharedPrefes.newMessage.add('newMessage');
+            
            }
            // context.read<NotificationService>().showMessageReceivedNotifications(title: match.name, body: lastMessage.message, payload: 'chat', channelId: lastMessage.id);
           }

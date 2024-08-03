@@ -4,8 +4,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
+import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
+import 'package:lomi/src/Data/Repository/Remote/remote_config.dart';
 
 import '../../../Blocs/ProfileBloc/profile_bloc.dart';
 import '../../../Blocs/ThemeCubit/theme_cubit.dart';
@@ -13,22 +16,47 @@ import '../../../Data/Models/user.dart';
 
 
 class PhotoSelector extends StatefulWidget {
-  const PhotoSelector({super.key, this.imageUrl, this.user, required this.length});
+   PhotoSelector({super.key, this.imageUrl, this.user, required this.length,required this.notblank});
 
   final String? imageUrl;
   final User? user;
   final int length;
+   bool notblank;
+  
 
   @override
   State<PhotoSelector> createState() => _PhotoSelectorState();
+
 }
 
 class _PhotoSelectorState extends State<PhotoSelector> {
    bool isPhotoSelected = false;
    File? imageFile;
+   RemoteConfigService remoteConfig = RemoteConfigService();
+
+   
   @override
   Widget build(BuildContext context) {
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
+   // isPhotoSelected = !widget.blank;
+    if(isPhotoSelected && !widget.notblank){
+    imageFile = null;
+    isPhotoSelected = false;
+  }
+  
+   if(widget.imageUrl == null){
+   if(isPhotoSelected && imageFile!=null){
+    widget.notblank = true;
+   }
+   }
+   
+  //  {
+  //   imageFile = null;
+  //   isPhotoSelected = false;
+  //  }
+ 
+    
+    
     return Padding(
       padding: const EdgeInsets.only(bottom: 10, right: 5),
       child: Container(
@@ -43,7 +71,7 @@ class _PhotoSelectorState extends State<PhotoSelector> {
         ),
         child:
         (widget.imageUrl == null) ?
-        isPhotoSelected?Stack(
+        (isPhotoSelected&&widget.notblank)?Stack(
           fit: StackFit.expand,
           children: [
             ClipRRect(
@@ -75,7 +103,7 @@ class _PhotoSelectorState extends State<PhotoSelector> {
                List<XFile> images =[];
   
               if(_image.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No image selected')));
+               // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No image selected',style: TextStyle(color: Colors.white),),backgroundColor: Colors.black38,));
 
               }
 
@@ -83,12 +111,17 @@ class _PhotoSelectorState extends State<PhotoSelector> {
                 setState(() {
                   isPhotoSelected =true;
                   imageFile =File(_image[0]!.path);
+                  widget.notblank = true;
                 });
+
+                
 
                 if(_image.length + widget.length > 6){
                   _image = _image.sublist(0,6-widget.length);
                 }
                 for(var img in _image){
+                bool samri =await processImage(img!.path);
+                if(samri){
 
                 final lastIndex = img!.path.lastIndexOf(new RegExp(r'.jp'));
                 final splitted = img.path.substring(0, (lastIndex));
@@ -97,6 +130,14 @@ class _PhotoSelectorState extends State<PhotoSelector> {
                 );
                 //images.add(image!);
                 context.read<ProfileBloc>().add(UpdateProfileImages(user: widget.user, image: image!));
+
+                }else{
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please use a real, clear photo of yours! your account might be banned!')));
+                  setState(() {
+                    isPhotoSelected = false;
+                    imageFile = null;
+                  });
+                }
               }
               }
               if(_image !=null){
@@ -164,5 +205,46 @@ class _PhotoSelectorState extends State<PhotoSelector> {
     
       ),
     );
+  }
+
+  Future<bool> processImage(String path) async{
+       final InputImage inputImage = InputImage.fromFilePath(path);
+       final ImageLabelerOptions options = ImageLabelerOptions();
+       final opts = FaceDetectorOptions();
+       final faceDetector = FaceDetector(options: opts);
+       final imageLabeler = ImageLabeler(options: options);
+
+      List<ImageLabel> labels =await imageLabeler.processImage(inputImage);
+      List<Face> faces = await faceDetector.processImage(inputImage);
+      final remote  = remoteConfig.ai();
+    
+
+      if(faces.isEmpty){
+        return false;
+      }
+
+      if(remote['screenshot'] || remote['poster']){
+      for (var label in labels) {
+        if(remote['screenshot']){
+        if(label.label == 'Screenshot'){
+         if(label.confidence >remote['screenshotConfidence']){
+          return false;
+         }
+        }
+        }
+    if(remote['poster']){
+        if(label.label == 'Poster'){
+          if(label.confidence >remote['posterConfidence']){
+          return false;
+         }
+        }
+    }
+
+
+      }
+}
+
+      return true;
+
   }
 }

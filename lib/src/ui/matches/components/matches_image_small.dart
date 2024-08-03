@@ -7,7 +7,10 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
+import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 
+import '../../../Blocs/InternetBloc/internet_bloc.dart';
 import '../../../Blocs/PaymentBloc/payment_bloc.dart';
 import '../../../Data/Models/enums.dart';
 import '../../../Data/Models/tag_helper.dart';
@@ -41,7 +44,19 @@ class MatchesImage extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: CachedNetworkImageProvider(match?.imageUrls[0]??url)
+                  image: CachedNetworkImageProvider(match?.imageUrls[0]??url,
+                            errorListener: (){
+                              if(context.read<InternetBloc>().state.isConnected == true){
+                                  context.read<DatabaseRepository>().changeMatchImage(
+                                    userId: context.read<AuthBloc>().state.user!.uid, 
+                                    userGender: context.read<AuthBloc>().state.accountType!,
+                                    match: match!.toMap(), 
+                                    from: 'matches');
+
+                              }
+
+                            }     
+                            )
                   //NetworkImage(url)
                   ),
                   borderRadius: shape == BoxShape.rectangle? BorderRadius.all(Radius.circular(10)):null,

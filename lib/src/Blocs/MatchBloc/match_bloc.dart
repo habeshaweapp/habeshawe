@@ -3,13 +3,16 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
+import 'package:lomi/src/Data/Repository/SharedPrefes/sharedPrefes.dart';
 
 import '../../Data/Models/likes_model.dart';
 import '../../Data/Models/model.dart';
+import '../../Data/Repository/Notification/notification_service.dart';
 
 part 'match_event.dart';
 part 'match_state.dart';
@@ -39,6 +42,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     on<LoadMoreMatches>(_onLoadMoreMatches);
     on<UpdateactiveMatches>(_onUpdateInactiveMatches);
     on<LoadMoreActiveMatches>(_onLoadMoreActiveMatches);
+    on<CheckImage>(_onCheckImage);
     
     matchController.addListener(() {
       if(matchController.position.pixels == matchController.position.maxScrollExtent){
@@ -63,11 +67,18 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     _matchesSubscription = _databaseRepository.getMatches(event.userId, event.users).listen((matches) {
 
       add(UpdateMatches(matchedUsers: matches));
+      if(SharedPrefes.inBackground()==true){ 
+        NotificationService().showMessageReceivedNotifications(title: 'New Match', body: "You have a new Match!---", payload: 'chat', channelId: 'backgroundMatch');
+
+      }
 
     });
 
     _activeSubscription = _databaseRepository.getactiveMatches(event.userId,event.users).listen((inactive){
       add(UpdateactiveMatches(activeMatches: inactive ));
+      if(SharedPrefes.inBackground() == true){
+         NotificationService().showMessageReceivedNotifications(title: 'Message', body: 'Someone Messaged you!----', payload: 'chat', channelId: 'backgroundMessage');
+      }
 
     });
 
@@ -86,8 +97,12 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
   void _onOpenChat(OpenChat event, Emitter<MatchState> emit) async{
     try {
-       _databaseRepository.openChat(event.message, event.users);
+       await _databaseRepository.openChat(event.message, event.users);
       //await _databaseRepository.sendMessage(event.message, event.users);
+      // var matches = [...state.matchedUsers];
+      // var newMatches = matches.remove(event.)
+
+      // emit(state.copyWith(matchedUsers: state.matchedUsers))
       
     }on Exception catch (e) {
       print(e.toString());
@@ -162,5 +177,14 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     }catch(e){
 
     }
+  }
+
+  FutureOr<void> _onCheckImage(CheckImage event, Emitter<MatchState> emit)async {
+
+    // var newImages = (await _databaseRepository.getUserbyId(event.match.id!, event.match.gender)).imageUrls;
+    // if(!listEquals(newImages, event.match.imageUrls)){
+    //   _databaseRepository.changeMatchImage(user: event.user, matchId: event.match.id, newImages: newImages, from: 'matches' );
+    // }
+
   }
 }

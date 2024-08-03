@@ -26,6 +26,7 @@ import '../../../Data/Models/likes_model.dart';
 import '../../../Data/Models/model.dart';
 import '../../../Data/Models/tag_helper.dart';
 import '../../../Data/Models/looking_for_datas.dart';
+import '../../../Data/Repository/Database/database_repository.dart';
 import '../../editProfile/editProfile.dart';
 import '../../home/components/userdrag.dart';
 import '../../itsAmatch/itsAmatch.dart';
@@ -130,7 +131,25 @@ class Body extends StatelessWidget {
                                       imageUrl: user.imageUrls[index],
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) => Center(child: CircularProgressIndicator(strokeWidth: 2,)),
-                                      errorWidget: (context, url, error) => Icon(Icons.error_outline_sharp),
+                                      errorWidget: (context, url,  error) {
+                                       if(error.statusCode == 403)
+                                        {
+                                          if(profileFrom == ProfileFrom.like || profileFrom == ProfileFrom.chat){
+                                            context.read<DatabaseRepository>().changeMatchImage(
+                                                userId: context.read<AuthBloc>().state.user!.uid, 
+                                                userGender: context.read<AuthBloc>().state.accountType!,
+                                                match:  {
+                                                  'id': user.id,
+                                                  'gender': user.gender,
+                                                  'imageUrls':user.imageUrls
+                                                }, 
+                                                from:profileFrom == ProfileFrom.like? 'likes':'matches');
+                                          }
+                                        }
+
+                                        return Icon(Icons.error);
+
+                                      } 
                                       )
                                    // Image.network(user.imageUrls[index], fit: BoxFit.cover,)
                                   );
@@ -242,7 +261,7 @@ class Body extends StatelessWidget {
                             children: [
                               Icon(LineIcons.city,color: Colors.grey, size:18,),
                               SizedBox(width: 7,),
-                              Text('${user.city}, ${user.country}',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
+                              Text(user.livingIn != ''?user.livingIn??'${user.city}, ${user.country}':'${user.city}, ${user.country}',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
                             ],
                           ),
                         ),

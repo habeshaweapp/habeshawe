@@ -9,7 +9,15 @@ class UpdateWallState extends Equatable {
 
 class UpdateWallInitial extends UpdateWallState {}
 
-class ShutDownThisApp extends UpdateWallState{}
+class ShutDownThisApp extends UpdateWallState{
+  final Shuts shutz;
+  const ShutDownThisApp({required this.shutz});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [shutz];
+
+}
 
 class Ribka extends UpdateWallState{}
 

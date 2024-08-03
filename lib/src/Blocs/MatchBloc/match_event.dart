@@ -86,3 +86,14 @@ class LoadMoreActiveMatches extends MatchEvent{
   // TODO: implement props
   List<Object> get props => [userId, gender,startAfter];
 }
+
+class CheckImage extends MatchEvent{
+  final UserMatch match;
+  final User user;
+
+  const CheckImage({required this.match, required this.user});
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [match, user];
+}

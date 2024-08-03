@@ -22,8 +22,9 @@ class ItsAMatch extends StatelessWidget {
   Widget build(BuildContext context) {
 
     SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(
-        systemNavigationBarColor: const Color.fromARGB(51, 182, 180, 180),
+       SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.grey[900],
+        //const Color.fromARGB(51, 182, 180, 180),
         systemNavigationBarIconBrightness: Brightness.light,
       ),
     );

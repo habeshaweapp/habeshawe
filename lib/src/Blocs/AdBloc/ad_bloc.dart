@@ -38,6 +38,14 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
     //add(LoadNativeAd());
     add(LoadRewardedAd());
    // add(LoadInterstitialAd());
+   if(state.totalAdWatchedReOn == 100 || state.completedTimeAd != null){
+    var diff = state.completedTimeAd!.difference(DateTime.now()).inMinutes;
+    if( diff > 60){
+       add(ResetTotalReON());
+
+      }
+
+   }
   }
 
   FutureOr<void> _onLoadNativeAd(LoadNativeAd event, Emitter<AdState> emit) {
@@ -218,11 +226,16 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
   }
 
   FutureOr<void> _onResetTotalReOn(ResetTotalReON event, Emitter<AdState> emit) {
-    emit(state.copyWith(totalAdWatchedReOn: 0));
+    emit(state.copyWith(totalAdWatchedReOn: 0, completedTimeAd: null));
   }
 
   FutureOr<void> _onTimeOutAd(TimeOutAd event, Emitter<AdState> emit) {
     emit(state.copyWith(completedTimeAd: event.completedTimeAd,totalAdWatchedReOn: 100 ));
+    Future.delayed(const Duration(hours: 1), (){
+          //context.read<AdBloc>().add(ResetTotalReON());
+          add(ResetTotalReON());
+
+        });
   }
   
   @override

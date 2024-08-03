@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_geo_hash/geohash.dart' as geohash;
 import 'package:geocoding_platform_interface/src/models/placemark.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
@@ -790,7 +792,9 @@ class DatabaseRepository extends BaseDatabaseRepository{
     return [];
   }
  // int totalNum = users == Gender.men? remoteConfig.howManyADayMen(): remoteConfig.howManyADayWomen();
-  int remoteMax = remoteConfig.getNumbers()['maxKmNearBy'];
+  var remoteNumbers = remoteConfig.getNumbers();
+  int totalNum = users == Gender.men? remoteNumbers['howManyADayMen']: remoteNumbers['howManyADayWomen'];
+  int remoteMax = remoteNumbers['maxKmNearBy'];
  
   geohash.MyGeoHash myGeoHash = geohash.MyGeoHash();
   String hash = myGeoHash.geoHashForLocation(geohash.GeoPoint(myLocation.latitude, myLocation.longitude));
@@ -852,10 +856,15 @@ class DatabaseRepository extends BaseDatabaseRepository{
     // }
     if(matchingUsers.isEmpty){
       outSideRad.removeWhere((user) => likedMatches.contains(user.id));
+      if(outSideRad.length>totalNum){
+        return outSideRad.sublist(0,totalNum);
+      }
       return outSideRad;
     }
     matchingUsers.removeWhere((user) => likedMatches.contains(user.id));
-    
+    if(matchingUsers.length > totalNum){
+      return matchingUsers.sublist(0,totalNum);
+    }
     return matchingUsers;
   });
   return result;
@@ -927,6 +936,7 @@ class DatabaseRepository extends BaseDatabaseRepository{
     
     List<User> princessOrgents =[];
     List<User> queensOrKings =[];
+    List<User> result=[];
       
     var collectionRef = _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name);
     List<int> randomsForQueens = [];
@@ -937,8 +947,6 @@ class DatabaseRepository extends BaseDatabaseRepository{
     .doc(userId).collection('viewedProfiles').doc('viewed')
     .get().then((value) => value.data());
 
-    viewedQueens = viewedProfiles?[gender == Gender.men? 'queens': 'kings'].split(',').map(int.parse).toList();
-    viewedPrincess = viewedProfiles?[gender == Gender.men?'princess':'gents'].split(',').map(int.parse).toList();
     
     List<String> likedMatches = viewedProfiles?['liked'].split(',');
     List<String> passedMatches = viewedProfiles?['passed'].split(',');
@@ -948,6 +956,11 @@ class DatabaseRepository extends BaseDatabaseRepository{
     final int queenCount = await collectionRef.where('adminChoice', isEqualTo: gender == Gender.men?  'queen' : 'king').count().get().then((value) => value.count);
     final int princessCount = await collectionRef.where('adminChoice', isEqualTo: gender == Gender.men? 'princess':'gent' ).count().get().then((value) => value.count);
     final noOfUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name).count().get().then((value) => value.count, onError: (e)=>print('error counting'));
+    
+//logic for showing queens, kings, princess and gentlemen
+ if(remoteNumbers['useMainLogic']){
+    viewedQueens = viewedProfiles?[gender == Gender.men? 'queens': 'kings'].split(',').map(int.parse).toList();
+    viewedPrincess = viewedProfiles?[gender == Gender.men?'princess':'gents'].split(',').map(int.parse).toList();
     
     //get queens or kings based on gender
     for(int i=1; i<=remoteQueensNumber; i++){
@@ -1018,7 +1031,7 @@ if(princessCount !=0){
                               .where('rate', whereIn: [7,8,6])
                               .where('adminchoice', isEqualTo: 'nan')
                               .where('number', isGreaterThanOrEqualTo: randForscore)
-                              .limit(10)
+                              .limit(totalNum)
                               .get().then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
 
     scoreUsers.removeWhere((user) => queensOrKings.contains(user) );
@@ -1026,13 +1039,14 @@ if(princessCount !=0){
 
     scoreUsers.removeWhere((user) => viewedMatches.contains(user.id),);
 
-    List<User> result = [...queensOrKings, ...princessOrgents,...scoreUsers];
+     result = [...queensOrKings, ...princessOrgents,...scoreUsers];
     if(result.length <totalNum){
        scoreUsers = await collectionRef
                               .where('rate', whereIn: [7,8,6])
                               .where('adminchoice', isEqualTo: 'nan')
                               .where('number', isLessThan: randForscore)
-                              .limit(10)
+                              .limit(totalNum-result.length+10
+                              )
                               .get().then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
 
     scoreUsers.removeWhere((user) => queensOrKings.contains(user) );
@@ -1041,7 +1055,48 @@ if(princessCount !=0){
 
     }
     result.addAll(scoreUsers);
+    
+ }
+    //same looking for
+    List<User> lookingFors= [];
 
+
+    if(result.length < totalNum){
+      int random =Random().nextInt(10000000);
+
+      lookingFors = await collectionRef
+      .where('lookingFor', isEqualTo: my.lookingFor)
+      .where('random', isLessThanOrEqualTo: random)
+      
+      .limit(totalNum-result.length+10)
+      .get().then((value) => 
+      value.docs.map((doc) => User.fromSnapshoot(doc)).toList()
+      );
+   
+      lookingFors.removeWhere((user) => viewedMatches.contains(user.id));
+      result.addAll(lookingFors);
+   
+    
+    if(result.length <totalNum){
+     // random = Random().nextInt(count);
+      lookingFors = await collectionRef
+      .where('lookingFor', isEqualTo: my.lookingFor)
+      .where('random', isGreaterThan: random)
+   
+      .limit(totalNum-result.length+10)
+      .get().then((value) => 
+      value.docs.map((doc) => User.fromSnapshoot(doc)).toList()
+      );
+   
+      lookingFors.removeWhere((user) => viewedMatches.contains(user.id));
+      result.addAll(lookingFors);
+      
+    }
+
+    
+
+
+    }
     
     //final noOfUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name:Gender.men.name).count().get().then((value) => value.count, onError: (e)=>print('error counting'));
     List<User> filler =[];
@@ -1125,7 +1180,7 @@ if(princessCount !=0){
     //diascoraRandom.removeWhere((element) => diascora.contains(element));
     //result.addAll(diascora);
    // result.addAll(diascoraRandom);
-
+    if(remoteNumbers['useMainLogic']){
     if(queensOrKings.isNotEmpty){
       String oldQueens = viewedProfiles?[gender == Gender.men? 'queens': 'kings'];
       String newQueens = '$oldQueens,${randomsForQueens.join(',')}';
@@ -1155,9 +1210,41 @@ if(princessCount !=0){
         );
 
     }
+
+    }
+
+
     if(my.countryCode == 'ET'){
     //get foringn users with random number
     var randForDiascora = Random().nextInt(10000000);
+    var diascoraSameLookingFor = await collectionRef
+                        .where('diascora', isEqualTo: true )
+                        .where('lookingFor', isEqualTo: my.lookingFor)
+                        .where('random', isLessThan: randForDiascora)
+                        //.orderBy('number', descending: true)
+                        .limit(remoteNumbers['numberOfDiascora'])
+                        .get()
+                        .then(
+                          (snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList() );
+
+    diascoraSameLookingFor.removeWhere((element) => viewedMatches.contains(element));
+    if(diascoraSameLookingFor.length < remoteNumbers['numberOfDiascora']){
+      var diascoraSameLookingFor2 = await collectionRef
+                        .where('diascora', isEqualTo: true )
+                        .where('lookingFor', isEqualTo: my.lookingFor)
+                        .where('random', isGreaterThanOrEqualTo: randForDiascora)
+                        //.orderBy('number', descending: true)
+                        .limit(remoteNumbers['numberOfDiascora'])
+                        .get()
+                        .then(
+                          (snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList() );
+
+            diascoraSameLookingFor2.removeWhere((element) => viewedMatches.contains(element));
+            diascoraSameLookingFor.addAll(diascoraSameLookingFor2);
+      
+    }
+    if(diascoraSameLookingFor.length < remoteNumbers['numberOfDiascora']){
+    randForDiascora = Random().nextInt(10000000);
     var diascoraRandom = await collectionRef
                         .where('diascora', isEqualTo: true )
                         .where('random', isLessThan: randForDiascora)
@@ -1169,19 +1256,40 @@ if(princessCount !=0){
 
                         
     diascoraRandom.removeWhere((element) => viewedMatches.contains(element.id));
+    diascoraRandom.removeWhere((element) => diascoraSameLookingFor.contains(element));
+    diascoraSameLookingFor.addAll(diascoraRandom);
+
+    if(diascoraSameLookingFor.length < remoteNumbers['numberOfDiascora']){
+      var diascoraRandom = await collectionRef
+                        .where('diascora', isEqualTo: true )
+                        .where('random', isGreaterThanOrEqualTo: randForDiascora)
+                        //.orderBy('number', descending: true)
+                        .limit(remoteNumbers['numberOfDiascora'])
+                        .get()
+                        .then(
+                          (snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList() );
+
+      diascoraRandom.removeWhere((element) => viewedMatches.contains(element.id));
+      diascoraRandom.removeWhere((element) => diascoraSameLookingFor.contains(element));
+      diascoraSameLookingFor.addAll(diascoraRandom);
+
+    }
+    
+
+    }
 
 
 
     if(result.length>totalNum){
       var resultT = result.sublist(0,totalNum);
      // resultT.addAll(diascora);
-      diascoraRandom.addAll(resultT);
-      return diascoraRandom;
+      diascoraSameLookingFor.addAll(resultT);
+      return diascoraSameLookingFor;
     }
 
     //result.addAll(diascora);
-    diascoraRandom.addAll(result);
-    return diascoraRandom;
+    diascoraSameLookingFor.addAll(result);
+    return diascoraSameLookingFor;
     
     }//end of et users with diaspora
 
@@ -1290,7 +1398,10 @@ Future<void> createDemoUsers(List<User> users) async{
         'searcName': searchName(user.name),
         'livingIn': '${user.city}, ${user.country}',
         'creationTimestamp': FieldValue.serverTimestamp(),
-        'diascora': placeMark.isoCountryCode == 'ET'? false:true
+        'diascora': placeMark.isoCountryCode == 'ET'? false:true,
+        'fake': 'unReviewed',
+        'version': '2.0.0+25',
+        'platform': Platform.isAndroid?'android':Platform.isIOS?'ios':'other'
       });
 
       return true;
@@ -1727,7 +1838,7 @@ Future<void> createDemoUsers(List<User> users) async{
             .snapshots();
   }
 
-  Future<List<User>>getOnlineUsers({required String userId, required Gender gender, int? limit=10}) async {
+  Future<User?>getOnlineUsers({required String userId, required Gender gender, int? limit=10}) async {
     try {
       // List<String> viewedIds =[];
       // var viewedProfiles = await _firebaseFirestore.collection(gender.name).doc(userId).collection('viewedProfiles').get()
@@ -1744,74 +1855,91 @@ Future<void> createDemoUsers(List<User> users) async{
     //var viewedMatches = viewedProfiles?['matches'];
     List<String> likedMatches = viewedProfiles?['liked'].split(',');
     List<String> passedMatches = viewedProfiles?['passed'].split(',');
-
-   
-   
-    int count = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name).count().get().then((value) => value.count);
-
-    int random = Random().nextInt(count);
+    List<String> viewedMatches = [...likedMatches,...passedMatches];
 
 
-      List<User> users = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
-                      .where('online', isEqualTo: true)
-                      .where('number', isGreaterThanOrEqualTo: random)
-                      .limit(limit!)
-                      .get()
-                      
-                      .then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
-      var firstUsers = users;
-      users.removeWhere((user) => likedMatches.contains(user.id));
-      List<User> recentUsers =[];
-      List<User> secondUsers =[];
-      if(users.length < limit){
-       secondUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
-                      .where('online', isEqualTo: true)
-                      .where('number', isLessThan: random)
-                      .limit(limit!)
-                      .get()
-                      
-                      .then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
-      var secondUsersback = users;
-      secondUsers.removeWhere((user) => likedMatches.contains(user.id));
-      users.addAll(secondUsers);
-
-      }
-
-      if(users.length <limit && limit>=10){
-        recentUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
+    List<User> recentUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
                       .orderBy('lastSeen', descending: true)
-                      .limit(limit)
+                      .limit(limit!)
                       .get()
                       .then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
 
-        var recentBackup= recentUsers;
-        recentUsers.removeWhere((user) => likedMatches.contains(user.id));
-        users.addAll(recentUsers);
-        if(users.length <10){
-          //void viewedNotLikedUsers = firstUsers.removeWhere((user) => viewedProfiles.contains({'id': user.id, 'liked':true}) );
-          users.addAll(firstUsers);
-          users.addAll(secondUsers);
-          users.removeWhere((element) => likedMatches.contains(element.id));
+   List<User> backKUp= recentUsers;
+   recentUsers.removeWhere((user) => viewedMatches.contains(user.id));
+   if(recentUsers.isNotEmpty){
+    return recentUsers.first;
+   }
+   else{
+    backKUp.removeWhere((user) => likedMatches.contains(user.id));
+    if(backKUp.isNotEmpty){
+      return backKUp.first;
+    }
+   }
+    // int count = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name).count().get().then((value) => value.count);
 
-          if(users.length < 10){
-            recentBackup.removeWhere((user) => likedMatches.contains(user.id));
-            users.addAll(recentBackup);
-            if(users.length<10){
-              return users;
-            }else{
-              return users.sublist(0,10);
-            }
-          }else{
-            return users.sublist(0,10);
-          }
+    // int random = Random().nextInt(count);
 
-        }else{
-          return users.sublist(0,10);
 
-        }
-      }
+      // List<User> users = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
+      //                 .where('online', isEqualTo: true)
+      //                 .where('number', isGreaterThanOrEqualTo: random)
+      //                 .limit(limit!)
+      //                 .get()
+                      
+      //                 .then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
+      // var firstUsers = users;
+      // users.removeWhere((user) => likedMatches.contains(user.id));
+      // List<User> recentUsers =[];
+      // List<User> secondUsers =[];
+      // if(users.length < limit){
+      //  secondUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
+      //                 .where('online', isEqualTo: true)
+      //                 .where('number', isLessThan: random)
+      //                 .limit(limit!)
+      //                 .get()
+                      
+      //                 .then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
+      // var secondUsersback = users;
+      // secondUsers.removeWhere((user) => likedMatches.contains(user.id));
+      // users.addAll(secondUsers);
+
+      // }
+
+      // if(users.length <limit && limit>=10){
+      //   recentUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
+      //                 .orderBy('lastSeen', descending: true)
+      //                 .limit(limit)
+      //                 .get()
+      //                 .then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
+
+      //   var recentBackup= recentUsers;
+      //   recentUsers.removeWhere((user) => likedMatches.contains(user.id));
+      //   users.addAll(recentUsers);
+      //   if(users.length <10){
+      //     //void viewedNotLikedUsers = firstUsers.removeWhere((user) => viewedProfiles.contains({'id': user.id, 'liked':true}) );
+      //     users.addAll(firstUsers);
+      //     users.addAll(secondUsers);
+      //     users.removeWhere((element) => likedMatches.contains(element.id));
+
+      //     if(users.length < 10){
+      //       recentBackup.removeWhere((user) => likedMatches.contains(user.id));
+      //       users.addAll(recentBackup);
+      //       if(users.length<10){
+      //         return users;
+      //       }else{
+      //         return users.sublist(0,10);
+      //       }
+      //     }else{
+      //       return users.sublist(0,10);
+      //     }
+
+      //   }else{
+      //     return users.sublist(0,10);
+
+      //   }
+      // }
       
-      return users;
+      return null;
       
       
     } catch (e) {
@@ -2282,6 +2410,127 @@ Future<void> createDemoUsers(List<User> users) async{
   Future<int> getMatchesCount({required String userId, required Gender gender}) {
     return _firebaseFirestore.collection(gender.name).doc(userId).collection('matches').where('chatOpened', isEqualTo: false).count().get().then((value) => value.count);
 
+  }
+
+  void changeMatchImage({required String userId,required Map<String,dynamic> match, required Gender userGender, required String from, List<dynamic>? newImages}) async{
+    if(from =='deleted'){
+      await _firebaseFirestore.collection(userGender.name)
+      .doc(userId)
+      .collection('matches')
+      .doc(match['id'])
+      .update({
+       
+        'imageUrls': [],
+        'name': 'DeletedAccount'
+        
+      });
+
+    }else{
+     newImages ??= (await getUserbyId(match['id'], match['gender'])).imageUrls;
+    if(!listEquals(newImages, match['imageUrls'])){
+
+    await _firebaseFirestore.collection(userGender.name)
+      .doc(userId)
+      .collection(from)
+      .doc(match['id'])
+      .update({
+        from == 'matches'?
+        'imageUrls': 'user.imageUrls': newImages
+        
+      });
+
+    }
+    }
+  }
+
+  void checkForChanges({required User user}) {
+    var now  = DateTime.now();
+    var birth = DateTime.parse(user.birthday!);
+    final age = DateTime.now().difference(birth).inDays ~/365;
+    if(age > user.age){
+      _firebaseFirestore.collection(user.gender).doc(user.id).update({'age':age});
+    }
+  }
+
+  void checkUserExist({required String userId, required Gender userGender, required Map<String, dynamic> match, required String from, required List newImages}) async{
+    try{
+    bool exist = await _firebaseFirestore.collection(match['gender']).doc(match['userId']).get().then((value) => value.exists);
+    if(!exist){
+      changeMatchImage(userId: userId, match: match, userGender: userGender, from: 'deleted', newImages: newImages);
+
+    }
+
+    }catch(e){
+
+    }
+  }
+
+   Stream<List<UserMatch>> getNewMatchesBack(String userId, Gender users)  {
+    try {
+  return _firebaseFirestore.collection(users.name)
+  .doc(userId)
+  .collection('matches')
+  .where('chatOpened', isEqualTo: false)
+  .orderBy('timestamp', descending: true)
+  .limit(1)
+  .snapshots()
+  .map((snap) => snap.docs
+  .map((match) => UserMatch.fromSnapshoot(match)).toList());
+}on FirebaseException catch (e){
+  print(e.message);
+  throw Exception(e.message);
+
+}
+ on Exception catch (e) {
+  // TODO
+
+  throw Exception(e);
+}
+    
+  }
+
+  Stream<List<Like>> getLikedMeUsersBack(String userId, Gender users) {
+   try {
+  return _firebaseFirestore.collection(users.name)
+   .doc(userId)
+   .collection('likes')
+   .orderBy('timestamp', descending: true)
+   .limit(1)
+   .snapshots()
+   .map((snap) => 
+    snap.docs
+    .map((user) => Like.fromSnapshoot(user)).toList()
+   );
+}on FirebaseException catch (e){
+  throw Exception(e.message);
+}
+ on Exception catch (e) {
+  // TODO
+  throw Exception(e);
+}
+  }
+
+  Stream<List<UserMatch>> getactiveMatchesBack(String userId, Gender users) {
+    try {
+  return _firebaseFirestore.collection(users.name)
+  .doc(userId)
+  .collection('matches')
+  .where('chatOpened', isEqualTo: true)
+  .orderBy('timestamp', descending: true)
+  .limit(1)
+  .snapshots()
+  .map((snap) => snap.docs
+  .map((match) => UserMatch.fromSnapshoot(match)).toList());
+}on FirebaseException catch (e){
+  print(e.message);
+  throw Exception(e.message);
+
+}
+ on Exception catch (e) {
+  // TODO
+
+  throw Exception(e);
+}
   }
 
 }

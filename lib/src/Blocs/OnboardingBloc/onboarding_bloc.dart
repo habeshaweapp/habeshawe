@@ -69,7 +69,8 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
       User user = (state as OnboardingLoaded).user;
       var url = await _storageRepository.uploadImage(user, event.image);
       user = (state as OnboardingLoaded).user;
-      List<dynamic> imageUrls = [...user.imageUrls, url];
+      List<dynamic> imageUrls = [...user.imageUrls];
+      imageUrls[event.index]= url;
       //List<dynamic> imageUrls = user.imageUrls;
       //imageUrls.add(url);   this code doesnt work and its your greatest finding in flutter it doesnt copy but changes the user
       //user.imageUrls..add(url);
@@ -119,7 +120,9 @@ class OnboardingBloc extends Bloc<OnboardingEvent, OnboardingState> {
   FutureOr<void> _onRemovePhoto(RemovePhoto event, Emitter<OnboardingState> emit) {
     var st = (state as OnboardingLoaded);
     var urls = [...st.user.imageUrls];
-    urls.remove(event.imageUrl);
+    //urls.remove(event.imageUrl);
+    int idx = urls.indexOf(event.imageUrl);
+    urls[idx] = null;
 
     emit(st.copyWith(user: st.user.copyWith(imageUrls: urls )));
   }

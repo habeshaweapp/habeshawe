@@ -9,11 +9,11 @@ class InternetState extends Equatable {
 
 class InternetInitial extends InternetState {}
 
-class InternetStatus extends InternetState{
-  final bool isConnected;
+class InternetStatus {
+  final bool? isConnected;
   const InternetStatus({required this.isConnected});
 
   @override
   // TODO: implement props
-  List<Object> get props => [isConnected];
+  List<Object?> get props => [isConnected];
 }

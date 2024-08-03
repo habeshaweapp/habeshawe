@@ -19,6 +19,7 @@ class UserPreference extends Equatable{
   final bool? onlyShowOnlineMatches;
   final bool? onlyShowFromMyCountry;
   final Timestamp? lastTime;
+  final bool showDelete;
 
 
   UserPreference({
@@ -37,14 +38,15 @@ class UserPreference extends Equatable{
      this.onlyShowFromMyCity=false,
      this.onlyShowOnlineMatches=false,
      this.onlyShowFromMyCountry = false,
-     this.lastTime
+     this.lastTime,
+     this.showDelete = false,
   })
   
   ;
 
   @override
   // TODO: implement props
-  List<Object?> get props => [userId,phoneNumber,global,ageRange,showDistancesIn,showMe,showMeOnLomi,recentlyActiveStatus,onlineStatus,maximumDistance,onlyShowInThisRange, discoverBy,onlyShowFromMyCity, onlyShowOnlineMatches,onlyShowFromMyCountry,lastTime];
+  List<Object?> get props => [userId,phoneNumber,global,ageRange,showDistancesIn,showMe,showMeOnLomi,recentlyActiveStatus,onlineStatus,maximumDistance,onlyShowInThisRange, discoverBy,onlyShowFromMyCity, onlyShowOnlineMatches,onlyShowFromMyCountry,lastTime,showDelete];
 
   UserPreference copyWith({
     String? userId,
@@ -62,7 +64,8 @@ class UserPreference extends Equatable{
     bool? onlyShowFromMyCity,
     bool? onlyShowOnlineMatches,
     bool? onlyShowFromMyCountry,
-    Timestamp? lastTime
+    Timestamp? lastTime,
+    bool? showDelete
 
 
   }){
@@ -82,7 +85,8 @@ class UserPreference extends Equatable{
       onlyShowFromMyCity: onlyShowFromMyCity ?? this.onlyShowFromMyCity,
       onlyShowOnlineMatches: onlyShowOnlineMatches?? this.onlyShowOnlineMatches,
       onlyShowFromMyCountry: onlyShowFromMyCountry?? this.onlyShowFromMyCountry,
-      lastTime: lastTime?? this.lastTime
+      lastTime: lastTime?? this.lastTime,
+      showDelete: showDelete?? this.showDelete
       );
   }
 
@@ -105,6 +109,7 @@ class UserPreference extends Equatable{
       onlyShowOnlineMatches: asMap.containsKey('onlyShowOnlineMatches') ? snap['onlyShowOnlineMatches']: null,
       onlyShowFromMyCountry: asMap.containsKey('onlyShowFromMyCountry') ? snap['onlyShowFromMyCountry']: null,
       lastTime: asMap.containsKey('lastTime') ? snap['lastTime']: null,
+      showDelete: asMap.containsKey('showDelete')? snap['showDelete']:false
 
       );
   }
@@ -126,7 +131,8 @@ class UserPreference extends Equatable{
       'onlyShowFromMyCity': onlyShowFromMyCity,
       'onlyShowOnlineMatches':onlyShowOnlineMatches,
       'onlyShowFromMyCountry':onlyShowFromMyCountry,
-      'lastTime': lastTime
+      'lastTime': lastTime,
+      'showDelete': showDelete
     };
   }
 

@@ -73,7 +73,7 @@ class SchoolName extends StatelessWidget {
                   width: MediaQuery.of(context).size.width*0.7,
                   margin: EdgeInsets.only(top: 10),
                   child: Text(
-                    'This is how  it will appear in Lomi and you will not be able to change it',
+                    'This is how  it will appear in HabeshaWe and you will not be able to change it',
                     style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w300),
                     )
                 ),
@@ -93,7 +93,7 @@ class SchoolName extends StatelessWidget {
                         Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
                                                                                                       child: const Interests() )));
                     }else{
-                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('please input a valid school!', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12)) ,backgroundColor: Colors.black38, ));
+                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('please input a valid school!', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12, color: Colors.white)) ,backgroundColor: Colors.black38, ));
 
 
                     }

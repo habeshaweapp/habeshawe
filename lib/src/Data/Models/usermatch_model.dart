@@ -43,6 +43,7 @@ class UserMatch extends Equatable{
       'timestamp': timestamp,
       'chatOpened': chatOpened,
       'superLike': superLike,
+      'gender':gender
     };
 
   }

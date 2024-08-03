@@ -33,6 +33,7 @@ class User extends Equatable {
   final int? number;
   final String? email;
   final String? provider;
+  final String? fake;
 
   const User({
     required this.id,
@@ -61,7 +62,8 @@ class User extends Equatable {
      this.phoneNumber,
      this.number,
      this.email,
-     this.provider
+     this.provider,
+     this.fake
   });
 
   @override
@@ -92,7 +94,8 @@ class User extends Equatable {
         phoneNumber,
         number,
         email,
-        provider
+        provider,
+        fake
       ];
 
   factory User.fromSnapshoot(DocumentSnapshot snap){
@@ -126,6 +129,7 @@ class User extends Equatable {
     number: map.containsKey('number')? snap['number']:null,
     email: map.containsKey('email')? snap['email']:null,
     provider: map.containsKey('provider')? snap['provider']:null,
+    fake: map.containsKey('fake')? snap['fake']:null,
     
 
   );
@@ -189,7 +193,8 @@ class User extends Equatable {
       'phoneNumber': phoneNumber,
       'number': number,
       'email': email,
-      'provider': provider
+      'provider': provider,
+      'fake': fake
     };
   }
 
@@ -221,7 +226,8 @@ class User extends Equatable {
       'phoneNumber': phoneNumber,
       'number': number,
       'email':email,
-      'provider':provider
+      'provider':provider,
+      'fake': fake
     };
   }
 
@@ -252,7 +258,8 @@ class User extends Equatable {
     String? phoneNumber,
     int? number,
     String? email,
-    String? provider
+    String? provider,
+    String? fake
 
   }){
     return User(
@@ -282,7 +289,8 @@ class User extends Equatable {
       phoneNumber: phoneNumber??this.phoneNumber,
       number: number??this.number,
       email: email??this.email,
-      provider: provider??this.provider
+      provider: provider??this.provider,
+      fake: fake??this.fake
     );
   }
 
@@ -320,6 +328,7 @@ factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
     number: snap.containsKey('number') ? snap['number'] : null,
     email:snap.containsKey('email') ? snap['email'] : null,
     provider: snap.containsKey('provider') ? snap['provider'] : null,
+    fake: snap.containsKey('fake') ? snap['fake'] : null,
   );
 } on Exception catch (e) {
   // TODO
@@ -362,6 +371,7 @@ factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
     number: snap['number'],
     email:snap.containsKey('email') ? snap['email'] : null,
     provider: snap.containsKey('provider') ? snap['provider'] : null,
+    fake: snap.containsKey('fake') ? snap['fake'] : null,
 
   );
 } on Exception catch (e) {
@@ -404,6 +414,7 @@ factory User.fromSnapshootMapType(DocumentSnapshot snapshot){
     number: snap.containsKey('number')? snap['number']:null,
     email: snap.containsKey('email')? snap['email']:null,
     provider: snap.containsKey('provider')? snap['provider']:null,
+    fake: snap.containsKey('fake') ? snap['fake'] : null,
     
 
   );

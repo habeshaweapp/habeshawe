@@ -13,6 +13,8 @@ import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Repository/Payment/payment_repository.dart';
 import 'package:lomi/src/Data/Repository/Remote/remote_config.dart';
 
+import '../../Data/Models/enums.dart';
+import '../../Data/Models/payment_model.dart';
 import '../../Data/Models/user.dart';
 import '../../Data/Repository/Database/database_repository.dart';
 
@@ -24,6 +26,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   final DatabaseRepository _databaseRepository;
   final AuthBloc _authBloc;
   StreamSubscription? _purchaseSubscription;
+  StreamSubscription? _paymentSubscription;
   final RemoteConfigService remoteConfigService = RemoteConfigService();
 
   List<String> subIds = ['monthly', 'yearly', '6months','premium'];
@@ -48,7 +51,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     on<BoostMe>(_onBoostMe);
     on<MakeNull>(_onMakeNull);
 
-    add(PaymentStarted());
+   // add(PaymentStarted());
 
     _purchaseSubscription= paymentRepository.purchaseStream().listen((List<PurchaseDetails> purchaseDetailsList) { 
         add(PurchaseUpdated(purchaseDetailsList: purchaseDetailsList));
@@ -57,6 +60,10 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     },onError: (Object error){
 
     });
+
+    _paymentSubscription = _databaseRepository.paymentSubscription(_authBloc.state.user!.uid, _authBloc.state.accountType!).listen((payment) {
+        add(PaymentStarted(payment: payment));
+     });
 
   } 
   
@@ -140,11 +147,11 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
 
                 int add = 0;
                 if(type == SubscribtionStatus.subscribedMonthly){
-                  add = 30;
+                  add = 33;
                 }else if(type == SubscribtionStatus.subscribed6Months){
-                 add = 182;
+                 add = 188;
                  }else if(type == SubscribtionStatus.subscribedYearly){
-                  add = 366;
+                  add = 370;
                  }
                 var expireDate = DateTime.fromMillisecondsSinceEpoch(purchaseData['purchaseTime']);
                 var newExpireDate = expireDate.add( Duration(days: add));
@@ -208,13 +215,21 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   Future<void> close() async {
     // TODO: implement close
     _purchaseSubscription?.cancel();
+    _paymentSubscription?.cancel();
     return super.close();
   }
 
   FutureOr<void> _onPaymentStarted(PaymentStarted event, Emitter<PaymentState> emit)async {
-    final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid, users: _authBloc.state.accountType!);
+   // final payment = await _databaseRepository.getUserPayment(userId: _authBloc.state.user?.uid, users: _authBloc.state.accountType!);
+    final  payment = event.payment;
     final products = await _paymentRepository.getProducts();
+
+    if(payment.countryCode == 'ET' && _authBloc.state.accountType == Gender.women  && remoteConfigService.ETWomensPay()==false ){
+       emit(state.copyWith(subscribtionStatus: SubscribtionStatus.ET_USER, productDetails: products, boosts: payment.boosts, superLikes: payment.superLikes ));
+  
+      }else
     if(payment.countryCode != 'ET' ||  remoteConfigService.ETusersPay() ){
+      
     final products = await _paymentRepository.getProducts();
     //emit(SubscribtionState(productDetails: products));
     var expireDate = DateTime.fromMillisecondsSinceEpoch(payment.expireDate, isUtc: true);

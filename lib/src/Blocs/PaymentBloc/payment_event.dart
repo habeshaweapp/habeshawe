@@ -7,7 +7,15 @@ class PaymentEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class PaymentStarted extends PaymentEvent{}
+class PaymentStarted extends PaymentEvent{
+  final Payment payment;
+
+  const PaymentStarted({required this.payment});
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [payment];
+}
 
 class PurchaseUpdated extends PaymentEvent{
   final List<PurchaseDetails> purchaseDetailsList;

@@ -201,7 +201,7 @@ class Body extends StatelessWidget {
                           child: Row(
                             children: [
                               //Icon(Icons.verified,color: Colors.blue, size:18,),
-                              TagHelper.getTag(name: user.verified!, size: 20 ),
+                              TagHelper.getTag(name: user.verified!, size: 16 ),
                               SizedBox(width: 7,),
                               Text(user.verified! ,style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
                             ],

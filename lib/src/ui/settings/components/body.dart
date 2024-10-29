@@ -34,6 +34,7 @@ class Body extends StatelessWidget {
 
         if(state.userPreferenceStatus == UserPreferenceStatus.loaded){
           int remoteMax = remoteConfig.getNumbers()['settingsKmNearBy'];
+          double remoteMaxAge = remoteConfig.getNumbers()['maxAge'].toDouble();
           int prefMax = state.userPreference!.maximumDistance!;
           if(prefMax > remoteMax){
             prefMax = remoteMax;
@@ -41,6 +42,10 @@ class Body extends StatelessWidget {
             context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(maximumDistance: remoteMax)));
             isThereChange = true;
 
+          }
+          double prefMaxAge = state.userPreference!.ageRange![1].toDouble();
+          if(prefMaxAge > remoteMaxAge){
+            remoteMaxAge = prefMaxAge;
           }
           return WillPopScope(
             onWillPop: ()async{
@@ -179,7 +184,7 @@ class Body extends StatelessWidget {
                           AbsorbPointer(
                             absorbing: state.userPreference?.discoverBy != DiscoverBy.preference.index,
                             child: RangeSlider(
-                              max: 60,
+                              max: remoteMaxAge,
                               min:18,
                               divisions: 60-18,
                               values: RangeValues(state.userPreference!.ageRange![0].toDouble(),state.userPreference!.ageRange![1].toDouble()), 
@@ -686,7 +691,7 @@ class Body extends StatelessWidget {
           
                     SizedBox(height: 25,),
                     Center(
-                      child: Text('version 2.0.0.25', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
+                      child: Text('version 2.1.0.33', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
                     ),
                     SizedBox(height: 25,),
           

@@ -148,8 +148,13 @@ void _onLoadMoreChats(LoadMoreChats event, Emitter<ChatState> emit) async{
 
 
   FutureOr<void> _onFirstMessageSent(FirstMessageSent event, Emitter<ChatState> emit) {
+    List<Message> msgs=[];
+    if(state is ChatLoaded){
+      msgs = (state as ChatLoaded).messages;
+    }
+    msgs.add(event.message);
     
-    emit(ChatLoaded(messages: [event.message]));
+    emit(ChatLoaded(messages: msgs));
   }
 
 

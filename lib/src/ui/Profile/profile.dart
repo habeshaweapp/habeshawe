@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lomi/src/Blocs/blocs.dart';
 import 'package:lomi/src/Data/Models/likes_model.dart';
 import 'package:lomi/src/ui/Profile/components/body.dart';
 import 'package:swipable_stack/swipable_stack.dart';
@@ -32,7 +34,13 @@ class Profile extends StatelessWidget {
       // ),
       // extendBodyBehindAppBar: false,
 
-      body: Body(user: user, profileFrom: profileFrom, likedMeUser: likedMeUser, matchEngine: matchEngine, ctrx: ctrx),
+      body: profileFrom == ProfileFrom.profile?
+       BlocBuilder<ProfileBloc, ProfileState>(
+         builder: (context, state) {
+           return Body(user: (state as ProfileLoaded).user, profileFrom: profileFrom, likedMeUser: likedMeUser, matchEngine: matchEngine, ctrx: ctrx);
+         },
+       ):
+       Body(user: user, profileFrom: profileFrom, likedMeUser: likedMeUser, matchEngine: matchEngine, ctrx: ctrx),
     );
     
   }

@@ -38,14 +38,14 @@ class AdBloc extends Bloc<AdEvent, AdState> with HydratedMixin{
     //add(LoadNativeAd());
     add(LoadRewardedAd());
    // add(LoadInterstitialAd());
-   if(state.totalAdWatchedReOn == 100 || state.completedTimeAd != null){
-    var diff = state.completedTimeAd!.difference(DateTime.now()).inMinutes;
-    if( diff > 60){
-       add(ResetTotalReON());
+  //  if(state.totalAdWatchedReOn == 100 || state.completedTimeAd != null){
+  //   var diff = state.completedTimeAd!.difference(DateTime.now()).inMinutes;
+  //   if( diff > 60){
+  //      add(ResetTotalReON());
 
-      }
+  //     }
 
-   }
+  //  }
   }
 
   FutureOr<void> _onLoadNativeAd(LoadNativeAd event, Emitter<AdState> emit) {

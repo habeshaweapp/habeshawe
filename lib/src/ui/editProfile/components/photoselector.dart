@@ -39,7 +39,7 @@ class _PhotoSelectorState extends State<PhotoSelector> {
   Widget build(BuildContext context) {
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
    // isPhotoSelected = !widget.blank;
-    if(isPhotoSelected && !widget.notblank){
+    if(isPhotoSelected && widget.notblank){
     imageFile = null;
     isPhotoSelected = false;
   }
@@ -219,9 +219,11 @@ class _PhotoSelectorState extends State<PhotoSelector> {
       final remote  = remoteConfig.ai();
     
 
-      if(faces.isEmpty){
-        return false;
-      }
+      if(remote['face']){  
+        if(faces.isEmpty){
+          return false;
+        }
+    }
 
       if(remote['screenshot'] || remote['poster']){
       for (var label in labels) {

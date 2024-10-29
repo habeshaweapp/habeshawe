@@ -25,6 +25,10 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
   StreamSubscription? _activeSubscription;
   ScrollController matchController = ScrollController();
   ScrollController activeController = ScrollController();
+  var Afirst;
+  var Asecond;
+  var Mfirst;
+  var Msecond;
   MatchBloc({
     required DatabaseRepository databaseRepository,
     required AuthBloc authBloc,
@@ -67,8 +71,23 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
     _matchesSubscription = _databaseRepository.getMatches(event.userId, event.users).listen((matches) {
 
       add(UpdateMatches(matchedUsers: matches));
-      if(SharedPrefes.inBackground()==true){ 
-        NotificationService().showMessageReceivedNotifications(title: 'New Match', body: "You have a new Match!---", payload: 'chat', channelId: 'backgroundMatch');
+   
+        if(Mfirst == null){
+          Mfirst = matches;
+        }else{
+          Msecond = matches;
+          if(!listEquals(Mfirst, Msecond)){
+      if(SharedPrefes.inBackground() == true){
+        if(!matches.first.chatOpened){
+        NotificationService().showMessageReceivedNotifications(title: 'New Match', body: "You have a new Match!", payload: 'chat', channelId: 'backgroundMatch');
+      }
+      }
+         Mfirst = Msecond;
+
+        }
+
+        
+        //NotificationService().showMessageReceivedNotifications(title: 'New Match', body: "You have a new Match!---", payload: 'chat', channelId: 'backgroundMatch');
 
       }
 
@@ -76,8 +95,22 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
     _activeSubscription = _databaseRepository.getactiveMatches(event.userId,event.users).listen((inactive){
       add(UpdateactiveMatches(activeMatches: inactive ));
-      if(SharedPrefes.inBackground() == true){
-         NotificationService().showMessageReceivedNotifications(title: 'Message', body: 'Someone Messaged you!----', payload: 'chat', channelId: 'backgroundMessage');
+      
+        if(Afirst == null){
+        Afirst = inactive;
+        }else{
+          Asecond = inactive;
+          if(!listEquals(Afirst, Asecond)){
+        if(SharedPrefes.inBackground() == true){
+          if(inactive.first.chatOpened){
+         NotificationService().showMessageReceivedNotifications(title: 'Message', body: 'Someone Messaged you!', payload: 'chat', channelId: 'backgroundMessage');
+          }
+        }
+         Afirst = Asecond;
+
+        }
+        
+         //NotificationService().showMessageReceivedNotifications(title: 'Message', body: 'Someone Messaged you!----', payload: 'chat', channelId: 'backgroundMessage');
       }
 
     });

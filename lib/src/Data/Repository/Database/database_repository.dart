@@ -17,6 +17,7 @@ import 'package:lomi/src/Data/Models/message_model.dart';
 import 'package:lomi/src/Data/Models/user.dart';
 import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import 'package:lomi/src/Data/Repository/Remote/remote_config.dart';
+import 'package:lomi/src/Data/Repository/SharedPrefes/sharedPrefes.dart';
 import 'package:lomi/src/Data/Repository/Storage/storage_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -184,30 +185,40 @@ class DatabaseRepository extends BaseDatabaseRepository{
       
     );
 
+    var localLiked = SharedPrefes.getLikedIds();
+    localLiked??='';
+      SharedPrefes.setLikedIds('$localLiked,${matchUser.id}');
+
+    var localLikedNums = SharedPrefes.getLikedNums();
+    localLikedNums??='';
+      SharedPrefes.setLikedNums('$localLikedNums,${matchUser.number}');
+
+
+
  
-    var viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get();
-    String liked = viewed['liked'];
+    // var viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get();
+    // String liked = viewed['liked'];
 
-    await _firebaseFirestore
-        .collection(user.gender)
-        .doc(user.id)
-        .collection('viewedProfiles')
-        .doc('viewed')
-        .update({
-          'liked': '$liked,${matchUser.id}'
-        }
-        );
+    // await _firebaseFirestore
+    //     .collection(user.gender)
+    //     .doc(user.id)
+    //     .collection('viewedProfiles')
+    //     .doc('viewed')
+    //     .update({
+    //       'liked': '$liked,${matchUser.id}'
+    //     }
+    //     );
 
-    String likedNumbers = viewed['likedNumbers'];
-    await _firebaseFirestore
-        .collection(user.gender)
-        .doc(user.id)
-        .collection('viewedProfiles')
-        .doc('viewed')
-        .update({
-          'likedNumbers': '$likedNumbers,${matchUser.number}'
-        }
-        );
+    // String likedNumbers = viewed['likedNumbers'];
+    // await _firebaseFirestore
+    //     .collection(user.gender)
+    //     .doc(user.id)
+    //     .collection('viewedProfiles')
+    //     .doc('viewed')
+    //     .update({
+    //       'likedNumbers': '$likedNumbers,${matchUser.number}'
+    //     }
+    //     );
         // .doc(matchUser.id)
         // .set({'liked' : true});
 
@@ -283,30 +294,41 @@ class DatabaseRepository extends BaseDatabaseRepository{
   @override
   Future<void> userPassed(User user, User passedUser) async {
     try {
+
+      var localPassed = SharedPrefes.getPassedIds();
+      localPassed??='';
+   
+      SharedPrefes.setPassedIds('$localPassed,${passedUser.id}');
+
+      var localPassedNums = SharedPrefes.getPassedNums();
+      localPassedNums??='';
+   
+      SharedPrefes.setPassedNums('$localPassedNums,${passedUser.number}');
+   
     
    // await _firebaseFirestore.collection(user.gender).doc(userId).collection('passed').doc(passedUser.id).set(passedUser.toMap());
-    var viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get();
-    String passed = viewed['passed'];
-    String newPassed = '$passed,${passedUser.id}';
-    await _firebaseFirestore
-        .collection(user.gender)
-        .doc(user.id)
-        .collection('viewedProfiles')
-        .doc('viewed')
-        .update({
-          'passed': newPassed
-        });
+    // var viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get();
+    // String passed = viewed['passed'];
+    // String newPassed = '$passed,${passedUser.id}';
+    // await _firebaseFirestore
+    //     .collection(user.gender)
+    //     .doc(user.id)
+    //     .collection('viewedProfiles')
+    //     .doc('viewed')
+    //     .update({
+    //       'passed': newPassed
+    //     });
 
-    String passedNumbers = viewed['passedNumbers'];
-    String newPassedNums = '$passedNumbers,${passedUser.number}';
-    await _firebaseFirestore
-        .collection(user.gender)
-        .doc(user.id)
-        .collection('viewedProfiles')
-        .doc('viewed')
-        .update({
-          'passedNumbers': newPassedNums
-        });
+    // String passedNumbers = viewed['passedNumbers'];
+    // String newPassedNums = '$passedNumbers,${passedUser.number}';
+    // await _firebaseFirestore
+    //     .collection(user.gender)
+    //     .doc(user.id)
+    //     .collection('viewedProfiles')
+    //     .doc('viewed')
+    //     .update({
+    //       'passedNumbers': newPassedNums
+    //     });
 
 
     }on FirebaseException catch(e){
@@ -470,31 +492,47 @@ class DatabaseRepository extends BaseDatabaseRepository{
     .collection('likes')
     .doc(likedMeUser.user.id)
     .delete();
+
+
+
+    var localLiked = SharedPrefes.getLikedIds();
+    if(localLiked != null){
+      SharedPrefes.setLikedIds('$localLiked,${likedMeUser.user.id}');
+    }else{
+      SharedPrefes.setLikedIds('${likedMeUser.user.id}');
+    }
+
+    var localLikedNums = SharedPrefes.getLikedNums();
+    if(localLikedNums !=null){
+      SharedPrefes.setLikedNums('$localLikedNums,${likedMeUser.user.number}');
+    }else{
+      SharedPrefes.setLikedNums('${likedMeUser.user.number}');
+    }
     
 
-    var viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get();
-    String liked = viewed['liked'];
+    // var viewed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get();
+    // String liked = viewed['liked'];
 
-    await _firebaseFirestore
-        .collection(user.gender)
-        .doc(user.id)
-        .collection('viewedProfiles')
-        .doc('viewed')
-        .update({
-          'liked': '$liked,${likedMeUser.user.id}'
-        }
-        );
+    // await _firebaseFirestore
+    //     .collection(user.gender)
+    //     .doc(user.id)
+    //     .collection('viewedProfiles')
+    //     .doc('viewed')
+    //     .update({
+    //       'liked': '$liked,${likedMeUser.user.id}'
+    //     }
+    //     );
 
-    String likedNumbers = viewed['likedNumbers'];
-    await _firebaseFirestore
-        .collection(user.gender)
-        .doc(user.id)
-        .collection('viewedProfiles')
-        .doc('viewed')
-        .update({
-          'likedNumbers': '$likedNumbers,${likedMeUser.user.number}'
-        }
-        );
+    // String likedNumbers = viewed['likedNumbers'];
+    // await _firebaseFirestore
+    //     .collection(user.gender)
+    //     .doc(user.id)
+    //     .collection('viewedProfiles')
+    //     .doc('viewed')
+    //     .update({
+    //       'likedNumbers': '$likedNumbers,${likedMeUser.user.number}'
+    //     }
+    //     );
 
 
 
@@ -1227,7 +1265,7 @@ if(princessCount !=0){
                         .then(
                           (snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList() );
 
-    diascoraSameLookingFor.removeWhere((element) => viewedMatches.contains(element));
+    diascoraSameLookingFor.removeWhere((element) => viewedMatches.contains(element.id));
     if(diascoraSameLookingFor.length < remoteNumbers['numberOfDiascora']){
       var diascoraSameLookingFor2 = await collectionRef
                         .where('diascora', isEqualTo: true )
@@ -1239,7 +1277,7 @@ if(princessCount !=0){
                         .then(
                           (snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList() );
 
-            diascoraSameLookingFor2.removeWhere((element) => viewedMatches.contains(element));
+            diascoraSameLookingFor2.removeWhere((element) => viewedMatches.contains(element.id));
             diascoraSameLookingFor.addAll(diascoraSameLookingFor2);
       
     }
@@ -1279,7 +1317,7 @@ if(princessCount !=0){
     }
 
 
-
+    result.removeWhere((user) => diascoraSameLookingFor.contains(user));
     if(result.length>totalNum){
       var resultT = result.sublist(0,totalNum);
      // resultT.addAll(diascora);
@@ -1400,7 +1438,7 @@ Future<void> createDemoUsers(List<User> users) async{
         'creationTimestamp': FieldValue.serverTimestamp(),
         'diascora': placeMark.isoCountryCode == 'ET'? false:true,
         'fake': 'unReviewed',
-        'version': '2.0.0+25',
+        'version': '2.1.0+33',
         'platform': Platform.isAndroid?'android':Platform.isIOS?'ios':'other'
       });
 
@@ -1831,14 +1869,22 @@ Future<void> createDemoUsers(List<User> users) async{
   }
 
   Stream<DocumentSnapshot<Map<String,dynamic>>> onlineStatusChanged({required String userId,required String gender }){
+    try {
+  
     return _firebaseFirestore.collection(gender)
             .doc(userId)
             .collection('online')
             .doc('status')
             .snapshots();
+
+        
+    } catch (e) {
+      throw Exception(e);
+      
+    }
   }
 
-  Future<User?>getOnlineUsers({required String userId, required Gender gender, int? limit=10}) async {
+  Future<List<User>?>getOnlineUsers({required String userId, required Gender gender, int? limit=20}) async {
     try {
       // List<String> viewedIds =[];
       // var viewedProfiles = await _firebaseFirestore.collection(gender.name).doc(userId).collection('viewedProfiles').get()
@@ -1859,22 +1905,22 @@ Future<void> createDemoUsers(List<User> users) async{
 
 
     List<User> recentUsers = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
-                      .orderBy('lastSeen', descending: true)
+                      .orderBy('lastseen', descending: true)
                       .limit(limit!)
                       .get()
                       .then((snap) => snap.docs.map((doc) => User.fromSnapshoot(doc)).toList());
 
-   List<User> backKUp= recentUsers;
+   //List<User> backKUp= recentUsers;
    recentUsers.removeWhere((user) => viewedMatches.contains(user.id));
    if(recentUsers.isNotEmpty){
-    return recentUsers.first;
+    return recentUsers;
    }
-   else{
-    backKUp.removeWhere((user) => likedMatches.contains(user.id));
-    if(backKUp.isNotEmpty){
-      return backKUp.first;
-    }
-   }
+  //  else{
+  //   backKUp.removeWhere((user) => likedMatches.contains(user.id));
+  //   if(backKUp.isNotEmpty){
+  //     return backKUp.first;
+  //   }
+  //  }
     // int count = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name).count().get().then((value) => value.count);
 
     // int random = Random().nextInt(count);
@@ -2018,12 +2064,12 @@ Future<void> createDemoUsers(List<User> users) async{
 
   }
 
-  Future<User>getQueen({required String userId, required Gender gender}) async{
+  Future<User?>getQueen({required String userId, required Gender gender}) async{
     try {
         final viewed  = await _firebaseFirestore.collection(gender.name).doc(userId).collection('viewedProfiles').doc('viewed').get();
         var viewedQueens= viewed[gender == Gender.men? 'queens' : 'kings'].split(',').map(int.parse).toList();
    
-        final noOfQueens = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.women.name)
+        final noOfQueens = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
           .where('adminChoice', isEqualTo: gender == Gender.men? 'queen' : 'king')
           .count().get().then((value) => value.count, onError: (e)=>print('error counting'));
         var rand = Random().nextInt(noOfQueens);
@@ -2035,11 +2081,16 @@ Future<void> createDemoUsers(List<User> users) async{
             break;
           }
         }
-        var queen = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.women.name)
+        var queen = await _firebaseFirestore.collection(gender == Gender.men? Gender.women.name: Gender.men.name)
                 .where('adminChoice', isEqualTo: gender == Gender.men? 'queen':'king')
                 .where(gender == Gender.men? 'queenNumber': 'kingNumber', isEqualTo: rand)
                 .get().then((value) => User.fromSnapshoot(value.docs.first));
-      
+
+       List<String> liked = viewed['matches'].split(',');
+       if(liked.contains(queen.id)){
+       // queen =await getQueen(userId: userId, gender: gender);
+        return null;
+      }
 
       String oldQueens = viewed[gender == Gender.men? 'queens': 'kings'];
       String newQueens = '$oldQueens,$rand';
@@ -2049,10 +2100,8 @@ Future<void> createDemoUsers(List<User> users) async{
         }
         );
 
-      List<String> liked = viewed['matches'].split(',');
-      if(liked.contains(queen.id)){
-        queen =await getQueen(userId: userId, gender: gender);
-      }
+      
+     
 
       return queen;
 
@@ -2063,7 +2112,7 @@ Future<void> createDemoUsers(List<User> users) async{
     }
   }
 
-  Future<User>getPrincess({required String userId, required Gender gender}) async{
+  Future<User?>getPrincess({required String userId, required Gender gender}) async{
     try {
       final viewed  = await _firebaseFirestore.collection(gender.name).doc(userId).collection('viewedProfiles').doc('viewed').get();
       var viewedPrincess= viewed[gender == Gender.men? 'princess' : 'gents'].split(',').map(int.parse).toList();
@@ -2093,8 +2142,15 @@ Future<void> createDemoUsers(List<User> users) async{
                         return User.fromSnapshoot(value.docs.first);
                     });
       //if(princess == null){
-        princess ??= await getPrincess(userId: userId, gender: gender);
+       // princess ??= await getPrincess(userId: userId, gender: gender);
+       
       if(princess != null){
+         List<String> liked = viewed['matches'].split(',');
+      if(liked.contains(princess?.id)){
+       // princess =await getQueen(userId: userId, gender: gender);
+       return null;
+      }
+
       String oldPrince = viewed[gender == Gender.men? 'queens': 'kings'];
       String newPrince = '$oldPrince,$random';
       await _firebaseFirestore.collection(gender.name).doc(userId).collection('viewedProfiles').doc('viewed')
@@ -2104,10 +2160,7 @@ Future<void> createDemoUsers(List<User> users) async{
         );
       }
 
-      List<String> liked = viewed['matches'].split(',');
-      if(liked.contains(princess?.id)){
-        princess =await getQueen(userId: userId, gender: gender);
-      }
+     
 
       return princess;
 
@@ -2533,6 +2586,91 @@ Future<void> createDemoUsers(List<User> users) async{
 }
   }
 
+
+  Future<void> updateViewedFiresbase(String id, String gender)async{
+    // String gender = Gender.values[SharedPrefes.getGender()!].name;
+    // String id = SharedPrefes.getUserId()!;
+
+    var viewed = await _firebaseFirestore.collection(gender).doc(id).collection('viewedProfiles').doc('viewed').get();
+    String liked = viewed['liked'];
+
+    await _firebaseFirestore
+        .collection(gender)
+        .doc(id)
+        .collection('viewedProfiles')
+        .doc('viewed')
+        .update({
+          'liked': '$liked${SharedPrefes.getLikedIds()}'
+        }
+        );
+
+    String likedNumbers = viewed['likedNumbers'];
+    await _firebaseFirestore
+        .collection(gender)
+        .doc(id)
+        .collection('viewedProfiles')
+        .doc('viewed')
+        .update({
+          'likedNumbers': '$likedNumbers${SharedPrefes.getLikedNums()}'
+        }
+        );
+
+
+   // var viewedPassed = await _firebaseFirestore.collection(user.gender).doc(user.id).collection('viewedProfiles').doc('viewed').get();
+    String passed = viewed['passed'];
+    String locp=SharedPrefes.getPassedIds()??'';
+    String newPassed = '$passed$locp';
+    await _firebaseFirestore
+        .collection(gender)
+        .doc(id)
+        .collection('viewedProfiles')
+        .doc('viewed')
+        .update({
+          'passed': newPassed
+        });
+
+    String passedNumbers = viewed['passedNumbers'];
+    String locnp=SharedPrefes.getPassedNums()??'';
+    String newPassedNums = '$passedNumbers$locnp';
+    await _firebaseFirestore
+        .collection(gender)
+        .doc(id)
+        .collection('viewedProfiles')
+        .doc('viewed')
+        .update({
+          'passedNumbers': newPassedNums
+        });
+
+    SharedPrefes.setLikedIds('');
+    SharedPrefes.setLikedNums('');
+    SharedPrefes.setPassedIds('');
+    SharedPrefes.setPassedNums('');
+
+
+  }
+
+  Future<List<String>> getViewed(String userId, Gender gender)async{
+    var viewedProfiles = await _firebaseFirestore.collection(gender.name)
+    .doc(userId).collection('viewedProfiles').doc('viewed')
+    .get().then((value) => value.data());
+
+    List<String> likedMatches = viewedProfiles?['liked'].split(',');
+    List<String> passedMatches = viewedProfiles?['passed'].split(',');
+    List<String> viewedMatches = [...likedMatches,...passedMatches];
+
+    return viewedMatches;
+  }
+
+  Stream<Payment> paymentSubscription(String uid, Gender gender) {
+    return _firebaseFirestore.collection(gender.name)
+        .doc(uid)
+        .collection('payment')
+        .doc('subscription')
+        .snapshots()
+        .map((payment) => Payment.fromSnapshoot(payment));
+        
+  }
+  
 }
 
 

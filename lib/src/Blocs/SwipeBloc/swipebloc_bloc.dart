@@ -17,6 +17,7 @@ import '../../Data/Models/model.dart';
 import '../../Data/Models/userpreference_model.dart';
 import '../../Data/Repository/Notification/notification_service.dart';
 import '../../Data/Repository/Remote/remote_config.dart';
+import '../../Data/Repository/SharedPrefes/sharedPrefes.dart';
 import '../AdBloc/ad_bloc.dart';
 import '../AuthenticationBloc/bloc/auth_bloc.dart';
 import '../InternetBloc/internet_bloc.dart';
@@ -64,6 +65,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     
     on<CheckLastTime>(_onCheckLastTime);
     on<EmitBoosted>(_onEmitBoosted);
+    on<CheckBoost>(_onCheckBoost);
   
 
     //if(state.completedTime == null && state.users.isEmpty){
@@ -82,6 +84,8 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
        
      },);
 
+     add(CheckBoost());
+
 
     // _internetSubscription = _internetBloc.stream.listen((status) {
     //   if(status.isConnected == true){
@@ -91,7 +95,7 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     //   }
       
     // });
-
+    
     
   }
 
@@ -106,6 +110,13 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
 
     //  users = await _databaseRepository.getUsersBasedonPreference(event.userId, event.users, event.prefes!, event.user!);
     //     emit(state.copyWith(swipeStatus: SwipeStatus.completed));
+   if( SharedPrefes.getLikedIds() == ''||
+    SharedPrefes.getLikedNums()==''||
+    SharedPrefes.getPassedIds()==''||
+    SharedPrefes.getPassedNums()==''){
+      _databaseRepository.updateViewedFiresbase(event.userId, event.users.name);
+
+    }
      
 
     if(event.prefes!.discoverBy == 0){
@@ -282,39 +293,67 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     emit(state.copyWith(completedTime: event.completedTime, swipeStatus: SwipeStatus.completed, users: []));
   }
 
-  FutureOr<void> _onBoostedLoaded(BoostedLoaded event, Emitter<SwipeState> emit) {
+  FutureOr<void> _onBoostedLoaded(BoostedLoaded event, Emitter<SwipeState> emit)async {
     var boosted = event.users;
+    var viewed = await _databaseRepository.getViewed(_authBloc.state.user!.uid, _authBloc.state.accountType!);
+    boosted.removeWhere((boost) => viewed.contains(boost.user.id));
       for(var boost in boosted){
         var boostedTime = boost.timestamp.toDate();
         int diff = DateTime.now().difference(boostedTime).inMinutes;
         if(diff >remoteConfigService.boostTime()){
           boosted.remove(boost);
-         // _databaseRepository.removeBoost(gender: boost.user.gender, userId: boost.user.id);
+          if(remoteConfigService.ai()['removeBoost']){
+           _databaseRepository.removeBoost(gender: boost.user.gender, userId: boost.user.id);
+          }
         }
       }
     var boosteds = boosted.map((boost) => boost.user).toList();
 
-    if(state.users.isEmpty && boosteds.isNotEmpty){
-      emit(state.copyWith(users: boosteds, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.boosted, boostedUsers: null));
-      NotificationService().showMessageReceivedNotifications(title: 'Matches', body: 'You have match to see!', payload: 'boosted', channelId: 'boosted');
+    if(state.swipeStatus == SwipeStatus.completed && boosteds.isNotEmpty){
+      //if(SharedPrefes.inBackground() == false){
+        emit(state.copyWith(users: boosteds, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.boosted, boostedUsers: boosted));
+        NotificationService().showMessageReceivedNotifications(title: 'Match', body: 'You have a match to see!', payload: 'boosted', channelId: 'boosted');
+     
+      if(SharedPrefes.inBackground() == false){
+        Future.delayed(Duration(minutes:remoteConfigService.boostTime()),(){
+        emit(state.copyWith(users: null, swipeStatus: SwipeStatus.completed, loadFor: LoadFor.ad, boostedUsers: null));
 
-    }else if(boosteds.isNotEmpty){
-      emit(state.copyWith(boostedUsers: boosteds));
+        });
+      }
+
+    }else if( (state.swipeStatus == SwipeStatus.loaded || state.swipeStatus == SwipeStatus.left || state.swipeStatus == SwipeStatus.right || state.swipeStatus == SwipeStatus.itsamatch) && boosteds.isNotEmpty){
+      boosteds.addAll(state.users);
+      emit(state.copyWith(users:boosteds,boostedUsers: null, swipeStatus: SwipeStatus.loaded));
+      NotificationService().showMessageReceivedNotifications(title: 'Match', body: 'You have a match to see!', payload: 'boosted', channelId: 'boosted');
+
+    }
+    else if(boosteds.isNotEmpty){
+      emit(state.copyWith(boostedUsers: boosted));
     }
   }
 
   FutureOr<void> _onLoadUserAd(LoadUserAd event, Emitter<SwipeState> emit)async {
     emit(state.copyWith( loadFor: event.loadFor, swipeStatus: SwipeStatus.completed));
 
-    try {
+   // try {
       
     
     if(event.loadFor == LoadFor.adOnline){
+      if(state.recentUsers.isEmpty){
       var user = await _databaseRepository.getOnlineUsers(userId: event.userId, gender: event.users);
       if(user !=null){
-      emit(state.copyWith(users: [user], swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad) );
+      
+      
+      emit(state.copyWith(users: [user.first], swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad, recentUsers: user) );
+      state.recentUsers.removeAt(0);
       }else{
         emit(state.copyWith(swipeStatus: SwipeStatus.error,loadFor: LoadFor.ad));
+
+      }
+
+      }else{
+        emit(state.copyWith(users: [state.recentUsers.first], swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad) );
+        state.recentUsers.removeAt(0);
 
       }
 
@@ -339,32 +378,42 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
     else
     if(event.loadFor == LoadFor.adQueen ){
      // emit(state.copyWith(loadFor: event.loadFor));
-      User queen = await _databaseRepository.getQueen(userId: event.userId, gender: event.users).timeout(const Duration(seconds: 15));
+      User? queen = await _databaseRepository.getQueen(userId: event.userId, gender: event.users).timeout(const Duration(seconds: 15));
+      if(queen !=null){
       emit(state.copyWith(users: [queen], swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad ));
+      
       if(_paymentBloc.state.subscribtionStatus != SubscribtionStatus.ET_USER){
         _paymentBloc.add(ConsumeBoost());
+      }
+      }else{
+        emit(state.copyWith(swipeStatus: SwipeStatus.error,loadFor: LoadFor.ad));
+
       }
 
     }
     else if(event.loadFor == LoadFor.adPrincess ){
       //emit(state.copyWith(loadFor: event.loadFor));
-      User princ = await _databaseRepository.getPrincess(userId: event.userId, gender: event.users).timeout(const Duration(seconds: 15));
+      User? princ = await _databaseRepository.getPrincess(userId: event.userId, gender: event.users).timeout(const Duration(seconds: 15));
+      if(princ != null){
       emit(state.copyWith(users: [princ], swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.ad ));
       if(_paymentBloc.state.subscribtionStatus != SubscribtionStatus.ET_USER){
         _paymentBloc.add(ConsumeSuperLike());
+      }
+      }else{
+        emit(state.copyWith(swipeStatus: SwipeStatus.error,loadFor: LoadFor.ad));
       }
 
     }
 
 
-    } on TimeoutException catch(e){
-      emit(state.copyWith(swipeStatus: SwipeStatus.error,loadFor: LoadFor.ad));
-    }
-    catch (e) {
-      print(e);
-      emit(state.copyWith(swipeStatus: SwipeStatus.error,loadFor: LoadFor.ad));
+    // } on TimeoutException catch(e){
+    //   emit(state.copyWith(swipeStatus: SwipeStatus.error,loadFor: LoadFor.ad));
+    // }
+    // catch (e) {
+    //   print(e);
+    //   emit(state.copyWith(swipeStatus: SwipeStatus.error,loadFor: LoadFor.ad));
       
-    }
+    // }
 
   }
 
@@ -409,9 +458,28 @@ class SwipeBloc extends Bloc<SwipeEvent, SwipeState> with HydratedMixin   {
   }
 
   FutureOr<void> _onEmitBoosted(EmitBoosted event, Emitter<SwipeState> emit) {
+    var boostedUsers= state.boostedUsers;
+    for(var boost in boostedUsers){
+        var boostedTime = boost.timestamp.toDate();
+        int diff = DateTime.now().difference(boostedTime).inMinutes;
+        if(diff >remoteConfigService.boostTime()){
+          boostedUsers.remove(boost);
+         // _databaseRepository.removeBoost(gender: boost.user.gender, userId: boost.user.id);
+        }
+      }
+      
+      if(boostedUsers.isNotEmpty){
+        var boosted = boostedUsers.map((boost) => boost.user).toList();
 
-      emit(state.copyWith(users: state.boostedUsers, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.boosted, boostedUsers: []));
-      NotificationService().showMessageReceivedNotifications(title: 'Matches', body: 'You have match to see!', payload: 'boosted', channelId: 'boosted');
+      emit(state.copyWith(users: boosted, swipeStatus: SwipeStatus.loaded, loadFor: LoadFor.boosted, boostedUsers: []));
+      NotificationService().showMessageReceivedNotifications(title: 'Match', body: 'You have a match to see!', payload: 'boosted', channelId: 'boosted');
+      }
    
+  }
+
+  FutureOr<void> _onCheckBoost(CheckBoost event, Emitter<SwipeState> emit) {
+    if(state.loadFor == LoadFor.boosted && state.boostedUsers.isNotEmpty && state.users.isNotEmpty){
+      emit(state.copyWith(swipeStatus: SwipeStatus.completed, users: [], boostedUsers: []));
+    }
   }
 }

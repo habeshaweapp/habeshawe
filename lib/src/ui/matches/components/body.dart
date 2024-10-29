@@ -159,10 +159,19 @@ class Body extends StatelessWidget {
 
                             SharedPrefes.setMatchesCount(snapshot.data!);
                             if(prev !=0) SharedPrefes.newMessage.add('newMessage');
+                          }else
+                          if(snapshot.data !=null && snapshot.data! < prev){
+                            SharedPrefes.setMatchesCount(snapshot.data!);
                           }
                           }
                           else{
                             SharedPrefes.setMatchesCount(0);
+                            if(snapshot.data !=null && snapshot.data! > 0){
+                           // NotificationService().showMessageReceivedNotifications(title: 'New Match', body: 'you have a new match!', payload: 'matches', channelId: 'matches');
+
+                            SharedPrefes.setMatchesCount(snapshot.data!);
+                            SharedPrefes.newMessage.add('newMessage');
+                          }
                           }
     
                           return Text(
@@ -318,17 +327,20 @@ class Body extends StatelessWidget {
                         }else{
                           
                           
-                          context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType! , matchedUserId: activeMatches[index].userId));
+                          
                           //Navigator.push(context, MaterialPageRoute(builder: (context) => ChatScreen(activeMatches[index]) ));
-                
+                          context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType! , matchedUserId: activeMatches[index].userId));
+
                           Navigator.push(context, MaterialPageRoute(
                                                     builder: (ctx) =>
                                                         BlocProvider.value(value: context.read<ChatBloc>(),
                                                             child: ChatScreen(userMatch: activeMatches[index],ctx: context ))));
+
                         }
+                        
                         },
                         child: 
-                                  ChatList(match: activeMatches[index])
+                                  ChatList(match: activeMatches[index],index: index,)
                         
                         
                         // Padding(

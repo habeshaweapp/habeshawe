@@ -92,3 +92,5 @@ class AdSwipeEnded extends SwipeEvent{
 class CheckLastTime extends SwipeEvent{}
 
 class EmitBoosted extends SwipeEvent{}
+
+class CheckBoost extends SwipeEvent{}

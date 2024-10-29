@@ -46,17 +46,19 @@ class ChatScreen extends StatelessWidget {
           ),
         title: GestureDetector(
           onTap: (){
+            if(userMatch.imageUrls.isNotEmpty){
             Navigator.push(context, MaterialPageRoute(
               builder: (ctxt)=>
     
               ViewProfile(match: userMatch,ctrx: ctx,profileFrom: ProfileFrom.chat,)));
+          }
           },
           child: Row(
           
           children: [
             CircleAvatar(
                 radius: 20,
-                backgroundImage: CachedNetworkImageProvider(userMatch.imageUrls[0]),                       
+                backgroundImage: CachedNetworkImageProvider(userMatch.imageUrls.isNotEmpty? userMatch.imageUrls[0]:'x'),                       
               ),
            
             Padding(
@@ -65,13 +67,19 @@ class ChatScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(userMatch.name,style: Theme.of(context).textTheme.bodyMedium,),
-                  
+                  userMatch.imageUrls.isEmpty? 
+                  const Text('last seen a long time ago', style: TextStyle(fontSize: 12, color: Colors.grey)):
                   StreamBuilder(
                     stream: context.read<DatabaseRepository>().onlineStatusChanged(userId: userMatch.userId, gender: userMatch.gender),
                     builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String,dynamic>>> snapshot) {
                       if(snapshot.hasError){
-                        return SizedBox();
+                        return  Text('connecting...',
+                          style: TextStyle(color: Colors.grey, fontSize: 12)
+                          );
                       }
+                     
+
+
                       if(snapshot.hasData){
                         var last = snapshot.data?['lastseen'].toDate();
                         var diff = DateTime.now().difference(last).inHours;

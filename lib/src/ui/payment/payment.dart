@@ -264,7 +264,7 @@ class _PaymentState extends State<Payment> {
             // )
              :Center(
                child: Container(
-                margin: EdgeInsets.only(top: 70.h),
+                margin: EdgeInsets.only(top: 140.h),
                 child: Center(
                   child: ElevatedButton(
                     onPressed: ()async{

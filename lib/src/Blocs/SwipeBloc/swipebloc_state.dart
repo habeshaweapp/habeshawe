@@ -12,7 +12,8 @@ class SwipeState extends Equatable {
     this.boostedUsers=const [],
     this.loadFor,
     this.loadAttempt =0,
-    this.error
+    this.error,
+    this.recentUsers=const []
    
   });
 
@@ -20,10 +21,11 @@ class SwipeState extends Equatable {
   final List<User> users;
   final User? matchedUser;
   final DateTime? completedTime;
-  final List<User> boostedUsers;
+  final List<Boosted> boostedUsers;
   final LoadFor? loadFor;
   final int loadAttempt;
   final String? error;
+  final List<User> recentUsers;
   
   
 
@@ -33,10 +35,11 @@ class SwipeState extends Equatable {
     List<User>? users,
     User? matchedUser,
     DateTime? completedTime,
-    List<User>? boostedUsers,
+    List<Boosted>? boostedUsers,
     LoadFor? loadFor,
     int? loadAttempt,
-    String? error
+    String? error,
+    List<User>? recentUsers
     
   }){
     return SwipeState(
@@ -47,7 +50,8 @@ class SwipeState extends Equatable {
       boostedUsers: boostedUsers?? this.boostedUsers,
       loadFor: loadFor??this.loadFor,
       loadAttempt: loadAttempt?? this.loadAttempt,
-      error: error?? this.error
+      error: error?? this.error,
+      recentUsers: recentUsers?? this.recentUsers
       
     );
   }
@@ -59,10 +63,10 @@ class SwipeState extends Equatable {
       newUser.add(user.toJson());
       });
 
-    List<Map<String, dynamic>> boosted =  [];
-    boostedUsers.forEach((user) {
-      newUser.add(user.toJson());
-      });
+    // List<Map<String, dynamic>> boosted =  [];
+    // boostedUsers.forEach((user) {
+    //   newUser.add(user.toJson());
+    //   });
 
     
     return {
@@ -70,7 +74,7 @@ class SwipeState extends Equatable {
       'users': newUser,
       'completedTime': completedTime?.toIso8601String(),
       'matchedUser': matchedUser?.toJson(),
-      'boostedUsers': boosted,
+      'boostedUsers': [],
       'loadFor': loadFor?.index,
       
      
@@ -91,7 +95,7 @@ class SwipeState extends Equatable {
       users: users,
       completedTime: json['completedTime'] == null?null: DateTime.parse(json['completedTime'] as String),
       matchedUser: json['matchedUser'] == null?null: User.fromMap(json['matchedUser'] as Map<String, dynamic>),
-      boostedUsers: boosted,
+      //boostedUsers: boosted,
       loadFor: json['loadFor'] == null?null: LoadFor.values[json['loadFor'] as int],      
     );
 
@@ -102,6 +106,6 @@ class SwipeState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [swipeStatus,users,matchedUser,completedTime, loadFor, error,loadAttempt];
+  List<Object?> get props => [swipeStatus,users,matchedUser,completedTime, loadFor, error,loadAttempt,recentUsers];
   
 }

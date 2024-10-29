@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lomi/src/Blocs/AdBloc/ad_bloc.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
+import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
 
 import 'package:lomi/src/ui/home/components/userdrag.dart';
@@ -114,7 +115,7 @@ class SwipeCard extends StatelessWidget {
                     
 
 
-                    if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months ){
+                   // if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months ){
                             if(context.read<PaymentBloc>().state.superLikes >0){
                            // _matchEngine!.currentItem?.superLike();
                               context.read<SwipeBloc>().add(SwipeRightEvent(     
@@ -124,17 +125,17 @@ class SwipeCard extends StatelessWidget {
                                 ));
 
                             }else{
-                              _matchEngine?.rewindMatch();
+                             // _matchEngine?.rewindMatch();
                               showPaymentDialog(context: context, paymentUi: PaymentUi.superlikes);
 
                             }
 
-                            }else if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
-                              showPaymentDialog(context: context, paymentUi: PaymentUi.superlikes);
-                              _matchEngine?.rewindMatch();
-                            }else{
-                              _matchEngine?.rewindMatch();
-                            }
+                            // }else if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
+                            //   showPaymentDialog(context: context, paymentUi: PaymentUi.superlikes);
+                            //   _matchEngine?.rewindMatch();
+                            // }else{
+                            //   _matchEngine?.rewindMatch();
+                            // }
 
                   
                 }
@@ -169,7 +170,9 @@ class SwipeCard extends StatelessWidget {
                       child: SwipeCards(
                         matchEngine: _matchEngine, 
                         onStackFinished: (){
+                          context.read<DatabaseRepository>().updateViewedFiresbase(context.read<AuthBloc>().state.user!.uid ,context.read<AuthBloc>().state.accountType!.name);
                           if(state.loadFor == LoadFor.daily){
+                            
                             
                             context.read<SwipeBloc>().add(SwipeEnded(completedTime: DateTime.now()));
 
@@ -198,7 +201,7 @@ class SwipeCard extends StatelessWidget {
                         },
                         leftSwipeAllowed: true,
                         rightSwipeAllowed: true,
-                        upSwipeAllowed: context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER?false: true,
+                        upSwipeAllowed: context.read<PaymentBloc>().state.superLikes >0?true: false,
                         
             
                         likeTag: Container(
@@ -365,6 +368,9 @@ class SwipeCard extends StatelessWidget {
 
         }
         if(state.swipeStatus == SwipeStatus.completed){
+          if(state.boostedUsers.isNotEmpty){
+              context.read<SwipeBloc>().add(EmitBoosted());
+          }
           // final now =DateTime.now();
           // final remain  = now.difference(state.completedTime!);
           return SwipeCompletedWidget(state: state,);

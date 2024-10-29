@@ -206,10 +206,11 @@ class _PhotoSelectorState extends State<PhotoSelector> {
       List<Face> faces = await faceDetector.processImage(inputImage);
       final remote = remoteConfig.ai();
     
-      
+    if(remote['face']){  
       if(faces.isEmpty){
         return false;
       }
+    }
 if(remote['screenshot'] || remote['poster']){
       for (var label in labels) {
         if(remote['screenshot']){

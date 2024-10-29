@@ -58,7 +58,7 @@ class SchoolName extends StatelessWidget {
                 child: Container(
                   width: MediaQuery.of(context).size.width*0.7,
                   child: TextField(
-                    textCapitalization: TextCapitalization.words,
+                    textCapitalization: TextCapitalization.characters,
                     decoration: InputDecoration(
                       hintText: 'University/school name'
                     ),

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import '../../Blocs/ThemeCubit/theme_cubit.dart';
@@ -49,33 +50,42 @@ class _SplashScreenState extends State<SplashScreen>
             //height: MediaQuery.of(context).size.height,
             child: FadeTransition(
               opacity: _animation,
-              child: Row(
+              child: Stack(
                   // mainAxisAlignment: MainAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  // mainAxisAlignment: MainAxisAlignment.start,
+                  // mainAxisSize: MainAxisSize.min,
                   children: [
                     
-                    SizedBox(width: 40,),
-                    SizedBox(
-                      height: size.height,
-                      child: VerticalDivider(
-                        color: Colors.red,
-                        thickness: isDark ? 0.2 : 0.5,
+                    //SizedBox(width: 20,),
+                    Positioned(
+                      left: 15.w,
+                      child: SizedBox(
+                        height: size.height,
+                        child: VerticalDivider(
+                          color: Colors.red,
+                          thickness: isDark ? 0.2 : 0.5,
+                        ),
                       ),
                     ),
                     //SizedBox(width: 5,),
-                    SizedBox(
-                      height: size.height,
-                      child: VerticalDivider(
-                        color: Colors.yellow,
-                        thickness: isDark ? 0.3 : 1,
+                    Positioned(
+                      left: 30.w,
+                      child: SizedBox(
+                        height: size.height,
+                        child: VerticalDivider(
+                          color: Colors.yellow,
+                          thickness: isDark ? 0.3 : 1,
+                        ),
                       ),
                     ),
-                    SizedBox(
-                      height: size.height,
-                      child: VerticalDivider(
-                        color: Colors.green,
-                        thickness: isDark ? 0.4 : 1,
+                    Positioned(
+                      left: 40.w,
+                      child: SizedBox(
+                        height: size.height,
+                        child: VerticalDivider(
+                          color: Colors.green,
+                          thickness: isDark ? 0.4 : 1,
+                        ),
                       ),
                     ),
 

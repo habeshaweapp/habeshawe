@@ -13,6 +13,7 @@ import 'package:lomi/src/Data/Repository/Authentication/auth_repository.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
 import 'package:lomi/src/Data/Repository/SharedPrefes/sharedPrefes.dart';
+import 'package:lomi/src/Data/Repository/Storage/storage_repository.dart';
 
 
 part 'auth_event.dart';
@@ -130,7 +131,7 @@ FutureOr<void> _onLogOut(LogOut event, Emitter<AuthState> emit) async {
   await HydratedBloc.storage.clear();
   SharedPrefes.clear();
   FlutterBackgroundService().invoke('stopService');
-  NotificationService.onClickNotification.close();
+  //NotificationService.onClickNotification.add('home');
 
   //FlutterBackgroundService().sendData({'action':'stopService'});
 
@@ -146,9 +147,9 @@ Future<void> _onLogInWithGoogle(LogInWithGoogle event, Emitter<AuthState> emit) 
       var st = state;
       emit(const AuthState.unauthenticated());
        
-      await _databaseRepository.deleteAccount(userId: st.user!.uid, email:st.user!.email,displayName:st.user!.displayName, gender: st.accountType!, reason: event.reason).then((value) => 
-       _authRepository.deleteAccount()
-      );
+      await _databaseRepository.deleteAccount(userId: st.user!.uid, email:st.user!.email,displayName:st.user!.displayName, gender: st.accountType!, reason: event.reason);
+      await StorageRepository().deleteAll(st.user!.uid);
+      await _authRepository.deleteAccount();
       
       
     } catch (e) {

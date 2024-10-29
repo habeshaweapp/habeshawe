@@ -33,7 +33,7 @@ class PageViewItem extends StatelessWidget {
                         padding:  EdgeInsets.symmetric(horizontal: 45.w),
                         child: Text(description
                          ,
-                          style: Theme.of(context).textTheme.bodySmall ,
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp) ,
                           textAlign: TextAlign.center,
                           ),
                       ),

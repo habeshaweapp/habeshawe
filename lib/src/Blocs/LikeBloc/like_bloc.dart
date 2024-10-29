@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
@@ -24,6 +25,8 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
   StreamSubscription? _authSubscription;
   StreamSubscription? _likesSubscription;
   ScrollController likeController = ScrollController();
+  var Lfirst;
+    var Lsecond;
   LikeBloc({
     required DatabaseRepository databaseRepository,
     required AuthBloc authBloc,
@@ -43,6 +46,7 @@ class LikeBloc extends Bloc<LikeEvent, LikeState> {
     //     add(LoadLikes(userId: state.user!.uid, users: state.accountType!));
     //   }
     // });
+    
     likeController.addListener(() {
       if(likeController.position.pixels == likeController.position.maxScrollExtent ){
         var likes = (state as LikeLoaded).likedMeUsers.last;
@@ -79,13 +83,24 @@ void _onLikeLikedMeUser(LikeLikedMeUser event, Emitter<LikeState> emit) async{
 
   FutureOr<void> _onLoadLikes(LoadLikes event, Emitter<LikeState> emit) {
     try {
+
        _likesSubscription = _databaseRepository.getLikedMeUsers(event.userId, event.users).listen((users) { 
         add(UpdateLikes(users: users));
         var back = SharedPrefes.inBackground();
-         if(back == true){
-          NotificationService().showMessageReceivedNotifications(title: 'New Like', body: 'Someone swiped right on you!', payload: 'newLike', channelId: 'like');
+        if(Lfirst == null){
+        Lfirst = users;
+        }else{
+          Lsecond = users;
+          if(!listEquals(Lfirst, Lsecond)){
+         if(back==true){
+          NotificationService().showMessageReceivedNotifications(title: 'New Like', body: 'Someone swiped right on you!',payload: 'like', channelId: 'backgroundLike');
+         }
+         Lfirst = Lsecond;
 
         }
+
+        }
+
       });
       
     } catch (e) {

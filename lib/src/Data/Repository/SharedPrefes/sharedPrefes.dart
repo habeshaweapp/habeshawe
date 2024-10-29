@@ -11,6 +11,10 @@ class SharedPrefes{
   static const _keyTempMatches = 'tempMatches';
   static const _KeyfirstLogIn = 'firstLogIn';
   static const _keyInBackground = 'inBackground';
+  static const _keyLikedIds = 'likedIds';
+  static const _keyPassedIds = 'passedIds';
+  static const _keyLikedNumbers = 'likedNumbers';
+  static const _keyPassedNumbers = 'passedNumbers';
 
   static Future init() async => 
     _preferences = await SharedPreferences.getInstance();
@@ -57,6 +61,18 @@ class SharedPrefes{
 
   static Future setGender(int gender)async => await _preferences.setInt('gender', gender);
   static int? getGender()=>_preferences.getInt('gender');
+
+  static Future setLikedIds(String ids)async => await _preferences.setString(_keyLikedIds, ids);
+  static String? getLikedIds()=> _preferences.getString(_keyLikedIds);
+
+  static Future setPassedIds(String ids)async => await _preferences.setString(_keyPassedIds, ids);
+  static String? getPassedIds()=> _preferences.getString(_keyPassedIds);
+
+  static Future setLikedNums(String nums)async => await _preferences.setString(_keyLikedNumbers, nums);
+  static String? getLikedNums()=> _preferences.getString(_keyLikedNumbers);
+
+  static Future setPassedNums(String ids)async => await _preferences.setString(_keyPassedNumbers, ids);
+  static String? getPassedNums()=> _preferences.getString(_keyPassedNumbers);
 
 
 

@@ -1,6 +1,9 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
@@ -8,12 +11,16 @@ import 'package:lomi/src/Data/Models/model.dart';
 import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
 import 'package:lomi/src/Data/Repository/Notification/notification_service.dart';
 
+import '../../../Blocs/PaymentBloc/payment_bloc.dart';
+import '../../../Data/Models/enums.dart';
+import '../../../Data/Models/tag_helper.dart';
 import '../../../Data/Repository/SharedPrefes/sharedPrefes.dart';
 import 'matches_image_small.dart';
 
 class ChatList extends StatelessWidget {
   final UserMatch match;
-  const ChatList({super.key, required this.match});
+  final int index;
+  const ChatList({super.key, required this.match, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +28,6 @@ class ChatList extends StatelessWidget {
     return ListTile(
       leading: 
       //MatchesImage(url: imageUrl),
-      
       ClipRRect(
         borderRadius: BorderRadius.circular(50),
         child:match.imageUrls.isNotEmpty? CachedNetworkImage(imageUrl: match.imageUrls[0], 
@@ -36,8 +42,15 @@ class ChatList extends StatelessWidget {
       ),
       ),
 
-      title: Text(match.name,
-      style: Theme.of(context).textTheme.bodyLarge,
+      title: Row(
+        children: [
+          Text(match.name,
+          style: Theme.of(context).textTheme.bodyLarge,
+          ),
+          SizedBox(width: 5.w,),
+          (match.verified != VerifiedStatus.notVerified.name && match.verified != VerifiedStatus.pending.name &&match.verified !=null)?
+                   TagHelper.getTag(name: match.verified??'not',size: 15):const SizedBox(),
+        ],
       ),
       subtitle: StreamBuilder(
     
@@ -47,7 +60,7 @@ class ChatList extends StatelessWidget {
           var lastMessage = snapshot.data?.first;
          // time = lastMessage
          var seen = SharedPrefes.getMessagesNotified();
-         if(lastMessage!.senderId == match.id && (lastMessage.seen == null)){
+         if(lastMessage!.senderId == match.id && (lastMessage.seen == null) && index<10){
            
            if(seen==null || !seen.contains(lastMessage.id)){
             if(SharedPrefes.getFirstLogIn()==false){

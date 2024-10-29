@@ -44,7 +44,8 @@ class RemoteConfigService{
           'adsForQueen': 10,
           'adsForPrincess': 5,
           'settingsKmNearBy':10,
-          'useMainLogic':false
+          'useMainLogic':false,
+          'maxAge':60
         }),
         'ETusersPay':false,
         'showDeleteAccount':false,
@@ -52,10 +53,13 @@ class RemoteConfigService{
           'screenshot': true,
           'poster': true,
           'screenshotConfidence': 0.5,
-          'posterConfidence':0.5
+          'posterConfidence':0.5,
+          'face':true,
+          'removeBoost':false
         }),
         'showAdREORN': false,
-        'ETbuyQP': false
+        'ETbuyQP': false,
+        'ETWomensPay': true
         
       });
 
@@ -112,6 +116,8 @@ class RemoteConfigService{
   bool showAdREORN() => _remoteConfig.getBool('showAdREORN');
 
   bool ETbuyQP() => _remoteConfig.getBool('ETbuyQP');
+
+  bool ETWomensPay() => _remoteConfig.getBool('ETWomensPay');
 
 
   

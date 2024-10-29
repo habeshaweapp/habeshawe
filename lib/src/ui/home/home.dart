@@ -112,11 +112,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
        SharedPrefes.setAppState(true);
       SharedPrefes.setInBackground(false);
 
-    }else if(state == AppLifecycleState.paused){
+    }else{
       SharedPrefes.setAppState(false);
       SharedPrefes.setInBackground(true);
+      if(state == AppLifecycleState.paused){
       if(SharedPrefes.getFirstLogIn() == true){
         SharedPrefes.setFirstLogIn(false);
+      }
       }
 
     }
@@ -128,13 +130,17 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         setState(() {
           pageIndex = 2;
         });
+        NotificationService.onClickNotification.add('home');
       }
 
       if(payload == 'like'){
         setState(() {
           pageIndex = 1;
         });
+        NotificationService.onClickNotification.add('home');
       }
+
+      
       
     });
   }
@@ -159,19 +165,24 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     return Scaffold(
       //backgroundColor: Colors.transparent,
       appBar: appBar(isDark),
-      body: HomeBody()
-      //  BlocConsumer<InternetBloc,InternetStatus>(
-      //   listener: (context, state) {
-      //     if(state.isConnected==false){
-      //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Connection...'),duration: Duration(seconds: 60),));
+      body: 
+      //HomeBody()
+       BlocConsumer<InternetBloc,InternetStatus>(
+        listener: (context, state) {
+          if(state.isConnected==false){
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Connection...',style: TextStyle(fontSize: 11,color: Colors.white), ),backgroundColor: Colors.black38, duration: Duration(seconds: 60),));
 
-      //     }
-      //   },
-      //   buildWhen: (previous, current) => (previous.isConnected == false&&current.isConnected==true),
-      //   builder: (context,state) {
-      //     return HomeBody();
-      //   }
-      // ),
+          }
+          if(state.isConnected == true){
+            context.read<SwipeBloc>().add(CheckLastTime());
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          }
+        },
+        //buildWhen: (previous, current) => (previous.isConnected == false&&current.isConnected==true),
+        builder: (context,state) {
+          return HomeBody();
+        }
+      ),
     );
 
     
@@ -220,7 +231,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               icn = Stack(
                 alignment: Alignment.topRight,
                 children: [
-                  SvgPicture.asset(items[index],height: isDark?28.sp:null, ),
+                  SvgPicture.asset(items[index],height: isDark?28.sp:32.sp, ),
                   
                   StreamBuilder(
                     stream: SharedPrefes.newLike,

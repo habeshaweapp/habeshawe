@@ -78,4 +78,9 @@ Future<void> deletePhoto(String url)async{
   return await storage.refFromURL(url).delete();
 }
 
+Future<void> deleteAll(String id)async{
+  return await storage.ref(id).delete();
+
+}
+
 }

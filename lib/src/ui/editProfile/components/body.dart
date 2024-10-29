@@ -230,7 +230,7 @@ class Body extends StatelessWidget {
                          SizedBox(width: 10,),
                          Text('Looking for'),
                          Spacer(),
-                         Text(LookingForItem.lookignForOpt[state.user.lookingFor!].replaceAll('\n', ''),style: TextStyle(color: Colors.grey,fontSize:12,),)
+                         Text(lookignForOptions[state.user.lookingFor!].replaceAll('\n', ''),style: TextStyle(color: Colors.grey,fontSize:12,),)
                   
                       ],
                     ),

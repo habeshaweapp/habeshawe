@@ -379,11 +379,12 @@ class _BodyState extends State<Body> {
                         // NetworkImage(
                         //   userMatch.matchedUser.imageUrls[0],
                         // ),
-                        CachedNetworkImageProvider(
-                                widget.userMatch.imageUrls[0],
+                        CachedNetworkImageProvider(widget.userMatch.imageUrls.isNotEmpty?
+                                widget.userMatch.imageUrls[0]
+                                :'x',
                               ),
                       ),
-                    ), 
+                    ),
                     SizedBox(height: 15),
                     Text('You matched with ${widget.userMatch.name}'),
                     Text(matchedTimecal(widget.userMatch.timestamp!), style: Theme.of(context).textTheme.bodySmall,),
@@ -391,11 +392,11 @@ class _BodyState extends State<Body> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        
                         Text('Say Hi!', ),
                         Icon(FontAwesomeIcons.faceSmileWink,color: Colors.green),
                       ],
                     ),
+                    
                     SizedBox(height: 10),
                     
         
@@ -773,11 +774,11 @@ class _BodyState extends State<Body> {
                       Container(child: Text('Are you sure you want to delete this\nmessage?',textAlign: TextAlign.start, style: TextStyle(fontSize: 12.sp),)),
                       Row(
                         children: [
-                          Checkbox(value: deleteAlso, 
+                          Switch(value: deleteAlso, 
                           onChanged: (value){
-                            setState(() {
+                           // setState(() {
                               deleteAlso = value!;
-                            });
+                           // });
                 
                           }
                           ),

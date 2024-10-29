@@ -101,7 +101,7 @@ class MatchesImage extends StatelessWidget {
                 ),
                 SizedBox(width: 5.w,),
                 (match!.verified != VerifiedStatus.notVerified.name && match!.verified != VerifiedStatus.pending.name && match!.verified !=null)?
-                 TagHelper.getTag(name: match!.verified??'not',size: 20):const SizedBox(),
+                 TagHelper.getTag(name: match!.verified??'not',size: 16):const SizedBox(),
                 
               ]),
           ),

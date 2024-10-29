@@ -57,11 +57,13 @@ class SwipeCompletedWidget extends StatelessWidget {
 
         // });
         context.read<AdBloc>().add(TimeOutAd(completedTimeAd: DateTime.now()));
-      }
-      // if(state.completedTimeAd != null && state.completedTimeAd!.difference(DateTime.now()).inMinutes > 60){
-      //   context.read<AdBloc>().add(ResetTotalReON());
 
-      // }
+      }
+      
+      if(state.totalAdWatchedReOn == 100 && state.completedTimeAd != null && DateTime.now().difference(state.completedTimeAd!).inMinutes > 60){
+        context.read<AdBloc>().add(ResetTotalReON());
+
+      }
       // if(state.totalAdWatchedReOn >10){
       //   if(state.completedTimeAd == null){
       //     context.read<AdBloc>().add(TimeOutAd(completedTimeAd: DateTime.now()));
@@ -102,7 +104,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                }
                              ),
                             SizedBox(height: 15.h,),
-                            Text('Thats it for today \ncome back Tomorrow!',
+                            Text('That\'s it for today \ncome back Tomorrow!',
                                 style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
                                 textAlign: TextAlign.center,
                             ),

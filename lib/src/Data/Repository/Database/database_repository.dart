@@ -1489,7 +1489,8 @@ Future<void> createDemoUsers(List<User> users) async{
               'subscriptionType': paymentType,
               'subscribtionStatus': subscribtionStatus,
               'timestamp': FieldValue.serverTimestamp(),
-              'paymentType': 'subscribtion'
+              'paymentType': 'subscribtion',
+              
             });
 
 

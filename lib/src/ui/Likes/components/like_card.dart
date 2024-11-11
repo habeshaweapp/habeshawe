@@ -27,129 +27,143 @@ class LikeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
-    return  Container(
-        height: 150,
-        width: 120,
-        //margin: EdgeInsets.only(top: 8, left: 8),
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            //opacity: 1,
-            //colorFilter: ColorFilter.mode(Colors.grey[900]!, BlendMode.modulate),
-            image: CachedNetworkImageProvider(
-              like.user.imageUrls[0],
-              errorListener: () {
-                if(context.read<InternetBloc>().state.isConnected == true){
-                    context.read<DatabaseRepository>().changeMatchImage(
-                                userId: context.read<AuthBloc>().state.user!.uid, 
-                                userGender: context.read<AuthBloc>().state.accountType!,
-                                match: {
-                                  'id': like.userId,
-                                  'gender': like.user.gender,
-                                  'imageUrls':like.user.imageUrls
-                                }, 
-                                from: 'likes');
-                          
-                }
-                
-              },
-              ),
-            fit: BoxFit.cover,
-            
-            //opacity: 0.7,
-            
-            
-            ),
-          borderRadius: BorderRadius.all(Radius.circular(10)),
-          color: !isDark?Colors.grey[300]: Colors.grey[800],
-      
-      
+    return Container(
+      height: 150,
+      width: 120,
+      //margin: EdgeInsets.only(top: 8, left: 8),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          //opacity: 1,
+          //colorFilter: ColorFilter.mode(Colors.grey[900]!, BlendMode.modulate),
+          image: CachedNetworkImageProvider(
+            like.user.imageUrls[0],
+            // errorListener: (context, url, error) {
+            //   if (context.read<InternetBloc>().state.isConnected == true) {
+            //     context.read<DatabaseRepository>().changeMatchImage(
+            //           userId: context.read<AuthBloc>().state.user!.uid,
+            //           userGender: context.read<AuthBloc>().state.accountType!,
+            //           match: {
+            //             'id': like.userId,
+            //             'gender': like.user.gender,
+            //             'imageUrls': like.user.imageUrls
+            //           },
+            //           from: 'likes',
+            //         );
+            //   }
+            // },
+            // errorListener: () {
+            //   if (context.read<InternetBloc>().state.isConnected == true) {
+            //     context.read<DatabaseRepository>().changeMatchImage(
+            //         userId: context.read<AuthBloc>().state.user!.uid,
+            //         userGender: context.read<AuthBloc>().state.accountType!,
+            //         match: {
+            //           'id': like.userId,
+            //           'gender': like.user.gender,
+            //           'imageUrls': like.user.imageUrls
+            //         },
+            //         from: 'likes');
+            //   }
+            // },
+          ),
+          fit: BoxFit.cover,
+
+          //opacity: 0.7,
         ),
-        child: 
-          
-          Stack(
-            children: [
-              Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10),bottomRight: Radius.circular(10)),
-                            gradient: LinearGradient(
-                              colors: [
-                                like.superLike!? Colors.blue:Color.fromARGB(200, 0, 0, 0),
-                                //Color.fromARGB(200, 0, 0, 0),
-                                Color.fromARGB(0, 0, 0, 0),
-                                
-                                  
-                            ],
-                                  
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            
-                            )
-                          ),
-                        ),
-                      ),
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: !isDark ? Colors.grey[300] : Colors.grey[800],
+      ),
+      child: Stack(
+        children: [
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10)),
+                  gradient: LinearGradient(
+                    colors: [
+                      like.superLike!
+                          ? Colors.blue
+                          : Color.fromARGB(200, 0, 0, 0),
+                      //Color.fromARGB(200, 0, 0, 0),
+                      Color.fromARGB(0, 0, 0, 0),
+                    ],
+                    begin: Alignment.bottomCenter,
+                    end: Alignment.topCenter,
+                  )),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Align(
               alignment: Alignment.bottomCenter,
-              child: Row(
-                children: [
-                  
-                  Text('${like.user.name}, ${like.user.age}',
-                      style: TextStyle(color: Colors.white),
-                  ),
-                  SizedBox(width: 5.w,),
-                  (like.user.verified != VerifiedStatus.notVerified.name && like.user.verified != VerifiedStatus.pending.name &&like.user.verified !=null)?
-                   TagHelper.getTag(name: like.user.verified??'not',size: 20):const SizedBox(),
-                  
-                ]),
+              child: Row(children: [
+                Text(
+                  '${like.user.name}, ${like.user.age}',
+                  style: TextStyle(color: Colors.white),
+                ),
+                SizedBox(
+                  width: 5.w,
+                ),
+                (like.user.verified != VerifiedStatus.notVerified.name &&
+                        like.user.verified != VerifiedStatus.pending.name &&
+                        like.user.verified != null)
+                    ? TagHelper.getTag(
+                        name: like.user.verified ?? 'not', size: 20)
+                    : const SizedBox(),
+              ]),
             ),
           ),
-      
           Align(
             alignment: Alignment.bottomRight,
-            child: like.superLike!? Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Icon(Icons.star,color: Colors.blue, size: 35,),
-            ): SizedBox(),
-            ),
-      
-         context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER? showAd? SizedBox(
-            child: Center(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: Colors.white),
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.black12
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('Watch Ad', style: TextStyle(color: Colors.white,fontSize: 12),),
-                ),
-              ),
-            ),
-          ): const SizedBox(): const SizedBox(),
-
-          context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed?
-          Center(
-            child: ClipRRect(
-              borderRadius:BorderRadius.all(Radius.circular(10)),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY:10.0),
-                  child: Container(
-                  
+            child: like.superLike!
+                ? Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Icon(
+                      Icons.star,
+                      color: Colors.blue,
+                      size: 35,
+                    ),
                   )
+                : SizedBox(),
+          ),
+          context.read<PaymentBloc>().state.subscribtionStatus ==
+                  SubscribtionStatus.ET_USER
+              ? showAd
+                  ? SizedBox(
+                      child: Center(
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(width: 1, color: Colors.white),
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.black12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Watch Ad',
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                  : const SizedBox()
+              : const SizedBox(),
+          context.read<PaymentBloc>().state.subscribtionStatus ==
+                  SubscribtionStatus.notSubscribed
+              ? Center(
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                          child: Container())),
                 )
-            ),
-          ):const SizedBox()
+              : const SizedBox()
         ],
-      
-      
-        ),
-      
-      
+      ),
     );
   }
 }

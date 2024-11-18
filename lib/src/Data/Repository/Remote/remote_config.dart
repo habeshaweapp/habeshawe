@@ -30,6 +30,7 @@ class RemoteConfigService{
       await _remoteConfig.setDefaults({
         'interests': 'Jesus,LOve,Start ups,programming, 90s,Memes,Writing,Teddy Afro,Painting,torpa,kasech,Girma,astu,Aynalem,Library,Abrhot,6-kilo-meda,Law,Phd,3AM,Abyot,psychology,Photography,Walking,K-Pop,Reading,Sports,Instagram,Twitter,Facebook,Snapchat,HabeshaWe,Movies,Home Workout,Gym,Pull Up,Skateboarding,Stand Up Comedy,Coffee,Poetry,Singing,Painting,Dancing,Museum,Tea,Freelance,Hip Hop,Nightlife,Highland,Addis Street,Wello-Sefer,Meskel-Flower,Life',
         'shutDownBefore': '0.0.0',
+        'shutDownBeforeIos': '0.0.0',
         'UPDATELOCATIONAFTER':10,
         'showAd':true,
         'boostTime':30,
@@ -80,6 +81,8 @@ class RemoteConfigService{
   //_remoteConfig.onConfigUpdated
 
   String getAppVersionToStop() => _remoteConfig.getString('shutDownBefore');
+
+  String iosVersionToStop() => _remoteConfig.getString('shutDownBeforeIos');
 
   bool shutDownBefore() => _remoteConfig.getBool('shutDownBefore');
 

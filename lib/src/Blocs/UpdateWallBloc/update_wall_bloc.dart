@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -10,7 +11,7 @@ part 'update_wall_state.dart';
 
 class UpdateWallBloc extends Bloc<UpdateWallEvent, UpdateWallState> {
   final RemoteConfigService remoteConfigService = RemoteConfigService();
-  Version currentVersion = Version(2, 1, 0);
+  Version currentVersion = Version(2, 1, 1);
   UpdateWallBloc() : super(UpdateWallInitial()) {
     on<ShutDownEvent>((event, emit) {
       // TODO: implement event handler
@@ -32,6 +33,9 @@ class UpdateWallBloc extends Bloc<UpdateWallEvent, UpdateWallState> {
 
   FutureOr<void> _onCheckShutDown(CheckShutDown event, Emitter<UpdateWallState> emit) {
     String shutBeforeVersion = remoteConfigService.getAppVersionToStop().isNotEmpty?remoteConfigService.getAppVersionToStop():'0.0.0' ;
+    if(Platform.isIOS ){
+      shutBeforeVersion = remoteConfigService.iosVersionToStop();
+    }
     Version shutBefore = Version.parse(shutBeforeVersion);
     if(currentVersion < shutBefore){
       add(ShutDownEvent(shut: Shuts.update));

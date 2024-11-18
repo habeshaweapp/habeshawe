@@ -1438,7 +1438,7 @@ Future<void> createDemoUsers(List<User> users) async{
         'creationTimestamp': FieldValue.serverTimestamp(),
         'diascora': placeMark.isoCountryCode == 'ET'? false:true,
         'fake': 'unReviewed',
-        'version': '2.1.0+33',
+        'version': '2.1.1+34',
         'platform': Platform.isAndroid?'android':Platform.isIOS?'ios':'other'
       });
 
@@ -1490,6 +1490,7 @@ Future<void> createDemoUsers(List<User> users) async{
               'subscribtionStatus': subscribtionStatus,
               'timestamp': FieldValue.serverTimestamp(),
               'paymentType': 'subscribtion',
+              'platform': Platform.isIOS?'ios':'android'
               
             });
 

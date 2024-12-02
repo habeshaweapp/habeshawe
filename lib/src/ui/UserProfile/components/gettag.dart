@@ -78,7 +78,7 @@ final pageController = PageController();
           children: [
             Icon(Icons.pending, color: Colors.grey,size: 30, ), 
             Container(
-              child: Text('Your profile is,\nunder review, you will be verified in time...', style: TextStyle(fontSize: 12.sp, color: Colors.grey ), textAlign: TextAlign.center, ),
+              child: Text('Your profile is \nunder review, you will be verified in time...', style: TextStyle(fontSize: 12.sp, color: Colors.grey ), textAlign: TextAlign.center, ),
             ),
           ],
         ),

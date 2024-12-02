@@ -75,32 +75,34 @@ class _EditInterestsState extends State<EditInterests> {
                 ),
              // Spacer(flex: 1,),
         
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height *0.69,
-                  child: SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Wrap(
-                      spacing: 5,
-                      children: List.generate(inter.length, (index) => 
-                          ChoiceChip(
-                          label: Text(inter[index],style: TextStyle(color: _selectedList.contains(inter[index])? Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w300),), 
-                          selected: _selectedList.contains(inter[index]),
-                          selectedColor: isDark? Colors.teal: Colors.green,
-                          //backgroundColor: Colors.teal,
-                          onSelected: (value) {
-                            
-                            if(_selectedList.length <5 || _selectedList.contains(inter[index]) ){
-
-                            setState(() {
-                              _selectedList.contains(inter[index]) ?_selectedList.length <=3?null: _selectedList.remove(inter[index]) : _selectedList.add(inter[index]);
-                            });
-
-                            }
-                          },
-                          ),
-                      )
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                  child: SizedBox(
+                   // height: MediaQuery.of(context).size.height *0.69,
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Wrap(
+                        spacing: 5,
+                        children: List.generate(inter.length, (index) => 
+                            ChoiceChip(
+                            label: Text(inter[index],style: TextStyle(color: _selectedList.contains(inter[index])? Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w300),), 
+                            selected: _selectedList.contains(inter[index]),
+                            selectedColor: isDark? Colors.teal: Colors.green,
+                            //backgroundColor: Colors.teal,
+                            onSelected: (value) {
+                              
+                              if(_selectedList.length <5 || _selectedList.contains(inter[index]) ){
+              
+                              setState(() {
+                                _selectedList.contains(inter[index]) ?_selectedList.length <=3?null: _selectedList.remove(inter[index]) : _selectedList.add(inter[index]);
+                              });
+              
+                              }
+                            },
+                            ),
+                        )
+                      ),
                     ),
                   ),
                 ),
@@ -111,8 +113,8 @@ class _EditInterestsState extends State<EditInterests> {
              
         
         
-        
-              Spacer(flex: 2,),
+            //const SizedBox(height: 20,),
+             // Spacer(flex: 2,),
               BlocBuilder<ProfileBloc, ProfileState>(
                 
                 builder: (context, state) {

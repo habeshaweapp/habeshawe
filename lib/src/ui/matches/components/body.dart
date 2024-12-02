@@ -209,49 +209,28 @@ class Body extends StatelessWidget {
                       itemBuilder: (context, index){
                         return GestureDetector(
                           onTap: (){
-                           // Navigator.push(context,MaterialPageRoute(builder: (context) => ChatScreen(inactiveMatches[index])));
-    
-                              if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER && !remoteConfig.ETusersPay() ){
-                                        if(context.read<AdBloc>().state.isLoadedRewardedAd ==true || !showAd){
-                                         showAd ?context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedOnline)):null;
-                                         if(state.isUserSearching){
-                                         
-                                          if(state.searchResultFor == SearchResultFor.matched && state.searchResult![index].chatOpened){
-                                            context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType! , matchedUserId: state.searchResult![index].userId));
-                                          }
-                                         }
-                                         Navigator.push(context, MaterialPageRoute(
-                                                  builder: (ctx) =>
-                                                      BlocProvider.value(value: context.read<ChatBloc>(),
-                                                          child: BlocProvider.value(
-                                                            value: context.read<MatchBloc>() ,
-                                                            child: (state.isUserSearching && state.searchResultFor == SearchResultFor.findMe)?
-                                                                  BlocProvider.value(
-                                                                    value: context.read<ProfileBloc>(),
-                                                                    child: BlocProvider.value(
-                                                                    value: context.read<SharedpreferenceCubit>(),
-                                                                    child: BlocProvider.value(
-                                                                    value: context.read<UserpreferenceBloc>(),
-                                                                    child: BlocProvider.value(
-                                                                    value: context.read<SwipeBloc>(),
-                                                                      child: Profile(user: state.findMeResult![0], profileFrom: ProfileFrom.search, ctrx: context,))))):
-                                                                  ChatScreen(ctx:context,userMatch:state.isUserSearching?state.searchResult![index]: inactiveMatches[index]) 
-                                                                                              ))));
-    
-    
-    
-                                        }else{
-                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
-                                          context.read<AdBloc>().add(LoadRewardedAd());
-                                        }
-    
-                                      }else
-                                      if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly||context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months){
-                                        if(state.isUserSearching){
-                                          if(state.searchResultFor == SearchResultFor.matched&&state.searchResult![index].chatOpened){
-                                            context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType! , matchedUserId: state.searchResult![index].userId));
-                                          }
-                                         }
+                            //new code
+                            if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
+                              showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
+
+                            }else{
+
+
+                            if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER && remoteConfig.showAd() ){
+                              if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                                context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedOnline));
+
+                              }else{
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                  context.read<AdBloc>().add(LoadRewardedAd());
+                                }
+                            }
+
+                            if(state.isUserSearching){
+                                if(state.searchResultFor == SearchResultFor.matched&&state.searchResult![index].chatOpened){
+                                     context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType! , matchedUserId: state.searchResult![index].userId));
+                                  }
+                                  }
                                         Navigator.push(context, MaterialPageRoute(
                                                   builder: (ctx) =>
                                                       BlocProvider.value(value: context.read<ChatBloc>(),
@@ -270,10 +249,80 @@ class Body extends StatelessWidget {
                                                                     child: Profile(user: state.findMeResult![0], profileFrom: ProfileFrom.search,ctrx: context,))))):
                                                                   ChatScreen(ctx:context, userMatch: state.isUserSearching?state.searchResult![index]: inactiveMatches[index]) 
                                                                                               ))));
+
+
+
+                            }
+
+
+
+
+
+                          //  // Navigator.push(context,MaterialPageRoute(builder: (context) => ChatScreen(inactiveMatches[index])));
     
-                                      }else{
-                                        showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
-                                      }
+                          //     if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER && !remoteConfig.ETusersPay() ){
+                          //               if(context.read<AdBloc>().state.isLoadedRewardedAd ==true || !showAd){
+                          //                showAd ?context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedOnline)):null;
+                          //                if(state.isUserSearching){
+                                         
+                          //                 if(state.searchResultFor == SearchResultFor.matched && state.searchResult![index].chatOpened){
+                          //                   context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType! , matchedUserId: state.searchResult![index].userId));
+                          //                 }
+                          //                }
+                          //                Navigator.push(context, MaterialPageRoute(
+                          //                         builder: (ctx) =>
+                          //                             BlocProvider.value(value: context.read<ChatBloc>(),
+                          //                                 child: BlocProvider.value(
+                          //                                   value: context.read<MatchBloc>() ,
+                          //                                   child: (state.isUserSearching && state.searchResultFor == SearchResultFor.findMe)?
+                          //                                         BlocProvider.value(
+                          //                                           value: context.read<ProfileBloc>(),
+                          //                                           child: BlocProvider.value(
+                          //                                           value: context.read<SharedpreferenceCubit>(),
+                          //                                           child: BlocProvider.value(
+                          //                                           value: context.read<UserpreferenceBloc>(),
+                          //                                           child: BlocProvider.value(
+                          //                                           value: context.read<SwipeBloc>(),
+                          //                                             child: Profile(user: state.findMeResult![0], profileFrom: ProfileFrom.search, ctrx: context,))))):
+                          //                                         ChatScreen(ctx:context,userMatch:state.isUserSearching?state.searchResult![index]: inactiveMatches[index]) 
+                          //                                                                     ))));
+    
+    
+    
+                          //               }else{
+                          //                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                          //                 context.read<AdBloc>().add(LoadRewardedAd());
+                          //               }
+    
+                          //             }else
+                          //             if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly||context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months){
+                          //               if(state.isUserSearching){
+                          //                 if(state.searchResultFor == SearchResultFor.matched&&state.searchResult![index].chatOpened){
+                          //                   context.read<ChatBloc>().add(LoadChats(userId: context.read<AuthBloc>().state.user!.uid, users: context.read<AuthBloc>().state.accountType! , matchedUserId: state.searchResult![index].userId));
+                          //                 }
+                          //                }
+                          //               Navigator.push(context, MaterialPageRoute(
+                          //                         builder: (ctx) =>
+                          //                             BlocProvider.value(value: context.read<ChatBloc>(),
+                          //                                 child: BlocProvider.value(
+                          //                                   value: context.read<MatchBloc>() ,
+                          //                                   child:
+                          //                                         (state.isUserSearching && state.searchResultFor == SearchResultFor.findMe)?
+                          //                                         BlocProvider.value(
+                          //                                           value: context.read<ProfileBloc>(),
+                          //                                           child: BlocProvider.value(
+                          //                                           value: context.read<SharedpreferenceCubit>(),
+                          //                                           child: BlocProvider.value(
+                          //                                           value: context.read<UserpreferenceBloc>(),
+                          //                                           child: BlocProvider.value(
+                          //                                           value: context.read<SwipeBloc>(),
+                          //                                           child: Profile(user: state.findMeResult![0], profileFrom: ProfileFrom.search,ctrx: context,))))):
+                          //                                         ChatScreen(ctx:context, userMatch: state.isUserSearching?state.searchResult![index]: inactiveMatches[index]) 
+                          //                                                                     ))));
+    
+                          //             }else{
+                          //               showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
+                          //             }
                                       if((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed )&&showAd){
                                         controller.clear();
                                         context.read<MatchBloc>().add(SearchName(userId: context.read<AuthBloc>().state.user!.uid, gender: context.read<AuthBloc>().state.accountType!, name: '' ));

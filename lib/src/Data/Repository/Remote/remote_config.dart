@@ -60,7 +60,15 @@ class RemoteConfigService{
         }),
         'showAdREORN': false,
         'ETbuyQP': false,
-        'ETWomensPay': true
+        'ETWomensPay': true,
+        'telebirr': jsonEncode({
+          "url": "xy",
+          "amount": "50",
+          "phone": "0960572807",
+          "cbe": "xxi000",
+          "useTelebirr": true,
+          "supportUrl": 'https://t.me/habeshawesupport'
+        })
         
       });
 
@@ -121,6 +129,8 @@ class RemoteConfigService{
   bool ETbuyQP() => _remoteConfig.getBool('ETbuyQP');
 
   bool ETWomensPay() => _remoteConfig.getBool('ETWomensPay');
+
+  Map<String, dynamic> telebirr() => jsonDecode(_remoteConfig.getString('telebirr')) as Map<String, dynamic>;
 
 
   

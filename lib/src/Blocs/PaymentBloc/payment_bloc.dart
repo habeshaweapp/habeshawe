@@ -225,7 +225,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     final products = await _paymentRepository.getProducts();
 
     if(payment.countryCode == 'ET' && _authBloc.state.accountType == Gender.women  && remoteConfigService.ETWomensPay()==false ){
-       emit(state.copyWith(subscribtionStatus: SubscribtionStatus.subscribedYearly, productDetails: products, boosts: payment.boosts, superLikes: payment.superLikes ));
+       emit(state.copyWith(subscribtionStatus: SubscribtionStatus.ET_USER, productDetails: products, boosts: payment.boosts, superLikes: payment.superLikes ));
   
       }else
     if(payment.countryCode != 'ET' ||  remoteConfigService.ETusersPay() ){

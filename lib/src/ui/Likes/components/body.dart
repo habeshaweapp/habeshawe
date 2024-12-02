@@ -176,42 +176,73 @@ class Body extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   return InkWell(
                                       onTap: () {
+
+                                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
+                                          showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
+                                        }else{
+                                          if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER && remoteConfigService.showAd() ){
+                                            //show ad for et user if show ad is true
+
+                                            if(context.read<AdBloc>().state.isLoadedRewardedAd ==true){
+                                              context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedOnline));
+                                      
+                                              }else{
+                                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad loading...', style: TextStyle(fontSize: 11.sp, color: Colors.grey), ), backgroundColor: Colors.black38, ));
+                                                context.read<AdBloc>().add(LoadRewardedAd());
+                                            }
+                                          }
+
+                                          //means user is subscribeddd
+                                                Navigator.push(context, MaterialPageRoute(
+                                                    builder: (ctx) =>
+                                                        BlocProvider.value(value: context.read<ProfileBloc>(),
+                                                            child: BlocProvider.value(value: context.read<LikeBloc>(),
+                                                            child: BlocProvider.value(value:context.read<PaymentBloc>(),
+                                                            child: BlocProvider.value(value:context.read<SharedpreferenceCubit>(),
+                                                            child: BlocProvider.value(value:context.read<UserpreferenceBloc>(),
+                                                            child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index],ctrx: context, ))))))));
+
+                                        }
+
+
+
+
                                         //context.read<AdBloc>().add(ShowInterstitialAd());
                                         //var subscribtion = context.read<PaymentBloc>().state.subscribtionStatus;
-                                        if(!remoteConfigService.ETusersPay() && context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
-                                          if(context.read<AdBloc>().state.isLoadedRewardedAd ==true || !showAd){
-                                           showAd? context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedOnline)):null;
-                                           Navigator.push(context, MaterialPageRoute(
-                                                    builder: (ctx) =>
-                                                        BlocProvider.value(value: context.read<ProfileBloc>(),
-                                                            child: BlocProvider.value(value: context.read<LikeBloc>(),
-                                                            child: BlocProvider.value(value:context.read<PaymentBloc>(),
-                                                            child: BlocProvider.value(value:context.read<SharedpreferenceCubit>(),
-                                                            child: BlocProvider.value(value:context.read<UserpreferenceBloc>(),
-                                                            child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index],ctrx: context, ))))))));
+                              // if(!remoteConfigService.ETusersPay() && context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER){
+                              //             if(context.read<AdBloc>().state.isLoadedRewardedAd ==true || !showAd){
+                              //              showAd? context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedOnline)):null;
+                              //              Navigator.push(context, MaterialPageRoute(
+                              //                       builder: (ctx) =>
+                              //                           BlocProvider.value(value: context.read<ProfileBloc>(),
+                              //                               child: BlocProvider.value(value: context.read<LikeBloc>(),
+                              //                               child: BlocProvider.value(value:context.read<PaymentBloc>(),
+                              //                               child: BlocProvider.value(value:context.read<SharedpreferenceCubit>(),
+                              //                               child: BlocProvider.value(value:context.read<UserpreferenceBloc>(),
+                              //                               child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index],ctrx: context, ))))))));
       
       
       
-                                          }else{
-                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad loading...', style: TextStyle(fontSize: 11.sp, color: Colors.grey), ), backgroundColor: Colors.black38, ));
-                                            context.read<AdBloc>().add(LoadRewardedAd());
-                                          }
+                              //             }else{
+                              //               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad loading...', style: TextStyle(fontSize: 11.sp, color: Colors.grey), ), backgroundColor: Colors.black38, ));
+                              //               context.read<AdBloc>().add(LoadRewardedAd());
+                              //             }
       
-                                        }else
-                                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly||context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months){
-                                          Navigator.push(context, MaterialPageRoute(
-                                                    builder: (ctx) =>
-                                                        BlocProvider.value(value: context.read<ProfileBloc>(),
-                                                            child: BlocProvider.value(value: context.read<LikeBloc>(),
-                                                            child: BlocProvider.value(value:context.read<PaymentBloc>(),
-                                                            child: BlocProvider.value(value:context.read<SharedpreferenceCubit>(),
-                                                            child: BlocProvider.value(value:context.read<UserpreferenceBloc>(),
-                                                            child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index],ctrx: context, ))))))));
+                              //           }else
+                              //           if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly||context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months){
+                              //             Navigator.push(context, MaterialPageRoute(
+                              //                       builder: (ctx) =>
+                              //                           BlocProvider.value(value: context.read<ProfileBloc>(),
+                              //                               child: BlocProvider.value(value: context.read<LikeBloc>(),
+                              //                               child: BlocProvider.value(value:context.read<PaymentBloc>(),
+                              //                               child: BlocProvider.value(value:context.read<SharedpreferenceCubit>(),
+                              //                               child: BlocProvider.value(value:context.read<UserpreferenceBloc>(),
+                              //                               child: Profile(user: state.likedMeUsers[index].user,profileFrom: ProfileFrom.like, likedMeUser: state.likedMeUsers[index],ctrx: context, ))))))));
       
-                                        }else{
-                                          showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
+                              //           }else{
+                              //             showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
                                          
-                                        }
+                              //           }
                                         
       
                                         

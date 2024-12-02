@@ -541,7 +541,8 @@ class Body extends StatelessWidget {
       int selectedIndex = index;
 
       return SizedBox(
-        height: MediaQuery.of(context).size.height * 0.46 ,
+        //height: MediaQuery.of(context).size.height * 0.46 ,
+        height: 600.h ,
         child: Center(
           child: Column(
             children: [

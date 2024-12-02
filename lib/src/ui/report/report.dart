@@ -41,16 +41,22 @@ class Report extends StatelessWidget {
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(
-                          LineIcons.arrowLeft,
-                          size: 30,
+                        child: GestureDetector(
+                          onTap: ()=>Navigator.pop(context),
+                          child: Icon(
+                            LineIcons.arrowLeft,
+                            size: 30,
+                          ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Icon(
-                          LineIcons.times,
-                          size: 30,
+                        child: GestureDetector(
+                          onTap: ()=>Navigator.pop(context),
+                          child: Icon(
+                            LineIcons.times,
+                            size: 30,
+                          ),
                         ),
                       ),
                     ],

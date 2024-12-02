@@ -1438,7 +1438,7 @@ Future<void> createDemoUsers(List<User> users) async{
         'creationTimestamp': FieldValue.serverTimestamp(),
         'diascora': placeMark.isoCountryCode == 'ET'? false:true,
         'fake': 'unReviewed',
-        'version': '2.1.1+34',
+        'version': '2.2.0+35',
         'platform': Platform.isAndroid?'android':Platform.isIOS?'ios':'other'
       });
 
@@ -2671,6 +2671,11 @@ Future<void> createDemoUsers(List<User> users) async{
         .snapshots()
         .map((payment) => Payment.fromSnapshoot(payment));
         
+  }
+
+  Future<String> getTelebirrImage()async{
+    var telebirr = await _firebaseFirestore.collection('configs').doc('telebirr').get();
+    return telebirr['paymentUrl'];
   }
   
 }

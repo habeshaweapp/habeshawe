@@ -1,11 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:lomi/src/Blocs/AuthenticationBloc/bloc/auth_bloc.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
+import 'package:lomi/src/Data/Repository/Database/database_repository.dart';
+import 'package:lomi/src/Data/Repository/Remote/remote_config.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../Blocs/PaymentBloc/payment_bloc.dart';
@@ -33,6 +38,7 @@ class _PaymentState extends State<Payment> {
     var width = MediaQuery.of(context).size.width;
 
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
+    final telebirrConfig = RemoteConfigService().telebirr();
 
     List<String> subIds = ['premium','monthly', 'yearly', '6months'];
     List<String> boostsIds = ['1boost', '5boosts', '10boosts'];
@@ -133,6 +139,87 @@ class _PaymentState extends State<Payment> {
                                 physics: BouncingScrollPhysics(),
                                 controller: pageController,
                                 children: [
+                                  state.productDetails.isEmpty?
+                                  Column(
+                                    children: [
+                                      
+                                      Image.asset(
+                                        telebirrConfig['useTelebirr']?
+                                        'assets/images/Telebirr.png':'assets/images/cbe.jpeg',
+                                        height:telebirrConfig['useTelebirr']? 40:55,
+                                      ),
+
+                                      // telebirrConfig['useTelebirr']?
+                                      // SizedBox():
+                                      // SizedBox(height: 10.h,),
+
+                                      
+                                      Text(
+                                        telebirrConfig['useTelebirr']?
+                                        'Scan the below QR code on Telebirr to pay.\nor Transfer':
+                                        'Transfer to CBE',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 12.sp,)
+                                      ),
+
+                                      Text(
+                                        '- Amount - ${telebirrConfig['amount']} birr',
+                                        style: TextStyle(fontSize: 12.sp)
+                                      ),
+                                      GestureDetector(
+                                        onLongPress: (){
+                                          Clipboard.setData(ClipboardData(text: '${telebirrConfig['phone']}'));
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar( content: Text('${telebirrConfig['useTelebirr']?'Phone' : "Account"} number copied!',style: const TextStyle(fontSize: 12))));
+                                  
+                                        },
+                                        onTap: (){
+                                          Clipboard.setData(ClipboardData(text: '${telebirrConfig['phone']}'));
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar( content: Text('${telebirrConfig['useTelebirr']?'Phone' : "Account"} number copied!',style: const TextStyle(fontSize: 12)
+                                          //style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),
+                                          )));
+                                  
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              '- ${telebirrConfig['useTelebirr']?'Phone' : "Account"} number - ${telebirrConfig[telebirrConfig['useTelebirr']?'phone':'cbe']}',
+                                              style: TextStyle(fontSize: 12.sp)
+                                            ),
+                                            SizedBox(width: 2,),
+                                            Icon(Icons.copy, size:12)
+                                          ],
+                                        ),
+                                      ),
+
+                                      Text(
+                                        'ብር ካስገቡ በኋላ receipt or screenshot ወደ Telegram ይላኩ',
+                                        style: TextStyle(fontSize: 12.sp)
+                                      ),
+                SizedBox(height: 5,),
+                SizedBox(
+                  height: 20.h,
+                  child: ElevatedButton(
+                  onPressed: ()async{
+                    var url = 'https://t.me/habeshawesupport?text=HabeshaWe id ${context.read<AuthBloc>().state.accountType!.index}- ${context.read<AuthBloc>().state.user!.uid}';
+                             
+                  if(await canLaunchUrl(Uri.parse(url))){
+                    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+                             
+                  }else{
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('please Go to playstore and update!')));
+                  }
+                             
+                  },
+                  
+                               
+                   child: Text('send Recipt', style: TextStyle(fontSize: 11),)
+                   ),
+                )
+
+
+                                    ],
+                                  ):SizedBox(),
                                   pageViewItem(
                                       context: context,
                                       image: 'assets/icons/likeIconPayment.png',
@@ -158,8 +245,8 @@ class _PaymentState extends State<Payment> {
                               ),
                             ),
                             SizedBox(
-                              width: 60,
-                              child: DotIndicator(dots: 3, pageController: pageController),
+                              width: 80,
+                              child: DotIndicator(dots:state.productDetails.isEmpty?4: 3, pageController: pageController),
                             )
                           ],
                         ):Container(
@@ -262,27 +349,80 @@ class _PaymentState extends State<Payment> {
             //     ),
             //   ),
             // )
-             :Center(
-               child: Container(
-                margin: EdgeInsets.only(top: 140.h),
-                child: Center(
-                  child: ElevatedButton(
-                    onPressed: ()async{
+             :
+             Container(
+              //margin: EdgeInsets.only(top: 140.h),
+              child: Column(
+               children:[
+                widget.paymentUi == PaymentUi.subscription?
+                Container(
+                  height: 260,
+                  width: 260,
+                  child: CachedNetworkImage(
+                           // imageUrl: 'https://firebasestorage.googleapis.com/v0/b/habeshawe-1270a.appspot.com/o/00000telebirr%2Fphoto_2024-11-30_15-18-58.jpg?alt=media&token=17bf241b-6ccb-4658-8fb1-ce93d2e979ae',
+                            imageUrl: telebirrConfig['url'],
+                            placeholder:(context,url)=> Container(),
+                            fit: BoxFit.cover,
+                            ),
+                ):SizedBox(),
+                //  Expanded(
+                //    child: FutureBuilder(
+                //      future: context.read<DatabaseRepository>().getTelebirrImage(),
+                //      builder: (context,AsyncSnapshot<String> snapshot) {
+                //        if(snapshot.hasError){
+                //          return  Container();
+                //        }
+                //        if(snapshot.hasData){
+                //          return CachedNetworkImage(
+                //            imageUrl: snapshot.data??'x');
+                //        }
+                //        return Container();
+                       
+                //      }),
+                //  ),
+                widget.paymentUi == PaymentUi.subscription?
+                Text(
+                  'Scan the QR code on Telebirr to pay.',
+                  style: TextStyle(fontSize: 11),
+                ):SizedBox(height: 250.h,),
+                SizedBox(height: 5.h,),
+              
+           
+                 Align(
+                  alignment: Alignment.bottomCenter,
+                   child: SizedBox(
+                    height: 30.h,
+                     child: ElevatedButton(
+                    
+                                   onPressed: ()async{
                       const url = 'https://t.me/habeshaweapp';
-             
-                    if(await canLaunchUrl(Uri.parse(url))){
+                                
+                                   if(await canLaunchUrl(Uri.parse(url))){
                       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-             
-                    }else{
+                                
+                                   }else{
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('please Go to playstore and update!')));
-                    }
-             
-                    },  
-                     child: Text('Open Telegram')
-                    )
-                  ),
-                         ),
-             ),
+                                   }
+                                
+                                   },
+                 
+                     style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll(Colors.lightBlue)
+                     ),
+                                  
+                     child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                       children: [
+                         Text('Open Telegram', style: TextStyle(fontSize: 12)),
+                         SizedBox(width: 5,),
+                         Transform.rotate(angle: 75,child: Icon(Icons.send, size:18))
+                       ],
+                     )
+                     ),
+                   ),
+                 )
+                 ]),
+                       ),
 
             //  state.subscribtionStatus == SubscribtionStatus.ET_USER?
             //   Center(

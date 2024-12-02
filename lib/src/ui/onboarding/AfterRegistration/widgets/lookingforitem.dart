@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:line_icons/line_icons.dart';
 
@@ -46,7 +47,9 @@ class LookingForItem extends StatelessWidget {
               //        },
               child: Container(
                        width: size.width*0.32,
-                        height: size.height*0.18,
+                      height: size.height*0.18,
+                      // width: 50.sp,
+                      // height:20.sp,
                                              // margin: EdgeInsets.all(10),
                         child: Card(                    
                             shape: RoundedRectangleBorder(

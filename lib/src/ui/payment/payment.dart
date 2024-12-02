@@ -201,7 +201,7 @@ class _PaymentState extends State<Payment> {
                   height: 20.h,
                   child: ElevatedButton(
                   onPressed: ()async{
-                    var url = 'https://t.me/habeshawesupport?text=HabeshaWe id ${context.read<AuthBloc>().state.accountType!.index}- ${context.read<AuthBloc>().state.user!.uid}';
+                    var url = '${telebirrConfig['supportUrl']}?text=HabeshaWe id ${context.read<AuthBloc>().state.accountType!.index}- ${context.read<AuthBloc>().state.user!.uid}';
                              
                   if(await canLaunchUrl(Uri.parse(url))){
                     await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);

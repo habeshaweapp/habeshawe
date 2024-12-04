@@ -162,6 +162,9 @@ class Body extends StatelessWidget {
                       
                                           
                     ),
+                    inputFormatters: [
+                              LengthLimitingTextInputFormatter(600),
+                            ],
 
                     //controller: TextEditingController(text: state.user.aboutMe),
                     controller: aboutMeController,
@@ -352,6 +355,9 @@ class Body extends StatelessWidget {
                       hintText: state.user.jobTitle == null? 'Add Job Title' : state.user.jobTitle,
                     
                     ),
+                    inputFormatters: [
+                              LengthLimitingTextInputFormatter(25),
+                            ],
                     controller: jobTitle,
                     style: TextStyle(color: Colors.grey, fontSize:13,),
           
@@ -390,6 +396,9 @@ class Body extends StatelessWidget {
                       hintText: state.user.company ?? 'Add Company'
                     
                     ),
+                    inputFormatters: [
+                              LengthLimitingTextInputFormatter(25),
+                            ],
                     style: TextStyle(color: Colors.grey, fontSize:13,),
                     controller: companyController,
           
@@ -427,6 +436,10 @@ class Body extends StatelessWidget {
                       border: InputBorder.none,
                       hintText: state.user.school ?? 'Add School',                  
                     ),
+                    inputFormatters: [
+                              LengthLimitingTextInputFormatter(55),
+                            
+                            ],
                     controller: schoolController,
                     style: TextStyle(color: Colors.grey, fontSize:13,),
           
@@ -468,6 +481,10 @@ class Body extends StatelessWidget {
                       
                     
                     ),
+                    inputFormatters: [
+                              LengthLimitingTextInputFormatter(55),
+                            
+                            ],
                     style: TextStyle(color: Colors.grey,fontSize:13,),
                     controller: addCityController,
                     onChanged: (value){

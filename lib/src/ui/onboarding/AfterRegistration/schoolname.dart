@@ -62,6 +62,10 @@ class SchoolName extends StatelessWidget {
                     decoration: InputDecoration(
                       hintText: 'University/school name'
                     ),
+                    inputFormatters: [
+                              LengthLimitingTextInputFormatter(55),
+                            
+                            ],
                     onChanged: (value) {
                       context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(school: value)));
                     },

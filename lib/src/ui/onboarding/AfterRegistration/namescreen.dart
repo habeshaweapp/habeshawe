@@ -60,6 +60,10 @@ class NameScreen extends StatelessWidget {
                             decoration: InputDecoration(
                               hintText: 'First Name'
                             ),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(20),
+                            
+                            ],
 
                             onChanged: (value){
                               context.read<OnboardingBloc>().add(EditUser(user: state.user.copyWith(name: value)));

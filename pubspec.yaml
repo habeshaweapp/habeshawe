@@ -71,7 +71,7 @@ dependencies:
 
   change_app_package_name: ^1.1.0
   flutter_image_compress: ^2.0.4
-  google_mobile_ads: ^5.1.0
+  google_mobile_ads: ^5.2.0
   #google_fonts: ^6.0.0
   flutter_advanced_switch: ^3.0.1
   full_screen_image: ^2.0.0

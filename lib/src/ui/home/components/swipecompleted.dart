@@ -223,110 +223,6 @@ class SwipeCompletedWidget extends StatelessWidget {
 
                             SizedBox(height: 25.h,),
                             const Spacer(),
-
-                            AbsorbPointer(
-                              absorbing: state.totalAdWatchedReOn >=10,
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.9,
-                                child: Card(
-                                      elevation: 4,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(5)),
-                                      //color: state.totalAdWatchedReOn<=10? Colors.grey.withOpacity(0.8):null,
-                                      
-                                      child: InkWell(
-                                        splashColor: state.totalAdWatchedReOn>=10?Colors.white:null,
-                                        highlightColor: state.totalAdWatchedReOn>=10?Colors.white:null,
-                                        onTap: (){
-                                          if((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed) && remoteConfigService.showAdREORN() ){
-                                          if(context.read<AdBloc>().state.isLoadedRewardedAd){
-                                            showAd?context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedRandom)):null;
-                              
-                                          context.read<SwipeBloc>().add(LoadUserAd(
-                                          userId: context.read<AuthBloc>().state.user!.uid, 
-                                          users: context.read<AuthBloc>().state.accountType!,
-                                          loadFor: LoadFor.adRandom,
-                                          limit: 1
-                                          ));
-                              
-                                          }else{
-                                                
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
-                                                    context.read<AdBloc>().add(LoadRewardedAd());
-                                     
-                                        }
-
-
-                                          }else{
-                                            
-                                            context.read<SwipeBloc>().add(LoadUserAd(
-                                              userId: context.read<AuthBloc>().state.user!.uid, 
-                                              users: context.read<AuthBloc>().state.accountType!,
-                                              loadFor: LoadFor.adRandom,
-                                              limit: 1
-                                              )
-                                            );
-
-                                            context.read<AdBloc>().add(IncreaseReOn());
-                            
-                                          }
-                                        },
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 25.w),
-                                          child: Column(
-                                        
-                                            children: [
-                                              Row(
-                                                children: [
-                                                Icon(Icons.verified,color: Colors.grey,size: 25.sp, ),
-                                                SizedBox(width: 10.h,),
-                                                BlocBuilder<PaymentBloc,PaymentState>(
-                                                  builder: (context,state) {
-                                                    return Text((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed)&&remoteConfigService.showAdREORN()?
-                            
-                                                    'Watch Ad - Get 1 random Match' : 'Get 1 random Match'
-                                                    ,textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), );
-                                                  }
-                                                ),
-                            
-                                                state.totalAdWatchedReOn >=10 && state.completedTimeAd !=null? Padding(
-                                                  padding:  EdgeInsets.only(left:20.0.w),
-                                                  child: SlideCountdown(
-                                                    duration: Duration(seconds: 3600 - DateTime.now().difference(state.completedTimeAd??DateTime.now()).inSeconds),
-                                                  
-                                                  textStyle: TextStyle(fontSize: 9, color: Colors.white),
-                                                  padding: EdgeInsets.symmetric(horizontal: 7,vertical: 2),
-                                                
-                                                  ),
-                                                ):SizedBox(),
-                                                Spacer(),
-                                        BlocBuilder<SwipeBloc,SwipeState>(
-                                          builder: (context,state){
-                                            if(state.loadFor == LoadFor.adRandom){
-                                              return SizedBox(
-                                                height: 10,
-                                                width: 10,
-                                                child: CircularProgressIndicator(strokeWidth: 2,));
-                                            }else{
-                                              return SizedBox();
-                                            }
-
-                                          })
-                              
-                                              ],
-                                              )
-                                             
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                
-                                    ),
-                              ),
-                            ),
-
-                            SizedBox(height: 20.h,),
-
                             AbsorbPointer(
                               absorbing: state.totalAdWatchedReOn >=10,
                               child: SizedBox(
@@ -432,6 +328,110 @@ class SwipeCompletedWidget extends StatelessWidget {
                                     ),
                               ),
                             ),
+                            
+                            SizedBox(height: 20.h,),
+
+                            AbsorbPointer(
+                              absorbing: state.totalAdWatchedReOn >=10,
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                child: Card(
+                                      elevation: 4,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5)),
+                                      //color: state.totalAdWatchedReOn<=10? Colors.grey.withOpacity(0.8):null,
+                                      
+                                      child: InkWell(
+                                        splashColor: state.totalAdWatchedReOn>=10?Colors.white:null,
+                                        highlightColor: state.totalAdWatchedReOn>=10?Colors.white:null,
+                                        onTap: (){
+                                          if((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER  || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed) && remoteConfigService.showAdREORN() ){
+                                          if(context.read<AdBloc>().state.isLoadedRewardedAd){
+                                            showAd?context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedRandom)):null;
+                              
+                                          context.read<SwipeBloc>().add(LoadUserAd(
+                                          userId: context.read<AuthBloc>().state.user!.uid, 
+                                          users: context.read<AuthBloc>().state.accountType!,
+                                          loadFor: LoadFor.adRandom,
+                                          limit: 1
+                                          ));
+                              
+                                          }else{
+                                                
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                                    context.read<AdBloc>().add(LoadRewardedAd());
+                                     
+                                        }
+
+
+                                          }else{
+                                            
+                                            context.read<SwipeBloc>().add(LoadUserAd(
+                                              userId: context.read<AuthBloc>().state.user!.uid, 
+                                              users: context.read<AuthBloc>().state.accountType!,
+                                              loadFor: LoadFor.adRandom,
+                                              limit: 1
+                                              )
+                                            );
+
+                                            context.read<AdBloc>().add(IncreaseReOn());
+                            
+                                          }
+                                        },
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 25.w),
+                                          child: Column(
+                                        
+                                            children: [
+                                              Row(
+                                                children: [
+                                                Icon(Icons.verified,color: Colors.grey,size: 25.sp, ),
+                                                SizedBox(width: 10.h,),
+                                                BlocBuilder<PaymentBloc,PaymentState>(
+                                                  builder: (context,state) {
+                                                    return Text((context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed)&&remoteConfigService.showAdREORN()?
+                            
+                                                    'Watch Ad - Get 1 random Match' : 'Get 1 random Match'
+                                                    ,textAlign: TextAlign.center, style: TextStyle(fontSize: 11.sp, color: Colors.grey), );
+                                                  }
+                                                ),
+                            
+                                                state.totalAdWatchedReOn >=10 && state.completedTimeAd !=null? Padding(
+                                                  padding:  EdgeInsets.only(left:20.0.w),
+                                                  child: SlideCountdown(
+                                                    duration: Duration(seconds: 3600 - DateTime.now().difference(state.completedTimeAd??DateTime.now()).inSeconds),
+                                                  
+                                                  textStyle: TextStyle(fontSize: 9, color: Colors.white),
+                                                  padding: EdgeInsets.symmetric(horizontal: 7,vertical: 2),
+                                                
+                                                  ),
+                                                ):SizedBox(),
+                                                Spacer(),
+                                        BlocBuilder<SwipeBloc,SwipeState>(
+                                          builder: (context,state){
+                                            if(state.loadFor == LoadFor.adRandom){
+                                              return SizedBox(
+                                                height: 10,
+                                                width: 10,
+                                                child: CircularProgressIndicator(strokeWidth: 2,));
+                                            }else{
+                                              return SizedBox();
+                                            }
+
+                                          })
+                              
+                                              ],
+                                              )
+                                             
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                
+                                    ),
+                              ),
+                            ),
+                            
 
                              SizedBox(height: 15.h,),
 

@@ -12,17 +12,17 @@ class AdRepository{
     return Platform.isAndroid ?
       //'ca-app-pub-3940256099942544/5224354917' : '';
 
-      'ca-app-pub-8094466977699992/3561708231' : '';
+      'ca-app-pub-8094466977699992/3561708231' : 'ca-app-pub-8094466977699992/1870617920';
   }
 
   static String get nativeAdUnitId{
     return Platform.isAndroid ?
-      'ca-app-pub-3940256099942544/1044960115' : '';
+      'ca-app-pub-3940256099942544/1044960115' : 'ca-app-pub-8094466977699992/3172091306';
   }
 
   static String get InterstitialAdUnitId{
     return Platform.isAndroid ?
-      'ca-app-pub-3940256099942544/1033173712' : '';
+      'ca-app-pub-3940256099942544/1033173712' : 'ca-app-pub-8094466977699992/3172091306';
   }
 
   void createRewardAd({required void Function(RewardedAd) onAdLoaded, required void Function(LoadAdError) onAdFailedToLoad} ){

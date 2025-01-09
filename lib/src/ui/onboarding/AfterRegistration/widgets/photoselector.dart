@@ -106,6 +106,7 @@ class _PhotoSelectorState extends State<PhotoSelector> {
                           //for(var img in _image){
 
                           if (validPhoto) {
+                            try{
                             final lastIndex =
                                 image0.path.lastIndexOf(RegExp(r'.jp'));
                             final splitted =
@@ -120,6 +121,13 @@ class _PhotoSelectorState extends State<PhotoSelector> {
                             //context.read<ProfileBloc>().add(UpdateProfileImages(user: widget.user, image: image!));
                             context.read<OnboardingBloc>().add(UpdateUserImages(
                                 image: image!, index: widget.index));
+                              }catch(e){
+                    setState(() {
+                      isPhotoSelected = false;
+                      imageFile = null;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please use another photo!',style: TextStyle(fontSize: 12),)));
+                  }
                           } else {
                             ScaffoldMessenger.of(context)
                                 .showSnackBar(const SnackBar(

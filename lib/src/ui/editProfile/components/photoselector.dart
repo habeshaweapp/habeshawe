@@ -118,6 +118,7 @@ class _PhotoSelectorState extends State<PhotoSelector> {
                           for (var img in image0) {
                             bool samri = await processImage(img!.path);
                             if (samri) {
+                              try{
                               final lastIndex =
                                   img.path.lastIndexOf(RegExp(r'.jp'));
                               final splitted =
@@ -132,6 +133,14 @@ class _PhotoSelectorState extends State<PhotoSelector> {
                               context.read<ProfileBloc>().add(
                                   UpdateProfileImages(
                                       user: widget.user, image: image!));
+
+                                }catch(e){
+                                    setState(() {
+                                    isPhotoSelected = false;
+                                    imageFile = null;
+                              });
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please use another photo!',style: TextStyle(fontSize: 12),)));
+                            }
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(

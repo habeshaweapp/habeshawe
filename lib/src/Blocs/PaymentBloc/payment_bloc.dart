@@ -225,7 +225,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     final products = await _paymentRepository.getProducts();
 
     if(payment.countryCode == 'ET' && _authBloc.state.accountType == Gender.women  && remoteConfigService.ETWomensPay()==false ){
-       emit(state.copyWith(subscribtionStatus: SubscribtionStatus.ET_USER, productDetails: products, boosts: payment.boosts, superLikes: payment.superLikes ));
+       emit(state.copyWith(subscribtionStatus: SubscribtionStatus.ET_USER, productDetails: products, boosts: payment.boosts, superLikes: payment.superLikes, countryCode: payment.countryCode ));
   
       }else
     if(payment.countryCode != 'ET' ||  remoteConfigService.ETusersPay() ){
@@ -239,15 +239,15 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
       _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: {}, subscribtionStatus: SubscribtionStatus.notSubscribed.index, paymentType: SubscribtionStatus.notSubscribed.name, expireDate: payment.expireDate);
 
       await _paymentRepository.restorePurchase();
-      emit(state.copyWith(productDetails: products, subscribtionStatus: SubscribtionStatus.notSubscribed, boosts: payment.boosts, superLikes: payment.superLikes ));
+      emit(state.copyWith(productDetails: products, subscribtionStatus: SubscribtionStatus.notSubscribed, boosts: payment.boosts, superLikes: payment.superLikes, countryCode: payment.countryCode ));
     }else{
 
-      emit(state.copyWith(productDetails: products, subscribtionStatus: SubscribtionStatus.values[payment.subscribtionStatus], boosts: payment.boosts, superLikes: payment.superLikes ));
+      emit(state.copyWith(productDetails: products, subscribtionStatus: SubscribtionStatus.values[payment.subscribtionStatus], boosts: payment.boosts, superLikes: payment.superLikes, countryCode: payment.countryCode ));
 
     }
   }
   else{
-    emit(state.copyWith(subscribtionStatus: SubscribtionStatus.ET_USER, productDetails: products, boosts: payment.boosts, superLikes: payment.superLikes ));
+    emit(state.copyWith(subscribtionStatus: SubscribtionStatus.ET_USER, productDetails: products, boosts: payment.boosts, superLikes: payment.superLikes, countryCode: payment.countryCode ));
   }
 
   if(payment.boostedTime !=null){

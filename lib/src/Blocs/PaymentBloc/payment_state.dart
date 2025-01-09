@@ -12,7 +12,8 @@ class PaymentState extends Equatable {
     this.boosts =0,
     this.superLikes=0,
     this.selectedProduct,
-    this.boostedTime
+    this.boostedTime,
+   this.countryCode = 'x'
   });
 
   final SubscribtionStatus subscribtionStatus;
@@ -22,6 +23,7 @@ class PaymentState extends Equatable {
   final int superLikes;
   final ProductDetails? selectedProduct;
   final DateTime? boostedTime;
+  final String countryCode;
 
 
   PaymentState copyWith({
@@ -32,7 +34,8 @@ class PaymentState extends Equatable {
     int? superLikes,
     ProductDetails? selectedProduct,
     DateTime? boostedTime,
-    bool? makeNull
+    bool? makeNull,
+    String? countryCode
 
   }){
     return PaymentState(
@@ -42,12 +45,13 @@ class PaymentState extends Equatable {
       boosts: boosts ?? this.boosts,
       superLikes: superLikes ?? this.superLikes,
       selectedProduct: selectedProduct??this.selectedProduct,
-      boostedTime: makeNull==true?null: boostedTime??  this.boostedTime
+      boostedTime: makeNull==true?null: boostedTime??  this.boostedTime,
+      countryCode: countryCode??this.countryCode
     );
   }
   
   @override
-  List<Object?> get props => [subscribtionStatus, productDetails, purchaseDetails,boosts,superLikes, selectedProduct,boostedTime];
+  List<Object?> get props => [subscribtionStatus, productDetails, purchaseDetails,boosts,superLikes, selectedProduct,boostedTime, countryCode];
 }
 
 class PaymentInitial extends PaymentState {}

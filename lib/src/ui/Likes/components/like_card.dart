@@ -37,7 +37,7 @@ class LikeCard extends StatelessWidget {
             //colorFilter: ColorFilter.mode(Colors.grey[900]!, BlendMode.modulate),
             image: CachedNetworkImageProvider(
               like.user.imageUrls[0],
-              errorListener: () {
+              errorListener: (error) {
                 if(context.read<InternetBloc>().state.isConnected == true){
                     context.read<DatabaseRepository>().changeMatchImage(
                                 userId: context.read<AuthBloc>().state.user!.uid, 

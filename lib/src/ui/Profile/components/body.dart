@@ -132,8 +132,9 @@ class Body extends StatelessWidget {
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) => Center(child: CircularProgressIndicator(strokeWidth: 2,)),
                                       errorWidget: (context, url,  error) {
-                                       if(error.statusCode == 403)
-                                        {
+                                        debugPrint(error.toString());
+                                      //  if(error.statusCode == 403)
+                                      //   {
                                           if(profileFrom == ProfileFrom.like || profileFrom == ProfileFrom.chat){
                                             context.read<DatabaseRepository>().changeMatchImage(
                                                 userId: context.read<AuthBloc>().state.user!.uid, 
@@ -145,7 +146,7 @@ class Body extends StatelessWidget {
                                                 }, 
                                                 from:profileFrom == ProfileFrom.like? 'likes':'matches');
                                           }
-                                        }
+                                        // }
 
                                         return Icon(Icons.error);
 

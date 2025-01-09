@@ -32,7 +32,7 @@ class _InterestsState extends State<Interests> {
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Scaffold(
       body: SafeArea(
-        child:Container(
+        child: Container(
           width: MediaQuery.of(context).size.width,
           //height: MediaQuery.of(context).size.height,
           child: SingleChildScrollView(
@@ -69,36 +69,47 @@ class _InterestsState extends State<Interests> {
                   ),
                // Spacer(flex: 1,),
                   
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                    child: SizedBox(
-                      //height: MediaQuery.of(context).size.height *0.67,
-                      child: SingleChildScrollView(
-                        physics: BouncingScrollPhysics(),
-                        child: Wrap(
-                          spacing: 5,
-                          children: List.generate(remoteInterests.length, (index) => 
-                              ChoiceChip(
-                              label: Text(remoteInterests[index],style: TextStyle(color: _selectedList.contains(remoteInterests[index])? isDark? Colors.black:Colors.white : Colors.black, fontSize: 12.sp, fontWeight: FontWeight.w300),), 
-                              selected: _selectedList.contains(remoteInterests[index]),
-                              selectedColor: isDark?Colors.teal: Colors.green,
-                              //backgroundColor: Colors.teal,
-                              onSelected: (value) {
-                                if(_selectedList.length <5 || _selectedList.contains(remoteInterests[index]) ){
-                                setState(() {
-                                  _selectedList.contains(remoteInterests[index]) ? _selectedList.remove(remoteInterests[index]) : _selectedList.add(remoteInterests[index]);
-                                });
-                          
-                                }
-                              },
-                              ),
-                          )
-                        ),
+                
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.67,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  itemBuilder: (context, index) {
+                    return ChoiceChip(
+                      label: Text(
+                        remoteInterests[index],
+                        style: TextStyle(
+                            color:
+                                _selectedList.contains(remoteInterests[index])
+                                    ? isDark
+                                        ? Colors.black
+                                        : Colors.white
+                                    : Colors.black,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w300),
                       ),
-                    ),
-                  ),
+                      selected: _selectedList.contains(remoteInterests[index]),
+                      selectedColor: isDark ? Colors.teal : Colors.green,
+                      //backgroundColor: Colors.teal,
+                      onSelected: (value) {
+                        if (_selectedList.length < 5 ||
+                            _selectedList.contains(remoteInterests[index])) {
+                          setState(() {
+                            _selectedList.contains(remoteInterests[index])
+                                ? _selectedList.remove(remoteInterests[index])
+                                : _selectedList.add(remoteInterests[index]);
+                          });
+                        }
+                      },
+                    );
+                  },
                 ),
+              ),
+            ),
+                
                 
                   
                 

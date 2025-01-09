@@ -36,7 +36,7 @@ class NotificationService{
 
    final DarwinInitializationSettings darwinInitializationSettings =
      DarwinInitializationSettings(
-      onDidReceiveLocalNotification: onDidReceiveLocalNotification,
+      // onDidReceiveLocalNotification: onDidReceiveLocalNotification,
      );
 
   final InitializationSettings initializationSettings = 

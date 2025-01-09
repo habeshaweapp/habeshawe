@@ -10,6 +10,7 @@ import 'package:lomi/src/Data/Repository/Remote/remote_config.dart';
 import 'package:lomi/src/app.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'src/Data/Repository/FirebaseMessaging/firebase_messaging.dart';
 import 'src/Data/Repository/SharedPrefes/sharedPrefes.dart';
 
 void main() async {
@@ -37,7 +38,7 @@ void main() async {
   await NotificationService().init();
   await RemoteConfigService().init();
   await SharedPrefes.init();
-  // await FirebaseMessagingRepo().initFirebaseMessaging();
+  await FirebaseMessagingRepo().initFirebaseMessaging();
   // await initializeBackgroundService();
   runApp(const MyApp());
 }

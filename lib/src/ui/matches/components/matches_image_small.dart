@@ -44,19 +44,16 @@ class MatchesImage extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: CachedNetworkImageProvider(match?.imageUrls[0]??url,
-                            errorListener: (){
-                              if(context.read<InternetBloc>().state.isConnected == true){
-                                  context.read<DatabaseRepository>().changeMatchImage(
-                                    userId: context.read<AuthBloc>().state.user!.uid, 
-                                    userGender: context.read<AuthBloc>().state.accountType!,
-                                    match: match!.toMap(), 
-                                    from: 'matches');
-
-                              }
-
-                            }     
-                            )
+                  image: CachedNetworkImageProvider(match?.imageUrls[0] ?? url,
+                errorListener: (error) {
+              if (context.read<InternetBloc>().state.isConnected == true) {
+                context.read<DatabaseRepository>().changeMatchImage(
+                    userId: context.read<AuthBloc>().state.user!.uid,
+                    userGender: context.read<AuthBloc>().state.accountType!,
+                    match: match!.toMap(),
+                    from: 'matches');
+              }
+            })
                   //NetworkImage(url)
                   ),
                   borderRadius: shape == BoxShape.rectangle? BorderRadius.all(Radius.circular(10)):null,

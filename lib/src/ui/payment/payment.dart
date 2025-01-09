@@ -61,86 +61,9 @@ class _PaymentState extends State<Payment> {
       {'name': '15', 'description': 'Super Likes', 'price': '\$1.99/ea'},
       {'name': '30', 'description': 'Super Likes', 'price': '\$1/ea'},
     ];
-
-    switch (widget.paymentUi) {
-      case PaymentUi.subscription:
-        subs = subs;
-        break;
-      case PaymentUi.boosts:
-        subs = boosts;
-        break;
-      case PaymentUi.superlikes:
-        subs = superLikes;
-        break;
-    }
-
-    Color bgColor = widget.paymentUi == PaymentUi.subscription
-        ? Colors.amber
-        : widget.paymentUi == PaymentUi.boosts
-            ? Colors.purple
-            : Colors.blue;
-
-    return 
-            BlocBuilder<PaymentBloc, PaymentState>(
-              builder: (context, state) {
-                List<ProductDetails> productDetails = [];
-                if(widget.paymentUi == PaymentUi.subscription){
-            
-                  for(var product in state.productDetails){
-                    if(subIds.contains(product.id)) productDetails.add(product);
-                  }
-                }
-                
-                if(widget.paymentUi == PaymentUi.boosts){
-                  for(var product in state.productDetails){
-                    if(boostsIds.contains(product.id)) productDetails.add(product);
-                  }
-                }
-
-                if(widget.paymentUi == PaymentUi.superlikes){
-                  for(var product in state.productDetails){
-                    if(likesIds.contains(product.id)) productDetails.add(product);
-                  }
-                }
-                return Container(
-      color: Colors.transparent,
-      child: Container(
-        width: width * 0.9,
-        height: 
-        550.h,
-        //height * 0.65,
-        // color: Colors.transparent,
-        child: Column(
-          children: [ Container(
-                  //height: height * 0.22,
-                  // width: 600,
-                  padding: EdgeInsets.zero,
-                  decoration: BoxDecoration(
-                      color: widget.paymentUi == PaymentUi.subscription
-                          ? !isDark
-                              ? Colors.amber
-                              : Colors.amber[700]
-                          : bgColor,
-                      borderRadius: BorderRadius.vertical(
-                        top: Radius.circular(15),
-                      )),
-                  child: widget.paymentUi == PaymentUi.subscription
-                      ? (state.subscribtionStatus == SubscribtionStatus.notSubscribed|| state.subscribtionStatus == SubscribtionStatus.ET_USER)? Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Text('Get HabeshaWe Premium',
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context).textTheme.bodyLarge),
-                            ),
-                            Container(
-                              height: 150.h,
-                              child: PageView(
-                                physics: BouncingScrollPhysics(),
-                                controller: pageController,
-                                children: [
-                                  state.productDetails.isEmpty?
-                                  Column(
+    
+    List<Widget> front = [
+      Column(
                                     children: [
                                       
                                       Image.asset(
@@ -219,8 +142,10 @@ class _PaymentState extends State<Payment> {
 
 
                                     ],
-                                  ):SizedBox(),
-                                  pageViewItem(
+                                  ),
+              
+
+              pageViewItem(
                                       context: context,
                                       image: 'assets/icons/likeIconPayment.png',
                                       title: 'View Profile',
@@ -241,12 +166,100 @@ class _PaymentState extends State<Payment> {
                                       description:'No Ads\nfind your partner without any delay.'
                                           //'Increase you match by becoming king you will get as match as many matchs, your profile will be showed to normal users '
                                           )
-                                ],
+
+
+
+    ];
+
+    switch (widget.paymentUi) {
+      case PaymentUi.subscription:
+        subs = subs;
+        break;
+      case PaymentUi.boosts:
+        subs = boosts;
+        break;
+      case PaymentUi.superlikes:
+        subs = superLikes;
+        break;
+    }
+
+    Color bgColor = widget.paymentUi == PaymentUi.subscription
+        ? Colors.amber
+        : widget.paymentUi == PaymentUi.boosts
+            ? Colors.purple
+            : Colors.blue;
+
+    return 
+            BlocBuilder<PaymentBloc, PaymentState>(
+              builder: (context, state) {
+                List<ProductDetails> productDetails = [];
+                if(widget.paymentUi == PaymentUi.subscription){
+            
+                  for(var product in state.productDetails){
+                    if(subIds.contains(product.id)) productDetails.add(product);
+                  }
+                }
+                
+                if(widget.paymentUi == PaymentUi.boosts){
+                  for(var product in state.productDetails){
+                    if(boostsIds.contains(product.id)) productDetails.add(product);
+                  }
+                }
+
+                if(widget.paymentUi == PaymentUi.superlikes){
+                  for(var product in state.productDetails){
+                    if(likesIds.contains(product.id)) productDetails.add(product);
+                  }
+                }
+                return Container(
+      color: Colors.transparent,
+      child: Container(
+        width: width * 0.9,
+        height: 
+        550.h,
+        //height * 0.65,
+        // color: Colors.transparent,
+        child: Column(
+          children: [ Container(
+                  //height: height * 0.22,
+                  // width: 600,
+                  padding: EdgeInsets.zero,
+                  decoration: BoxDecoration(
+                      color: widget.paymentUi == PaymentUi.subscription
+                          ? !isDark
+                              ? Colors.amber
+                              : Colors.amber[700]
+                          : bgColor,
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(15),
+                      )),
+                  child: widget.paymentUi == PaymentUi.subscription
+                      ? (state.subscribtionStatus == SubscribtionStatus.notSubscribed)? Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text('Get HabeshaWe Premium',
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.bodyLarge),
+                            ),
+                            Container(
+                              height: 150.h,
+                              child: PageView(
+                                physics: BouncingScrollPhysics(),
+                                controller: pageController,
+                                children: 
+                                  //change this
+                                  state.countryCode == 'ET' ?
+                                  //state.productDetails.isEmpty?
+                                  front
+                                  :front.sublist(1)
+                                  
+                                
                               ),
                             ),
                             SizedBox(
                               width: 80,
-                              child: DotIndicator(dots:state.productDetails.isEmpty?4: 3, pageController: pageController),
+                              child: DotIndicator(dots:state.countryCode == 'ET'?4: 3, pageController: pageController),
                             )
                           ],
                         ):Container(
@@ -311,7 +324,8 @@ class _PaymentState extends State<Payment> {
                 ),
               
             //SizedBox(height: 25,),
-            state.productDetails.isNotEmpty  ?
+           // state.productDetails.isNotEmpty  ?
+            (state.countryCode != 'ET'&& state.productDetails.isNotEmpty) || (state.productDetails.isNotEmpty && widget.paymentUi != PaymentUi.subscription)?
             SizedBox(
               //height: 100,
               child: Row(
@@ -354,7 +368,7 @@ class _PaymentState extends State<Payment> {
               //margin: EdgeInsets.only(top: 140.h),
               child: Column(
                children:[
-                widget.paymentUi == PaymentUi.subscription?
+                state.countryCode == 'ET'&& widget.paymentUi == PaymentUi.subscription?
                 Container(
                   height: 260,
                   width: 260,
@@ -380,14 +394,14 @@ class _PaymentState extends State<Payment> {
                        
                 //      }),
                 //  ),
-                widget.paymentUi == PaymentUi.subscription?
+                state.countryCode == 'ET'&&widget.paymentUi == PaymentUi.subscription?
                 Text(
                   'Scan the QR code on Telebirr to pay.',
                   style: TextStyle(fontSize: 11),
                 ):SizedBox(height: 250.h,),
                 SizedBox(height: 5.h,),
               
-           
+                state.countryCode == 'ET'?
                  Align(
                   alignment: Alignment.bottomCenter,
                    child: SizedBox(
@@ -420,7 +434,7 @@ class _PaymentState extends State<Payment> {
                      )
                      ),
                    ),
-                 )
+                 ):const SizedBox()
                  ]),
                        ),
 
@@ -452,7 +466,10 @@ class _PaymentState extends State<Payment> {
             Spacer(
               flex: 2,
             ),
-            state.productDetails.isNotEmpty?
+            //major change here too
+          // state.countryCode != 'ET'  && state.productDetails.isNotEmpty?
+           (state.countryCode != 'ET'&& state.productDetails.isNotEmpty) || (state.productDetails.isNotEmpty && widget.paymentUi != PaymentUi.subscription)?
+           // state.productDetails.isNotEmpty?
             SizedBox(
               width: width * 0.5,
               child: ElevatedButton(
@@ -481,11 +498,12 @@ class _PaymentState extends State<Payment> {
               child: Divider(),
             ):SizedBox(),
 
-            widget.paymentUi == PaymentUi.subscription? 
-            context.read<PaymentBloc>().state.subscribtionStatus ==SubscribtionStatus.notSubscribed?
+            // widget.paymentUi == PaymentUi.subscription? 
+            // context.read<PaymentBloc>().state.subscribtionStatus ==SubscribtionStatus.notSubscribed?
+             state.countryCode != 'ET'&& widget.paymentUi == PaymentUi.subscription && state.subscribtionStatus ==SubscribtionStatus.notSubscribed?
             TextButton(
               onPressed: (){}, 
-              child:  Text('Restore subscription!', style: TextStyle(color: Colors.grey, fontSize: 11.sp),)): SizedBox():SizedBox(),
+              child:  Text('Restore subscription!', style: TextStyle(color: Colors.grey, fontSize: 11.sp),)): SizedBox(),
 
             //Spacer()
             SizedBox(height:widget.paymentUi != PaymentUi.subscription?20.h:0,)

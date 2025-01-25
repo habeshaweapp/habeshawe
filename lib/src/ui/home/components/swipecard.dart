@@ -288,31 +288,31 @@ class SwipeCard extends StatelessWidget {
                         
                         }
                       if(index == 0){
-                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.ET_USER || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
-                          if(!remoteConfigService.ETusersPay()){
+                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.notSubscribed){
+                          //if(!remoteConfigService.ETusersPay()){
                             if(remoteConfigService.showAdREORN()){
                             if(context.read<AdBloc>().state.isLoadedRewardedAd){
                               context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedRandom));
                               _matchEngine?.rewindMatch();
                             }else{
-                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11.sp, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
 
                             }
                           }else{
                             _matchEngine?.rewindMatch();
                           }
-                          }
-                          else{
+                          // }
+                          // else{
                             showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
-                          }
+                          //}
                           
 
                         }else{
 
-                        if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly||context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months){
+                        //if(context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedMonthly||context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribedYearly || context.read<PaymentBloc>().state.subscribtionStatus == SubscribtionStatus.subscribed6Months){
 
                         _matchEngine?.rewindMatch();
-                        }
+                        //}
                         }
                       if(index == 4){ 
                         if(context.read<PaymentBloc>().state.productDetails != null ){

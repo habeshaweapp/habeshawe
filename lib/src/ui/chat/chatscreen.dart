@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
@@ -68,13 +69,13 @@ class ChatScreen extends StatelessWidget {
                 children: [
                   Text(userMatch.name,style: Theme.of(context).textTheme.bodyMedium,),
                   userMatch.imageUrls.isEmpty? 
-                  const Text('last seen a long time ago', style: TextStyle(fontSize: 12, color: Colors.grey)):
+                  const Text('last seen a long time ago', style: TextStyle(fontSize: 12.sp, color: Colors.grey)):
                   StreamBuilder(
                     stream: context.read<DatabaseRepository>().onlineStatusChanged(userId: userMatch.userId, gender: userMatch.gender),
                     builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String,dynamic>>> snapshot) {
                       if(snapshot.hasError){
                         return  Text('connecting...',
-                          style: TextStyle(color: Colors.grey, fontSize: 12)
+                          style: TextStyle(color: Colors.grey, fontSize: 12.sp)
                           );
                       }
                      
@@ -104,7 +105,7 @@ class ChatScreen extends StatelessWidget {
                           SizedBox(width: 3,),
                           Text('Active now', style: 
                           //Theme.of(context).textTheme.bodySmall,
-                          TextStyle(color: Colors.grey, fontSize: 12
+                          TextStyle(color: Colors.grey, fontSize: 12.sp
                           ),
                           )
                         ],
@@ -113,12 +114,12 @@ class ChatScreen extends StatelessWidget {
                       Text(
                         lastSeen(snapshot.data?['lastseen'].toDate()),
                         style: Theme.of(context).textTheme.bodySmall,
-                        ): const Text('last seen recently', style: TextStyle(fontSize: 12, color: Colors.grey));
+                        ): const Text('last seen recently', style: TextStyle(fontSize: 12.sp, color: Colors.grey));
                       
 
                     }else{
                       return Text('updating...',
-                          style: TextStyle(color: Colors.grey, fontSize: 12
+                          style: TextStyle(color: Colors.grey, fontSize: 12.sp
                           ),
                       );
                     }
@@ -238,7 +239,7 @@ class ChatScreen extends StatelessWidget {
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 20),
-                      child: Text('Unmatch this person', style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white, fontSize: 18),),
+                      child: Text('Unmatch this person', style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.white, fontSize: 18.sp),),
                     )
                     ,Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
@@ -332,7 +333,7 @@ class ChatScreen extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal:30),
                     child: Text('Bloc and report this person',
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(fontSize: 18.sp),
                     ),
                     ),
                     Padding(

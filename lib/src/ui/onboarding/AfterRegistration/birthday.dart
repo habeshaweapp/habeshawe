@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
@@ -64,7 +65,7 @@ class _BirthdayState extends State<Birthday> {
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'day',
-                          labelStyle: TextStyle(fontSize: 12)
+                          labelStyle: TextStyle(fontSize: 12.sp)
                         ),
                         //maxLength: 2,
                         keyboardType: TextInputType.number,
@@ -89,7 +90,7 @@ class _BirthdayState extends State<Birthday> {
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'month',
-                          labelStyle: TextStyle(fontSize: 12)
+                          labelStyle: TextStyle(fontSize: 12.sp)
                         ),
                         //maxLength: 2,
                         keyboardType: TextInputType.number,
@@ -116,7 +117,7 @@ class _BirthdayState extends State<Birthday> {
                         decoration: InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'year',
-                          labelStyle: TextStyle(fontSize: 12)
+                          labelStyle: TextStyle(fontSize: 12.sp)
                         ),
                         //maxLength: 4,
                         keyboardType: TextInputType.number,
@@ -180,7 +181,7 @@ class _BirthdayState extends State<Birthday> {
                     child: ElevatedButton(
                       onPressed: (){
                         if(int.parse(month)>12){
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('invalid month!', style: TextStyle(fontSize: 12)) ,backgroundColor: Colors.black38, ));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('invalid month!', style: TextStyle(fontSize: 12.sp)) ,backgroundColor: Colors.black38, ));
                         }else{
                         final Today = DateTime.now();
                         if(day !=''&& month!=''&& year!=''){
@@ -232,7 +233,7 @@ class _BirthdayState extends State<Birthday> {
                       //   Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
                       //                                                                                 child: const LookingFor() )));
                       }, 
-                      child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
+                      child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp,color: Colors.white),),
                       style: ElevatedButton.styleFrom(
                         shape: StadiumBorder(),
                       ),

@@ -1390,7 +1390,7 @@ class DatabaseRepository extends BaseDatabaseRepository {
         'creationTimestamp': FieldValue.serverTimestamp(),
         'diascora': placeMark.isoCountryCode == 'ET' ? false : true,
         'fake': 'unReviewed',
-        'version': '2.2.0+35',
+        'version': '1.0.0+2_ios',
         'platform': Platform.isAndroid
             ? 'android'
             : Platform.isIOS

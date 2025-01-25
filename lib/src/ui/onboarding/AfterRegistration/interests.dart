@@ -151,7 +151,7 @@ class _InterestsState extends State<Interests> {
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyLarge!
-                                  .copyWith(fontSize: 17, color: Colors.white),
+                                  .copyWith(fontSize: 17.sp, color: Colors.white),
                             ),
                             style: ElevatedButton.styleFrom(
                                 shape: StadiumBorder(),

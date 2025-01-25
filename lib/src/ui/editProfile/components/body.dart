@@ -169,7 +169,7 @@ class Body extends StatelessWidget {
 
                     //controller: TextEditingController(text: state.user.aboutMe),
                     controller: aboutMeController,
-                    style: TextStyle(fontWeight: FontWeight.w300, fontSize:12, color: Colors.grey),
+                    style: TextStyle(fontWeight: FontWeight.w300, fontSize:12.sp, color: Colors.grey),
                  
           
                     onChanged: (text){
@@ -205,7 +205,7 @@ class Body extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                     width: MediaQuery.of(context).size.width,
                     child: Text(state.user.interests.toString().replaceAll('[', '').replaceAll(']', ''),
-                                style: TextStyle(color: Colors.grey,fontSize:12,),
+                                style: TextStyle(color: Colors.grey,fontSize:12.sp,),
                             ),
                   ),
                 ),
@@ -234,7 +234,7 @@ class Body extends StatelessWidget {
                          SizedBox(width: 10,),
                          Text('Looking for'),
                          Spacer(),
-                         Text(lookignForOptions[state.user.lookingFor!].replaceAll('\n', ''),style: TextStyle(color: Colors.grey,fontSize:12,),)
+                         Text(lookignForOptions[state.user.lookingFor!].replaceAll('\n', ''),style: TextStyle(color: Colors.grey,fontSize:12.sp,),)
                   
                       ],
                     ),
@@ -275,7 +275,7 @@ class Body extends StatelessWidget {
                     keyboardType: TextInputType.number,
                     maxLength: 3,
                     controller: heightController,
-                    style: TextStyle(color: Colors.grey, fontSize:13,),
+                    style: TextStyle(color: Colors.grey, fontSize:13.sp,),
           
                     onChanged: (value){
                       //context.read<ProfileBloc>().add(UpdateProfile(user: state.user.copyWith(height: int.parse(value) )));
@@ -319,7 +319,7 @@ class Body extends StatelessWidget {
                          Text('Education'),
                          Spacer(),
                          Text(state.user.education == null ? 'Empty  >': state.user.education!,
-                            style: TextStyle(color: Colors.grey, fontSize:12,),
+                            style: TextStyle(color: Colors.grey, fontSize:12.sp,),
                          ),
                   
                       ],
@@ -360,7 +360,7 @@ class Body extends StatelessWidget {
                               LengthLimitingTextInputFormatter(25),
                             ],
                     controller: jobTitle,
-                    style: TextStyle(color: Colors.grey, fontSize:13,),
+                    style: TextStyle(color: Colors.grey, fontSize:13.sp,),
           
                     onChanged: (value) {
                      // context.read<ProfileBloc>().add(UpdateProfile(user: state.user.copyWith(jobTitle: value)));
@@ -400,7 +400,7 @@ class Body extends StatelessWidget {
                     inputFormatters: [
                               LengthLimitingTextInputFormatter(25),
                             ],
-                    style: TextStyle(color: Colors.grey, fontSize:13,),
+                    style: TextStyle(color: Colors.grey, fontSize:13.sp,),
                     controller: companyController,
           
                     onChanged: (value){
@@ -442,7 +442,7 @@ class Body extends StatelessWidget {
                             
                             ],
                     controller: schoolController,
-                    style: TextStyle(color: Colors.grey, fontSize:13,),
+                    style: TextStyle(color: Colors.grey, fontSize:13.sp,),
           
                     onChanged: (value){
                       //context.read<ProfileBloc>().add(UpdateProfile(user: state.user.copyWith(school: value)));
@@ -486,7 +486,7 @@ class Body extends StatelessWidget {
                               LengthLimitingTextInputFormatter(55),
                             
                             ],
-                    style: TextStyle(color: Colors.grey,fontSize:13,),
+                    style: TextStyle(color: Colors.grey,fontSize:13.sp,),
                     controller: addCityController,
                     onChanged: (value){
                       //context.read<ProfileBloc>().add(UpdateProfile(user: state.user.copyWith(livingIn: value)));
@@ -532,7 +532,7 @@ class Body extends StatelessWidget {
                   children: List.generate(caps.length, (index) => 
               
                     ChoiceChip(
-                      label: Text(caps[index],style: TextStyle(color: selectedIndex == index? Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w300)) , 
+                      label: Text(caps[index],style: TextStyle(color: selectedIndex == index? Colors.white : Colors.black, fontSize: 12.sp, fontWeight: FontWeight.w300)) , 
                       selected: selectedIndex == index,
                       selectedColor:  Theme.of(context).brightness == ThemeMode.dark? Colors.teal: Colors.green,
                       disabledColor: Colors.grey[300],

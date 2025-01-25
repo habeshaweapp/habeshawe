@@ -126,7 +126,7 @@ class LikeCard extends StatelessWidget {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text('Watch Ad', style: TextStyle(color: Colors.white,fontSize: 12),),
+                  child: Text('Watch Ad', style: TextStyle(color: Colors.white,fontSize: 12.sp),),
                 ),
               ),
             ),

@@ -182,7 +182,7 @@ class Body extends StatelessWidget {
                             Container(
                               child: Text(
                                 "${user.name}  ${user.age}", 
-                                style: TextStyle(fontSize: 24, fontFamily: 'Proxima-Nova_Extrabold', fontWeight: FontWeight.bold,  ),
+                                style: TextStyle(fontSize: 24.sp, fontFamily: 'Proxima-Nova_Extrabold', fontWeight: FontWeight.bold,  ),
                                 ),
                             ),
                             SizedBox(width: 5,),
@@ -204,7 +204,7 @@ class Body extends StatelessWidget {
                               //Icon(Icons.verified,color: Colors.blue, size:18,),
                               TagHelper.getTag(name: user.verified!, size: 16 ),
                               SizedBox(width: 7,),
-                              Text(user.verified! ,style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
+                              Text(user.verified! ,style: TextStyle(fontSize: 11.sp, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
                             ],
                           ),
                         ):SizedBox(),
@@ -216,7 +216,7 @@ class Body extends StatelessWidget {
                             children: [
                               Icon(FontAwesomeIcons.ruler, size: 16,color:Colors.grey),
                               SizedBox(width: 7,),
-                              Text('${user.height}cm',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),)
+                              Text('${user.height}cm',style: TextStyle(fontSize: 11.sp, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),)
                               
                             ],
                           ),
@@ -229,8 +229,8 @@ class Body extends StatelessWidget {
                             children: [
                               Icon(Icons.work, size: 18,color:Colors.grey),
                               SizedBox(width: 7,),
-                              (user.jobTitle !=null && user.jobTitle !='' ) && (user.company!=null && user.company!='')? Text('${user.jobTitle} at ${user.company}',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),):
-                              Text(user.jobTitle !=''?'${user.jobTitle}':'${user.company}',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),)
+                              (user.jobTitle !=null && user.jobTitle !='' ) && (user.company!=null && user.company!='')? Text('${user.jobTitle} at ${user.company}',style: TextStyle(fontSize: 11.sp, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),):
+                              Text(user.jobTitle !=''?'${user.jobTitle}':'${user.company}',style: TextStyle(fontSize: 11.sp, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),)
                               ,
 
                             ],
@@ -251,7 +251,7 @@ class Body extends StatelessWidget {
                             children: [
                               Icon(LineIcons.graduationCap, color: Colors.grey, size: 18,  ),
                               SizedBox(width: 7,),
-                              Text(user.school!, style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),)
+                              Text(user.school!, style: TextStyle(fontSize: 11.sp, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),)
                             ],
                           ),
                         ):SizedBox(),
@@ -262,7 +262,7 @@ class Body extends StatelessWidget {
                             children: [
                               Icon(LineIcons.city,color: Colors.grey, size:18,),
                               SizedBox(width: 7,),
-                              Text(user.livingIn != ''?user.livingIn??'${user.city}, ${user.country}':'${user.city}, ${user.country}',style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
+                              Text(user.livingIn != ''?user.livingIn??'${user.city}, ${user.country}':'${user.city}, ${user.country}',style: TextStyle(fontSize: 11.sp, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300))
                             ],
                           ),
                         ),
@@ -282,7 +282,7 @@ class Body extends StatelessWidget {
                               Text(
                                 
                                 distance == 0? 'less than a $km away' :'${distance} $km away',
-                                style: TextStyle(fontSize: 11, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),
+                                style: TextStyle(fontSize: 11.sp, fontFamily: 'ProximaNova-Regular', fontWeight: FontWeight.w300),
                                 ),
                             ],
                           ),
@@ -321,7 +321,7 @@ class Body extends StatelessWidget {
                         Container(
                           child: Text(
                                 "About Me", 
-                                style: TextStyle(fontSize: 20, fontFamily: 'Proxima-Nova-Bold', fontWeight: FontWeight.w400
+                                style: TextStyle(fontSize: 20.sp, fontFamily: 'Proxima-Nova-Bold', fontWeight: FontWeight.w400
                         ),
                                 ),
                         ),
@@ -332,7 +332,7 @@ class Body extends StatelessWidget {
                           width: size.width * 0.85,
                           child: Text(
                             user.aboutMe ?? '-',
-                            style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13, fontWeight: FontWeight.w300)
+                            style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13.sp, fontWeight: FontWeight.w300)
                             
                            // TextStyle(fontFamily: 'Proxima-Nova-Bold',fontWeight: FontWeight.w300,),
                            //style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 13),
@@ -345,7 +345,7 @@ class Body extends StatelessWidget {
                         Container(
                           child: Text(
                                 "Interstes", 
-                                style: TextStyle(fontSize: 20, fontFamily: 'Proxima-Nova-Bold', fontWeight: FontWeight.w400
+                                style: TextStyle(fontSize: 20.sp, fontFamily: 'Proxima-Nova-Bold', fontWeight: FontWeight.w400
                         ),
                                 ),
                         ),
@@ -368,7 +368,7 @@ class Body extends StatelessWidget {
                                 user.interests[index], 
                               style: TextStyle(
                                 fontWeight: FontWeight.w300, 
-                                fontSize: 12
+                                fontSize: 12.sp
                                 
                                 )
                                 ,),
@@ -387,7 +387,7 @@ class Body extends StatelessWidget {
                              Container(
                               child: const Text(
                                     "Basics", 
-                                    style: TextStyle(fontSize: 20, fontFamily: 'Proxima-Nova-Bold', fontWeight: FontWeight.w400
+                                    style: TextStyle(fontSize: 20.sp, fontFamily: 'Proxima-Nova-Bold', fontWeight: FontWeight.w400
                             ),
                                     ),
                             ),
@@ -407,7 +407,7 @@ class Body extends StatelessWidget {
                                     SizedBox(width: 5,),
                                     Text(
                                       user.education??'',
-                                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300),
+                                      style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w300),
                                     ),
                                   ],
                                 ),
@@ -439,7 +439,7 @@ class Body extends StatelessWidget {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: Text('Report ${user.name}', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18) ,textAlign: TextAlign.center, ),
+                                  child: Text('Report ${user.name}', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 18.sp) ,textAlign: TextAlign.center, ),
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(bottom:8.0),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/ui/settings/components/body.dart';
 import 'package:flutter_advanced_switch/flutter_advanced_switch.dart';
@@ -25,7 +26,7 @@ class Settings extends StatelessWidget {
         systemNavigationBarColor: isDark ? Colors.grey[900] : Colors.white,
         systemNavigationBarIconBrightness: isDark? Brightness.light: Brightness.dark,
       ),
-        title: Text('Settings', style: TextStyle( fontWeight: FontWeight.w400, fontSize: 17),),
+        title: Text('Settings', style: TextStyle( fontWeight: FontWeight.w400, fontSize: 17.sp),),
         //backgroundColor: Colors.transparent,
         leading: BackButton(
           color: context.read<ThemeCubit>().state == ThemeMode.dark ?Colors.teal: Colors.green,

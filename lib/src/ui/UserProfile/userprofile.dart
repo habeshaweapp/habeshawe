@@ -259,7 +259,7 @@ class UserProfile extends StatelessWidget {
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge!
-                            .copyWith(fontSize: 18),
+                            .copyWith(fontSize: 18.sp),
                       ),
                       // SizedBox(
                       //   width: 1,
@@ -397,14 +397,14 @@ class UserProfile extends StatelessWidget {
               
               Text('My Boosts',
                textAlign: TextAlign.center,
-               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+               style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
                ),
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text('Be a top profile everywhere in the world for ${remoteConfig.boostTime()} minutes to get more matches', 
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w300),
+                  style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w300),
 
                   ),
               ),
@@ -420,7 +420,7 @@ class UserProfile extends StatelessWidget {
                       ,
                       children: [
                         Text('Boosts'),
-                        Text('${context.read<PaymentBloc>().state.boosts} left', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w300), textAlign: TextAlign.start,)
+                        Text('${context.read<PaymentBloc>().state.boosts} left', style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w300), textAlign: TextAlign.start,)
                       ],
                     ),
                     Spacer(flex: 3,),
@@ -437,7 +437,7 @@ class UserProfile extends StatelessWidget {
                   }else{
                     if(context.read<PaymentBloc>().state.boosts > 0){
                       context.read<PaymentBloc>().add(BoostMe(user: (context.read<ProfileBloc>().state as ProfileLoaded).user));
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text('You are boosted!', style: TextStyle(fontSize: 12),)));
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text('You are boosted!', style: TextStyle(fontSize: 12.sp),)));
                       Navigator.pop(context);
 
                     
@@ -459,7 +459,7 @@ class UserProfile extends StatelessWidget {
                                                           child:  SlideCountdown(
                                                             duration: Duration(seconds: remoteConfig.boostTime()*60 - DateTime.now().difference(context.read<PaymentBloc>().state.boostedTime ??DateTime.now()).inSeconds),
                                                           
-                                                          textStyle: TextStyle(fontSize: 12, color: Colors.white),
+                                                          textStyle: TextStyle(fontSize: 12.sp, color: Colors.white),
                                                           padding: EdgeInsets.symmetric(horizontal: 7,vertical: 2),
                                                         
                                                           ),

@@ -253,7 +253,7 @@ class _StartScreenState extends State<StartScreen>
                         'By continuing with an account, you agree to our Terms of Service and acknowledge that you have read our \nPrivacy Policy.',
                         style: TextStyle(
                           //color: Colors.white,
-                          fontSize: 11,
+                          fontSize: 11.sp,
                           //fontWeight: FontWeight.w300,
                           color: Colors.grey
                         ),
@@ -330,7 +330,7 @@ class _StartScreenState extends State<StartScreen>
               
                     signInButton(
                         context: context,
-                        text: "CONTINUE WITH X",
+                        text: "CONTINUE WITH TWITTER",
                         icon: isDark?'assets/images/xlogodark.png': 'assets/icons/twitterlogo.png',
                         color: Colors.blue,
                         isDark: isDark,
@@ -372,7 +372,7 @@ class _StartScreenState extends State<StartScreen>
                           'Trouble logging in?',
                           style: TextStyle(
                             color: Colors.grey,
-                            fontSize: 11,
+                            fontSize: 11.sp,
                             //fontWeight: FontWeight.w300,
                       
                           ),

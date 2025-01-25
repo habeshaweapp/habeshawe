@@ -79,7 +79,7 @@ class WelcomeScreen extends StatelessWidget {
             
                           Center(
                             child: Text("Please follow these House Rules.",
-                                style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.normal,),
+                                style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.normal,fontSize: 11.sp),
                           
                             ),
                           ),
@@ -182,7 +182,7 @@ class WelcomeScreen extends StatelessWidget {
                        Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
                                                                                                       child: const NameScreen() )));
                       }, 
-                      child: Text('I Agree', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
+                      child: Text('I Agree', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp,color: Colors.white),),
                       style: ElevatedButton.styleFrom(
                         shape: StadiumBorder(),
                       ),

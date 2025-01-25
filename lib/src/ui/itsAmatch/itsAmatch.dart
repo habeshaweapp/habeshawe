@@ -73,14 +73,14 @@ class ItsAMatch extends StatelessWidget {
                       child: Text(
                         "IT\'S",
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold,fontSize: 50, color: Colors.green),
+                        style: Theme.of(context).textTheme.headlineMedium!.copyWith(fontWeight: FontWeight.bold,fontSize: 50.sp, color: Colors.green),
                         ),
                     ),
                     SizedBox(
                       child: Text(
                         "A MATCH",
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold,fontSize: 70, color: Colors.green),
+                        style: Theme.of(context).textTheme.headlineLarge!.copyWith(fontWeight: FontWeight.bold,fontSize: 70.sp, color: Colors.green),
                         ),
                     ),
                     Spacer(),
@@ -119,7 +119,7 @@ class ItsAMatch extends StatelessWidget {
                           ,
                           hintText: 'Type here...',
                           //user.user.gender == 'men'? 'Limta wey koblye...': 'Temari nesh serategna...',
-                          hintStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w200, fontSize: 13),
+                          hintStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.w200, fontSize: 13.sp),
                           // border: OutlineInputBorder(
                           //   borderRadius: BorderRadius.circular(15),
                           //   borderSide: const BorderSide(
@@ -175,7 +175,7 @@ class ItsAMatch extends StatelessWidget {
                             child: Text(
                               'PLAY IT COOL',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 12.sp,
                                 color: Colors.grey
                               ),
                             )

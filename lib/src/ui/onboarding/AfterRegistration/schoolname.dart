@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/app_route_config.dart';
@@ -98,12 +99,12 @@ class SchoolName extends StatelessWidget {
                         Navigator.push(context, MaterialPageRoute(builder: (ctx) => BlocProvider.value(value: context.read<OnboardingBloc>(),
                                                                                                       child: const Interests() )));
                     }else{
-                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('please input a valid school!', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12, color: Colors.white)) ,backgroundColor: Colors.black38, ));
+                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('please input a valid school!', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp, color: Colors.white)) ,backgroundColor: Colors.black38, ));
 
 
                     }
                     }, 
-                    child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
+                    child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp,color: Colors.white),),
                     style: ElevatedButton.styleFrom(
                       shape: StadiumBorder(),
                     ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
@@ -86,7 +87,7 @@ class _EditInterestsState extends State<EditInterests> {
                         spacing: 5,
                         children: List.generate(inter.length, (index) => 
                             ChoiceChip(
-                            label: Text(inter[index],style: TextStyle(color: _selectedList.contains(inter[index])? Colors.white : Colors.black, fontSize: 12, fontWeight: FontWeight.w300),), 
+                            label: Text(inter[index],style: TextStyle(color: _selectedList.contains(inter[index])? Colors.white : Colors.black, fontSize: 12.sp, fontWeight: FontWeight.w300),), 
                             selected: _selectedList.contains(inter[index]),
                             selectedColor: isDark? Colors.teal: Colors.green,
                             //backgroundColor: Colors.teal,

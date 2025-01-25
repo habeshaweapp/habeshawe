@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lomi/src/Blocs/AdBloc/ad_bloc.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
@@ -45,7 +46,7 @@ class SwipeCard extends StatelessWidget {
            
 
           }
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text(state.loadFor == LoadFor.daily? 'something went wrong come back later...': 'Try again!...' ,style: TextStyle(color: Colors.grey, fontSize: 12))));
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text(state.loadFor == LoadFor.daily? 'something went wrong come back later...': 'Try again!...' ,style: TextStyle(color: Colors.grey, fontSize: 12.sp))));
        
         }
 
@@ -215,7 +216,7 @@ class SwipeCard extends StatelessWidget {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Text('LIKE', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 35),),
+                            child: Text('LIKE', style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 35.sp),),
                           ),
                         ),
             
@@ -229,7 +230,7 @@ class SwipeCard extends StatelessWidget {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Text('NOPE', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 35),),
+                            child: Text('NOPE', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 35.sp),),
                           ),
                         ),
             
@@ -243,7 +244,7 @@ class SwipeCard extends StatelessWidget {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Text('SUPER\nLIKE',textAlign: TextAlign.center, style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 30),),
+                            child: Text('SUPER\nLIKE',textAlign: TextAlign.center, style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 30.sp),),
                           ),
                         ),
                         ),
@@ -294,7 +295,7 @@ class SwipeCard extends StatelessWidget {
                               context.read<AdBloc>().add(ShowRewardedAd(adType: AdType.rewardedRandom));
                               _matchEngine?.rewindMatch();
                             }else{
-                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11.sp, color: Colors.grey),), backgroundColor: Colors.black38,));
 
                             }
                           }else{
@@ -320,7 +321,7 @@ class SwipeCard extends StatelessWidget {
                           }else{
                             if(context.read<PaymentBloc>().state.boosts >0){
                             context.read<PaymentBloc>().add(BoostMe(user: (context.read<ProfileBloc>().state as ProfileLoaded).user, ));
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text('You are boosted!', style: TextStyle(fontSize: 12),)));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text('You are boosted!', style: TextStyle(fontSize: 12.sp),)));
                             }
                           }
                         }

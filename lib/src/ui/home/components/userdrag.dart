@@ -202,7 +202,7 @@ class UserCard extends StatelessWidget {
                                   
                                   style: TextStyle(
                                     color: Colors.white, 
-                                    fontSize: 24,
+                                    fontSize: 24.sp,
                                     decoration: TextDecoration.none,
                                     fontWeight: FontWeight.w300
                                     )

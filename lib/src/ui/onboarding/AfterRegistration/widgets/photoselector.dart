@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 // import 'package:google_mlkit_face_detection/google_mlkit_face_detection.dart';
@@ -128,7 +129,7 @@ class _PhotoSelectorState extends State<PhotoSelector> {
                       isPhotoSelected = false;
                       imageFile = null;
                     });
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please use another photo!',style: TextStyle(fontSize: 12),)));
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please use another photo!',style: TextStyle(fontSize: 12.sp),)));
                   }
                           } else {
                             ScaffoldMessenger.of(context)

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
@@ -83,7 +84,7 @@ class Report extends StatelessWidget {
                     child: Text(
                       'The more detail you can give,\n the better we can understand\n what\'s happened.',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 16.sp,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -102,7 +103,7 @@ class Report extends StatelessWidget {
                             hintText: 'Tell us what happened...',
                             labelText: 'Feedback',
                             fillColor: Colors.green,
-                            labelStyle: TextStyle(fontSize: 12)),
+                            labelStyle: TextStyle(fontSize: 12.sp)),
                         minLines: 1,
                         maxLines: 5,
                         onChanged: (value){
@@ -160,7 +161,7 @@ class Report extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge!
-                              .copyWith(fontSize: 17, color: Colors.white),
+                              .copyWith(fontSize: 17.sp, color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
                           shape: StadiumBorder(),

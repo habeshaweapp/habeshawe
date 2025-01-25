@@ -87,17 +87,17 @@ class _PaymentState extends State<Payment> {
 
                                       Text(
                                         '- Amount - ${telebirrConfig['amount']} birr',
-                                        style: TextStyle(fontSize: 12.sp)
+                                        style: TextStyle(: 12.sp)
                                       ),
                                       GestureDetector(
                                         onLongPress: (){
-                                          Clipboard.setData(ClipboardData(text: '${telebirrConfig['phone']}'));
-                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar( content: Text('${telebirrConfig['useTelebirr']?'Phone' : "Account"} number copied!',style: const TextStyle(fontSize: 12))));
+fontSize                                          Clipboard.setData(ClipboardData(text: '${telebirrConfig['phone']}'));
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar( content: Text('${telebirrConfig['useTelebirr']?'Phone' : "Account"} number copied!',style: const TextStyle(fontSize: 12.sp))));
                                   
                                         },
                                         onTap: (){
                                           Clipboard.setData(ClipboardData(text: '${telebirrConfig['phone']}'));
-                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar( content: Text('${telebirrConfig['useTelebirr']?'Phone' : "Account"} number copied!',style: const TextStyle(fontSize: 12)
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar( content: Text('${telebirrConfig['useTelebirr']?'Phone' : "Account"} number copied!',style: const TextStyle(fontSize: 12.sp)
                                           //style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),
                                           )));
                                   
@@ -136,7 +136,7 @@ class _PaymentState extends State<Payment> {
                   },
                   
                                
-                   child: Text('send Recipt', style: TextStyle(fontSize: 11),)
+                   child: Text('send Recipt', style: TextStyle(fontSize: 11.sp),)
                    ),
                 )
 
@@ -272,7 +272,7 @@ class _PaymentState extends State<Payment> {
                               Icon(Icons.diamond, size:70, color: isDark? Colors.teal:Colors.green ),
                               Text('Subscribed', style: TextStyle(color: Colors.white),),
 
-                              Text(state.subscribtionStatus.name, style: TextStyle(color: Colors.white, fontSize: 25 ),),
+                              Text(state.subscribtionStatus.name, style: TextStyle(color: Colors.white, fontSize: 25.sp ),),
                               Text('Enjoy and have fun!', style: TextStyle(color: Colors.white, fontSize: 11),),
                             ],
                           )
@@ -397,7 +397,7 @@ class _PaymentState extends State<Payment> {
                 state.countryCode == 'ET'&&widget.paymentUi == PaymentUi.subscription?
                 Text(
                   'Scan the QR code on Telebirr to pay.',
-                  style: TextStyle(fontSize: 11),
+                  style: TextStyle(fontSize: 11.sp),
                 ):SizedBox(height: 250.h,),
                 SizedBox(height: 5.h,),
               
@@ -427,7 +427,7 @@ class _PaymentState extends State<Payment> {
                      child: Row(
                       mainAxisSize: MainAxisSize.min,
                        children: [
-                         Text('Open Telegram', style: TextStyle(fontSize: 12)),
+                         Text('Open Telegram', style: TextStyle(fontSize: 12.sp)),
                          SizedBox(width: 5,),
                          Transform.rotate(angle: 75,child: Icon(Icons.send, size:18))
                        ],

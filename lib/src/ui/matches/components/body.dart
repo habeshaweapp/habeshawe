@@ -87,7 +87,7 @@ class Body extends StatelessWidget {
                         suffixIconConstraints: BoxConstraints.tight(const Size(40, 20))
     
                     ),
-                    style: TextStyle(fontSize: 12),
+                    style: TextStyle(fontSize: 12.sp),
                     maxLines: 1,
                     maxLength: 30,
                     controller: controller,
@@ -221,7 +221,7 @@ class Body extends StatelessWidget {
                                 context.read<AdBloc>().add(const ShowRewardedAd(adType: AdType.rewardedOnline));
 
                               }else{
-                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...', style: TextStyle(fontSize: 11.sp, color: Colors.grey),), backgroundColor: Colors.black38,));
                                   context.read<AdBloc>().add(LoadRewardedAd());
                                 }
                             }
@@ -342,7 +342,7 @@ class Body extends StatelessWidget {
                         border: Border.all(color: isDark ? Colors.teal: Colors.green),
                         borderRadius: BorderRadius.circular(20)
                                         ),
-                                        child: Center(child: Text('${state.isUserSearching?'Match\n':'New matches\n'}will appear\n here',textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10,fontWeight: FontWeight.w300),)),
+                                        child: Center(child: Text('${state.isUserSearching?'Match\n':'New matches\n'}will appear\n here',textAlign: TextAlign.center, style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 10.sp,fontWeight: FontWeight.w300),)),
                         ),
                       ),
                   ),

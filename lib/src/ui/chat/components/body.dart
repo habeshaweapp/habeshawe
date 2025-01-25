@@ -119,7 +119,7 @@ class _BodyState extends State<Body> {
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(horizontal:10.0, vertical: 5),
-                                        child: Text(separatorDate, style: TextStyle(fontSize: 10, color: Colors.white),),
+                                        child: Text(separatorDate, style: TextStyle(fontSize: 10.sp, color: Colors.white),),
                                       )
                                     ),
                                   ) :const SizedBox(),
@@ -165,7 +165,7 @@ class _BodyState extends State<Body> {
                                                     //Icon(Icons.check, size: 13,),
                                                    context.read<InternetBloc>().state.isConnected ==true ?
                                                     Text(state.messages[index].timestamp != null ? DateFormat('hh:mm a').format(state.messages[index].timestamp!.toDate() ):DateFormat('hh:mm a').format(DateTime.now()) ,
-                                                        style: TextStyle(fontSize: 8),
+                                                        style: TextStyle(fontSize: 8.sp),
                                                         
                                                     ):Icon(Icons.access_time, size: 11,),
                                       
@@ -216,7 +216,7 @@ class _BodyState extends State<Body> {
                                                           //Icon(Icons.check, size: 13,),
                                                           context.read<InternetBloc>().state.isConnected ==true ?
                                                           Text(state.messages[index].timestamp != null ? DateFormat('hh:mm a').format(state.messages[index].timestamp!.toDate() ):DateFormat('hh:mm a').format(DateTime.now()) ,
-                                                              style: TextStyle(fontSize: 8, color: Colors.white),
+                                                              style: TextStyle(fontSize: 8.sp, color: Colors.white),
                                                               
                                                           ):Icon(Icons.access_time, size: 11,),
                                                                                                     
@@ -277,7 +277,7 @@ class _BodyState extends State<Body> {
                                                          //Icon(Icons.check, size: 13,),
                                                    
                                                         Text( DateFormat('hh:mm a').format(state.messages[index].timestamp!.toDate() ),
-                                                        style: TextStyle(fontSize: 8 )),
+                                                        style: TextStyle(fontSize: 8.sp )),
                                                       ],
                                                     )
                                                 ],
@@ -329,7 +329,7 @@ class _BodyState extends State<Body> {
                                                           //Icon(Icons.check, size: 13,),
                                                           context.read<InternetBloc>().state.isConnected ==true ?
                                                           Text(state.messages[index].timestamp != null ? DateFormat('hh:mm a').format(state.messages[index].timestamp!.toDate() ):DateFormat('hh:mm a').format(DateTime.now()) ,
-                                                              style: TextStyle(fontSize: 8, color: Colors.white),
+                                                              style: TextStyle(fontSize: 8.sp, color: Colors.white),
                                                               
                                                           ):Icon(Icons.access_time, size: 11,),
                                                                                                     

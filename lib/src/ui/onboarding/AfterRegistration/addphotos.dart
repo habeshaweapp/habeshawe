@@ -213,7 +213,7 @@ class _AddPhotosState extends State<AddPhotos> {
                                                                                                       child: const EnableLocation() )));
                               }
                             }, 
-                            child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
+                            child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp,color: Colors.white),),
                             style: ElevatedButton.styleFrom(
                               shape: StadiumBorder(),
                               backgroundColor: count <2?Colors.grey:null

@@ -30,14 +30,14 @@ class VerifyProfile extends StatelessWidget {
             children: [
               Icon(Icons.verified, color: Colors.blue, size: 50,),
               
-              Text('/', style: TextStyle(fontSize: 40),),
+              Text('/', style: TextStyle(fontSize: 40.sp),),
 
               Icon(user.gender =='men'?FontAwesomeIcons.crown: LineIcons.crown, size: 50, color: Colors.amber,),
               
             ],
           ),
           SizedBox(height:35,),
-          Text('Get Verified', style: TextStyle(fontSize: 20),),
+          Text('Get Verified', style: TextStyle(fontSize: 20.sp),),
           SizedBox(height:40,),
           Text('Prove you\'re the person in your\nprofile by taking a photo. if you \nmatch, boom, you\'re verified!',
                 style: Theme.of(context).textTheme.bodyLarge!,

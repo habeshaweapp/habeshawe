@@ -192,7 +192,7 @@ class ProfileBox extends StatelessWidget {
                 title != 'Subscriptions'?
                 Text(
                   "GET MORE",
-                  style: TextStyle(color: Colors.blue, fontSize: 12),
+                  style: TextStyle(color: Colors.blue, fontSize: 12.sp),
                 ):SizedBox()
               ],
             ),

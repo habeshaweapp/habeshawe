@@ -97,8 +97,11 @@ class SwipeCompletedWidget extends StatelessWidget {
                                     color: isDark? Colors.grey[800]: Colors.grey[400],
                                     borderRadius: BorderRadius.circular(5),
                                   ),
-                                  textStyle: TextStyle(fontSize: 25, color: Colors.white),
+                                  textStyle: TextStyle(fontSize: 25.sp, color: Colors.white),
                                   padding: EdgeInsets.all(10),
+                                  onDone: () {
+                                    context.read<SwipeBloc>().add(CheckLastTime());
+                                  },
                                  
                             );
                                }
@@ -145,7 +148,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                         if(remoteConfigService.showAdREORN()){
                                         
                                         if(!context.read<AdBloc>().state.isLoadedRewardedAd){
-                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('check your internet connection or VPN and Try again! ad not loaded...', style: TextStyle(fontSize: 11.sp, color: Colors.grey),), backgroundColor: Colors.black38,));
                                           context.read<AdBloc>().add(LoadRewardedAd());
                                         }else{
                                         
@@ -254,7 +257,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                           }
                                           else{
                                                 
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad loading...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad loading...', style: TextStyle(fontSize: 11.sp, color: Colors.grey),), backgroundColor: Colors.black38,));
                                                     context.read<AdBloc>().add(LoadRewardedAd());
                                      
                                         }
@@ -358,7 +361,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                               
                                           }else{
                                                 
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11.sp, color: Colors.grey),), backgroundColor: Colors.black38,));
                                                     context.read<AdBloc>().add(LoadRewardedAd());
                                      
                                         }
@@ -401,7 +404,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                                   child: SlideCountdown(
                                                     duration: Duration(seconds: 3600 - DateTime.now().difference(state.completedTimeAd??DateTime.now()).inSeconds),
                                                   
-                                                  textStyle: TextStyle(fontSize: 9, color: Colors.white),
+                                                  textStyle: TextStyle(fontSize: 9.sp, color: Colors.white),
                                                   padding: EdgeInsets.symmetric(horizontal: 7,vertical: 2),
                                                 
                                                   ),
@@ -475,7 +478,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                             
                                         }else{
                                                 
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad loading...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad loading...', style: TextStyle(fontSize: 11.sp, color: Colors.grey),), backgroundColor: Colors.black38,));
                                                     context.read<AdBloc>().add(LoadRewardedAd());
                                      
                                         }
@@ -558,7 +561,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                             
                                         }else{
                                                 
-                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
+                                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11.sp, color: Colors.grey),), backgroundColor: Colors.black38,));
                                                     context.read<AdBloc>().add(LoadRewardedAd());
                                      
                                         }
@@ -779,7 +782,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                                 ],
                               ),
                               Text('HabeshaWe algorithm gives you the best profiles who is rated beautiful Habesha matches around the world.',
-                               style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600], fontSize: 11),
+                               style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600], fontSize: 11.sp),
                              ),
                             ],
                           ),

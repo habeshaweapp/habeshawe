@@ -170,7 +170,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
        BlocConsumer<InternetBloc,InternetStatus>(
         listener: (context, state) {
           if(state.isConnected==false){
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Connection...',style: TextStyle(fontSize: 11,color: Colors.white), ),backgroundColor: Colors.black38, duration: Duration(seconds: 60),));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('No Connection...',style: TextStyle(fontSize: 11.sp,color: Colors.white), ),backgroundColor: Colors.black38, duration: Duration(seconds: 60),));
 
           }
           if(state.isConnected == true){

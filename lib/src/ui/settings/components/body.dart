@@ -100,7 +100,7 @@ class Body extends StatelessWidget {
                     Text('Discovery Settings',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 17,
+                        fontSize: 17.sp,
                         //color: Colors.grey[800],
                       ) 
                     ),
@@ -175,7 +175,7 @@ class Body extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Age Range', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17)),
+                                Text('Age Range', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp)),
                                 Text('${state.userPreference!.ageRange![0]} - ${state.userPreference?.ageRange![1]}.')
                               ],
                             ),
@@ -368,7 +368,7 @@ class Body extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text('Maximum Distance', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17)),
+                                  Text('Maximum Distance', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp)),
                                   Text('${state.userPreference!.maximumDistance}KM.')
                                 ],
                               ),
@@ -488,7 +488,7 @@ class Body extends StatelessWidget {
                     Text('Activity Status',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 17,
+                        fontSize: 17.sp,
                        // color: Colors.grey[800],
                       ) 
                     ),
@@ -574,7 +574,7 @@ class Body extends StatelessWidget {
                     Text('App Settings',
                       style: TextStyle(
                        // fontWeight: FontWeight.bold,
-                        fontSize: 17,
+                        fontSize: 17.sp,
                         fontWeight: FontWeight.bold,
                        
                         //color: Colors.grey[800],
@@ -594,7 +594,7 @@ class Body extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Show Distances in', 
-                                style: TextStyle(fontSize: 17, color: Colors.grey)
+                                style: TextStyle(fontSize: 17.sp, color: Colors.grey)
                                 ),
                                 Text(state.userPreference!.showDistancesIn!)
                               ],
@@ -691,7 +691,7 @@ class Body extends StatelessWidget {
           
                     SizedBox(height: 25,),
                     Center(
-                      child: Text('version 2.2.0.35', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
+                      child: Text('version 1.0.0.2', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
                     ),
                     SizedBox(height: 25,),
           
@@ -712,7 +712,7 @@ class Body extends StatelessWidget {
                                     mainAxisAlignment: MainAxisAlignment.start,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Please select areason for deleting\nyour account', style: TextStyle(fontSize: 13, color:Colors.grey), ),
+                                      Text('Please select areason for deleting\nyour account', style: TextStyle(fontSize: 13.sp, color:Colors.grey), ),
                                       const SizedBox(height: 15,),
                                       TextButton(
                                         onPressed: (){
@@ -818,7 +818,7 @@ class Body extends StatelessWidget {
       title: Text('Are you sure?', ),
       content: Container(
         width: MediaQuery.of(context).size.width*0.95,
-        child: Text('Deleting your profile to create a new\naccount may affect who you see on\nthe platform, and we want you to have\nthe best experience possible.',style: TextStyle(fontSize: 13, fontWeight: FontWeight.w300, color: Colors.grey),)),
+        child: Text('Deleting your profile to create a new\naccount may affect who you see on\nthe platform, and we want you to have\nthe best experience possible.',style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w300, color: Colors.grey),)),
 
       actions: [
         TextButton(
@@ -854,14 +854,14 @@ class Body extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('This action cannot be undone', style: TextStyle(color: Colors.grey, fontSize: 13),),
+            Text('This action cannot be undone', style: TextStyle(color: Colors.grey, fontSize: 13.sp),),
             SizedBox(height: 15,),
-            Text('Type \"delete\" to confirm', style: TextStyle(color: Colors.grey, fontSize: 12),),
+            Text('Type \"delete\" to confirm', style: TextStyle(color: Colors.grey, fontSize: 12.sp),),
             
             TextField(
               controller: ctr,
             ),
-            Text('*you may be redirected to login again, to complete deletion.', style: TextStyle(color: Colors.grey, fontSize: 10),),
+            Text('*you may be redirected to login again, to complete deletion.', style: TextStyle(color: Colors.grey, fontSize: 10.sp),),
           ],
         ),
       ),

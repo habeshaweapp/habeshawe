@@ -106,22 +106,11 @@ class AuthRepository extends BaseAuthRepository{
   @override
   Future<auth.User?> logInWithTwitter() async {
     try {
-
-    final twitterLogin = TwitterLogin(
-      apiKey: 'rLdjOZdpiItrFkbdOhdb0LDHE', 
-      apiSecretKey: 'C0U6w9QXhp8EyC35d9VR5je8GndEVPezv0m4uBKo0x1QZLNOif', 
-      redirectURI: 'habeshawe://');
-
-    final twitterAuth = await twitterLogin.login();
-
-    final twitterAuthCredential = TwitterAuthProvider.credential(
-      accessToken: twitterAuth.authToken!, 
-      secret: twitterAuth.authTokenSecret!);
-
-    
-    final userCredential = await _firebaseAuth.signInWithCredential(twitterAuthCredential);
+      final appleProvider = AppleAuthProvider();
+    final userCredential = await _firebaseAuth.signInWithProvider(appleProvider);
 
     return userCredential.user;
+
 
     } catch (e) {
       throw Exception(e);

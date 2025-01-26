@@ -330,8 +330,8 @@ class _StartScreenState extends State<StartScreen>
               
                     signInButton(
                         context: context,
-                        text: "CONTINUE WITH TWITTER",
-                        icon: isDark?'assets/images/xlogodark.png': 'assets/icons/twitterlogo.png',
+                        text: "CONTINUE WITH APPLE",
+                        icon: 'assets/images/apple.png',
                         color: Colors.blue,
                         isDark: isDark,
                         iconHeight: isDark? 28:17,

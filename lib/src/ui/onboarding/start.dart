@@ -334,8 +334,7 @@ class _StartScreenState extends State<StartScreen>
                         icon: 'assets/images/apple.png',
                         color: Colors.blue,
                         isDark: isDark,
-                        iconHeight: isDark? 28:17,
-                        iconWidth: isDark? 28:17,
+                        
                         onPressed: () async {
                           try{
                           await context
@@ -428,8 +427,8 @@ class _StartScreenState extends State<StartScreen>
               child: Image.asset(
                 icon,
                 //color: color,
-                height: iconHeight,
-                width: iconWidth,
+                height: iconHeight.sp,
+                width: iconWidth.sp,
               ),
             ),
             Text(text,

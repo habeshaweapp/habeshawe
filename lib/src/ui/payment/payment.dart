@@ -370,13 +370,13 @@ fontSize                                          Clipboard.setData(ClipboardDat
                children:[
                 state.countryCode == 'ET'&& widget.paymentUi == PaymentUi.subscription?
                 Container(
-                  height: 260,
-                  width: 260,
+                  height: 260.h,
+                  width: 260.w,
                   child: CachedNetworkImage(
                            // imageUrl: 'https://firebasestorage.googleapis.com/v0/b/habeshawe-1270a.appspot.com/o/00000telebirr%2Fphoto_2024-11-30_15-18-58.jpg?alt=media&token=17bf241b-6ccb-4658-8fb1-ce93d2e979ae',
                             imageUrl: telebirrConfig['url'],
                             placeholder:(context,url)=> Container(),
-                            fit: BoxFit.cover,
+                            fit: BoxFit.contain,
                             ),
                 ):SizedBox(),
                 //  Expanded(

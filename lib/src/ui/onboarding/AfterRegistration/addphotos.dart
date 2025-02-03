@@ -97,7 +97,7 @@ class _AddPhotosState extends State<AddPhotos> {
                             margin: EdgeInsets.only(top: 10,left: 35,right: 35),
                             child: Text(
                               'Make you first photo Habesha Kemis. keep the\nculture queen!',
-                              style: Theme.of(context).textTheme.bodySmall!,
+                              style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
                               textAlign: TextAlign.center,
                               )
                           ),

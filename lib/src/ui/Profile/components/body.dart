@@ -445,7 +445,7 @@ class Body extends StatelessWidget {
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(bottom:8.0),
-                                  child: Text('Don\'t worry-we won\'t tell them.', style: Theme.of(context).textTheme.bodySmall,),
+                                  child: Text('Don\'t worry-we won\'t tell them.', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 11.sp),),
                                 )
                               ],
                             ),

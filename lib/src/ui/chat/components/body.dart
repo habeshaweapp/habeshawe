@@ -154,7 +154,7 @@ class _BodyState extends State<Body> {
                                               Text(
                                                 state.messages[index].message,                                    
                                                 //userMatch.chat![0].messages[index].message,
-                                                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: !isDark? Colors.black:null)
+                                                style: Theme.of(context).textTheme.bodySmall!.copyWith(color: !isDark? Colors.black:null, fontSize: 11.sp)
                                                 //TextStyle(color: Colors.black)
                                                 ,),
                                                 Row(
@@ -268,7 +268,7 @@ class _BodyState extends State<Body> {
                                                   Text(
                                                     state.messages[index].message,
                                                     //userMatch.chat![0].messages[index].message,
-                                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color:!isDark? Colors.black: null),),
+                                                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color:!isDark? Colors.black: null, fontSize: 11.sp),),
                                           
                                                     Row(
                                                       mainAxisAlignment: MainAxisAlignment.end,
@@ -387,7 +387,7 @@ class _BodyState extends State<Body> {
                     ),
                     SizedBox(height: 15),
                     Text('You matched with ${widget.userMatch.name}'),
-                    Text(matchedTimecal(widget.userMatch.timestamp!), style: Theme.of(context).textTheme.bodySmall,),
+                    Text(matchedTimecal(widget.userMatch.timestamp!), style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 11.sp),),
                     SizedBox(height: 15,),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,

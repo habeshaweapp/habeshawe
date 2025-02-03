@@ -82,7 +82,7 @@ class SchoolName extends StatelessWidget {
                   margin: EdgeInsets.only(top: 10),
                   child: Text(
                     'This is how  it will appear in HabeshaWe and you will not be able to change it',
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w300),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w300,fontSize: 11.sp),
                     )
                 ),
               ),

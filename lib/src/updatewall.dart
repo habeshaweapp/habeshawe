@@ -32,7 +32,7 @@ class UpdateWall extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: Text('Update your HabeshaWe app for the newest\nFeatures',
-                  style: Theme.of(context).textTheme.bodySmall,
+                  style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 11.sp),
                   textAlign: TextAlign.center,
                 ),
               ),

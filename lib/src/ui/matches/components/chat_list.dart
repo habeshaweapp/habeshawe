@@ -89,7 +89,7 @@ class ChatList extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             //softWrap: true,
-            style: Theme.of(context).textTheme.bodySmall!.copyWith(color:(lastMessage.senderId == match.id && (lastMessage.seen == null))?isDark?Colors.white:Colors.black:null, fontWeight: (lastMessage.senderId == match.id && (lastMessage.seen == null))?FontWeight.bold:null ),
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(color:(lastMessage.senderId == match.id && (lastMessage.seen == null))?isDark?Colors.white:Colors.black:null, fontWeight: (lastMessage.senderId == match.id && (lastMessage.seen == null))?FontWeight.bold:null, fontSize: 11.sp ),
             
           );
           }
@@ -123,7 +123,7 @@ class ChatList extends StatelessWidget {
             //'${time.hour}:${time.minute}',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall,
+            style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
           ):
             Icon(Icons.access_time, size: 17,)
           ;

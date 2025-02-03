@@ -120,7 +120,7 @@ class SwipeCompletedWidget extends StatelessWidget {
                              SizedBox(height: 25.h,),
 
                             //Spacer(),
-                            Text('Till then...', style: Theme.of(context).textTheme.bodySmall,),
+                            Text('Till then...', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 11.sp),),
                              SizedBox(height: 25.h,),
 
                             BlocListener<AdBloc, AdState>(

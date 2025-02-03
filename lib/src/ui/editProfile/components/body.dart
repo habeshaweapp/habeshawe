@@ -577,7 +577,7 @@ class Body extends StatelessWidget {
                         padding: const EdgeInsets.only(left: 35, top:10,bottom: 10),
                         child: Text(
                           'Increase compatibility by sharing yours!',
-                              style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w300),
+                              style: Theme.of(context).textTheme.bodySmall!.copyWith(fontWeight: FontWeight.w300,fontSize: 11.sp),
                               ),
                       ),
 

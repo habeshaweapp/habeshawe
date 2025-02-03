@@ -131,7 +131,7 @@ class Body extends StatelessWidget {
                               ],
                             ),
                             Text('HabeshaWe algorithm gives you the best profiles who is rated beautiful Habesha Matches around the world.',
-                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600],fontSize: 11.sp),
                     ),
                           ],
                         ),
@@ -164,7 +164,7 @@ class Body extends StatelessWidget {
                                 ],
                               ),
                               Text('You will get matches based on your preferences once in a day. your preference include all your profile information including age range that will probably will match with your choice and profile information.',
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600],fontSize: 11.sp),
                                           ),
 
                               SizedBox(height: 20,),
@@ -308,7 +308,7 @@ class Body extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text('Only show Recently-Active matches', 
-                                style: Theme.of(context).textTheme.bodySmall, ),
+                                style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 11.sp), ),
                                 Switch(value: state.userPreference!.onlyShowOnlineMatches??false, 
                                 onChanged: (value){
                                   context.read<UserpreferenceBloc>().add(UpdateUserPreference(preference: state.userPreference!.copyWith(onlyShowOnlineMatches: value)));
@@ -334,7 +334,7 @@ class Body extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text('HabeshaWe uses these preferences to suggest matches. Some match suggestions may not fall within your desired parameters.',
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600],fontSize: 11.sp),
                       ),
                     ),
             
@@ -361,7 +361,7 @@ class Body extends StatelessWidget {
                                 ],
                               ),
                               Text('find peoples nearby, within ${remoteConfig.getNumbers()['settingsKmNearBy']}-km from you.',
-                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600]),
+                          style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[600],fontSize: 11.sp),
                                           ),
                               Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -691,7 +691,7 @@ class Body extends StatelessWidget {
           
                     SizedBox(height: 25,),
                     Center(
-                      child: Text('version 1.0.0.2', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green)),
+                      child: Text('version 1.0.0.2', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: isDark? Colors.teal: Colors.green,fontSize: 11.sp)),
                     ),
                     SizedBox(height: 25,),
           

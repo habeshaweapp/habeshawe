@@ -108,7 +108,7 @@ class Phone extends StatelessWidget {
       
                   Text(
                     'When you tap Continue. HabeshaWe may send a text with verification code. The verified phone number can be used to log in. Learn what happens when your number \nchanges.',
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
                   ),
                   SizedBox(height: 25,),
       

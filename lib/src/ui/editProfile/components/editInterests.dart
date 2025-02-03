@@ -71,7 +71,7 @@ class _EditInterestsState extends State<EditInterests> {
                   margin: EdgeInsets.only(top: 10,left: 35),
                   child: Text(
                     'Let everyone know what you\'re passionate about \nby adding it to your profile. (${_selectedList.length}/5)',
-                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Color.fromARGB(255, 192, 189, 189)),
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Color.fromARGB(255, 192, 189, 189),fontSize: 11.sp),
                     )
                 ),
              // Spacer(flex: 1,),

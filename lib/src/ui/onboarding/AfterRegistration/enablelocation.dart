@@ -191,7 +191,7 @@ class EnableLocation extends StatelessWidget {
                             Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const SplashScreen()),(route) => false);
 
                           }else{
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try Again! something went wrong', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),)));
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try Again! something went wrong', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white,fontSize: 12.sp),))); 
                           }          
                         }
                        

@@ -119,11 +119,11 @@ class Report extends StatelessWidget {
                         width: MediaQuery.of(context).size.width * 0.8,
                         margin: EdgeInsets.only(top: 10),
                         child: Text(
-                          'If we need more information, we\'ll contact you at\nlos*****@gmail.com',
+                          'If we need more information, we\'ll contact you at\n${ctx.read<AuthBloc>().state.user!.email??'your email.'}',
                           style: Theme.of(context)
                               .textTheme
                               .bodySmall!
-                              .copyWith(fontWeight: FontWeight.w300),
+                              .copyWith(fontWeight: FontWeight.w300, fontSize: 11.sp),
                         )),
                   ),
 

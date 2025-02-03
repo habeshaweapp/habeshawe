@@ -161,7 +161,7 @@ class UserProfile extends StatelessWidget {
                                 child: GestureDetector(
                                   onLongPress: (){
                                     Clipboard.setData(ClipboardData(text: 'Find me on Habeshawe id: ${state.user.id}'));
-                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text('id generated! good luck...',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),)));
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.black38, content: Text('id generated! good luck...',style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white,fontSize: 11.sp),)));
                                   },
                                   onTap: (){
                                     var firt = SharedPrefes.getFirstLogIn();

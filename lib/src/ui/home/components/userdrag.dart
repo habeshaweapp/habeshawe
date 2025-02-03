@@ -231,7 +231,7 @@ class UserCard extends StatelessWidget {
                                    // user.location != null ?'${distance} $km away ' : '',
                                     distance == 0? 'less than a $km away' :'$distance $km away',
                                     //"Recently Active", 
-                                   style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[400]),
+                                   style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[400],fontSize: 11.sp),
                                    //TextStyle(color: Colors.white, decoration: TextDecoration.none  ),
                                         
                                 
@@ -254,7 +254,7 @@ class UserCard extends StatelessWidget {
                                    child:  Text(
                                     user.city != ''? '${user.city},  ${user.country }' : user.country??'',
                                     //"Recently Active", 
-                                   style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[400]),
+                                   style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.grey[400],fontSize: 11.sp),
                                    //TextStyle(color: Colors.white, decoration: TextDecoration.none  ),
                                         
                                 

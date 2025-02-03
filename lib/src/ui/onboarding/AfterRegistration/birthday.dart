@@ -165,7 +165,7 @@ class _BirthdayState extends State<Birthday> {
 
               Center(
                 child: Text('Your profile shows your age, not your \nbirth date.',
-                    style: Theme.of(context).textTheme.bodySmall,
+                    style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 12.sp),
                 ),
               ),
               

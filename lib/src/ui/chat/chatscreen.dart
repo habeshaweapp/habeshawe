@@ -113,7 +113,7 @@ class ChatScreen extends StatelessWidget {
 
                       Text(
                         lastSeen(snapshot.data?['lastseen'].toDate()),
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 11.sp),
                         ): const Text('last seen recently', style: TextStyle(fontSize: 12.sp, color: Colors.grey));
                       
 
@@ -340,7 +340,7 @@ class ChatScreen extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                     child: Text('Don\'t worry, your feedback is anonymous and\n they won\'t know that you\'ve blocked or reported them.',
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.bodySmall,
+                                style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 11.sp),
                                 ),
                     ),
                     SizedBox(height: 10,),

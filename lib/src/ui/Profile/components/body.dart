@@ -305,9 +305,11 @@ class Body extends StatelessWidget {
                                   Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text('Looking for', style: Theme.of(context).textTheme.bodySmall,),
+                                      Text('Looking for', style: Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 11.sp),),
                                       //Text(user.lookingFor?.replaceAll('\n', '') ?? 'Someone to love', style: Theme.of(context).textTheme.bodyLarge,)
-                                      Text( lookignForOptions[user.lookingFor??0].replaceAll('\n', '') )
+                                      Text( lookignForOptions[user.lookingFor??0].replaceAll('\n', ''),
+                                          style: TextStyle(fontSize: 13.sp)
+                                       )
                                         //TagHelper.getLookingFor(user.lookingFor ?? 0 )[1].replaceAll('\n', ''))
                                     ],
                                   )

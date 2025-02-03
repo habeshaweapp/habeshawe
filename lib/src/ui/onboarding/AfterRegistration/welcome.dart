@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -167,12 +168,15 @@ class WelcomeScreen extends StatelessWidget {
                       onPressed: (){
                         var email = context.read<AuthBloc>().state.user!.email;
                         var gmail = email ==''?context.read<AuthBloc>().state.user!.displayName:email;
+                        var firstName = context.read<AuthBloc>().state.user!.displayName?.split(' ')[0];
                         User user = User(
                           id: context.read<AuthBloc>().state.user!.uid,
-                          name: '', age: 0, gender: '', imageUrls:const [null,null,null,null,null,null], interests: [],
+                          name: firstName??'', 
+                          age: 0, gender: '', imageUrls:const [null,null,null,null,null,null], interests: [],
                           email: gmail,
                           provider: email == ''?'twitter':'google',
-                          phoneNumber: context.read<AuthBloc>().state.user!.phoneNumber
+                          phoneNumber: context.read<AuthBloc>().state.user!.phoneNumber,
+                          
 
                           );
                         
@@ -185,6 +189,7 @@ class WelcomeScreen extends StatelessWidget {
                       child: Text('I Agree', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp,color: Colors.white),),
                       style: ElevatedButton.styleFrom(
                         shape: StadiumBorder(),
+                        backgroundColor: isDark?Colors.teal:Colors.green
                       ),
                       
                       ),

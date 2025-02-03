@@ -174,7 +174,7 @@ class User extends Equatable {
       'imageUrls': imageUrls,
       'interests': interests,
       'lookingFor': lookingFor,
-      'location': GeoPoint(location![0], location![1]),
+      'location': location!=null? GeoPoint(location![0], location![1]):location,
       'school': school,
       'birthday': birthday,
       'aboutMe' : aboutMe,

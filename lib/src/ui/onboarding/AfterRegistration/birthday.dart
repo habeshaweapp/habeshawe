@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/onboarding/AfterRegistration/lookingfor.dart';
 import 'package:lomi/src/ui/onboarding/AfterRegistration/showme.dart';
@@ -26,6 +27,7 @@ class _BirthdayState extends State<Birthday> {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Scaffold(
       body: SafeArea(
         child:Container(
@@ -236,6 +238,7 @@ class _BirthdayState extends State<Birthday> {
                       child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp,color: Colors.white),),
                       style: ElevatedButton.styleFrom(
                         shape: StadiumBorder(),
+                        backgroundColor: isDark?Colors.teal:Colors.green
                       ),
                       
                       ),

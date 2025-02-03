@@ -30,6 +30,7 @@ class _AddPhotosState extends State<AddPhotos> {
   Widget build(BuildContext context) {
     //context.read<OnboardingBloc>().add(onboa)
     return Scaffold(
+      bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
       body: SafeArea(
         child:
         BlocBuilder<OnboardingBloc, OnboardingState>(
@@ -216,7 +217,7 @@ class _AddPhotosState extends State<AddPhotos> {
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp,color: Colors.white),),
                             style: ElevatedButton.styleFrom(
                               shape: StadiumBorder(),
-                              backgroundColor: count <2?Colors.grey:null
+                              backgroundColor: count <2?Colors.grey:isDark?Colors.teal:Colors.green
                             ),
                             
                             ),

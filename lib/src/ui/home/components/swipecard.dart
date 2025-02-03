@@ -296,14 +296,15 @@ class SwipeCard extends StatelessWidget {
                               _matchEngine?.rewindMatch();
                             }else{
                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try again! ad not loaded...', style: TextStyle(fontSize: 11, color: Colors.grey),), backgroundColor: Colors.black38,));
-
+                                  showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
                             }
                           }else{
-                            _matchEngine?.rewindMatch();
+                            //_matchEngine?.rewindMatch();
+                            showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
                           }
                           // }
                           // else{
-                            showPaymentDialog(context: context, paymentUi: PaymentUi.subscription);
+                            
                           //}
                           
 

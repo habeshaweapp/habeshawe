@@ -1427,7 +1427,8 @@ class DatabaseRepository extends BaseDatabaseRepository {
       required Map purchaseData,
       required int subscribtionStatus,
       required String paymentType,
-      required int expireDate}) async {
+      required int expireDate,
+      bool firstPurchase= false}) async {
     await _firebaseFirestore
         .collection(users.name)
         .doc(userId)
@@ -1439,8 +1440,8 @@ class DatabaseRepository extends BaseDatabaseRepository {
       'subscriptionType': paymentType,
       'subscribtionStatus': subscribtionStatus
     });
-
-    await _firebaseFirestore.collection('payments').add({
+if(firstPurchase){
+    await _firebaseFirestore.collection('purchases').add({
       'userId': userId,
       'gender': users.name,
       'paymentDetails': purchaseData,
@@ -1451,6 +1452,7 @@ class DatabaseRepository extends BaseDatabaseRepository {
       'paymentType': 'subscribtion',
       'platform': Platform.isIOS ? 'ios' : 'android'
     });
+}
   }
 
   Future<List<Message>> getMoreChats(
@@ -1717,13 +1719,13 @@ class DatabaseRepository extends BaseDatabaseRepository {
         .doc('subscription')
         .update({field: value});
 
-    await _firebaseFirestore.collection('payments').add({
-      'userId': userId,
-      'gender': users.name,
-      'timestamp': FieldValue.serverTimestamp(),
-      'paymentType': field,
-      'value': value
-    });
+    // await _firebaseFirestore.collection('payments').add({
+    //   'userId': userId,
+    //   'gender': users.name,
+    //   'timestamp': FieldValue.serverTimestamp(),
+    //   'paymentType': field,
+    //   'value': value
+    // });
   }
 
   void seenMessage({required Message message, required Gender gender}) async {

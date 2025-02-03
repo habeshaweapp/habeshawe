@@ -77,7 +77,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     if(event.purchaseDetailsList.isEmpty){
       //emit(NotSubscribed());
       emit(state.copyWith(subscribtionStatus: SubscribtionStatus.notSubscribed, purchaseDetails: event.purchaseDetailsList));
-      _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: {}, subscribtionStatus: SubscribtionStatus.notSubscribed.index, paymentType: SubscribtionStatus.notSubscribed.name,expireDate: payment.expireDate );
+      //_databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: {}, subscribtionStatus: SubscribtionStatus.notSubscribed.index, paymentType: SubscribtionStatus.notSubscribed.name,expireDate: payment.expireDate );
     }else{
       for(var purchase in event.purchaseDetailsList){
         if(purchase.status == PurchaseStatus.restored || purchase.status == PurchaseStatus.purchased){
@@ -156,7 +156,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
                 var expireDate = DateTime.fromMillisecondsSinceEpoch(purchaseData['purchaseTime']);
                 var newExpireDate = expireDate.add( Duration(days: add));
                 _databaseRepository.updatePayment(userId: _authBloc.state.user!.uid, users: _authBloc.state.accountType!, purchaseData: purchaseData, 
-                subscribtionStatus: type.index, paymentType: purchase.productID, expireDate: newExpireDate.millisecondsSinceEpoch );
+                subscribtionStatus: type.index, paymentType: purchase.productID, expireDate: newExpireDate.millisecondsSinceEpoch,firstPurchase:true );
               }
             //boosts complete
               if(boostsIds.contains(purchase.productID)){

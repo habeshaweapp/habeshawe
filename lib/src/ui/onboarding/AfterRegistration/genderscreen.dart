@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Data/Models/enums.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/onboarding/AfterRegistration/birthday.dart';
@@ -113,7 +114,9 @@ class GenderScreen extends StatelessWidget {
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp,color: Colors.white),),
                             style: ElevatedButton.styleFrom(
                               shape: StadiumBorder(),
-                              foregroundColor: state.user.gender == '' ?  Colors.white : null
+                              //foregroundColor: state.user.gender == '' ?  Colors.white : null,
+                              backgroundColor: state.user.gender == '' ?  Colors.grey : isDark?Colors.teal:Colors.green
+
                             ),
                             
                             ),

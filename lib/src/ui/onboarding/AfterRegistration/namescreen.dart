@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/onboarding/AfterRegistration/genderscreen.dart';
 
@@ -16,6 +17,7 @@ class NameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Scaffold(
       body: SafeArea(
         child:
@@ -60,7 +62,8 @@ class NameScreen extends StatelessWidget {
                           child: TextField(
                             textCapitalization: TextCapitalization.words,
                             decoration: InputDecoration(
-                              hintText: 'First Name'
+                             // hintText: 'First Name'
+                              hintText: state.user.name
                             ),
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(20),
@@ -105,6 +108,7 @@ class NameScreen extends StatelessWidget {
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp,color: Colors.white),),
                             style: ElevatedButton.styleFrom(
                               shape: StadiumBorder(),
+                              backgroundColor: isDark?Colors.teal:Colors.green
                             ),
                             
                             ),

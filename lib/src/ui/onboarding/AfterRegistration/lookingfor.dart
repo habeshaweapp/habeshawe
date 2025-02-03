@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:lomi/src/Blocs/blocs.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/onboarding/AfterRegistration/schoolname.dart';
 
@@ -23,6 +24,7 @@ class _LookingForState extends State<LookingFor> {
  int selectedIndex = -1;
   @override
   Widget build(BuildContext context) {
+    bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
    List<String> lookignForOpt = [
       'Long-term\n partner',
       'Christian\n partner',
@@ -141,7 +143,7 @@ class _LookingForState extends State<LookingFor> {
                             child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp,color: Colors.white),),
                             style: ElevatedButton.styleFrom(
                               shape: StadiumBorder(),
-                              backgroundColor: selectedIndex == -1?Colors.grey:null,
+                              backgroundColor: selectedIndex == -1?Colors.grey: isDark?Colors.teal:Colors.green,
                             ),
                             
                             ),

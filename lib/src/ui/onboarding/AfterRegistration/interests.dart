@@ -157,7 +157,8 @@ class _InterestsState extends State<Interests> {
                                 shape: StadiumBorder(),
                                 backgroundColor: _selectedList.length <= 2
                                     ? Colors.grey
-                                    : null),
+                                    : isDark?Colors.teal:Colors.green
+                                    ),
                           ),
                         ),
                       ),

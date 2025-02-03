@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:line_icons/line_icons.dart';
@@ -16,6 +17,7 @@ class SchoolName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Scaffold(
       body: SafeArea(
         child: BlocBuilder<OnboardingBloc, OnboardingState>(
@@ -107,6 +109,7 @@ class SchoolName extends StatelessWidget {
                     child: Text('CONTINUE', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp,color: Colors.white),),
                     style: ElevatedButton.styleFrom(
                       shape: StadiumBorder(),
+                      backgroundColor: isDark?Colors.teal:Colors.green
                     ),
                     
                     ),

@@ -11,6 +11,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:lomi/src/Blocs/blocs.dart';
+import 'package:lomi/src/Blocs/ThemeCubit/theme_cubit.dart';
 import 'package:lomi/src/Data/Models/userpreference_model.dart';
 import 'package:lomi/src/app_route_config.dart';
 import 'package:lomi/src/ui/home/home.dart';
@@ -43,7 +44,8 @@ class EnableLocation extends StatelessWidget {
 
     if(permission == LocationPermission.deniedForever){
       return Future.error(
-        'Location permission are permanently denied, we cannot request permission'
+        //'Location permission are permanently denied, we cannot request permission'
+        'Location permissions are denied'
       );
     }
 
@@ -52,6 +54,7 @@ class EnableLocation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     return Scaffold(
       body: SafeArea(
         child:BlocBuilder<OnboardingBloc, OnboardingState>(
@@ -102,7 +105,8 @@ class EnableLocation extends StatelessWidget {
                     width: MediaQuery.of(context).size.width*0.7,
                     margin: EdgeInsets.only(top: 10),
                     child: Text(
-                      'You\'ll need to enable your location in order to use HabeshaWe',
+                      //'You\'ll need to enable your location in order to use HabeshaWe',
+                      'Turning on Location Services allows as to provide features like Nearby matches, calculate your distance from another match...',
                       style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.w300, fontSize: 12.sp, color: Colors.grey),
                       textAlign: TextAlign.center,
                       )
@@ -178,17 +182,30 @@ class EnableLocation extends StatelessWidget {
 
                         
                         } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try Again! something went wrong', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),)));
-                                     
+                          if(e.toString() == 'Location permissions are denied'){
+                            List<dynamic> imageUrls = [...state.user.imageUrls];
+                            imageUrls.removeWhere((element) => element == null);
+
+                            context.read<OnboardingBloc>().add(CompleteOnboarding(placeMark: Placemark(), user: state.user.copyWith(countryCode: 'LocationDenied', imageUrls: imageUrls, location: [0,0], country: '', city: '',livingIn: ' ' ), isMocked: true,));
+           
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const SplashScreen()),(route) => false);
+
+                          }else{
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Try Again! something went wrong', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),)));
+                          }          
                         }
                        
  
                        
                       }
                       , 
-                      child: Text('ALLOW LOCATION', style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17.sp,color: Colors.white),),
+                      child: Text(
+                        //'ALLOW LOCATION', 
+                        'CONTINUE',
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 17,color: Colors.white),),
                       style: ElevatedButton.styleFrom(
                         shape: StadiumBorder(),
+                        backgroundColor:  isDark?Colors.teal:Colors.green
                       ),
                       
                       ),

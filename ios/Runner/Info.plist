@@ -45,12 +45,8 @@
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow access to camera to capture photos</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open and in the background.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app needs access to location when in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to location when open.</string>
+	<string>Turning on Location Services allows as to provide features like Nearby matches, calculate your distance from another match...</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow access to microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>

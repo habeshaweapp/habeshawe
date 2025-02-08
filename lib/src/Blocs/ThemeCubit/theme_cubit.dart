@@ -6,7 +6,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 part 'theme_state.dart';
 
 class ThemeCubit extends HydratedCubit<ThemeMode> {
-  ThemeCubit() : super(ThemeMode.light);
+  ThemeCubit() : super(ThemeMode.dark);
 
   void changeTheme(){
     emit(state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark);

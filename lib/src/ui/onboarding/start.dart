@@ -44,11 +44,11 @@ class _StartScreenState extends State<StartScreen>
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
-    var _controller = ValueNotifier<bool>(isDark);
+    // var _controller = ValueNotifier<bool>(isDark);
 
-    _controller.addListener(() {
-      context.read<ThemeCubit>().changeTheme();
-    },);
+    // _controller.addListener(() {
+    //   context.read<ThemeCubit>().changeTheme();
+    // },);
 
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
@@ -160,32 +160,32 @@ class _StartScreenState extends State<StartScreen>
           ),
 
 
-          Positioned(
-            right: 10,
-            top: 50,
-            child: UnconstrainedBox(
+      //     Positioned(
+      //       right: 10,
+      //       top: 50,
+      //       child: UnconstrainedBox(
       
-        child: AdvancedSwitch(
-          controller: _controller,
-          enabled: true,
-          height: 30,
-          //width: 100,
-          //
-          //inactiveColor: Colors.amber,
-          activeColor: Colors.grey[800]!,
-          inactiveColor: Colors.grey[300]!,
-          //inactiveChild: const Text('Dark'),
-          //activeChild: const Text('Light'),
-          thumb: ValueListenableBuilder<bool>(
-            valueListenable: _controller, 
-            builder: (_,value,__){
-              return Transform.rotate(
-                angle: -10,
-                child: Icon(value?Icons.wb_sunny : Icons.brightness_2,size: 17, ));
-            }),
-        ),
-      ),
-            ),
+      //   child: AdvancedSwitch(
+      //     controller: _controller,
+      //     enabled: true,
+      //     height: 30,
+      //     //width: 100,
+      //     //
+      //     //inactiveColor: Colors.amber,
+      //     activeColor: Colors.grey[800]!,
+      //     inactiveColor: Colors.grey[300]!,
+      //     //inactiveChild: const Text('Dark'),
+      //     //activeChild: const Text('Light'),
+      //     thumb: ValueListenableBuilder<bool>(
+      //       valueListenable: _controller, 
+      //       builder: (_,value,__){
+      //         return Transform.rotate(
+      //           angle: -10,
+      //           child: Icon(value?Icons.wb_sunny : Icons.brightness_2,size: 17, ));
+      //       }),
+      //   ),
+      // ),
+      //       ),
           // Positioned(
           //   //alignment: Alignment.topLeft,
           //   left: 5,

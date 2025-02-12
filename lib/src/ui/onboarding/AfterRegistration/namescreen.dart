@@ -19,6 +19,12 @@ class NameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
     final ctrl  = TextEditingController();
+    try {
+      ctrl.text = (context.read<OnboardingBloc>().state as OnboardingLoaded).user.name;
+      
+    } catch (e) {
+      
+    }
     return Scaffold(
       body: SafeArea(
         child:
@@ -29,7 +35,7 @@ class NameScreen extends StatelessWidget {
             }
             
             if(state is OnboardingLoaded){
-              ctrl.text = state.user.name;
+              
             return Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,

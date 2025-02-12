@@ -166,15 +166,17 @@ class WelcomeScreen extends StatelessWidget {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: (){
-                        var email = context.read<AuthBloc>().state.user!.email;
-                        var gmail = email ==''?context.read<AuthBloc>().state.user!.displayName:email;
+
+                        var provData = context.read<AuthBloc>().state.user!.providerData;
+                        var prov =  provData.isNotEmpty? provData[0].providerId : '';
+                        var gmail = context.read<AuthBloc>().state.user!.email;
                         var firstName = context.read<AuthBloc>().state.user!.displayName?.split(' ')[0];
                         User user = User(
                           id: context.read<AuthBloc>().state.user!.uid,
                           name: firstName??'', 
                           age: 0, gender: '', imageUrls:const [null,null,null,null,null,null], interests: [],
                           email: gmail,
-                          provider: email == ''?'twitter':'google',
+                          provider: prov,
                           phoneNumber: context.read<AuthBloc>().state.user!.phoneNumber,
                           
 

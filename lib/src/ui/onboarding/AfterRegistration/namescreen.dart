@@ -18,6 +18,7 @@ class NameScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDark = context.read<ThemeCubit>().state == ThemeMode.dark;
+    final ctrl  = TextEditingController();
     return Scaffold(
       body: SafeArea(
         child:
@@ -28,6 +29,7 @@ class NameScreen extends StatelessWidget {
             }
             
             if(state is OnboardingLoaded){
+              ctrl.text = state.user.name;
             return Container(
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height,
@@ -61,9 +63,10 @@ class NameScreen extends StatelessWidget {
                           width: MediaQuery.of(context).size.width*0.7,
                           child: TextField(
                             textCapitalization: TextCapitalization.words,
+                            controller: ctrl,
                             decoration: InputDecoration(
-                             // hintText: 'First Name'
-                              hintText: state.user.name
+                              hintText: 'First Name'
+                              //hintText: state.user.name
                             ),
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(20),
